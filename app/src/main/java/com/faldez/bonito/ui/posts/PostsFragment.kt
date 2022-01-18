@@ -3,20 +3,21 @@ package com.faldez.bonito.ui.posts
 import com.faldez.bonito.data.GelbooruRepository
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.faldez.bonito.MainActivity
+import com.faldez.bonito.R
 import com.faldez.bonito.adapter.PostsAdapter
 import com.faldez.bonito.databinding.PostsFragmentBinding
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.service.GelbooruService
+import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -32,6 +33,11 @@ class PostsFragment : Fragment() {
 
     private val gelbooruService = GelbooruService.getInstance("https://safebooru.org")
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -46,6 +52,11 @@ class PostsFragment : Fragment() {
             pagingData = viewModel.pagingDataFlow,
             uiActions = viewModel.accept
         )
+
+        (activity as MainActivity).setSupportActionBar(binding.topAppBar)
+        binding.appBarLayout.statusBarForeground =
+            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+
         return binding.root
     }
 
@@ -62,6 +73,11 @@ class PostsFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         binding.topAppBar.title = "Posts"
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.posts_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun PostsFragmentBinding.bindState(
@@ -129,7 +145,8 @@ class PostsFragment : Fragment() {
 
         lifecycleScope.launch {
             postsAdapter.loadStateFlow.collect { loadState ->
-                val isListEmpty = loadState.refresh is LoadState.NotLoading && postsAdapter.itemCount == 0
+                val isListEmpty =
+                    loadState.refresh is LoadState.NotLoading && postsAdapter.itemCount == 0
                 postsRecyclerView.isVisible = !isListEmpty
                 progressBar.isVisible = loadState.source.refresh is LoadState.Loading
                 retryButton.isVisible = loadState.source.refresh is LoadState.Error
