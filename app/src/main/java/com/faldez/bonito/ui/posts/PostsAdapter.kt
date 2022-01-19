@@ -26,12 +26,14 @@ class PostsAdapter : PagingDataAdapter<Post, PostsViewHolder>(POST_COMPARATOR) {
     override fun onBindViewHolder(holder: PostsViewHolder, position: Int) {
         val post = getItem(position)
         Log.d("Adapter", post.toString())
-        holder.binding.imageView.load(post?.previewUrl, builder = {
-            placeholder(BitmapDrawable(holder.binding.imageView.resources,
-                Bitmap.createBitmap(post?.previewWidth!!,
-                    post?.previewHeight!!,
-                    Bitmap.Config.ARGB_8888)))
-        })
+        post?.let {
+            holder.binding.imageView.load(it.previewUrl, builder = {
+                placeholder(BitmapDrawable(holder.binding.imageView.resources,
+                    Bitmap.createBitmap(it.previewWidth!!,
+                        it.previewHeight!!,
+                        Bitmap.Config.ARGB_8888)))
+            })
+        }
     }
 
     companion object {

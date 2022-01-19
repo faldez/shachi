@@ -4,20 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="false"
     tools:context=".ui.posts.PostsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:liftOnScroll="false">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/topAppBar"
+        <com.lapism.search.widget.MaterialSearchBar
+            android:id="@+id/material_search_bar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways|snap"/>
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:search_navigationBackgroundColor="?attr/colorSurfaceVariant"
+            app:search_radius="25dp"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -25,6 +28,7 @@
         android:id="@+id/postsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/transparent"
         tools:listitem="@layout/adapter_post"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
 
@@ -42,5 +46,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Retry"/>
+
+    <com.lapism.search.widget.MaterialSearchView
+        android:id="@+id/material_search_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_anchor="@id/material_search_bar"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

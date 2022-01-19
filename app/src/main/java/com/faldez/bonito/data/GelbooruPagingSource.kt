@@ -2,6 +2,7 @@ package com.faldez.bonito.data
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.faldez.bonito.data.GelbooruRepository.Companion.GELBOORU_STARTING_PAGE_INDEX
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.service.GelbooruService
 import okio.IOException
@@ -17,18 +18,18 @@ class GelbooruPagingSource(private val service: GelbooruService, private val tag
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
-        val position = params.key ?: 1
+        val position = params.key ?: GELBOORU_STARTING_PAGE_INDEX
         return try {
             val response = service.getPosts(position, tags)
-            val posts = response.posts.post
-            val nextKey = if (posts?.isEmpty() == true) {
+            val posts = response.posts.post ?: listOf()
+            val nextKey = if (posts?.isEmpty()) {
                 null
             } else {
                 position + 1
             }
 
-            return LoadResult.Page(data = posts!!,
-                prevKey = if (position == 1) null else position,
+            return LoadResult.Page(data = posts,
+                prevKey = if (position == GELBOORU_STARTING_PAGE_INDEX) null else position,
                 nextKey = nextKey)
         } catch (exception: IOException) {
             return LoadResult.Error(exception)

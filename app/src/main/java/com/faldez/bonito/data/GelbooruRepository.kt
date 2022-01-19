@@ -22,6 +22,7 @@ class GelbooruRepository constructor(private val service: GelbooruService): View
 //    fun getTags(pattern: String) = service.getTags(pattern)
 
     companion object {
+        const val GELBOORU_STARTING_PAGE_INDEX = 0
         const val NETWORK_PAGE_SIZE = 100
     }
 }

@@ -3,7 +3,8 @@ package com.faldez.bonito
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.core.view.WindowCompat
+import android.view.ViewGroup.MarginLayoutParams
+import androidx.core.view.*
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import coil.Coil

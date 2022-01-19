@@ -8,7 +8,6 @@ import retrofit2.http.Query
 import android.util.Xml
 import com.faldez.bonito.model.LocalDateTimeAdapter
 import com.google.gson.GsonBuilder
-import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 import okhttp3.*
 import org.json.jsonjava.XML
 
@@ -19,7 +18,7 @@ import java.time.LocalDateTime
 
 
 interface GelbooruService {
-    @GET("/index.php?page=dapi&s=post&q=index")
+    @GET("/index.php?page=dapi&s=post&q=index&limit=100")
     suspend fun getPosts(@Query("pid") page: Int, @Query("tags") tags: String): PostsResponse
 
 //    @GET("/index.php?page=dapi&s=tag&q=index")
