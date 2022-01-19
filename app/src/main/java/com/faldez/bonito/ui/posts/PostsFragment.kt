@@ -78,11 +78,9 @@ class PostsFragment : Fragment() {
             setBackgroundColor(resources.getColor(R.color.background))
             setOnClickListener {
                 binding.materialSearchView.requestFocus()
-                binding.postsRecyclerView.scrollToPosition(0)
             }
             setNavigationOnClickListener {
                 binding.materialSearchView.requestFocus()
-                binding.postsRecyclerView.scrollToPosition(0)
             }
         }
 
@@ -94,21 +92,27 @@ class PostsFragment : Fragment() {
             setHint("tags_1 tags_2")
             setOnFocusChangeListener(object : MaterialSearchView.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
-                    (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = if (hasFocus) {
+                    val visibility = if (hasFocus) {
                         View.GONE
                     } else {
                         View.VISIBLE
                     }
+                    (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+                        visibility
+                    binding.materialSearchBar.visibility = visibility
                 }
             })
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.materialSearchView) { view, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(view) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             // Apply the insets as padding to the view. Here we're setting all of the
             // dimensions, but apply as appropriate to your layout. You could also
             // update the views margin if more appropriate.
-            (view.layoutParams as ViewGroup.MarginLayoutParams).setMargins(insets.left, insets.top, insets.right, 0)
+            (view.layoutParams as ViewGroup.MarginLayoutParams).setMargins(insets.left,
+                insets.top,
+                insets.right,
+                insets.bottom)
 
             // Return CONSUMED if we don't want the window insets to keep being passed
             // down to descendant views.
@@ -161,7 +165,8 @@ class PostsFragment : Fragment() {
         uiState: StateFlow<UiState>,
         onTagsChanged: (UiAction.Search) -> Unit,
     ) {
-        binding.materialSearchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
+        binding.materialSearchView.setOnQueryTextListener(object :
+            MaterialSearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: CharSequence) {
 
             }
