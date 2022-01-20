@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable
 import com.faldez.bonito.data.GelbooruRepository
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
@@ -42,16 +43,18 @@ class PostsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        Log.d("PostsFragment", savedInstanceState.toString())
+        viewModel =
+            ViewModelProvider(this,
+                PostsViewModelFactory(GelbooruRepository(gelbooruService), this)).get(
+                PostsViewModel::class.java)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        viewModel =
-            ViewModelProvider(this,
-                PostsViewModelFactory(GelbooruRepository(gelbooruService), this)).get(
-                PostsViewModel::class.java)
+        super.onCreateView(inflater, container, savedInstanceState)
         binding = PostsFragmentBinding.inflate(inflater, container, false)
 
         val view = binding.root
@@ -78,6 +81,7 @@ class PostsFragment : Fragment() {
             setBackgroundColor(resources.getColor(R.color.background))
             setOnClickListener {
                 binding.materialSearchView.requestFocus()
+                binding.materialSearchView.setTextQuery(viewModel.state.value.tags, false)
             }
             setNavigationOnClickListener {
                 binding.materialSearchView.requestFocus()
@@ -127,9 +131,18 @@ class PostsFragment : Fragment() {
 
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onResume() {
         super.onResume()
 //        binding.topAppBar.title = "Posts"
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("PostsFragment", "onDestroy")
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
