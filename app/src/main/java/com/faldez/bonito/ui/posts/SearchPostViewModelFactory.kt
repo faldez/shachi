@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import java.lang.IllegalArgumentException
 
-class PostsViewModelFactory constructor(
+class SearchPostViewModelFactory constructor(
     private val repository: GelbooruRepository,
     owner: SavedStateRegistryOwner,
 ) : AbstractSavedStateViewModelFactory(owner, null) {

@@ -1,7 +1,5 @@
 package com.faldez.bonito.ui.posts
 
-import android.content.res.ColorStateList
-import android.graphics.drawable.ColorDrawable
 import com.faldez.bonito.data.GelbooruRepository
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -12,13 +10,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
 import com.faldez.bonito.adapter.PostsAdapter
-import com.faldez.bonito.databinding.PostsFragmentBinding
+import com.faldez.bonito.databinding.SearchPostFragmentBinding
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.service.GelbooruService
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -28,15 +25,15 @@ import com.lapism.search.widget.NavigationIconCompat
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class PostsFragment : Fragment() {
+class SearchPostFragment : Fragment() {
 
     companion object {
-        public const val TAG = "PostsFragment"
+        public const val TAG = "SearchPostFragment"
     }
 
     private lateinit var viewModel: PostsViewModel
 
-    private lateinit var binding: PostsFragmentBinding
+    private lateinit var binding: SearchPostFragmentBinding
 
     private val gelbooruService = GelbooruService.getInstance("https://safebooru.org")
 
@@ -46,7 +43,7 @@ class PostsFragment : Fragment() {
         Log.d(TAG, "onCreate " + savedInstanceState.toString())
         viewModel =
             ViewModelProvider(this,
-                PostsViewModelFactory(GelbooruRepository(gelbooruService), this)).get(
+                SearchPostViewModelFactory(GelbooruRepository(gelbooruService), this)).get(
                 PostsViewModel::class.java)
     }
 
@@ -56,7 +53,7 @@ class PostsFragment : Fragment() {
     ): View? {
         Log.d(TAG, "onCreateView " + savedInstanceState.toString())
         super.onCreateView(inflater, container, savedInstanceState)
-        binding = PostsFragmentBinding.inflate(inflater, container, false)
+        binding = SearchPostFragmentBinding.inflate(inflater, container, false)
 
         val view = binding.root
 
@@ -157,7 +154,7 @@ class PostsFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun PostsFragmentBinding.bindState(
+    private fun SearchPostFragmentBinding.bindState(
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         uiActions: (UiAction) -> Unit,
@@ -177,7 +174,7 @@ class PostsFragment : Fragment() {
         )
     }
 
-    private fun PostsFragmentBinding.bindSearch(
+    private fun SearchPostFragmentBinding.bindSearch(
         uiState: StateFlow<UiState>,
         onTagsChanged: (UiAction.Search) -> Unit,
     ) {
@@ -200,7 +197,7 @@ class PostsFragment : Fragment() {
         }
     }
 
-    private fun PostsFragmentBinding.bindList(
+    private fun SearchPostFragmentBinding.bindList(
         postsAdapter: PostsAdapter,
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
