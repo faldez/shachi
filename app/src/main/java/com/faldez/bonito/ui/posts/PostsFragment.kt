@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 class PostsFragment : Fragment() {
 
     companion object {
-        fun newInstance() = PostsFragment()
+        public const val TAG = "PostsFragment"
     }
 
     private lateinit var viewModel: PostsViewModel
@@ -43,7 +43,7 @@ class PostsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        Log.d("PostsFragment", savedInstanceState.toString())
+        Log.d(TAG, "onCreate " + savedInstanceState.toString())
         viewModel =
             ViewModelProvider(this,
                 PostsViewModelFactory(GelbooruRepository(gelbooruService), this)).get(
@@ -54,6 +54,7 @@ class PostsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+        Log.d(TAG, "onCreateView " + savedInstanceState.toString())
         super.onCreateView(inflater, container, savedInstanceState)
         binding = PostsFragmentBinding.inflate(inflater, container, false)
 
@@ -128,11 +129,13 @@ class PostsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        Log.d(TAG, "onActivityCreated " + savedInstanceState.toString())
 
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        Log.d(TAG, "onSaveInstanceState " + outState.toString())
     }
 
     override fun onResume() {
@@ -142,7 +145,7 @@ class PostsFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("PostsFragment", "onDestroy")
+        Log.d(TAG, "onDestroy")
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

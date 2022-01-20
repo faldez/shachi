@@ -1,5 +1,6 @@
 package com.faldez.bonito.ui.posts
 
+import android.util.Log
 import com.faldez.bonito.data.GelbooruRepository
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,7 @@ class PostsViewModel constructor(
     val accept: (UiAction) -> Unit
 
     init {
+        Log.d("PostsViewModel", "init " + savedStateHandle.get(LAST_SEARCH_TAGS) + " " + savedStateHandle.get(LAST_TAGS_SCROLLED))
         val initialTags: String = savedStateHandle.get(LAST_SEARCH_TAGS) ?: ""
         val lastTagsScrolled: String = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: ""
         val actionStateFlow = MutableSharedFlow<UiAction>()
@@ -55,11 +57,11 @@ class PostsViewModel constructor(
         return repository.getSearchPostsResultStream(tags)
     }
 
-
     override fun onCleared() {
-        savedStateHandle[LAST_SEARCH_TAGS] = state.value.tags
-        savedStateHandle[LAST_TAGS_SCROLLED] = state.value.lastTagsScrolled
+        savedStateHandle.set(LAST_SEARCH_TAGS, state.value.tags)
+        savedStateHandle.set(LAST_TAGS_SCROLLED, state.value.lastTagsScrolled)
         super.onCleared()
+        Log.d("PostsViewModel", "onCleared " + state.value.tags + " " + state.value.lastTagsScrolled)
     }
 }
 

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.core.view.*
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import coil.Coil
@@ -16,14 +17,19 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import okhttp3.OkHttpClient
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(R.layout.activity_main)
+
+        val navFragment = supportFragmentManager.findFragmentById(R.id.navFragment) as NavHostFragment
+        navController = navFragment.navController
+
+        val bottomNavigationView =
+            findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.setupWithNavController(navController)
 
         val imageLoader = ImageLoader.Builder(this)
             .crossfade(true)
@@ -35,15 +41,5 @@ class MainActivity : AppCompatActivity() {
             }
             .build()
         Coil.setImageLoader(imageLoader)
-
-        val navFragment = supportFragmentManager.findFragmentById(R.id.navFragment) as NavHostFragment
-        val bottomNavigationView =
-            view.findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.setupWithNavController(navFragment.navController)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("Adapter", "Destroyed")
     }
 }
