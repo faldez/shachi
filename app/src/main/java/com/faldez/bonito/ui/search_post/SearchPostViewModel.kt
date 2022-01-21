@@ -1,4 +1,4 @@
-package com.faldez.bonito.ui.posts
+package com.faldez.bonito.ui.search_post
 
 import android.util.Log
 import com.faldez.bonito.data.GelbooruRepository
@@ -11,7 +11,7 @@ import com.faldez.bonito.model.Post
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class PostsViewModel constructor(
+class SearchPostViewModel constructor(
     private val repository: GelbooruRepository,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {

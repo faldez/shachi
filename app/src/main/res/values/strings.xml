@@ -1,9 +1,17 @@
 <resources>
     <string name="app_name">Bonito</string>
-    <string name="pinned_label">Pinned</string>
-    <string name="posts_label">Posts</string>
-    <string name="favorite_label">Favorite</string>
-    <string name="more_label">More</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="pinned">Pinned</string>
+    <string name="posts">Posts</string>
+    <string name="favorite">Favorite</string>
+    <string name="more">More</string>
+    <string name="detail">Detail</string>
+    <string name="pin">Pin</string>
+    <string name="pin_tags">Pin Tags</string>
+    <string name="servers">Servers</string>
+    <string name="source">Source</string>
+    <string name="tags">Tags</string>
+    <string name="size">Size</string>
+    <string name="posted">Posted</string>
+    <string name="rating">Rating</string>
+    <string name="score">Score</string>
 </resources>

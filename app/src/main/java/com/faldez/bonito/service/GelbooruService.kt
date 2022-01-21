@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Query
 import android.util.Xml
-import com.faldez.bonito.model.LocalDateTimeAdapter
+import com.faldez.bonito.model.ZonedDateTimeAdapter
 import com.google.gson.GsonBuilder
 import okhttp3.*
 import org.json.jsonjava.XML

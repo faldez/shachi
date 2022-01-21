@@ -5,8 +5,8 @@ import androidx.paging.PagingState
 import com.faldez.bonito.data.GelbooruRepository.Companion.GELBOORU_STARTING_PAGE_INDEX
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.service.GelbooruService
-import okio.IOException
 import retrofit2.HttpException
+import java.io.IOException
 
 class GelbooruPagingSource(private val service: GelbooruService, private val tags: String) :
     PagingSource<Int, Post>() {

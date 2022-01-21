@@ -1,4 +1,4 @@
-package com.faldez.bonito.ui.posts
+package com.faldez.bonito.ui.search_post
 
 import com.faldez.bonito.data.GelbooruRepository
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
@@ -16,8 +16,8 @@ class SearchPostViewModelFactory constructor(
         modelClass: Class<T>,
         handle: SavedStateHandle,
     ): T {
-        return if (modelClass.isAssignableFrom(PostsViewModel::class.java)) {
-            PostsViewModel(this.repository, handle) as T
+        return if (modelClass.isAssignableFrom(SearchPostViewModel::class.java)) {
+            SearchPostViewModel(this.repository, handle) as T
         } else {
             throw  IllegalArgumentException("ViewModel Not Found")
         }

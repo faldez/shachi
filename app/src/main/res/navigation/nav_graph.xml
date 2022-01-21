@@ -16,13 +16,33 @@
         android:label="favorite_fragment"
         tools:layout="@layout/favorite_fragment" />
     <fragment
-        android:id="@+id/postsFragment"
-        android:name="com.faldez.bonito.ui.posts.SearchPostFragment"
+        android:id="@+id/searchPostFragment"
+        android:name="com.faldez.bonito.ui.search_post.SearchPostFragment"
         android:label="posts_fragment"
-        tools:layout="@layout/search_post_fragment" />
+        tools:layout="@layout/search_post_fragment">
+        <action
+            android:id="@+id/action_searchpost_to_postslide"
+            app:destination="@id/postSlideFragment"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
+    </fragment>
     <fragment
         android:id="@+id/moreFragment"
         android:name="com.faldez.bonito.ui.more.MoreFragment"
         android:label="more_fragment"
         tools:layout="@layout/more_fragment" />
+    <fragment
+        android:id="@+id/postSlideFragment"
+        android:name="com.faldez.bonito.ui.post_slide.PostSlideFragment"
+        android:label="post_slide_fragment"
+        tools:layout="@layout/post_slide_fragment">
+        <action
+            android:id="@+id/action_postslide_to_postdetail"
+            app:destination="@id/post_detail_bottom_sheet_fragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/post_detail_bottom_sheet_fragment"
+        android:name="com.faldez.bonito.ui.post_detail.PostDetailBottomSheetFragment"
+        android:label="post_detail"
+        tools:layout="@layout/post_detail_bottom_sheet_fragment" />
 </navigation>

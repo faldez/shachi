@@ -4,20 +4,20 @@
         android:id="@+id/pinnedFragment"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_push_pin_24"
-        android:title="@string/pinned_label"/>
+        android:title="@string/pinned"/>
     <item
-        android:id="@+id/postsFragment"
+        android:id="@+id/searchPostFragment"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_image_24"
-        android:title="@string/posts_label"/>
+        android:title="@string/posts"/>
     <item
         android:id="@+id/favoriteFragment"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_favorite_24"
-        android:title="@string/favorite_label"/>
+        android:title="@string/favorite"/>
     <item
         android:id="@+id/moreFragment"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_more_horiz_24"
-        android:title="@string/more_label"/>
+        android:title="@string/more"/>
 </menu>

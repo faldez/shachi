@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/pinTags"
+        android:id="@+id/pin_tags_button"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_push_pin_24"
-        android:title="Pin Tags"
+        android:title="@string/pin_tags"
         app:showAsAction="always"/>
     <item
         android:id="@+id/selectServer"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_search_24"
-        android:title="Servers"/>
+        android:title="@string/servers"/>
 </menu>

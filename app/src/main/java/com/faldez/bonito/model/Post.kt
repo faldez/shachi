@@ -1,12 +1,11 @@
 package com.faldez.bonito.model
 
+import android.os.Parcelable
 import android.util.Log
 import com.google.gson.*
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDateTime
-
+import kotlinx.parcelize.Parcelize
 import java.lang.reflect.Type
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.google.gson.JsonPrimitive
 
@@ -18,6 +17,7 @@ import com.google.gson.JsonElement
 
 import com.google.gson.JsonDeserializer
 import com.google.gson.annotations.JsonAdapter
+import java.time.ZonedDateTime
 
 data class Posts(
     val post: List<Post>?,
@@ -25,12 +25,13 @@ data class Posts(
     val offset: Int,
 )
 
+@Parcelize
 data class Post(
     val height: Int,
     val width: Int,
     @JsonAdapter(EmptyStringAsNullTypeAdapter::class) val score: Int?,
     @SerializedName("file_url") val fileUrl: String,
-    @SerializedName("parent_id") @JsonAdapter(EmptyStringAsNullTypeAdapter::class)  val parentId: Int?,
+    @JsonAdapter(EmptyStringAsNullTypeAdapter::class) @SerializedName("parent_id") val parentId: Int?,
     @SerializedName("sample_url") val sampleUrl: String?,
     @SerializedName("sample_width") val sampleWidth: Int?,
     @SerializedName("sample_height") val sampleHeight: Int?,
@@ -44,19 +45,31 @@ data class Post(
     val md5: String,
     @SerializedName("creator_id") val creatorId: Int?,
     @SerializedName("has_children") val hasChildren: Boolean,
-    @JsonAdapter(LocalDateTimeAdapter::class) @SerializedName("created_at") val createdAt: LocalDateTime?,
+    @JsonAdapter(ZonedDateTimeAdapter::class) @SerializedName("created_at") val createdAt: ZonedDateTime?,
     val status: String,
     val source: String,
     @SerializedName("has_notes") val hasNotes: Boolean,
     @SerializedName("has_comments") val hasComments: Boolean,
-)
+) : Parcelable
 
-internal class LocalDateTimeAdapter : JsonDeserializer<LocalDateTime?> {    override fun deserialize(
+internal class ZonedDateTimeAdapter : JsonDeserializer<ZonedDateTime?>,
+    JsonSerializer<ZonedDateTime?> {
+    val format = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss Z yyyy")
+
+    override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,
         context: JsonDeserializationContext?,
-    ): LocalDateTime? {
-        return LocalDateTime.parse(json?.asString, DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss Z yyyy"))
+    ): ZonedDateTime? {
+        return ZonedDateTime.parse(json?.asString, format)
+    }
+
+    override fun serialize(
+        src: ZonedDateTime?,
+        typeOfSrc: Type?,
+        context: JsonSerializationContext?,
+    ): JsonElement {
+        return JsonPrimitive(src?.format(format)!!)
     }
 }
 
@@ -73,6 +86,8 @@ private constructor() : JsonDeserializer<T?> {
             if (jsonPrimitive.isString && jsonPrimitive.asString.isEmpty()) {
                 return null
             }
+        } else if (jsonElement.isJsonObject) {
+            return null
         }
         return context.deserialize(jsonElement, type)
     }

@@ -1,20 +1,22 @@
-package com.faldez.bonito.ui.posts
+package com.faldez.bonito.ui.search_post
 
 import com.faldez.bonito.data.GelbooruRepository
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
-import com.faldez.bonito.adapter.PostsAdapter
 import com.faldez.bonito.databinding.SearchPostFragmentBinding
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.service.GelbooruService
@@ -26,25 +28,23 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SearchPostFragment : Fragment() {
-
     companion object {
-        public const val TAG = "SearchPostFragment"
+        const val TAG = "SearchPostFragment"
     }
-
-    private lateinit var viewModel: PostsViewModel
 
     private lateinit var binding: SearchPostFragmentBinding
 
     private val gelbooruService = GelbooruService.getInstance("https://safebooru.org")
 
+    private val viewModel: SearchPostViewModel by
+    navGraphViewModels(R.id.nav_graph) {
+        SearchPostViewModelFactory(GelbooruRepository(gelbooruService), this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         Log.d(TAG, "onCreate " + savedInstanceState.toString())
-        viewModel =
-            ViewModelProvider(this,
-                SearchPostViewModelFactory(GelbooruRepository(gelbooruService), this)).get(
-                PostsViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -66,6 +66,12 @@ class SearchPostFragment : Fragment() {
         (activity as MainActivity).setSupportActionBar(binding.materialSearchBar.getToolbar())
         binding.appBarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+
+        val bottomNavigationView =
+            (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        if (bottomNavigationView.visibility == View.GONE) {
+            bottomNavigationView.visibility = View.VISIBLE
+        }
 
         val layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
@@ -94,13 +100,15 @@ class SearchPostFragment : Fragment() {
             setHint("tags_1 tags_2")
             setOnFocusChangeListener(object : MaterialSearchView.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
+                    val bottomNavigationView =
+                        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView)
                     val visibility = if (hasFocus) {
                         View.GONE
                     } else {
                         View.VISIBLE
                     }
-                    (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
-                        visibility
+
+                    bottomNavigationView.visibility = visibility
                     binding.materialSearchBar.visibility = visibility
                 }
             })
@@ -127,22 +135,6 @@ class SearchPostFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         Log.d(TAG, "onActivityCreated " + savedInstanceState.toString())
-
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        Log.d(TAG, "onSaveInstanceState " + outState.toString())
-    }
-
-    override fun onResume() {
-        super.onResume()
-//        binding.topAppBar.title = "Posts"
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy")
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -159,7 +151,15 @@ class SearchPostFragment : Fragment() {
         pagingData: Flow<PagingData<Post>>,
         uiActions: (UiAction) -> Unit,
     ) {
-        val postAdapter = PostsAdapter()
+        val postAdapter = SearchPostAdapter(
+            onClick = { posts, position ->
+                val bundle = bundleOf("posts" to posts, "position" to position)
+                findNavController().navigate(R.id.action_searchpost_to_postslide, bundle)
+
+                (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+                    View.GONE
+            }
+        )
         postsRecyclerView.adapter = postAdapter
         bindSearch(
             uiState = uiState,
@@ -198,7 +198,7 @@ class SearchPostFragment : Fragment() {
     }
 
     private fun SearchPostFragmentBinding.bindList(
-        postsAdapter: PostsAdapter,
+        postsAdapter: SearchPostAdapter,
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (UiAction.Scroll) -> Unit,
