@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             app:search_navigationBackgroundColor="?attr/colorSurfaceVariant"
+            app:search_navigationIcon="@drawable/ic_baseline_storage_24"
             app:search_radius="25dp"/>
 
     </com.google.android.material.appbar.AppBarLayout>

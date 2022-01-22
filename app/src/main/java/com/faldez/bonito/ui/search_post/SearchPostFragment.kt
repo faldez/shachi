@@ -79,7 +79,6 @@ class SearchPostFragment : Fragment() {
         binding.postsRecyclerView.layoutManager = layoutManager
 
         binding.materialSearchBar.apply {
-            navigationIconCompat = NavigationIconCompat.SEARCH
             setHint("Tags")
             setStrokeWidth(0)
             setBackgroundColor(resources.getColor(R.color.background))
@@ -88,7 +87,7 @@ class SearchPostFragment : Fragment() {
                 binding.materialSearchView.setTextQuery(viewModel.state.value.tags, false)
             }
             setNavigationOnClickListener {
-                binding.materialSearchView.requestFocus()
+
             }
         }
 
