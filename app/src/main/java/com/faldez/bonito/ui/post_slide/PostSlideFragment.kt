@@ -80,6 +80,8 @@ class PostSlideFragment : Fragment() {
                     "" + (position + 1) + "/" + postSlideAdapter.itemCount
             }
         })
+        (activity as MainActivity).supportActionBar?.title =
+            "" + (position + 1) + "/" + postSlideAdapter.itemCount
     }
 
     private fun prepareAppBar() {
