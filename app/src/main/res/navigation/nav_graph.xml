@@ -26,14 +26,14 @@
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out"/>
+            app:popExitAnim="@anim/slide_out" />
         <action
             android:id="@+id/action_searchpost_to_servers"
             app:destination="@id/serversFragment"
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out"/>
+            app:popExitAnim="@anim/slide_out" />
     </fragment>
     <fragment
         android:id="@+id/moreFragment"
@@ -58,5 +58,18 @@
         android:id="@+id/serversFragment"
         android:name="com.faldez.bonito.ui.servers.ServersFragment"
         android:label="servers_fragment"
-        tools:layout="@layout/servers_fragment" />
+        tools:layout="@layout/servers_fragment">
+        <action
+            android:id="@+id/action_servers_to_serveredit"
+            app:destination="@id/server_edit_fragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/server_edit_fragment"
+        android:name="com.faldez.bonito.ui.server_edit.ServerEditFragment"
+        android:label="server_edit_fragment"
+        tools:layout="@layout/server_edit_fragment" />
 </navigation>
