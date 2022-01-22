@@ -8,8 +8,8 @@
         android:title="@string/pin_tags"
         app:showAsAction="always"/>
     <item
-        android:id="@+id/selectServer"
+        android:id="@+id/manage_server_button"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_search_24"
-        android:title="@string/servers"/>
+        android:title="@string/manage_servers"/>
 </menu>

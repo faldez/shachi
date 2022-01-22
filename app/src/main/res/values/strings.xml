@@ -8,6 +8,8 @@
     <string name="pin">Pin</string>
     <string name="pin_tags">Pin Tags</string>
     <string name="servers">Servers</string>
+    <string name="manage_servers">Manage Servers</string>
+    <string name="new_server">New Server</string>
     <string name="source">Source</string>
     <string name="tags">Tags</string>
     <string name="size">Size</string>

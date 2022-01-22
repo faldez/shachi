@@ -142,7 +142,23 @@ class SearchPostFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.pin_tags_button -> {
+                return true
+            }
+            R.id.manage_server_button -> {
+                findNavController().navigate(R.id.action_searchpost_to_servers)
+                hideBottomNavigationView()
+                return true
+            }
+        }
+
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun hideBottomNavigationView() {
+        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
+            View.GONE
     }
 
     private fun SearchPostFragmentBinding.bindState(
@@ -154,9 +170,7 @@ class SearchPostFragment : Fragment() {
             onClick = { posts, position ->
                 val bundle = bundleOf("posts" to posts, "position" to position)
                 findNavController().navigate(R.id.action_searchpost_to_postslide, bundle)
-
-                (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
-                    View.GONE
+                hideBottomNavigationView()
             }
         )
         postsRecyclerView.adapter = postAdapter

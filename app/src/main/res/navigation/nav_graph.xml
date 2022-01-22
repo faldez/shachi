@@ -27,6 +27,13 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_out"/>
+        <action
+            android:id="@+id/action_searchpost_to_servers"
+            app:destination="@id/serversFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out"/>
     </fragment>
     <fragment
         android:id="@+id/moreFragment"
@@ -47,4 +54,9 @@
         android:name="com.faldez.bonito.ui.post_detail.PostDetailBottomSheetFragment"
         android:label="post_detail"
         tools:layout="@layout/post_detail_bottom_sheet_fragment" />
+    <fragment
+        android:id="@+id/serversFragment"
+        android:name="com.faldez.bonito.ui.servers.ServersFragment"
+        android:label="servers_fragment"
+        tools:layout="@layout/servers_fragment" />
 </navigation>
