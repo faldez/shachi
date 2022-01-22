@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.*
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
 import com.faldez.bonito.data.GelbooruRepository
@@ -53,23 +55,40 @@ class PostSlideFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = PostSlideFragmentBinding.inflate(inflater, container, false)
 
+        prepareAppBar()
+
         val view = binding.root
 
         val position = arguments!!.getInt("position")
 
-        (activity as MainActivity).setSupportActionBar(binding.postSlideTopappbar)
-        binding.postSlideAppbarLayout.statusBarForeground =
-            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+        prepareViewPager(position)
 
+        return view
+    }
 
+    private fun prepareViewPager(position: Int) {
         postSlideAdapter = PostSlideAdapter()
         binding.postViewPager.adapter = postSlideAdapter
         lifecycleScope.launch {
             viewModel.pagingDataFlow.collect(postSlideAdapter::submitData)
         }
-
         binding.postViewPager.setCurrentItem(position, false)
-        return view
+        binding.postViewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                (activity as MainActivity).supportActionBar?.title =
+                    "" + (position + 1) + "/" + postSlideAdapter.itemCount
+            }
+        })
+    }
+
+    private fun prepareAppBar() {
+        (activity as MainActivity).setSupportActionBar(binding.postSlideTopappbar)
+        binding.postSlideAppbarLayout.statusBarForeground =
+            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+        val supportActionBar = (activity as MainActivity).supportActionBar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -88,8 +107,12 @@ class PostSlideFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            android.R.id.home -> {
+                (activity as MainActivity).onBackPressed()
+                return true
+            }
             R.id.favorite_button -> {
-                true
+                return true
             }
             R.id.detail_button -> {
                 val gson = Gson()
@@ -97,7 +120,7 @@ class PostSlideFragment : Fragment() {
                 Log.d(TAG, "$post")
                 val bundle = bundleOf("post" to gson.toJson(post))
                 findNavController().navigate(R.id.action_postslide_to_postdetail, bundle)
-                true
+                return true
             }
         }
 
