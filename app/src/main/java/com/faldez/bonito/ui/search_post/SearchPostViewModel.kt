@@ -1,7 +1,7 @@
 package com.faldez.bonito.ui.search_post
 
 import android.util.Log
-import com.faldez.bonito.data.Repository
+import com.faldez.bonito.data.PostRepository
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SearchPostViewModel constructor(
-    private val repository: Repository,
+    private val postRepository: PostRepository,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val state: StateFlow<UiState>
@@ -72,7 +72,7 @@ class SearchPostViewModel constructor(
     private fun searchPosts(tags: String): Flow<PagingData<Post>> {
         val server = getSelectedServer()
         val action = Action.SearchPost(server, tags)
-        return repository.getSearchPostsResultStream(action)
+        return postRepository.getSearchPostsResultStream(action)
     }
 
     override fun onCleared() {

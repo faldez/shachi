@@ -11,7 +11,7 @@ import com.faldez.bonito.service.BooruService
 import com.faldez.bonito.service.GelbooruService
 import kotlinx.coroutines.flow.Flow
 
-class Repository constructor(private val service: BooruService) {
+class PostRepository constructor(private val service: BooruService) {
     fun getSearchPostsResultStream(action: Action.SearchPost): Flow<PagingData<Post>> {
         return Pager(
             config = PagingConfig(

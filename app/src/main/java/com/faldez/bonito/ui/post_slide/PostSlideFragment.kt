@@ -11,10 +11,9 @@ import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.widget.ViewPager2.*
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
-import com.faldez.bonito.data.Repository
+import com.faldez.bonito.data.PostRepository
 import com.faldez.bonito.databinding.PostSlideFragmentBinding
 import com.faldez.bonito.service.BooruService
-import com.faldez.bonito.service.GelbooruService
 import com.faldez.bonito.ui.search_post.SearchPostViewModel
 import com.faldez.bonito.ui.search_post.SearchPostViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -35,7 +34,7 @@ class PostSlideFragment : Fragment() {
 
     private val viewModel: SearchPostViewModel by
     navGraphViewModels(R.id.nav_graph) {
-        SearchPostViewModelFactory(Repository(BooruService()), this)
+        SearchPostViewModelFactory(PostRepository(BooruService()), this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

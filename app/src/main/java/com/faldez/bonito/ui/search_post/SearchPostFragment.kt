@@ -1,6 +1,6 @@
 package com.faldez.bonito.ui.search_post
 
-import com.faldez.bonito.data.Repository
+import com.faldez.bonito.data.PostRepository
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -19,7 +19,6 @@ import com.faldez.bonito.R
 import com.faldez.bonito.databinding.SearchPostFragmentBinding
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.service.BooruService
-import com.faldez.bonito.service.GelbooruService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.lapism.search.widget.MaterialSearchView
@@ -37,7 +36,7 @@ class SearchPostFragment : Fragment() {
 
     private val viewModel: SearchPostViewModel by
     navGraphViewModels(R.id.nav_graph) {
-        SearchPostViewModelFactory(Repository(BooruService()), this)
+        SearchPostViewModelFactory(PostRepository(BooruService()), this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

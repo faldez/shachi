@@ -3,14 +3,12 @@ package com.faldez.bonito.data
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.faldez.bonito.data.Repository.Companion.STARTING_PAGE_INDEX
+import com.faldez.bonito.data.PostRepository.Companion.STARTING_PAGE_INDEX
 import com.faldez.bonito.model.Post
-import com.faldez.bonito.model.Server
 import com.faldez.bonito.model.ServerType
 import com.faldez.bonito.model.response.GelbooruPostResponse
 import com.faldez.bonito.service.Action
 import com.faldez.bonito.service.BooruService
-import com.faldez.bonito.service.GelbooruService
 import retrofit2.HttpException
 import java.io.IOException
 
