@@ -104,6 +104,8 @@ class ServerEditFragment : Fragment() {
                 viewModel.insert(Server(type = binding.serverTypeSpinner.selectedItem as ServerType,
                     title = binding.serverNameInput.text.toString(),
                     url = binding.serverUrlInput.text.toString()))
+
+                (activity as MainActivity).onBackPressed()
                 return true
             }
         }

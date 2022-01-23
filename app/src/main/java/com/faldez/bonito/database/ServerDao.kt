@@ -20,6 +20,9 @@ interface ServerDao {
     @Insert
     suspend fun insert(server: Server)
 
+    @Update
+    suspend fun update(server: Server)
+
     @Delete
     suspend fun delete(server: Server)
 }
