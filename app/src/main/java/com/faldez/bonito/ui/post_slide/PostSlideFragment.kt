@@ -1,6 +1,5 @@
 package com.faldez.bonito.ui.post_slide
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -9,13 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
-import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.*
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
-import com.faldez.bonito.data.GelbooruRepository
+import com.faldez.bonito.data.Repository
 import com.faldez.bonito.databinding.PostSlideFragmentBinding
-import com.faldez.bonito.model.Post
+import com.faldez.bonito.service.BooruService
 import com.faldez.bonito.service.GelbooruService
 import com.faldez.bonito.ui.search_post.SearchPostViewModel
 import com.faldez.bonito.ui.search_post.SearchPostViewModelFactory
@@ -23,8 +21,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
 class PostSlideFragment : Fragment() {
@@ -36,11 +32,10 @@ class PostSlideFragment : Fragment() {
 
     private lateinit var binding: PostSlideFragmentBinding
 
-    private val gelbooruService = GelbooruService.getInstance("https://safebooru.org")
 
     private val viewModel: SearchPostViewModel by
     navGraphViewModels(R.id.nav_graph) {
-        SearchPostViewModelFactory(GelbooruRepository(gelbooruService), this)
+        SearchPostViewModelFactory(Repository(BooruService()), this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

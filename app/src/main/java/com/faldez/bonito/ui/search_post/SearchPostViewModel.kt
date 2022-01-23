@@ -1,26 +1,34 @@
 package com.faldez.bonito.ui.search_post
 
 import android.util.Log
-import com.faldez.bonito.data.GelbooruRepository
+import com.faldez.bonito.data.Repository
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.faldez.bonito.model.Post
+import com.faldez.bonito.model.Server
+import com.faldez.bonito.model.ServerType
+import com.faldez.bonito.service.Action
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SearchPostViewModel constructor(
-    private val repository: GelbooruRepository,
+    private val repository: Repository,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val state: StateFlow<UiState>
     val pagingDataFlow: Flow<PagingData<Post>>
     val accept: (UiAction) -> Unit
 
+    val serverList: List<Server>
+    val selectedIndex: Int
+
     init {
-        Log.d("PostsViewModel", "init " + savedStateHandle.get(LAST_SEARCH_TAGS) + " " + savedStateHandle.get(LAST_TAGS_SCROLLED))
+        Log.d("PostsViewModel",
+            "init " + savedStateHandle.get(LAST_SEARCH_TAGS) + " " + savedStateHandle.get(
+                LAST_TAGS_SCROLLED))
         val initialTags: String = savedStateHandle.get(LAST_SEARCH_TAGS) ?: ""
         val lastTagsScrolled: String = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: ""
         val actionStateFlow = MutableSharedFlow<UiAction>()
@@ -51,17 +59,28 @@ class SearchPostViewModel constructor(
         accept = { action ->
             viewModelScope.launch { actionStateFlow.emit(action) }
         }
+
+        serverList = listOf(Server(ServerType.Gelbooru, "Safebooru", "https://safebooru.org"),
+            Server(ServerType.Gelbooru, "Gelbooru", "https://gelbooru.com"))
+        selectedIndex = 0
+    }
+
+    private fun getSelectedServer(): Server {
+        return serverList[selectedIndex]
     }
 
     private fun searchPosts(tags: String): Flow<PagingData<Post>> {
-        return repository.getSearchPostsResultStream(tags)
+        val server = getSelectedServer()
+        val action = Action.SearchPost(server, tags)
+        return repository.getSearchPostsResultStream(action)
     }
 
     override fun onCleared() {
         savedStateHandle.set(LAST_SEARCH_TAGS, state.value.tags)
         savedStateHandle.set(LAST_TAGS_SCROLLED, state.value.lastTagsScrolled)
         super.onCleared()
-        Log.d("PostsViewModel", "onCleared " + state.value.tags + " " + state.value.lastTagsScrolled)
+        Log.d("PostsViewModel",
+            "onCleared " + state.value.tags + " " + state.value.lastTagsScrolled)
     }
 }
 

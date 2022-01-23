@@ -13,13 +13,14 @@ import org.json.jsonjava.XML
 
 import retrofit2.Converter
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Url
 import java.lang.reflect.Type
 import java.time.LocalDateTime
 
 
 interface GelbooruService {
-    @GET("/index.php?page=dapi&s=post&q=index&limit=100")
-    suspend fun getPosts(@Query("pid") page: Int, @Query("tags") tags: String): PostsResponse
+    @GET
+    suspend fun getPosts(@Url url: String): PostsResponse
 
 //    @GET("/index.php?page=dapi&s=tag&q=index")
 //    fun getTags(@Query("name_pattern")pattern: String): ResponseBody
@@ -27,11 +28,12 @@ interface GelbooruService {
     companion object {
         var retrofitService: GelbooruService? = null
 
-        fun getInstance(baseUrl: String): GelbooruService {
+        fun getInstance(): GelbooruService {
             if (retrofitService == null) {
                 val client =
                     OkHttpClient().newBuilder().addInterceptor(TransformInterceptor()).build()
-                return Retrofit.Builder().client(client).baseUrl(baseUrl)
+                return Retrofit.Builder().client(client)
+                    .baseUrl("https://safebooru.org")
                     .addConverterFactory(GsonConverterFactory.create()).build()
                     .create(GelbooruService::class.java)
             }

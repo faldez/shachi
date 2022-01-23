@@ -1,7 +1,6 @@
 package com.faldez.bonito.ui.search_post
 
-import com.faldez.bonito.data.GelbooruRepository
-import androidx.lifecycle.ViewModelProvider
+import com.faldez.bonito.data.Repository
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -19,6 +18,7 @@ import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
 import com.faldez.bonito.databinding.SearchPostFragmentBinding
 import com.faldez.bonito.model.Post
+import com.faldez.bonito.service.BooruService
 import com.faldez.bonito.service.GelbooruService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -34,11 +34,10 @@ class SearchPostFragment : Fragment() {
 
     private lateinit var binding: SearchPostFragmentBinding
 
-    private val gelbooruService = GelbooruService.getInstance("https://safebooru.org")
 
     private val viewModel: SearchPostViewModel by
     navGraphViewModels(R.id.nav_graph) {
-        SearchPostViewModelFactory(GelbooruRepository(gelbooruService), this)
+        SearchPostViewModelFactory(Repository(BooruService()), this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

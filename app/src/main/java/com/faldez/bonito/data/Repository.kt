@@ -1,28 +1,30 @@
 package com.faldez.bonito.data
-import androidx.lifecycle.ViewModel
+
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.faldez.bonito.model.Post
+import com.faldez.bonito.model.Server
+import com.faldez.bonito.service.Action
+import com.faldez.bonito.service.BooruService
 import com.faldez.bonito.service.GelbooruService
 import kotlinx.coroutines.flow.Flow
 
-class GelbooruRepository constructor(private val service: GelbooruService): ViewModel() {
-    fun getSearchPostsResultStream(tags: String) : Flow<PagingData<Post>> {
+class Repository constructor(private val service: BooruService) {
+    fun getSearchPostsResultStream(action: Action.SearchPost): Flow<PagingData<Post>> {
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                GelbooruPagingSource(service, tags)
+                PostPagingSource(action, service)
             }
         ).flow
     }
-//    fun getTags(pattern: String) = service.getTags(pattern)
 
     companion object {
-        const val GELBOORU_STARTING_PAGE_INDEX = 0
-        const val NETWORK_PAGE_SIZE = 100
+        const val STARTING_PAGE_INDEX = 0
+        const val NETWORK_PAGE_SIZE = 50
     }
 }

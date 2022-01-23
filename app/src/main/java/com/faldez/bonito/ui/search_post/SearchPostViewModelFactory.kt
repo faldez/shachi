@@ -1,6 +1,6 @@
 package com.faldez.bonito.ui.search_post
 
-import com.faldez.bonito.data.GelbooruRepository
+import com.faldez.bonito.data.Repository
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -8,7 +8,7 @@ import androidx.savedstate.SavedStateRegistryOwner
 import java.lang.IllegalArgumentException
 
 class SearchPostViewModelFactory constructor(
-    private val repository: GelbooruRepository,
+    private val repository: Repository,
     owner: SavedStateRegistryOwner,
 ) : AbstractSavedStateViewModelFactory(owner, null) {
     override fun <T : ViewModel?> create(
