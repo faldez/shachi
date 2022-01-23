@@ -27,14 +27,17 @@ class PostPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
         val position = params.key ?: STARTING_PAGE_INDEX
         return try {
-            val posts = when (action.server.type) {
+            val posts = when (action.server?.type) {
                 ServerType.Gelbooru -> {
                     val url = action.buildGelbooruUrl(position).toString()
                     Log.d("PostPagingSource", url)
-                    service.gelbooru.getPosts(url).mapToPost()?: listOf()
+                    service.gelbooru.getPosts(url).mapToPost() ?: listOf()
                 }
                 ServerType.Danbooru -> {
                     TODO("not yet implemented")
+                }
+                null -> {
+                    return LoadResult.Error(Error("server not found"))
                 }
             }
 

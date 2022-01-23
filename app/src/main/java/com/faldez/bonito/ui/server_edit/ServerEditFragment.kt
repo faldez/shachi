@@ -10,22 +10,23 @@ import androidx.fragment.app.Fragment
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
+import androidx.navigation.navGraphViewModels
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
+import com.faldez.bonito.data.ServerRepository
+import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.databinding.ServerEditFragmentBinding
+import com.faldez.bonito.model.Server
 import com.faldez.bonito.model.ServerType
 import com.google.android.material.shape.MaterialShapeDrawable
 import java.util.prefs.AbstractPreferences
 
 class ServerEditFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = ServerEditFragment()
+    private val viewModel: ServerEditViewModel by
+    navGraphViewModels(R.id.nav_graph) {
+        ServerEditViewModelFactory(ServerRepository(AppDatabase.build(requireContext())), this)
     }
-
-    private lateinit var viewModel: ServerEditViewModel
     private lateinit var binding: ServerEditFragmentBinding
-    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +50,6 @@ class ServerEditFragment : Fragment() {
         binding = ServerEditFragmentBinding.inflate(inflater, container, false)
         prepareAppBar()
 
-        sharedPreferences =
-            requireActivity().getSharedPreferences(getString(R.string.server_list_key),
-                Context.MODE_PRIVATE)
-
         ArrayAdapter(requireContext(),
             R.layout.support_simple_spinner_dropdown_item,
             ServerType.values()).also { adapter ->
@@ -60,12 +57,6 @@ class ServerEditFragment : Fragment() {
             binding.serverTypeSpinner.adapter = adapter
         }
 
-        binding.serverNameInput.addTextChangedListener {
-            Log.d("ServerEditFragment", "title: $it")
-        }
-        binding.serverUrlInput.addTextChangedListener {
-            Log.d("ServerEditFragment", "url: $it")
-        }
         binding.serverTypeSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -75,7 +66,6 @@ class ServerEditFragment : Fragment() {
                     id: Long,
                 ) {
                     val it = ServerType.values().get(pos)
-                    Log.d("ServerEditFragment", "type: $it")
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -88,7 +78,6 @@ class ServerEditFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ServerEditViewModel::class.java)
         // TODO: Use the ViewModel
     }
 
@@ -112,6 +101,9 @@ class ServerEditFragment : Fragment() {
                     binding.serverUrlInputLayout.error = "Url cannot be empty"
                 }
 
+                viewModel.insert(Server(type = binding.serverTypeSpinner.selectedItem as ServerType,
+                    title = binding.serverNameInput.text.toString(),
+                    url = binding.serverUrlInput.text.toString()))
                 return true
             }
         }

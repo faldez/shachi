@@ -2,19 +2,29 @@ package com.faldez.bonito.data
 
 import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.database.ServerDao
+import com.faldez.bonito.model.SelectedServer
 import com.faldez.bonito.model.Server
+import com.faldez.bonito.model.ServerWithSelected
 import kotlinx.coroutines.flow.Flow
 
 class ServerRepository(private val db: AppDatabase) {
-    fun getAllServers(): Flow<List<Server>?> {
+    fun getAllServers(): Flow<List<ServerWithSelected>?> {
         return db.serverDao().getAll()
     }
 
-    fun insert(server: Server) {
+    fun getSelectedServer(): Flow<ServerWithSelected?> {
+        return db.serverDao().getSelectedServer()
+    }
+
+    suspend fun setSelectedServer(serverId: Int) {
+        return db.serverDao().insertSelectedServer(SelectedServer(serverId = serverId))
+    }
+
+    suspend fun insert(server: Server) {
         return db.serverDao().insert(server)
     }
 
-    fun delete(server: Server) {
+    suspend fun delete(server: Server) {
         return db.serverDao().delete(server)
     }
 }

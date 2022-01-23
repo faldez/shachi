@@ -1,16 +1,17 @@
-package com.faldez.bonito.ui.search_post
+package com.faldez.bonito.ui.server_edit
 
-import com.faldez.bonito.data.PostRepository
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
+import com.faldez.bonito.data.PostRepository
 import com.faldez.bonito.data.ServerRepository
+import com.faldez.bonito.database.AppDatabase
+import com.faldez.bonito.ui.search_post.SearchPostViewModel
 import java.lang.IllegalArgumentException
 
-class SearchPostViewModelFactory constructor(
-    private val postRepository: PostRepository,
-    private val serverRepository: ServerRepository,
+class ServerEditViewModelFactory constructor(
+    private val repository: ServerRepository,
     owner: SavedStateRegistryOwner,
 ) : AbstractSavedStateViewModelFactory(owner, null) {
     override fun <T : ViewModel?> create(
@@ -18,8 +19,8 @@ class SearchPostViewModelFactory constructor(
         modelClass: Class<T>,
         handle: SavedStateHandle,
     ): T {
-        return if (modelClass.isAssignableFrom(SearchPostViewModel::class.java)) {
-            SearchPostViewModel(this.postRepository, this.serverRepository, handle) as T
+        return if (modelClass.isAssignableFrom(ServerEditViewModel::class.java)) {
+            ServerEditViewModel(this.repository) as T
         } else {
             throw  IllegalArgumentException("ViewModel Not Found")
         }

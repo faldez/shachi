@@ -48,7 +48,7 @@ data class GelbooruPost(
 
 internal class ZonedDateTimeAdapter : JsonDeserializer<ZonedDateTime?>,
     JsonSerializer<ZonedDateTime?> {
-    val format = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss Z yyyy")
+    private val format: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss Z yyyy")
 
     override fun deserialize(
         json: JsonElement?,

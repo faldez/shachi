@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
+import com.faldez.bonito.data.ServerRepository
+import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.databinding.SearchPostFragmentBinding
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.service.BooruService
@@ -36,7 +38,9 @@ class SearchPostFragment : Fragment() {
 
     private val viewModel: SearchPostViewModel by
     navGraphViewModels(R.id.nav_graph) {
-        SearchPostViewModelFactory(PostRepository(BooruService()), this)
+        SearchPostViewModelFactory(PostRepository(BooruService()),
+            ServerRepository(AppDatabase.build(requireContext())),
+            this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -196,7 +200,7 @@ class SearchPostFragment : Fragment() {
             }
 
             override fun onQueryTextSubmit(query: CharSequence) {
-                onTagsChanged(UiAction.Search(query.toString()))
+                onTagsChanged(UiAction.Search(uiState.value.server?.serverId, query.toString()))
                 binding.materialSearchView.clearFocus()
             }
         })
@@ -217,13 +221,14 @@ class SearchPostFragment : Fragment() {
         retryButton.setOnClickListener { postsAdapter.retry() }
         postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy != 0) onScrollChanged(UiAction.Scroll(currentTags = uiState.value.tags))
+                if (dy != 0) onScrollChanged(UiAction.Scroll(uiState.value.server?.serverId, currentTags = uiState.value.tags))
             }
         })
         val notLoading = postsAdapter.loadStateFlow.distinctUntilChangedBy { it.source.refresh }
             .map { it.source.refresh is LoadState.NotLoading }
         val hasNotScrolledForCurrentSearch =
             uiState.map { it.hasNotScrolledForCurrentTag }.distinctUntilChanged()
+
         val shouldScrollToTop = combine(
             notLoading,
             hasNotScrolledForCurrentSearch,

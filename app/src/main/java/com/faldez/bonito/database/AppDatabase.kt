@@ -4,15 +4,24 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.faldez.bonito.model.SelectedServer
 import com.faldez.bonito.model.Server
+import com.faldez.bonito.model.ServerWithSelected
 
-@Database(entities = [Server::class], version = 1)
+@Database(entities = [Server::class, SelectedServer::class],
+    views = [ServerWithSelected::class],
+    version = 4)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun serverDao(): ServerDao
 
     companion object {
+        private var db: AppDatabase? = null
         fun build(context: Context): AppDatabase {
-            return Room.databaseBuilder(context, AppDatabase::class.java, "bonito").build()
+            if (db == null) {
+                db = Room.databaseBuilder(context, AppDatabase::class.java, "bonito")
+                    .fallbackToDestructiveMigration().build()
+            }
+            return db!!
         }
     }
 }

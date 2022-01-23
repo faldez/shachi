@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Widget.Material3.CardView.Filled"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="6dp">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -13,15 +14,33 @@
 
         <TextView
             android:id="@+id/source_title_textview"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodyLarge" />
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            app:layout_constraintBottom_toTopOf="@id/source_url_textview"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/source_selected_icon"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/source_url_textview"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodySmall"/>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/source_selected_icon"
+            app:layout_constraintTop_toBottomOf="@id/source_title_textview" />
+
+        <ImageView
+            android:id="@+id/source_selected_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_check_24"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

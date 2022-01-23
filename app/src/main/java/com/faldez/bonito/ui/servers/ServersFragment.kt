@@ -1,7 +1,10 @@
 package com.faldez.bonito.ui.servers
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -11,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
+import com.faldez.bonito.data.ServerRepository
 import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.databinding.ServersFragmentBinding
 import com.faldez.bonito.model.Server
@@ -23,13 +27,9 @@ import kotlinx.coroutines.launch
 
 class ServersFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = ServersFragment()
-    }
-
     private val viewModel: ServersViewModel by
     navGraphViewModels(R.id.nav_graph) {
-        ServersViewModelFactory(AppDatabase.build(requireContext()), this)
+        ServersViewModelFactory(ServerRepository(AppDatabase.build(requireContext())), this)
     }
     private lateinit var binding: ServersFragmentBinding
     private lateinit var adapter: ServerListAdapter
@@ -44,20 +44,24 @@ class ServersFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         binding = ServersFragmentBinding.inflate(inflater, container, false)
-        prepareAppBar()
-        adapter = ServerListAdapter()
-        binding.serverListRecyclerview.adapter = adapter
-        binding.serverListRecyclerview.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        prepareAppBar()
+
+        adapter = ServerListAdapter(onClick = {
+            viewModel.insert(it)
+        })
+        binding.serverListRecyclerview.adapter = adapter
+        binding.serverListRecyclerview.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
         lifecycleScope.launch {
-            viewModel.serverList.distinctUntilChanged().collect {
+            viewModel.serverList.collect {
+                Log.d("ServersFragment", "$it")
                 adapter.setData(it ?: listOf())
             }
         }
