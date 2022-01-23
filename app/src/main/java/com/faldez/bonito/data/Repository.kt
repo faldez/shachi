@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.model.Server
+import com.faldez.bonito.model.response.GelbooruPostResponse
 import com.faldez.bonito.service.Action
 import com.faldez.bonito.service.BooruService
 import com.faldez.bonito.service.GelbooruService
