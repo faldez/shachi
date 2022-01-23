@@ -60,8 +60,10 @@ class SearchPostViewModel constructor(
             viewModelScope.launch { actionStateFlow.emit(action) }
         }
 
-        serverList = listOf(Server(ServerType.Gelbooru, "Safebooru", "https://safebooru.org"),
-            Server(ServerType.Gelbooru, "Gelbooru", "https://gelbooru.com"))
+        serverList = listOf(Server(type = ServerType.Gelbooru,
+            title = "Safebooru",
+            url = "https://safebooru.org"),
+            Server(type = ServerType.Gelbooru, title = "Gelbooru", url = "https://gelbooru.com"))
         selectedIndex = 0
     }
 
