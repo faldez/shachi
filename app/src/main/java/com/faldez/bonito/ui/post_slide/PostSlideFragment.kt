@@ -3,6 +3,7 @@ package com.faldez.bonito.ui.post_slide
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -11,13 +12,17 @@ import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.widget.ViewPager2.*
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
+import com.faldez.bonito.data.FavoriteRepository
 import com.faldez.bonito.data.PostRepository
 import com.faldez.bonito.data.ServerRepository
 import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.databinding.PostSlideFragmentBinding
+import com.faldez.bonito.model.Favorite
+import com.faldez.bonito.model.Post
 import com.faldez.bonito.service.BooruService
 import com.faldez.bonito.ui.search_post.SearchPostViewModel
 import com.faldez.bonito.ui.search_post.SearchPostViewModelFactory
+import com.faldez.bonito.ui.search_post.UiAction
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.gson.Gson
@@ -33,11 +38,16 @@ class PostSlideFragment : Fragment() {
 
     private lateinit var binding: PostSlideFragmentBinding
 
+    private lateinit var topbarMenu: Menu
+
 
     private val viewModel: SearchPostViewModel by
     navGraphViewModels(R.id.nav_graph) {
+        val db = AppDatabase.build(requireContext())
+        val favoriteRepository = FavoriteRepository(db)
         SearchPostViewModelFactory(PostRepository(BooruService()),
-            ServerRepository(AppDatabase.build(requireContext())),
+            ServerRepository(db),
+            favoriteRepository,
             this)
     }
 
@@ -53,15 +63,8 @@ class PostSlideFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = PostSlideFragmentBinding.inflate(inflater, container, false)
 
-        prepareAppBar()
 
-        val view = binding.root
-
-        val position = arguments!!.getInt("position")
-
-        prepareViewPager(position)
-
-        return view
+        return binding.root
     }
 
     private fun prepareViewPager(position: Int) {
@@ -76,10 +79,24 @@ class PostSlideFragment : Fragment() {
                 super.onPageSelected(position)
                 (activity as MainActivity).supportActionBar?.title =
                     "" + (position + 1) + "/" + postSlideAdapter.itemCount
+                postSlideAdapter.getPostItem(position)?.let { setFavoriteButton(it) }
             }
         })
         (activity as MainActivity).supportActionBar?.title =
             "" + (position + 1) + "/" + postSlideAdapter.itemCount
+    }
+
+    private fun setFavoriteButton(post: Post) {
+        if (post.favorite) {
+            topbarMenu.getItem(0).icon =
+                ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_favorite_24,
+                    requireActivity().theme)
+        } else {
+            topbarMenu.getItem(0).icon =
+                ResourcesCompat.getDrawable(resources,
+                    R.drawable.ic_baseline_favorite_border_24,
+                    requireActivity().theme)
+        }
     }
 
     private fun prepareAppBar() {
@@ -93,6 +110,9 @@ class PostSlideFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        val position = arguments!!.getInt("position")
+        prepareAppBar()
+        prepareViewPager(position)
     }
 
     override fun onDestroy() {
@@ -103,6 +123,8 @@ class PostSlideFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.post_slide_menu, menu)
+        topbarMenu = menu
+        postSlideAdapter.getPostItem(binding.postViewPager.currentItem)?.let { setFavoriteButton(it) }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -112,6 +134,7 @@ class PostSlideFragment : Fragment() {
                 return true
             }
             R.id.favorite_button -> {
+                onFavoriteButton()
                 return true
             }
             R.id.detail_button -> {
@@ -125,5 +148,21 @@ class PostSlideFragment : Fragment() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun onFavoriteButton() {
+        postSlideAdapter.getPostItem(binding.postViewPager.currentItem)?.let { post ->
+            val fav = Favorite(serverUrl = post.serverUrl,
+                postId = post.postId)
+            if (post.favorite) {
+                viewModel.deleteFavoritePost(fav)
+            } else {
+                viewModel.favoritePost(fav)
+            }
+            postSlideAdapter.setFavorite(binding.postViewPager.currentItem, !post.favorite)
+            postSlideAdapter.getPostItem(binding.postViewPager.currentItem)?.let { post ->
+                setFavoriteButton(post)
+            }
+        }
     }
 }

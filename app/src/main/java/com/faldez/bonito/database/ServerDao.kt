@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ServerDao {
-    @Query("SELECT * FROM serverwithselected")
+    @Query("SELECT * FROM server_with_selected")
     fun getAll(): Flow<List<ServerWithSelected>?>
 
-    @Query("SELECT * FROM serverwithselected WHERE selected = :selected")
+    @Query("SELECT * FROM server_with_selected WHERE selected = :selected")
     fun getSelectedServer(selected: Boolean = true): Flow<ServerWithSelected?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

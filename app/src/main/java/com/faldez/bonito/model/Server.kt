@@ -7,7 +7,7 @@ enum class ServerType {
     Danbooru
 }
 
-@Entity(indices = [Index(value = ["url"], unique = true)])
+@Entity(tableName = "server", indices = [Index(value = ["url"], unique = true)])
 data class Server(
     val type: ServerType,
     val title: String,
@@ -24,7 +24,7 @@ data class SelectedServer(
         "server.*, " +
         "selected_server.server_url IS NOT NULL AS selected " +
         "FROM server " +
-        "LEFT JOIN selected_server ON server.url = selected_server.server_url")
+        "LEFT JOIN selected_server ON server.url = selected_server.server_url", viewName = "server_with_selected")
 data class ServerWithSelected(
     val type: ServerType,
     val title: String,

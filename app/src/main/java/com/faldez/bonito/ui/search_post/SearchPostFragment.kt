@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
+import com.faldez.bonito.data.FavoriteRepository
 import com.faldez.bonito.data.ServerRepository
 import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.databinding.SearchPostFragmentBinding
@@ -35,11 +36,13 @@ class SearchPostFragment : Fragment() {
 
     private lateinit var binding: SearchPostFragmentBinding
 
-
     private val viewModel: SearchPostViewModel by
     navGraphViewModels(R.id.nav_graph) {
+        val db = AppDatabase.build(requireContext())
+        val favoriteRepository = FavoriteRepository(db)
         SearchPostViewModelFactory(PostRepository(BooruService()),
-            ServerRepository(AppDatabase.build(requireContext())),
+            ServerRepository(db),
+            favoriteRepository,
             this)
     }
 

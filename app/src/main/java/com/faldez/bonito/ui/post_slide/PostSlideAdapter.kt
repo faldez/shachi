@@ -12,6 +12,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.faldez.bonito.databinding.PostSlideItemBinding
+import com.faldez.bonito.model.Favorite
 import com.faldez.bonito.model.Post
 
 class PostSlideAdapter :
@@ -43,6 +44,14 @@ class PostSlideAdapter :
 
     fun getPostItem(position: Int): Post? {
         return getItem(position)
+    }
+
+    fun setFavorite(position: Int, favorite: Boolean) {
+        val item = getItem(position)
+        item?.let {
+            it.favorite = favorite
+            notifyItemChanged(position)
+        }
     }
 
     companion object {

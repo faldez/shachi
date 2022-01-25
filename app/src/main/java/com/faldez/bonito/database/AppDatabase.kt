@@ -4,25 +4,22 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.faldez.bonito.model.Post
-import com.faldez.bonito.model.SelectedServer
-import com.faldez.bonito.model.Server
-import com.faldez.bonito.model.ServerWithSelected
+import com.faldez.bonito.model.*
 
-@Database(entities = [Server::class, SelectedServer::class, Post::class],
+@Database(entities = [Server::class, SelectedServer::class, Favorite::class],
     views = [ServerWithSelected::class],
     version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun serverDao(): ServerDao
+    abstract fun favoriteDao(): FavoriteDao
 
     companion object {
         private var db: AppDatabase? = null
-        fun build(context: Context): AppDatabase {
-            if (db == null) {
-                db = Room.databaseBuilder(context, AppDatabase::class.java, "bonito")
-                    .fallbackToDestructiveMigration().build()
+        fun build(context: Context): AppDatabase =
+            db ?: synchronized(this) {
+                val newDb = db ?: Room.databaseBuilder(context, AppDatabase::class.java, "bonito")
+                    .fallbackToDestructiveMigration().build().also { db = it }
+                newDb
             }
-            return db!!
-        }
     }
 }

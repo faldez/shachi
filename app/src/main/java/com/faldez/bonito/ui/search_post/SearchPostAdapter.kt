@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -31,6 +32,12 @@ class SearchPostAdapter(private val onClick: (List<Post?>, Int) -> Unit) :
                     Bitmap.createBitmap(it.previewWidth!!,
                         it.previewHeight!!,
                         Bitmap.Config.ARGB_8888))).into(imageView)
+
+            holder.binding.favoriteIcon.visibility = if (post.favorite) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
 
             holder.binding.root.setOnClickListener { _ ->
                 onClick(snapshot().toList(), position)

@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
+import com.faldez.bonito.data.FavoriteRepository
 import com.faldez.bonito.data.ServerRepository
 import com.faldez.bonito.model.*
 import com.faldez.bonito.service.Action
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
 class SearchPostViewModel constructor(
     private val postRepository: PostRepository,
     private val serverRepository: ServerRepository,
+    private val favoriteRepository: FavoriteRepository,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val state: StateFlow<UiState>
@@ -65,7 +68,14 @@ class SearchPostViewModel constructor(
 
         val serverChange = state.map { it.server }.distinctUntilChanged()
         pagingDataFlow = combine(serverChange, searches, ::Pair).flatMapLatest { (server, search) ->
-            searchPosts(server, tags = search.tags)
+            searchPosts(server, tags = search.tags).map {
+                it.map { post ->
+                    val postId =
+                        favoriteRepository.queryByServerUrlAndPostId(post.serverUrl, post.postId)
+                    Log.d("SearchPostViewModel", "$postId")
+                    post.copy(favorite = postId != null)
+                }
+            }
         }.cachedIn(viewModelScope)
 
         accept = { action ->
@@ -80,6 +90,18 @@ class SearchPostViewModel constructor(
     private fun searchPosts(server: Server?, tags: String): Flow<PagingData<Post>> {
         val action = Action.SearchPost(server, tags)
         return postRepository.getSearchPostsResultStream(action)
+    }
+
+    fun favoritePost(favorite: Favorite) {
+        viewModelScope.launch {
+            favoriteRepository.insert(favorite)
+        }
+    }
+
+    fun deleteFavoritePost(favorite: Favorite) {
+        viewModelScope.launch {
+            favoriteRepository.delete(favorite)
+        }
     }
 
     override fun onCleared() {
@@ -99,6 +121,9 @@ sealed class UiAction {
     ) : UiAction()
 
     object GetSelectedServer : UiAction()
+    data class FavoritePost(val favorite: Favorite) : UiAction()
+    data class DeleteFavoritePost(val favorite: Favorite) : UiAction()
+    data class GetFavoritePost(val serverUrl: String, val postIds: List<Int>) : UiAction()
 }
 
 data class UiState(

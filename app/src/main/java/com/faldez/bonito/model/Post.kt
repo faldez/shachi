@@ -39,4 +39,5 @@ data class Post(
     val source: String,
     val hasNotes: Boolean,
     val hasComments: Boolean,
+    var favorite: Boolean = false,
 ) : Parcelable
