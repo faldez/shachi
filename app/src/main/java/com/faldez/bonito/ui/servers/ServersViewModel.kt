@@ -30,10 +30,10 @@ class ServersViewModel(private val repository: ServerRepository) : ViewModel() {
         }
     }
 
-    fun insert(serverId: Int) {
-        Log.d("ServersViewModel", "$serverId")
+    fun insert(serverUrl: String) {
+        Log.d("ServersViewModel", "$serverUrl")
         viewModelScope.launch {
-            repository.setSelectedServer(serverId)
+            repository.setSelectedServer(serverUrl)
         }
     }
 }

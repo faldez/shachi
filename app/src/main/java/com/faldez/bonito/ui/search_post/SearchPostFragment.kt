@@ -200,7 +200,7 @@ class SearchPostFragment : Fragment() {
             }
 
             override fun onQueryTextSubmit(query: CharSequence) {
-                onTagsChanged(UiAction.Search(uiState.value.server?.serverId, query.toString()))
+                onTagsChanged(UiAction.Search(uiState.value.server?.url, query.toString()))
                 binding.materialSearchView.clearFocus()
             }
         })
@@ -221,7 +221,8 @@ class SearchPostFragment : Fragment() {
         retryButton.setOnClickListener { postsAdapter.retry() }
         postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy != 0) onScrollChanged(UiAction.Scroll(uiState.value.server?.serverId, currentTags = uiState.value.tags))
+                if (dy != 0) onScrollChanged(UiAction.Scroll(uiState.value.server?.url,
+                    currentTags = uiState.value.tags))
             }
         })
         val notLoading = postsAdapter.loadStateFlow.distinctUntilChangedBy { it.source.refresh }

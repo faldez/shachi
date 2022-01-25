@@ -10,7 +10,7 @@ import com.faldez.bonito.model.Server
 import com.faldez.bonito.model.ServerWithSelected
 
 class ServerListAdapter(
-    private val onClick: (Int) -> Unit,
+    private val onClick: (String) -> Unit,
 ) : RecyclerView.Adapter<ServerListItemViewHolder>() {
     private var serverList: MutableList<ServerWithSelected> = mutableListOf()
 
@@ -19,9 +19,9 @@ class ServerListAdapter(
         notifyDataSetChanged()
     }
 
-    fun setSelectedServer(serverId: Int?) {
-        serverList.find { it.serverId == serverId }?.selected = true
-        serverList.find { it.serverId != serverId }?.selected = false
+    fun setSelectedServer(serverUrl: String?) {
+        serverList.find { it.url == serverUrl }?.selected = true
+        serverList.find { it.url != serverUrl }?.selected = false
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerListItemViewHolder {
@@ -40,8 +40,8 @@ class ServerListAdapter(
             holder.binding.sourceSelectedIcon.visibility = View.GONE
         }
         holder.binding.root.setOnClickListener {
-            setSelectedServer(serverId = server.serverId)
-            onClick(server.serverId)
+            setSelectedServer(serverUrl = server.url)
+            onClick(server.url)
             notifyItemChanged(position)
         }
     }

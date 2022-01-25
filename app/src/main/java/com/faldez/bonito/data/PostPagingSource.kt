@@ -11,6 +11,8 @@ import com.faldez.bonito.service.Action
 import com.faldez.bonito.service.BooruService
 import retrofit2.HttpException
 import java.io.IOException
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 class PostPagingSource(
     private val action: Action.SearchPost,
@@ -79,7 +81,7 @@ class PostPagingSource(
                 md5 = post.md5,
                 creatorId = post.creatorId,
                 hasChildren = post.hasChildren,
-                createdAt = post.createdAt,
+                createdAt = post.createdAt?.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)),
                 status = post.status,
                 source = post.source,
                 hasNotes = post.hasNotes,

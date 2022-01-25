@@ -50,14 +50,13 @@ class SearchPostViewModel constructor(
             combine(getServer, searches, tagsScrolled, ::Triple).map { (server, search, scroll) ->
                 UiState(
                     server = server?.let {
-                        Server(serverId = it.serverId,
-                            title = it.title,
+                        Server(title = it.title,
                             url = it.url,
                             type = it.type)
                     },
                     tags = search.tags,
                     lastTagsScrolled = scroll.currentTags,
-                    hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (search.serverId != scroll.currentServerId)
+                    hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (search.serverUrl != scroll.currentServerUrl)
                 )
             }.stateIn(scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
@@ -93,9 +92,9 @@ class SearchPostViewModel constructor(
 }
 
 sealed class UiAction {
-    data class Search(val serverId: Int?, val tags: String) : UiAction()
+    data class Search(val serverUrl: String?, val tags: String) : UiAction()
     data class Scroll(
-        val currentServerId: Int?,
+        val currentServerUrl: String?,
         val currentTags: String,
     ) : UiAction()
 

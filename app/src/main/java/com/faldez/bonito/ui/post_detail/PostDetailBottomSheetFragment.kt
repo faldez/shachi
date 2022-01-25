@@ -35,6 +35,7 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
         binding.sourceUrl.text = post?.source
         binding.ratingTextview.text = post.rating
         binding.scoreTextview.text = "${post.score ?: 0}"
+        binding.postedTextview.text = post.createdAt
         post.tags.trim().split(" ").forEach {
             val chip = Chip(requireContext())
             chip.setEnsureMinTouchTargetSize(false)

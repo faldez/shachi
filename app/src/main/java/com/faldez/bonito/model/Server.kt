@@ -9,25 +9,23 @@ enum class ServerType {
 
 @Entity(indices = [Index(value = ["url"], unique = true)])
 data class Server(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "server_id") val serverId: Int = 0,
     val type: ServerType,
     val title: String,
-    val url: String,
+    @PrimaryKey val url: String,
 )
 
-@Entity(tableName = "selected_server")
+@Entity(tableName = "selected_server", indices = [Index(value = ["server_url"])])
 data class SelectedServer(
     @PrimaryKey @ColumnInfo(name = "selected_server_id") val selectedServerId: Int = 0,
-    @ColumnInfo(name = "server_id") val serverId: Int,
+    @ColumnInfo(name = "server_url") val serverUrl: String,
 )
 
 @DatabaseView("SELECT " +
         "server.*, " +
-        "selected_server.selected_server_id IS NOT NULL AS selected " +
+        "selected_server.server_url IS NOT NULL AS selected " +
         "FROM server " +
-        "LEFT JOIN selected_server ON server.server_id = selected_server.server_id")
+        "LEFT JOIN selected_server ON server.url = selected_server.server_url")
 data class ServerWithSelected(
-    @ColumnInfo(name = "server_id") val serverId: Int,
     val type: ServerType,
     val title: String,
     val url: String,
