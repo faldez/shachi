@@ -7,7 +7,7 @@ enum class ServerType {
     Danbooru
 }
 
-@Entity
+@Entity(indices = [Index(value = ["url"], unique = true)])
 data class Server(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "server_id") val serverId: Int = 0,
     val type: ServerType,

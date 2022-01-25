@@ -41,7 +41,7 @@ class SearchPostAdapter(private val onClick: (List<Post?>, Int) -> Unit) :
     companion object {
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
-                oldItem.id == newItem.id
+                oldItem.postId == newItem.postId && oldItem.serverUrl == newItem.serverUrl
 
 
             override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =

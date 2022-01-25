@@ -31,7 +31,7 @@ class PostPagingSource(
                 ServerType.Gelbooru -> {
                     val url = action.buildGelbooruUrl(position).toString()
                     Log.d("PostPagingSource", url)
-                    service.gelbooru.getPosts(url).mapToPost() ?: listOf()
+                    service.gelbooru.getPosts(url).mapToPost(action.server.url) ?: listOf()
                 }
                 ServerType.Danbooru -> {
                     TODO("not yet implemented")
@@ -57,7 +57,7 @@ class PostPagingSource(
         }
     }
 
-    private fun GelbooruPostResponse.mapToPost(): List<Post>? {
+    private fun GelbooruPostResponse.mapToPost(serverUrl: String): List<Post>? {
         return this.posts.post?.map { post ->
             Post(
                 height = post.height,
@@ -73,7 +73,8 @@ class PostPagingSource(
                 previewHeight = post.previewHeight,
                 rating = post.rating,
                 tags = post.tags,
-                id = post.id,
+                postId = post.id,
+                serverUrl = serverUrl,
                 change = post.change,
                 md5 = post.md5,
                 creatorId = post.creatorId,

@@ -4,13 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.faldez.bonito.model.Post
 import com.faldez.bonito.model.SelectedServer
 import com.faldez.bonito.model.Server
 import com.faldez.bonito.model.ServerWithSelected
 
-@Database(entities = [Server::class, SelectedServer::class],
+@Database(entities = [Server::class, SelectedServer::class, Post::class],
     views = [ServerWithSelected::class],
-    version = 4)
+    version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun serverDao(): ServerDao
 
