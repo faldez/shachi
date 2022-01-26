@@ -173,7 +173,7 @@ class SearchPostFragment : Fragment() {
     ) {
         val postAdapter = SearchPostAdapter(
             onClick = { posts, position ->
-                val bundle = bundleOf("posts" to posts, "position" to position)
+                val bundle = bundleOf("position" to position)
                 findNavController().navigate(R.id.action_searchpost_to_postslide, bundle)
                 hideBottomNavigationView()
             }

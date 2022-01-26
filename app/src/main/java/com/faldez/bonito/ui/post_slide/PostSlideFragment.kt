@@ -17,12 +17,10 @@ import com.faldez.bonito.data.PostRepository
 import com.faldez.bonito.data.ServerRepository
 import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.databinding.PostSlideFragmentBinding
-import com.faldez.bonito.model.Favorite
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.service.BooruService
 import com.faldez.bonito.ui.search_post.SearchPostViewModel
 import com.faldez.bonito.ui.search_post.SearchPostViewModelFactory
-import com.faldez.bonito.ui.search_post.UiAction
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.gson.Gson
@@ -110,7 +108,7 @@ class PostSlideFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val position = arguments!!.getInt("position")
+        val position = requireArguments().getInt("position")
         prepareAppBar()
         prepareViewPager(position)
     }
@@ -152,12 +150,10 @@ class PostSlideFragment : Fragment() {
 
     private fun onFavoriteButton() {
         postSlideAdapter.getPostItem(binding.postViewPager.currentItem)?.let { post ->
-            val fav = Favorite(serverUrl = post.serverUrl,
-                postId = post.postId)
             if (post.favorite) {
-                viewModel.deleteFavoritePost(fav)
+                viewModel.deleteFavoritePost(post)
             } else {
-                viewModel.favoritePost(fav)
+                viewModel.favoritePost(post)
             }
             postSlideAdapter.setFavorite(binding.postViewPager.currentItem, !post.favorite)
             postSlideAdapter.getPostItem(binding.postViewPager.currentItem)?.let { post ->

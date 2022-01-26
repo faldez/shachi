@@ -73,7 +73,8 @@ class SearchPostViewModel constructor(
                     val postId =
                         favoriteRepository.queryByServerUrlAndPostId(post.serverUrl, post.postId)
                     Log.d("SearchPostViewModel", "$postId")
-                    post.copy(favorite = postId != null)
+                    post.favorite = postId != null
+                    post
                 }
             }
         }.cachedIn(viewModelScope)
@@ -92,13 +93,13 @@ class SearchPostViewModel constructor(
         return postRepository.getSearchPostsResultStream(action)
     }
 
-    fun favoritePost(favorite: Favorite) {
+    fun favoritePost(favorite: Post) {
         viewModelScope.launch {
             favoriteRepository.insert(favorite)
         }
     }
 
-    fun deleteFavoritePost(favorite: Favorite) {
+    fun deleteFavoritePost(favorite: Post) {
         viewModelScope.launch {
             favoriteRepository.delete(favorite)
         }
@@ -121,9 +122,6 @@ sealed class UiAction {
     ) : UiAction()
 
     object GetSelectedServer : UiAction()
-    data class FavoritePost(val favorite: Favorite) : UiAction()
-    data class DeleteFavoritePost(val favorite: Favorite) : UiAction()
-    data class GetFavoritePost(val serverUrl: String, val postIds: List<Int>) : UiAction()
 }
 
 data class UiState(

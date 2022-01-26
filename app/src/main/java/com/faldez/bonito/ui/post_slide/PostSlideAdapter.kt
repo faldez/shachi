@@ -1,8 +1,5 @@
 package com.faldez.bonito.ui.post_slide
 
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -12,7 +9,6 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.faldez.bonito.databinding.PostSlideItemBinding
-import com.faldez.bonito.model.Favorite
 import com.faldez.bonito.model.Post
 
 class PostSlideAdapter :

@@ -24,6 +24,7 @@
             android:id="@+id/favoriteIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="2dp"
             android:src="@drawable/ic_baseline_favorite_24"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
