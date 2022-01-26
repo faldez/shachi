@@ -11,7 +11,8 @@ import com.faldez.bonito.ui.search_post.SearchPostViewModel
 import java.lang.IllegalArgumentException
 
 class ServerEditViewModelFactory constructor(
-    private val repository: ServerRepository,
+    private val postRepository: PostRepository,
+    private val serverRepository: ServerRepository,
     owner: SavedStateRegistryOwner,
 ) : AbstractSavedStateViewModelFactory(owner, null) {
     override fun <T : ViewModel?> create(
@@ -20,7 +21,7 @@ class ServerEditViewModelFactory constructor(
         handle: SavedStateHandle,
     ): T {
         return if (modelClass.isAssignableFrom(ServerEditViewModel::class.java)) {
-            ServerEditViewModel(this.repository) as T
+            ServerEditViewModel(this.postRepository, this.serverRepository) as T
         } else {
             throw  IllegalArgumentException("ViewModel Not Found")
         }

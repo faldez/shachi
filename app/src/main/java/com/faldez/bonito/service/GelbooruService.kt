@@ -52,6 +52,7 @@ class TransformInterceptor : Interceptor {
                 .body(body).build()
         }
 
+        Log.d("TransformInterceptor", "pass trough")
         return response
     }
 
