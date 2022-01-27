@@ -204,7 +204,9 @@ class SearchPostFragment : Fragment() {
                     loadState.refresh is LoadState.NotLoading && postsAdapter.itemCount == 0
                 postsRecyclerView.isVisible = !isListEmpty
                 progressBar.isVisible = loadState.source.refresh is LoadState.Loading
-                retryButton.isVisible = loadState.source.refresh is LoadState.Error
+                retryButton.isVisible =
+                    loadState.source.refresh is LoadState.Error && viewModel.state.value.server != null
+                binding.serverHelpText.isVisible = viewModel.state.value.server == null
             }
         }
     }

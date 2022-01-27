@@ -6,10 +6,10 @@
     <string name="more">More</string>
     <string name="detail">Detail</string>
     <string name="pin">Pin</string>
-    <string name="pin_tags">Pin Tags</string>
+    <string name="pin_tags">Pin tags</string>
     <string name="servers">Servers</string>
-    <string name="manage_servers">Manage Servers</string>
-    <string name="new_server">New Server</string>
+    <string name="manage_servers">Manage servers</string>
+    <string name="new_server">New server</string>
     <string name="source">Source</string>
     <string name="tags">Tags</string>
     <string name="size">Size</string>
@@ -22,8 +22,8 @@
     <string name="name">Name</string>
     <string name="clear">Clear</string>
     <string name="apply">Apply</string>
-    <string name="selected_tags">Selected Tags</string>
-    <string name="suggested_tags">Suggested Tags</string>
+    <string name="selected_tags">Selected tags</string>
+    <string name="suggested_tags">Suggested tags</string>
     <string name="artist">Artist</string>
     <string name="character">Character</string>
     <string name="metadata">Metadata</string>
@@ -31,6 +31,8 @@
     <string name="general">General</string>
     <string name="other">Other</string>
     <string name="select">Select</string>
+    <string name="retry">Retry</string>
+    <string name="empty_server_help_text">There is no server setup. To setup your server click ⋮ > Manage Server > + > fill title, host url and select server type > save</string>
     <!-- Preference Key -->
     <string name="server_list_key">SERVER_LIST_KEY</string>
 
