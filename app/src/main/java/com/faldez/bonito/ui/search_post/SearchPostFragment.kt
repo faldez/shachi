@@ -55,7 +55,6 @@ class SearchPostFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        Log.d(TAG, "onCreateView " + savedInstanceState.toString())
         super.onCreateView(inflater, container, savedInstanceState)
         binding = SearchPostFragmentBinding.inflate(inflater, container, false)
 

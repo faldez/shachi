@@ -18,6 +18,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text="@string/select" />
+        android:text="@string/add" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

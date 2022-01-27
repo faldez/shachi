@@ -10,7 +10,7 @@
     <item
         android:id="@+id/apply_button"
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_check_24"
-        android:title="@string/apply"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="@string/search"
         app:showAsAction="ifRoom" />
 </menu>
