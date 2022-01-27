@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.faldez.bonito.databinding.PostCardItemBinding
 import com.faldez.bonito.model.Post
 
-class SearchPostAdapter(private val onClick: (List<Post?>, Int) -> Unit) :
+class SearchPostAdapter(private val onClick: (Int) -> Unit) :
     PagingDataAdapter<Post, SearchPostViewHolder>(POST_COMPARATOR) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchPostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -24,7 +24,6 @@ class SearchPostAdapter(private val onClick: (List<Post?>, Int) -> Unit) :
 
     override fun onBindViewHolder(holder: SearchPostViewHolder, position: Int) {
         val post = getItem(position)
-        Log.d("Adapter", post.toString())
         post?.let {
             val imageView = holder.binding.imageView
             Glide.with(imageView.context).load(it.previewUrl)
@@ -40,7 +39,7 @@ class SearchPostAdapter(private val onClick: (List<Post?>, Int) -> Unit) :
             }
 
             holder.binding.root.setOnClickListener { _ ->
-                onClick(snapshot().toList(), position)
+                onClick(position)
             }
         }
     }

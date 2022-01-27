@@ -87,7 +87,7 @@ class SearchPostFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController()?.currentBackStackEntry?.savedStateHandle?.getLiveData<List<Tag>>("tags")
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<List<Tag>>("tags")
             ?.observe(viewLifecycleOwner) { result ->
                 Log.d("SearchPostFragment", "$result")
                 viewModel.accept(UiAction.Search(viewModel.state.value.server?.url,
@@ -137,7 +137,7 @@ class SearchPostFragment : Fragment() {
         uiActions: (UiAction) -> Unit,
     ) {
         val postAdapter = SearchPostAdapter(
-            onClick = { posts, position ->
+            onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 findNavController().navigate(R.id.action_searchpost_to_postslide, bundle)
                 hideBottomNavigationView()
@@ -187,7 +187,7 @@ class SearchPostFragment : Fragment() {
             Boolean::and
         )
 
-        lifecycleScope.launch {
+        lifecycleScope.launchWhenCreated {
             pagingData.collectLatest(postsAdapter::submitData)
         }
 

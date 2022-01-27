@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -176,7 +177,6 @@ class SearchSimpleFragment : Fragment() {
                     binding.suggestionTagsHeader.visibility = View.VISIBLE
                 }
                 it?.let { tags ->
-                    Log.d("SearchSimpleFragment", "collect $tags")
                     searchSuggestionAdapter.setSuggestion(tags)
                 }
             }
@@ -185,12 +185,15 @@ class SearchSimpleFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.selectedTags.collect { tags ->
                 val groupedTags = tags.groupBy { it.type }
-                if (groupedTags.isNotEmpty()) {
-                    binding.selectedTagsHeader.visibility = View.VISIBLE
-                } else {
+                Log.d("SearchSimpleFragment", "collect $groupedTags")
+                binding.selectedTagsHeader.isVisible = groupedTags.isNotEmpty()
+                binding.generalTagsHeader.isVisible = false
+                binding.artistTagsHeader.isVisible = false
+                binding.copyrightTagsHeader.isVisible = false
+                binding.characterTagsHeader.isVisible = false
+                binding.metadataTagsHeader.isVisible = false
+                binding.otherTagsHeader.isVisible = false
 
-                    binding.selectedTagsHeader.visibility = View.GONE
-                }
                 groupedTags.forEach { (type, tags) ->
                     var group = binding.otherTagsChipGroup
                     var header = binding.otherTagsHeader
@@ -218,13 +221,9 @@ class SearchSimpleFragment : Fragment() {
                         else -> binding.otherTagsChipGroup
                     }
                     group.removeAllViews()
-                    if (tags.isNotEmpty()) {
-                        header.visibility = View.VISIBLE
-                        group.visibility = View.VISIBLE
-                    } else {
-                        header.visibility = View.INVISIBLE
-                        group.visibility = View.INVISIBLE
-                    }
+                    header.isVisible = tags.isNotEmpty()
+                    group.isVisible = tags.isNotEmpty()
+
                     tags.forEach { tag ->
                         val chip = Chip(requireContext())
                         chip.bind(tag)
