@@ -4,24 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false"
+    android:fitsSystemWindows="true"
     tools:context=".ui.search_post.SearchPostFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        app:liftOnScroll="false">
+        android:fitsSystemWindows="true">
 
-        <com.lapism.search.widget.MaterialSearchBar
-            android:id="@+id/material_search_bar"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/searchPostTopAppBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:search_navigationBackgroundColor="?attr/colorSurfaceVariant"
-            app:search_navigationIcon="@drawable/ic_baseline_storage_24"
-            app:search_radius="25dp"/>
+            app:menu="@menu/posts_menu"
+            app:title="@string/posts" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -29,29 +27,22 @@
         android:id="@+id/postsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        tools:listitem="@layout/post_card_item"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        tools:listitem="@layout/post_card_item" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBar"
+        style="?attr/circularProgressIndicatorStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        style="?attr/circularProgressIndicatorStyle"
-        android:indeterminate="true"/>
+        android:indeterminate="true" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/retryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Retry"/>
-
-    <com.lapism.search.widget.MaterialSearchView
-        android:id="@+id/material_search_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_anchor="@id/material_search_bar"/>
+        android:text="Retry" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

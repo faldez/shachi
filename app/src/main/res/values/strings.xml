@@ -18,7 +18,19 @@
     <string name="score">Score</string>
     <string name="save">Save</string>
     <string name="host">Host</string>
+    <string name="search">Search</string>
     <string name="name">Name</string>
+    <string name="clear">Clear</string>
+    <string name="apply">Apply</string>
+    <string name="selected_tags">Selected Tags</string>
+    <string name="suggested_tags">Suggested Tags</string>
+    <string name="artist">Artist</string>
+    <string name="character">Character</string>
+    <string name="metadata">Metadata</string>
+    <string name="copyright">Copyright</string>
+    <string name="general">General</string>
+    <string name="other">Other</string>
+    <string name="select">Select</string>
     <!-- Preference Key -->
     <string name="server_list_key">SERVER_LIST_KEY</string>
 
@@ -36,4 +48,6 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

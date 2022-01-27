@@ -53,5 +53,10 @@
     <color name="md_theme_dark_primaryInverse">#6750A4</color>
     <color name="seed">#6750A4</color>
     <color name="error">#B3261E</color>
-    <color name="background">#FFFBFE</color>
+    <!--    tag color   -->
+    <color name="tag_artist">#A00</color>
+    <color name="tag_character">#0A0</color>
+    <color name="tag_copyright">#A0A</color>
+    <color name="tag_general">#337ab7</color>
+    <color name="tag_metadata">#F80</color>
 </resources>

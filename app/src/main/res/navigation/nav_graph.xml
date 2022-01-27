@@ -21,6 +21,13 @@
         android:label="posts_fragment"
         tools:layout="@layout/search_post_fragment">
         <action
+            android:id="@+id/action_searchpost_to_searchsimple"
+            app:destination="@id/search_simple_fragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_down" />
+        <action
             android:id="@+id/action_searchpost_to_postslide"
             app:destination="@id/postSlideFragment"
             app:enterAnim="@anim/slide_in"
@@ -72,4 +79,9 @@
         android:name="com.faldez.bonito.ui.server_edit.ServerEditFragment"
         android:label="server_edit_fragment"
         tools:layout="@layout/server_edit_fragment" />
+    <fragment
+        android:id="@+id/search_simple_fragment"
+        android:name="com.faldez.bonito.ui.search_simple.SearchSimpleFragment"
+        android:label="search_dialog"
+        tools:layout="@layout/search_simple_fragment" />
 </navigation>

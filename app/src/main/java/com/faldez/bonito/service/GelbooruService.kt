@@ -7,6 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import android.util.Xml
 import com.faldez.bonito.model.response.GelbooruPostResponse
+import com.faldez.bonito.model.response.GelbooruTagResponse
 import com.google.gson.GsonBuilder
 import okhttp3.*
 import org.json.jsonjava.XML
@@ -21,6 +22,9 @@ import java.time.LocalDateTime
 interface GelbooruService {
     @GET
     suspend fun getPosts(@Url url: String): GelbooruPostResponse
+
+    @GET
+    suspend fun getTags(@Url url: String): GelbooruTagResponse
 
     companion object {
         var retrofitService: GelbooruService? = null

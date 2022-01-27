@@ -30,8 +30,8 @@ class SearchPostViewModel constructor(
         Log.d("PostsViewModel",
             "init " + savedStateHandle.get(LAST_SEARCH_TAGS) + " " + savedStateHandle.get(
                 LAST_TAGS_SCROLLED))
-        val initialTags: String = savedStateHandle.get(LAST_SEARCH_TAGS) ?: ""
-        val lastTagsScrolled: String = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: ""
+        val initialTags: List<Tag> = savedStateHandle.get(LAST_SEARCH_TAGS) ?: listOf()
+        val lastTagsScrolled: List<Tag> = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: listOf()
         val actionStateFlow = MutableSharedFlow<UiAction>()
         val searches = actionStateFlow.filterIsInstance<UiAction.Search>().distinctUntilChanged()
             .onStart { emit(UiAction.Search(null, tags = initialTags)) }
@@ -68,7 +68,7 @@ class SearchPostViewModel constructor(
 
         val serverChange = state.map { it.server }.distinctUntilChanged()
         pagingDataFlow = combine(serverChange, searches, ::Pair).flatMapLatest { (server, search) ->
-            searchPosts(server, tags = search.tags).map {
+            searchPosts(server, tags = search.tags.toQuery()).map {
                 it.map { post ->
                     val postId =
                         favoriteRepository.queryByServerUrlAndPostId(post.serverUrl, post.postId)
@@ -112,13 +112,17 @@ class SearchPostViewModel constructor(
         Log.d("PostsViewModel",
             "onCleared " + state.value.tags + " " + state.value.lastTagsScrolled)
     }
+
+    private fun List<Tag>.toQuery(): String {
+        return this.map { it.name }.joinToString(" ")
+    }
 }
 
 sealed class UiAction {
-    data class Search(val serverUrl: String?, val tags: String) : UiAction()
+    data class Search(val serverUrl: String?, val tags: List<Tag>) : UiAction()
     data class Scroll(
         val currentServerUrl: String?,
-        val currentTags: String,
+        val currentTags: List<Tag>,
     ) : UiAction()
 
     object GetSelectedServer : UiAction()
@@ -126,8 +130,8 @@ sealed class UiAction {
 
 data class UiState(
     val server: Server? = null,
-    val tags: String = "",
-    val lastTagsScrolled: String = "",
+    val tags: List<Tag> = listOf(),
+    val lastTagsScrolled: List<Tag> = listOf(),
     val hasNotScrolledForCurrentTag: Boolean = false,
 )
 
