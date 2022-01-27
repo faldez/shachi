@@ -33,6 +33,7 @@ class SearchSimpleFragment : Fragment() {
     private lateinit var binding: SearchSimpleFragmentBinding
     private lateinit var viewModel: SearchSimpleViewModel
     private lateinit var searchSuggestionAdapter: SearchSuggestionAdapter
+    private lateinit var searchSimpleMenu: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,6 +114,7 @@ class SearchSimpleFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_simple_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
+        searchSimpleMenu = menu
     }
 
     private fun NestedScrollView.show() {
@@ -146,10 +148,12 @@ class SearchSimpleFragment : Fragment() {
                     searchSuggestionAdapter.clear()
                     binding.selectedTagsLayout.show()
                     binding.suggestionTagLayout.hide()
+                    searchSimpleMenu.getItem(0).isVisible = false
                 } else {
                     viewModel.accept(UiAction.SearchTag(viewModel.server, text.toString()))
                     binding.selectedTagsLayout.hide()
                     binding.suggestionTagLayout.show()
+                    searchSimpleMenu.getItem(0).isVisible = true
                 }
             }
             setOnEditorActionListener { textView, i, _ ->
