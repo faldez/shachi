@@ -1,11 +1,10 @@
-package com.faldez.bonito.ui.search_post
+package com.faldez.bonito.ui.browse_server
 
-import com.faldez.bonito.data.PostRepository
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.core.os.bundleOf
-import androidx.core.view.*
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -17,9 +16,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
 import com.faldez.bonito.data.FavoriteRepository
+import com.faldez.bonito.data.PostRepository
 import com.faldez.bonito.data.ServerRepository
 import com.faldez.bonito.database.AppDatabase
-import com.faldez.bonito.databinding.SearchPostFragmentBinding
+import com.faldez.bonito.databinding.BrowseServerFragmentBinding
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.model.Tag
 import com.faldez.bonito.service.BooruService
@@ -28,18 +28,18 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class SearchPostFragment : Fragment() {
+class BrowseServerFragment : Fragment() {
     companion object {
         const val TAG = "SearchPostFragment"
     }
 
-    private lateinit var binding: SearchPostFragmentBinding
+    private lateinit var binding: BrowseServerFragmentBinding
 
-    private val viewModel: SearchPostViewModel by
+    private val viewModel: BrowseServerViewModel by
     navGraphViewModels(R.id.nav_graph) {
         val db = AppDatabase.build(requireContext())
         val favoriteRepository = FavoriteRepository(db)
-        SearchPostViewModelFactory(PostRepository(BooruService()),
+        BrowseServerViewModelFactory(PostRepository(BooruService()),
             ServerRepository(db),
             favoriteRepository,
             this)
@@ -56,7 +56,7 @@ class SearchPostFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        binding = SearchPostFragmentBinding.inflate(inflater, container, false)
+        binding = BrowseServerFragmentBinding.inflate(inflater, container, false)
 
         val view = binding.root
 
@@ -131,7 +131,7 @@ class SearchPostFragment : Fragment() {
             View.GONE
     }
 
-    private fun SearchPostFragmentBinding.bindState(
+    private fun BrowseServerFragmentBinding.bindState(
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         uiActions: (UiAction) -> Unit,
@@ -157,13 +157,13 @@ class SearchPostFragment : Fragment() {
         )
     }
 
-    private fun SearchPostFragmentBinding.bindSearch(
+    private fun BrowseServerFragmentBinding.bindSearch(
         uiState: StateFlow<UiState>,
         onTagsChanged: (UiAction.Search) -> Unit,
     ) {
     }
 
-    private fun SearchPostFragmentBinding.bindList(
+    private fun BrowseServerFragmentBinding.bindList(
         postsAdapter: SearchPostAdapter,
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,

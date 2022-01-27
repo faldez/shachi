@@ -16,10 +16,10 @@
         android:label="favorite_fragment"
         tools:layout="@layout/favorite_fragment" />
     <fragment
-        android:id="@+id/searchPostFragment"
-        android:name="com.faldez.bonito.ui.search_post.SearchPostFragment"
+        android:id="@+id/browseServerFragment"
+        android:name="com.faldez.bonito.ui.browse_server.BrowseServerFragment"
         android:label="posts_fragment"
-        tools:layout="@layout/search_post_fragment">
+        tools:layout="@layout/browse_server_fragment">
         <action
             android:id="@+id/action_searchpost_to_searchsimple"
             app:destination="@id/search_simple_fragment"

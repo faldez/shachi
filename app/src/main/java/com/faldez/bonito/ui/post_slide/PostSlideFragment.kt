@@ -19,8 +19,8 @@ import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.databinding.PostSlideFragmentBinding
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.service.BooruService
-import com.faldez.bonito.ui.search_post.SearchPostViewModel
-import com.faldez.bonito.ui.search_post.SearchPostViewModelFactory
+import com.faldez.bonito.ui.browse_server.BrowseServerViewModel
+import com.faldez.bonito.ui.browse_server.BrowseServerViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.gson.Gson
@@ -39,11 +39,11 @@ class PostSlideFragment : Fragment() {
     private lateinit var topbarMenu: Menu
 
 
-    private val viewModel: SearchPostViewModel by
+    private val viewModel: BrowseServerViewModel by
     navGraphViewModels(R.id.nav_graph) {
         val db = AppDatabase.build(requireContext())
         val favoriteRepository = FavoriteRepository(db)
-        SearchPostViewModelFactory(PostRepository(BooruService()),
+        BrowseServerViewModelFactory(PostRepository(BooruService()),
             ServerRepository(db),
             favoriteRepository,
             this)

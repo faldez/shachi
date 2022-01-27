@@ -1,6 +1,5 @@
-package com.faldez.bonito.ui.search_post
+package com.faldez.bonito.ui.browse_server
 
-import android.content.SharedPreferences
 import android.util.Log
 import com.faldez.bonito.data.PostRepository
 import androidx.lifecycle.SavedStateHandle
@@ -16,7 +15,7 @@ import com.faldez.bonito.service.Action
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class SearchPostViewModel constructor(
+class BrowseServerViewModel constructor(
     private val postRepository: PostRepository,
     private val serverRepository: ServerRepository,
     private val favoriteRepository: FavoriteRepository,

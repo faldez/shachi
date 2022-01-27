@@ -33,6 +33,7 @@
     <string name="select">Select</string>
     <string name="retry">Retry</string>
     <string name="add">Add</string>
+    <string name="browse">Browse</string>
     <string name="empty_server_help_text">There is no server setup. To setup your server click ⋮ > Manage Server > + > fill title, host url and select server type > save</string>
     <!-- Preference Key -->
     <string name="server_list_key">SERVER_LIST_KEY</string>

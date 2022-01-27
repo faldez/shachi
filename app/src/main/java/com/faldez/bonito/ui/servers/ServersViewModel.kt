@@ -1,15 +1,10 @@
 package com.faldez.bonito.ui.servers
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faldez.bonito.data.ServerRepository
-import com.faldez.bonito.database.AppDatabase
-import com.faldez.bonito.model.SelectedServer
-import com.faldez.bonito.model.Server
 import com.faldez.bonito.model.ServerWithSelected
-import com.faldez.bonito.ui.search_post.UiState
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

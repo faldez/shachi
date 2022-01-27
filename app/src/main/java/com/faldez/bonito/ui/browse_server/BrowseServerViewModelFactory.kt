@@ -1,4 +1,4 @@
-package com.faldez.bonito.ui.search_post
+package com.faldez.bonito.ui.browse_server
 
 import com.faldez.bonito.data.PostRepository
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
@@ -9,7 +9,7 @@ import com.faldez.bonito.data.FavoriteRepository
 import com.faldez.bonito.data.ServerRepository
 import java.lang.IllegalArgumentException
 
-class SearchPostViewModelFactory constructor(
+class BrowseServerViewModelFactory constructor(
     private val postRepository: PostRepository,
     private val serverRepository: ServerRepository,
     private val favoriteRepository: FavoriteRepository,
@@ -20,8 +20,8 @@ class SearchPostViewModelFactory constructor(
         modelClass: Class<T>,
         handle: SavedStateHandle,
     ): T {
-        return if (modelClass.isAssignableFrom(SearchPostViewModel::class.java)) {
-            SearchPostViewModel(this.postRepository, this.serverRepository, favoriteRepository, handle) as T
+        return if (modelClass.isAssignableFrom(BrowseServerViewModel::class.java)) {
+            BrowseServerViewModel(this.postRepository, this.serverRepository, favoriteRepository, handle) as T
         } else {
             throw  IllegalArgumentException("ViewModel Not Found")
         }

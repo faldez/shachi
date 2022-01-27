@@ -1,8 +1,7 @@
-package com.faldez.bonito.ui.search_post
+package com.faldez.bonito.ui.browse_server
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,15 +13,15 @@ import com.faldez.bonito.databinding.PostCardItemBinding
 import com.faldez.bonito.model.Post
 
 class SearchPostAdapter(private val onClick: (Int) -> Unit) :
-    PagingDataAdapter<Post, SearchPostViewHolder>(POST_COMPARATOR) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchPostViewHolder {
+    PagingDataAdapter<Post, BrowseServerItemViewHolder>(POST_COMPARATOR) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BrowseServerItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
 
         val binding = PostCardItemBinding.inflate(inflater, parent, false)
-        return SearchPostViewHolder(binding)
+        return BrowseServerItemViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: SearchPostViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BrowseServerItemViewHolder, position: Int) {
         val post = getItem(position)
         post?.let {
             val imageView = holder.binding.imageView
@@ -57,7 +56,7 @@ class SearchPostAdapter(private val onClick: (Int) -> Unit) :
     }
 }
 
-class SearchPostViewHolder(val binding: PostCardItemBinding) :
+class BrowseServerItemViewHolder(val binding: PostCardItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
 }

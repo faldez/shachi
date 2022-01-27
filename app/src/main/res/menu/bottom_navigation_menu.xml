@@ -6,10 +6,10 @@
         android:icon="@drawable/ic_baseline_push_pin_24"
         android:title="@string/pinned"/>
     <item
-        android:id="@+id/searchPostFragment"
+        android:id="@+id/browseServerFragment"
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_image_24"
-        android:title="@string/posts"/>
+        android:icon="@drawable/ic_baseline_explore_24"
+        android:title="@string/browse"/>
     <item
         android:id="@+id/favoriteFragment"
         android:enabled="true"

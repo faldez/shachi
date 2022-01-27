@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import com.faldez.bonito.data.PostRepository
 import com.faldez.bonito.data.ServerRepository
-import com.faldez.bonito.database.AppDatabase
-import com.faldez.bonito.ui.search_post.SearchPostViewModel
 import java.lang.IllegalArgumentException
 
 class ServerEditViewModelFactory constructor(
