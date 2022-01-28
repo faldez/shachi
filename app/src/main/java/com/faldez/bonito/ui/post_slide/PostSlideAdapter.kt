@@ -1,6 +1,7 @@
 package com.faldez.bonito.ui.post_slide
 
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -18,8 +19,14 @@ import com.faldez.bonito.databinding.PostSlideItemBinding
 import com.faldez.bonito.model.Post
 
 
-class PostSlideAdapter(private val onTap: () -> Unit, private val onLoadEnd: () -> Unit) :
+class PostSlideAdapter(
+    private val onTap: () -> Unit,
+    private val onLoadStart: () -> Unit,
+    private val onLoadEnd: () -> Unit,
+) :
     PagingDataAdapter<Post, PostSlideViewHolder>(POST_COMPARATOR) {
+    var loadedPost: MutableSet<Int> = mutableSetOf()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostSlideViewHolder {
         val inflater = LayoutInflater.from(parent.context)
 
@@ -31,12 +38,13 @@ class PostSlideAdapter(private val onTap: () -> Unit, private val onLoadEnd: () 
         val post = getItem(position)
 
         post?.let {
+            onLoadStart()
             val postImageView = holder.binding.postImageView
-            postImageView.setOnViewTapListener { view, x, y -> onTap()  }
+            postImageView.setOnViewTapListener { view, x, y -> onTap() }
             GlideApp.with(postImageView.context).load(it.fileUrl)
-                .thumbnail(Glide.with(postImageView.context).load(it.previewUrl))
+                .thumbnail(GlideApp.with(postImageView.context).load(it.previewUrl))
                 .timeout(3000)
-                .listener(object: RequestListener<Drawable> {
+                .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
                         model: Any?,
@@ -55,6 +63,7 @@ class PostSlideAdapter(private val onTap: () -> Unit, private val onLoadEnd: () 
                         isFirstResource: Boolean,
                     ): Boolean {
                         onLoadEnd()
+                        loadedPost.add(holder.bindingAdapterPosition)
                         return false
                     }
 

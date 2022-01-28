@@ -24,7 +24,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
-            android:background="@android:color/transparent"
             app:menu="@menu/post_slide_menu" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
