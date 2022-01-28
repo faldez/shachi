@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.faldez.bonito.databinding.PostCardItemBinding
 import com.faldez.bonito.model.Post
 
-class SearchPostAdapter(private val onClick: (Int) -> Unit) :
+class BrowserServerAdapter(private val onClick: (Int) -> Unit) :
     PagingDataAdapter<Post, BrowseServerItemViewHolder>(POST_COMPARATOR) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BrowseServerItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)

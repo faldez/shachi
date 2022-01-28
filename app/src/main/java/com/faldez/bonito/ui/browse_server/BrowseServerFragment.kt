@@ -77,11 +77,6 @@ class BrowseServerFragment : Fragment() {
             bottomNavigationView.visibility = View.VISIBLE
         }
 
-        val layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
-        layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
-
-        binding.postsRecyclerView.layoutManager = layoutManager
-
         return view
     }
 
@@ -136,7 +131,7 @@ class BrowseServerFragment : Fragment() {
         pagingData: Flow<PagingData<Post>>,
         uiActions: (UiAction) -> Unit,
     ) {
-        val postAdapter = SearchPostAdapter(
+        val postAdapter = BrowserServerAdapter(
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 findNavController().navigate(R.id.action_searchpost_to_postslide, bundle)
@@ -144,6 +139,12 @@ class BrowseServerFragment : Fragment() {
             }
         )
         postsRecyclerView.adapter = postAdapter
+
+        val layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+        layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+
+        postsRecyclerView.layoutManager = layoutManager
+
         bindSearch(
             uiState = uiState,
             onTagsChanged = uiActions
@@ -164,7 +165,7 @@ class BrowseServerFragment : Fragment() {
     }
 
     private fun BrowseServerFragmentBinding.bindList(
-        postsAdapter: SearchPostAdapter,
+        postsAdapter: BrowserServerAdapter,
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (UiAction.Scroll) -> Unit,
