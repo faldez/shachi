@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
@@ -13,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
-import androidx.viewpager2.widget.ViewPager2.*
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
 import com.faldez.bonito.data.FavoriteRepository
@@ -27,7 +26,6 @@ import com.faldez.bonito.ui.browse.BrowseViewModel
 import com.faldez.bonito.ui.browse.BrowseViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -183,10 +181,9 @@ class PostSlideFragment : Fragment() {
                 return true
             }
             R.id.detail_button -> {
-                val gson = Gson()
                 val post = postSlideAdapter.getPostItem(binding.postViewPager.currentItem)
                 Log.d(TAG, "$post")
-                val bundle = bundleOf("post" to gson.toJson(post))
+                val bundle = bundleOf("post" to post, "server" to viewModel.state.value.server)
                 findNavController().navigate(R.id.action_postslide_to_postdetail, bundle)
                 return true
             }

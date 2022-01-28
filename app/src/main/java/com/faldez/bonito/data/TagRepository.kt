@@ -21,10 +21,35 @@ class TagRepository(private val service: BooruService) {
             }
         }
     }
+
     suspend fun getTag(action: Action.GetTag): Tag? {
         return when (action.server?.type) {
             ServerType.Gelbooru -> {
                 service.gelbooru.getTags(action.buildGelbooruUrl().toString()).mapToTag()
+            }
+            ServerType.Danbooru -> {
+                TODO("not yet implemented")
+            }
+            null -> {
+                null
+            }
+        }
+    }
+
+    suspend fun getTags(action: Action.GetTags): List<Tag>? {
+        return when (action.server?.type) {
+            ServerType.Gelbooru -> {
+                val url = action.buildGelbooruUrl().toString()
+                Log.d("TagRepository", url)
+                val tags = service.gelbooru.getTags(url).mapToTags()
+
+                action.tags.trim().split(" ").map { name ->
+                    tags?.find { it.name == name } ?: Tag(id = 0,
+                        name = name,
+                        count = 0,
+                        type = 0,
+                        ambiguous = false)
+                }
             }
             ServerType.Danbooru -> {
                 TODO("not yet implemented")

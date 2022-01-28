@@ -1,6 +1,7 @@
 package com.faldez.bonito.data
 
 import android.util.Log
+import androidx.core.os.LocaleListCompat
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.faldez.bonito.data.PostRepository.Companion.STARTING_PAGE_INDEX
@@ -12,7 +13,6 @@ import com.faldez.bonito.service.BooruService
 import retrofit2.HttpException
 import java.io.IOException
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 class PostPagingSource(
     private val action: Action.SearchPost,
@@ -82,7 +82,8 @@ class PostPagingSource(
                 md5 = post.md5,
                 creatorId = post.creatorId,
                 hasChildren = post.hasChildren,
-                createdAt = post.createdAt?.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)),
+                createdAt = post.createdAt?.format(DateTimeFormatter.ofPattern("cccc, dd MMMM y hh:mm:ss a",
+                    LocaleListCompat.getDefault().get(0))),
                 status = post.status,
                 source = post.source,
                 hasNotes = post.hasNotes,

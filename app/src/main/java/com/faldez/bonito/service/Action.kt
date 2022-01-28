@@ -44,4 +44,16 @@ sealed class Action {
             }
         }
     }
+
+    data class GetTags(val server: Server?, val tags: String) : Action() {
+        fun buildGelbooruUrl(): HttpUrl? {
+            return server?.let {
+                HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
+                    .addQueryParameter("page", "dapi")
+                    .addQueryParameter("q", "index").addQueryParameter("s", "tag")
+                    .addQueryParameter("names", tags)
+                    .build()
+            }
+        }
+    }
 }

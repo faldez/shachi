@@ -1,20 +1,15 @@
 package com.faldez.bonito.model
 
 import android.os.Parcelable
-import android.util.Log
-import androidx.room.*
-import com.faldez.bonito.model.response.EmptyStringAsNullTypeAdapter
-import com.faldez.bonito.model.response.ZonedDateTimeAdapter
-import com.google.gson.annotations.JsonAdapter
-import com.google.gson.annotations.SerializedName
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Fts4
+import androidx.room.Ignore
 import kotlinx.parcelize.Parcelize
-import java.time.LocalDateTime
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 @Fts4
 @Entity(tableName = "favorite")
+@Parcelize
 data class Post(
     val height: Int,
     val width: Int,
@@ -40,7 +35,7 @@ data class Post(
     val source: String,
     @ColumnInfo(name = "has_notes") val hasNotes: Boolean,
     @ColumnInfo(name = "has_comments") val hasComments: Boolean,
-) {
+) : Parcelable {
     @Ignore
     var favorite: Boolean = false
 }
