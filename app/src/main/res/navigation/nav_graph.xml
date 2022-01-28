@@ -17,7 +17,7 @@
         tools:layout="@layout/favorite_fragment" />
     <fragment
         android:id="@+id/browseServerFragment"
-        android:name="com.faldez.bonito.ui.browse_server.BrowseServerFragment"
+        android:name="com.faldez.bonito.ui.browse.BrowseFragment"
         android:label="posts_fragment"
         tools:layout="@layout/browse_server_fragment">
         <action

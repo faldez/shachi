@@ -1,4 +1,4 @@
-package com.faldez.bonito.ui.browse_server
+package com.faldez.bonito.ui.browse
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -12,16 +12,16 @@ import com.bumptech.glide.Glide
 import com.faldez.bonito.databinding.PostCardItemBinding
 import com.faldez.bonito.model.Post
 
-class BrowserServerAdapter(private val onClick: (Int) -> Unit) :
-    PagingDataAdapter<Post, BrowseServerItemViewHolder>(POST_COMPARATOR) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BrowseServerItemViewHolder {
+class BrowserAdapter(private val onClick: (Int) -> Unit) :
+    PagingDataAdapter<Post, BrowseItemViewHolder>(POST_COMPARATOR) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BrowseItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
 
         val binding = PostCardItemBinding.inflate(inflater, parent, false)
-        return BrowseServerItemViewHolder(binding)
+        return BrowseItemViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: BrowseServerItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BrowseItemViewHolder, position: Int) {
         val post = getItem(position)
         post?.let {
             val imageView = holder.binding.imageView
@@ -56,7 +56,7 @@ class BrowserServerAdapter(private val onClick: (Int) -> Unit) :
     }
 }
 
-class BrowseServerItemViewHolder(val binding: PostCardItemBinding) :
+class BrowseItemViewHolder(val binding: PostCardItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
 }

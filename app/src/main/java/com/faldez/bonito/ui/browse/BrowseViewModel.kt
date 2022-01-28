@@ -1,4 +1,4 @@
-package com.faldez.bonito.ui.browse_server
+package com.faldez.bonito.ui.browse
 
 import android.util.Log
 import com.faldez.bonito.data.PostRepository
@@ -15,7 +15,7 @@ import com.faldez.bonito.service.Action
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class BrowseServerViewModel constructor(
+class BrowseViewModel constructor(
     private val postRepository: PostRepository,
     private val serverRepository: ServerRepository,
     private val favoriteRepository: FavoriteRepository,

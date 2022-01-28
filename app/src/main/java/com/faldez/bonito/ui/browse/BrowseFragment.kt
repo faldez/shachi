@@ -1,4 +1,4 @@
-package com.faldez.bonito.ui.browse_server
+package com.faldez.bonito.ui.browse
 
 import android.os.Bundle
 import android.util.Log
@@ -28,18 +28,18 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class BrowseServerFragment : Fragment() {
+class BrowseFragment : Fragment() {
     companion object {
         const val TAG = "SearchPostFragment"
     }
 
     private lateinit var binding: BrowseServerFragmentBinding
 
-    private val viewModel: BrowseServerViewModel by
+    private val viewModel: BrowseViewModel by
     navGraphViewModels(R.id.nav_graph) {
         val db = AppDatabase.build(requireContext())
         val favoriteRepository = FavoriteRepository(db)
-        BrowseServerViewModelFactory(PostRepository(BooruService()),
+        BrowseViewModelFactory(PostRepository(BooruService()),
             ServerRepository(db),
             favoriteRepository,
             this)
@@ -131,7 +131,7 @@ class BrowseServerFragment : Fragment() {
         pagingData: Flow<PagingData<Post>>,
         uiActions: (UiAction) -> Unit,
     ) {
-        val postAdapter = BrowserServerAdapter(
+        val postAdapter = BrowserAdapter(
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 findNavController().navigate(R.id.action_searchpost_to_postslide, bundle)
@@ -165,7 +165,7 @@ class BrowseServerFragment : Fragment() {
     }
 
     private fun BrowseServerFragmentBinding.bindList(
-        postsAdapter: BrowserServerAdapter,
+        postsAdapter: BrowserAdapter,
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (UiAction.Scroll) -> Unit,
