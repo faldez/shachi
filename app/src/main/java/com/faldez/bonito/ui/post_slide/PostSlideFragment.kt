@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -66,7 +67,9 @@ class PostSlideFragment : Fragment() {
     }
 
     private fun prepareViewPager(position: Int) {
-        postSlideAdapter = PostSlideAdapter()
+        postSlideAdapter = PostSlideAdapter(onLoadEnd = {
+            binding.postLoadingIndicator.isVisible = false
+        })
         binding.postViewPager.adapter = postSlideAdapter
         lifecycleScope.launch {
             viewModel.pagingDataFlow.collect(postSlideAdapter::submitData)
@@ -75,6 +78,7 @@ class PostSlideFragment : Fragment() {
         binding.postViewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
+                binding.postLoadingIndicator.isVisible = true
                 (activity as MainActivity).supportActionBar?.title =
                     "" + (position + 1) + "/" + postSlideAdapter.itemCount
                 postSlideAdapter.getPostItem(position)?.let { setFavoriteButton(it) }

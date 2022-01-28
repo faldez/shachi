@@ -1,17 +1,24 @@
 package com.faldez.bonito.ui.post_slide
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.annotation.GlideModule
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.module.AppGlideModule
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.faldez.bonito.GlideApp
 import com.faldez.bonito.databinding.PostSlideItemBinding
 import com.faldez.bonito.model.Post
 
-class PostSlideAdapter :
+
+class PostSlideAdapter(private val onLoadEnd: () -> Unit) :
     PagingDataAdapter<Post, PostSlideViewHolder>(POST_COMPARATOR) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostSlideViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -22,18 +29,35 @@ class PostSlideAdapter :
 
     override fun onBindViewHolder(holder: PostSlideViewHolder, position: Int) {
         val post = getItem(position)
+
         post?.let {
             val postImageView = holder.binding.postImageView
-            val circularProgress = CircularProgressDrawable(postImageView.context)
-            circularProgress.strokeWidth = 5f
-            circularProgress.centerRadius = 30f
-            circularProgress.start()
-            val requestOptions =
-                RequestOptions().placeholder(circularProgress)
-            Glide.with(postImageView.context).load(it.fileUrl)
-                .thumbnail(Glide.with(postImageView.context).load(it.previewUrl)
-                    .apply(requestOptions))
-                .apply(requestOptions)
+            GlideApp.with(postImageView.context).load(it.fileUrl)
+                .thumbnail(Glide.with(postImageView.context).load(it.previewUrl))
+                .timeout(3000)
+                .listener(object: RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean,
+                    ): Boolean {
+                        onLoadEnd()
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean,
+                    ): Boolean {
+                        onLoadEnd()
+                        return false
+                    }
+
+                })
                 .into(postImageView)
         }
     }

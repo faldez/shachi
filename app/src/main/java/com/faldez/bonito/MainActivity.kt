@@ -8,6 +8,8 @@ import androidx.core.view.*
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.annotation.GlideModule
+import com.bumptech.glide.module.AppGlideModule
 import com.faldez.bonito.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import okhttp3.OkHttpClient
@@ -33,3 +35,5 @@ class MainActivity : AppCompatActivity() {
         return super.onSupportNavigateUp()
     }
 }
+@GlideModule
+class MyGlideModule : AppGlideModule()
