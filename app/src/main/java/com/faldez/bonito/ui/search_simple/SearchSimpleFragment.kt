@@ -160,8 +160,10 @@ class SearchSimpleFragment : Fragment() {
             setOnEditorActionListener { textView, i, _ ->
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     val text = (textView as TextInputEditText).text.toString().removePrefix("# ")
-                    viewModel.insertTagByName(text)
-                    binding.searchSimpleTagsInputText.text?.clear()
+                    if (text.isNotEmpty()) {
+                        viewModel.insertTagByName(text)
+                        binding.searchSimpleTagsInputText.text?.clear()
+                    }
                     true
                 } else {
                     false
