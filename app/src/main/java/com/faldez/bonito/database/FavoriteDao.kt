@@ -1,5 +1,6 @@
 package com.faldez.bonito.database
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -14,6 +15,12 @@ interface FavoriteDao {
 
     @Delete
     suspend fun delete(favorite: Post)
+
+    @Query("SELECT * FROM favorite WHERE favorite MATCH :query")
+    fun queryByTags(query: String): PagingSource<Int, Post>
+
+    @Query("SELECT * FROM favorite")
+    fun query(): PagingSource<Int, Post>
 
     @Query("SELECT post_id FROM favorite WHERE server_url = :serverUrl AND post_id IN (:postIds)")
     fun queryByServerUrlAndPostIds(serverUrl: String, postIds: List<Int>): Flow<List<Int>>

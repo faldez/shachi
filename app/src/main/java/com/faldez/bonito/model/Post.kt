@@ -13,7 +13,8 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-@Entity(primaryKeys = ["server_url", "post_id"], tableName = "favorite")
+@Fts4
+@Entity(tableName = "favorite")
 data class Post(
     val height: Int,
     val width: Int,
