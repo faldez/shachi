@@ -4,13 +4,17 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.text.Editable
+import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
 import com.faldez.bonito.MainActivity
@@ -28,19 +32,13 @@ import kotlinx.coroutines.launch
 import java.util.prefs.AbstractPreferences
 
 class ServerEditFragment : Fragment() {
-    private val viewModel: ServerEditViewModel by
-    navGraphViewModels(R.id.nav_graph) {
-        ServerEditViewModelFactory(PostRepository(BooruService()),
-            ServerRepository(AppDatabase.build(requireContext())),
-            this)
-    }
+    private lateinit var viewModel: ServerEditViewModel
     private lateinit var binding: ServerEditFragmentBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
-
 
     private fun prepareAppBar() {
         (activity as MainActivity).setSupportActionBar(binding.serverNewTopappbar)
@@ -56,6 +54,21 @@ class ServerEditFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         binding = ServerEditFragmentBinding.inflate(inflater, container, false)
+
+        val server = arguments?.getParcelable<Server>("server")
+
+        viewModel = ServerEditViewModelFactory(server, PostRepository(BooruService()),
+            ServerRepository(AppDatabase.build(requireContext())),
+            this).create(ServerEditViewModel::class.java)
+
+        server?.let {
+            binding.serverNewTopappbar.title = "Edit server"
+            binding.serverNameInput.text = SpannableStringBuilder(it.title)
+            binding.serverUrlInput.text = SpannableStringBuilder(it.url)
+            val position = ServerType.values().indexOf(it.type)
+            binding.serverTypeSpinner.setSelection(position)
+        }
+
         prepareAppBar()
 
         ArrayAdapter(requireContext(),
@@ -64,12 +77,38 @@ class ServerEditFragment : Fragment() {
             adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
             binding.serverTypeSpinner.adapter = adapter
         }
+
+        binding.serverNameInput.doOnTextChanged { text, _, _, _ ->
+            viewModel.setTitle(text.toString())
+        }
+
+        binding.serverUrlInput.doOnTextChanged { text, _, _, _ ->
+            viewModel.setUrl(text.toString())
+        }
+
+        binding.serverTypeSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long,
+                ) {
+                    val type = ServerType.values().get(position)
+                    viewModel.setType(type)
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    TODO("Not yet implemented")
+                }
+
+            }
+
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        // TODO: Use the ViewModel
 
         Toast.makeText(activity?.applicationContext, "Test", Toast.LENGTH_SHORT).show()
 
@@ -80,13 +119,17 @@ class ServerEditFragment : Fragment() {
                         Log.d("ServerEditFragement", "Idle")
                     }
                     State.Success -> {
-                        Toast.makeText(activity?.applicationContext, "Success", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity?.applicationContext, "Success", Toast.LENGTH_SHORT)
+                            .show()
                         Log.d("ServerEditFragement", "Success")
                         (activity as MainActivity).onBackPressed()
+                        binding.testProgressBar.isVisible = false
                     }
                     State.Failed -> {
-                        Toast.makeText(activity?.applicationContext, "Failed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity?.applicationContext, "Failed", Toast.LENGTH_SHORT)
+                            .show()
                         Log.d("ServerEditFragement", "Failed")
+                        binding.testProgressBar.isVisible = false
                     }
                 }
                 viewModel.state.value = State.Idle
@@ -107,34 +150,16 @@ class ServerEditFragment : Fragment() {
             }
             R.id.save_server_edit_button -> {
                 Log.d("ServerEditFragment", "Save")
-                var error = false
-
-                val type = binding.serverTypeSpinner.selectedItem as ServerType
-
-                var name = binding.serverNameInput.text ?: ""
-                name = name.trim()
-                if (name.isEmpty()) {
-                    binding.serverNameInputLayout.error = "Name cannot be empty"
-                    error = true
-                }
-
-                var url = binding.serverUrlInput.text ?: ""
-                url = url.trim().trimEnd { it == '/' }
-                if (url.isEmpty()) {
-                    binding.serverUrlInputLayout.error = "Url cannot be empty"
-                    error = true
-                } else if (!url.startsWith("http")) {
-                    binding.serverUrlInputLayout.error = "Specify http:// or https://"
-                    error = true
-                }
-
-                if (error) {
+                val error = viewModel.validate()
+                if (error != null) {
                     return true
                 }
 
-                viewModel.test(Server(type = type,
-                    title = name.toString(),
-                    url = url.toString()))
+                binding.testProgressBar.isVisible = true
+
+                viewModel.server.value?.let {
+                    viewModel.test(it)
+                }
 
                 return true
             }

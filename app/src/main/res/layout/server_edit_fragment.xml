@@ -19,9 +19,15 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
             app:menu="@menu/server_edit_menu"
-            app:title="@string/new_server"
-            app:navigationIcon="@drawable/ic_baseline_close_24"/>
+            app:navigationIcon="@drawable/ic_baseline_close_24"
+            app:title="@string/new_server" />
 
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/testProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="invisible" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat

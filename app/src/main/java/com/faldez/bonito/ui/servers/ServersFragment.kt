@@ -6,11 +6,14 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
@@ -52,12 +55,41 @@ class ServersFragment : Fragment() {
 
         prepareAppBar()
 
-        adapter = ServerListAdapter(onClick = {
-            viewModel.insert(it)
-        })
+        adapter = ServerListAdapter(
+            onTap = {
+                viewModel.insert(it)
+            },
+            onEdit = {
+                val server = Server(
+                    serverId = it.serverId,
+                    type = it.type,
+                    title = it.title,
+                    url = it.url
+                )
+                val bundle = bundleOf("server" to server)
+                findNavController().navigate(R.id.action_servers_to_serveredit, bundle)
+            },
+            onDelete = {
+                viewModel.delete(it)
+            })
         binding.serverListRecyclerview.adapter = adapter
         binding.serverListRecyclerview.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+        binding.serverListRecyclerview.addOnItemTouchListener(object :
+            RecyclerView.OnItemTouchListener {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                return false
+            }
+
+            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+
+            }
+
+            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+            }
+
+        })
 
         lifecycleScope.launch {
             viewModel.serverList.collect {

@@ -52,7 +52,9 @@ class BrowseViewModel constructor(
             combine(getServer, searches, tagsScrolled, ::Triple).map { (server, search, scroll) ->
                 UiState(
                     server = server?.let {
-                        Server(title = it.title,
+                        Server(
+                            serverId = it.serverId,
+                            title = it.title,
                             url = it.url,
                             type = it.type)
                     },
