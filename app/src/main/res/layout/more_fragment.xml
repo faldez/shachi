@@ -14,18 +14,17 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/more_topappbar"
-            app:menu="@menu/post_slide_menu"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
-            app:title="More"/>
+            app:title="More" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
+    <FrameLayout
+        android:id="@+id/moreFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="More" />
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

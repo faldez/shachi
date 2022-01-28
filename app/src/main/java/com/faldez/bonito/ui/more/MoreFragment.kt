@@ -1,12 +1,14 @@
 package com.faldez.bonito.ui.more
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
+import com.faldez.bonito.databinding.MoreFragmentBinding
 
 class MoreFragment : Fragment() {
 
@@ -14,13 +16,19 @@ class MoreFragment : Fragment() {
         fun newInstance() = MoreFragment()
     }
 
+    private lateinit var binding: MoreFragmentBinding
     private lateinit var viewModel: MoreViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.more_fragment, container, false)
+        binding = MoreFragmentBinding.inflate(inflater, container, false)
+
+        (activity as MainActivity).supportFragmentManager.beginTransaction()
+            .replace(R.id.moreFrameLayout, MoreSettingsFragment()).commit()
+
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
