@@ -1,8 +1,6 @@
 package com.faldez.bonito.ui.servers
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -13,10 +11,10 @@ import com.faldez.bonito.model.ServerWithSelected
 
 class ServerListAdapter(
     private val onTap: (Int) -> Unit,
-    private val onEdit: (ServerWithSelected) -> Unit,
-    private val onDelete: (ServerWithSelected) -> Unit,
+    private val onEdit: (Int) -> Unit,
+    private val onDelete: (Int) -> Unit,
 ) : RecyclerView.Adapter<ServerListItemViewHolder>() {
-    private var serverList: MutableList<ServerWithSelected> = mutableListOf()
+    var serverList: MutableList<ServerWithSelected> = mutableListOf()
 
     fun setData(list: List<ServerWithSelected>) {
         serverList = list.toMutableList()
@@ -31,7 +29,7 @@ class ServerListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerListItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ServerListItemBinding.inflate(inflater, parent, false)
-        return ServerListItemViewHolder(binding)
+        return ServerListItemViewHolder(binding, onEdit, onDelete)
     }
 
 
@@ -46,18 +44,57 @@ class ServerListAdapter(
             onTap(server.serverId)
             notifyItemChanged(position)
         }
-        view.serverEditButton.setOnClickListener {
-            onEdit(server)
-        }
-        view.serverDeleteButton.setOnClickListener {
-            onDelete(server)
-        }
+
+//        view.serverEditButton.setOnClickListener {
+//            onEdit(server)
+//        }
+//        view.serverDeleteButton.setOnClickListener {
+//            onDelete(server)
+//        }
 
     }
 
     override fun getItemCount(): Int = serverList.size
-
 }
 
-class ServerListItemViewHolder(val binding: ServerListItemBinding) :
-    RecyclerView.ViewHolder(binding.root)
+class ServerListItemViewHolder(
+    val binding: ServerListItemBinding,
+    private val onEdit: (Int) -> Unit,
+    private val onDelete: (Int) -> Unit,
+) :
+    RecyclerView.ViewHolder(binding.root), View.OnCreateContextMenuListener {
+    init {
+        binding.root.setOnCreateContextMenuListener(this)
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu?,
+        view: View?,
+        contextMenu: ContextMenu.ContextMenuInfo?,
+    ) {
+        val edit = menu?.add(Menu.NONE, 1, 1, "Edit")
+        val delete = menu?.add(Menu.NONE, 2, 2, "Delete")
+
+        edit?.setOnMenuItemClickListener {
+            onMenuItemClick(it)
+        }
+        delete?.setOnMenuItemClickListener {
+            onMenuItemClick(it)
+        }
+    }
+
+    private fun onMenuItemClick(it: MenuItem): Boolean {
+        when (it.itemId) {
+            1 -> {
+                onEdit(bindingAdapterPosition)
+                return true
+            }
+            2 -> {
+                onDelete(bindingAdapterPosition)
+                return true
+            }
+        }
+        return false
+    }
+
+}

@@ -60,17 +60,19 @@ class ServersFragment : Fragment() {
                 viewModel.insert(it)
             },
             onEdit = {
+                val serverWithSelected = adapter.serverList.get(it)
                 val server = Server(
-                    serverId = it.serverId,
-                    type = it.type,
-                    title = it.title,
-                    url = it.url
+                    serverId = serverWithSelected.serverId,
+                    type = serverWithSelected.type,
+                    title = serverWithSelected.title,
+                    url = serverWithSelected.url
                 )
                 val bundle = bundleOf("server" to server)
                 findNavController().navigate(R.id.action_servers_to_serveredit, bundle)
             },
             onDelete = {
-                viewModel.delete(it)
+                val server = adapter.serverList.get(it)
+                viewModel.delete(server)
             })
         binding.serverListRecyclerview.adapter = adapter
         binding.serverListRecyclerview.layoutManager =
