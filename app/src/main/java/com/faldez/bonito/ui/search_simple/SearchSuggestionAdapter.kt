@@ -57,7 +57,7 @@ class SearchSuggestionAdapter(
                 holder.binding.sugestionTagTextView.setTextColor(setTextColor(it))
             }
             holder.binding.sugestionTagTextView.text = "# ${tag.name}"
-            holder.binding.suggestionTagAddButton.setOnClickListener {
+            holder.binding.root.setOnClickListener {
                 onClick(tag)
             }
         }

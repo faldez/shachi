@@ -14,6 +14,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.bonito.MainActivity
@@ -63,6 +64,11 @@ class SearchSimpleFragment : Fragment() {
     }
 
     private fun RecyclerView.bind() {
+        val linearLayoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        val dividerItemDecoration = DividerItemDecoration(this.context,
+            linearLayoutManager.orientation)
+        this.addItemDecoration(dividerItemDecoration)
         searchSuggestionAdapter = SearchSuggestionAdapter(
             setTextColor = {
                 ColorStateList.valueOf(ResourcesCompat.getColor(resources,
@@ -77,8 +83,8 @@ class SearchSimpleFragment : Fragment() {
         )
         this.apply {
             adapter = searchSuggestionAdapter
-            layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            layoutManager = linearLayoutManager
+
         }
     }
 
@@ -274,6 +280,9 @@ class SearchSimpleFragment : Fragment() {
                 Log.d("SearchSimpleViewModel", "onClose")
                 viewModel.removeTag(tag)
                 group.removeView(it)
+            }
+            setOnClickListener {
+
             }
 
             group.addView(this)

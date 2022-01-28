@@ -64,12 +64,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="@string/suggested_tags"
+                android:textSize="16sp"
                 android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/suggestionTagsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
                 tools:listitem="@layout/search_suggestion_tag_list_item" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -96,6 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="@string/selected_tags"
+                android:textSize="16sp"
                 android:visibility="gone" />
 
             <TextView
