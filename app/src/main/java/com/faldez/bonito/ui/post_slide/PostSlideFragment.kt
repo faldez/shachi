@@ -77,12 +77,10 @@ class PostSlideFragment : Fragment() {
                 val window = (activity as MainActivity).window
                 isAppBarHide = if (isAppBarHide) {
                     binding.postSlideAppbarLayout.animate().translationY(0f)
-                    WindowCompat.setDecorFitsSystemWindows(window, true)
                     WindowInsetsControllerCompat(window, window.decorView).show(WindowInsetsCompat.Type.systemBars())
                     false
                 } else {
                     binding.postSlideAppbarLayout.animate().translationY(-binding.postSlideAppbarLayout.height.toFloat())
-                    WindowCompat.setDecorFitsSystemWindows(window, false)
                     WindowInsetsControllerCompat(window, window.decorView).let { controller ->
                         controller.hide(WindowInsetsCompat.Type.systemBars())
                         controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
