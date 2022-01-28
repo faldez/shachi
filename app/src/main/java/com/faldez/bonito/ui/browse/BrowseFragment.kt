@@ -13,13 +13,14 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
 import com.faldez.bonito.data.FavoriteRepository
 import com.faldez.bonito.data.PostRepository
 import com.faldez.bonito.data.ServerRepository
 import com.faldez.bonito.database.AppDatabase
-import com.faldez.bonito.databinding.BrowseServerFragmentBinding
+import com.faldez.bonito.databinding.BrowseFragmentBinding
 import com.faldez.bonito.model.Post
 import com.faldez.bonito.model.Tag
 import com.faldez.bonito.service.BooruService
@@ -33,7 +34,7 @@ class BrowseFragment : Fragment() {
         const val TAG = "SearchPostFragment"
     }
 
-    private lateinit var binding: BrowseServerFragmentBinding
+    private lateinit var binding: BrowseFragmentBinding
 
     private val viewModel: BrowseViewModel by
     navGraphViewModels(R.id.nav_graph) {
@@ -56,7 +57,7 @@ class BrowseFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        binding = BrowseServerFragmentBinding.inflate(inflater, container, false)
+        binding = BrowseFragmentBinding.inflate(inflater, container, false)
 
         val view = binding.root
 
@@ -126,7 +127,7 @@ class BrowseFragment : Fragment() {
             View.GONE
     }
 
-    private fun BrowseServerFragmentBinding.bindState(
+    private fun BrowseFragmentBinding.bindState(
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         uiActions: (UiAction) -> Unit,
@@ -158,13 +159,13 @@ class BrowseFragment : Fragment() {
         )
     }
 
-    private fun BrowseServerFragmentBinding.bindSearch(
+    private fun BrowseFragmentBinding.bindSearch(
         uiState: StateFlow<UiState>,
         onTagsChanged: (UiAction.Search) -> Unit,
     ) {
     }
 
-    private fun BrowseServerFragmentBinding.bindList(
+    private fun BrowseFragmentBinding.bindList(
         postsAdapter: BrowserAdapter,
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
@@ -177,6 +178,11 @@ class BrowseFragment : Fragment() {
                     currentTags = uiState.value.tags))
             }
         })
+
+        swipeRefreshLayout.setOnRefreshListener {
+            postsAdapter.refresh()
+        }
+
         val notLoading = postsAdapter.loadStateFlow.distinctUntilChangedBy { it.source.refresh }
             .map { it.source.refresh is LoadState.NotLoading }
         val hasNotScrolledForCurrentSearch =
@@ -203,7 +209,7 @@ class BrowseFragment : Fragment() {
                 val isListEmpty =
                     loadState.refresh is LoadState.NotLoading && postsAdapter.itemCount == 0
                 postsRecyclerView.isVisible = !isListEmpty
-                progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+                swipeRefreshLayout.isRefreshing = loadState.source.refresh is LoadState.Loading
                 retryButton.isVisible =
                     loadState.source.refresh is LoadState.Error && viewModel.state.value.server != null
                 binding.serverHelpText.isVisible = viewModel.state.value.server == null

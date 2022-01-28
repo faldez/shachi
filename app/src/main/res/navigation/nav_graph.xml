@@ -19,7 +19,7 @@
         android:id="@+id/browseServerFragment"
         android:name="com.faldez.bonito.ui.browse.BrowseFragment"
         android:label="posts_fragment"
-        tools:layout="@layout/browse_server_fragment">
+        tools:layout="@layout/browse_fragment">
         <action
             android:id="@+id/action_searchpost_to_searchsimple"
             app:destination="@id/search_simple_fragment"
