@@ -71,23 +71,32 @@ class PostSlideFragment : Fragment() {
         return binding.root
     }
 
+    private fun showSystemUi() {
+        val window = (activity as MainActivity).window
+        WindowInsetsControllerCompat(window,
+            window.decorView).show(WindowInsetsCompat.Type.systemBars())
+    }
+
+    private fun hideSystemUi() {
+        val window = (activity as MainActivity).window
+        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+
     private fun prepareViewPager(position: Int) {
         postSlideAdapter = PostSlideAdapter(
             onTap = {
-                val window = (activity as MainActivity).window
                 isAppBarHide = if (isAppBarHide) {
                     binding.postSlideAppbarLayout.animate().translationY(0f)
-                    WindowInsetsControllerCompat(window,
-                        window.decorView).show(WindowInsetsCompat.Type.systemBars())
+                    showSystemUi()
                     false
                 } else {
                     binding.postSlideAppbarLayout.animate()
                         .translationY(-binding.postSlideAppbarLayout.height.toFloat())
-                    WindowInsetsControllerCompat(window, window.decorView).let { controller ->
-                        controller.hide(WindowInsetsCompat.Type.systemBars())
-                        controller.systemBarsBehavior =
-                            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                    }
+                    hideSystemUi()
                     true
                 }
             },
@@ -109,7 +118,8 @@ class PostSlideFragment : Fragment() {
                     "" + (position + 1) + "/" + postSlideAdapter.itemCount
                 postSlideAdapter.getPostItem(position)?.let { setFavoriteButton(it) }
 
-                binding.postLoadingIndicator.isVisible = !postSlideAdapter.loadedPost.contains(position)
+                binding.postLoadingIndicator.isVisible =
+                    !postSlideAdapter.loadedPost.contains(position)
             }
         })
 
@@ -150,6 +160,9 @@ class PostSlideFragment : Fragment() {
         super.onDestroy()
         (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
             View.VISIBLE
+        if (isAppBarHide) {
+            showSystemUi()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
