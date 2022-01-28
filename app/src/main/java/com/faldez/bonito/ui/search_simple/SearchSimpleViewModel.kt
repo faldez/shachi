@@ -45,6 +45,18 @@ class SearchSimpleViewModel(
         emit(res)
     }
 
+    fun toggleTag(name: String) {
+        selectedTags.getAndUpdate { tags ->
+            tags.map { tag ->
+                if (tag.name == name) {
+                    tag.copy(excluded = !tag.excluded)
+                } else {
+                    tag
+                }
+            }
+        }
+    }
+
     fun insertTag(tag: Tag) {
         selectedTags.getAndUpdate { tags ->
             val list = tags.toMutableList()

@@ -14,6 +14,7 @@ data class GelbooruPostResponse(
 )
 
 data class GelbooruPosts(
+    @JsonAdapter(SingleObjectAsArrayTypeAdapter::class)
     val post: List<GelbooruPost>?,
     val count: Int,
     val offset: Int,

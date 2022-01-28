@@ -269,7 +269,11 @@ class SearchSimpleFragment : Fragment() {
         }
 
         this.apply {
-            text = tag.name
+            text = if(tag.excluded) {
+                "-${tag.name}"
+            } else {
+                tag.name
+            }
             isCloseIconVisible = true
             textColor?.let {
                 setTextColor(ColorStateList.valueOf(ResourcesCompat.getColor(resources,
@@ -282,7 +286,7 @@ class SearchSimpleFragment : Fragment() {
                 group.removeView(it)
             }
             setOnClickListener {
-
+                viewModel.toggleTag(tag.name)
             }
 
             group.addView(this)

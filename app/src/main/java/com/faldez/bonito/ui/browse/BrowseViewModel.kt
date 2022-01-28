@@ -115,7 +115,13 @@ class BrowseViewModel constructor(
     }
 
     private fun List<Tag>.toQuery(): String {
-        return this.map { it.name }.joinToString(" ")
+        return this.joinToString(" ") {
+            if (it.excluded) {
+                "-${it.name}"
+            } else {
+                it.name
+            }
+        }
     }
 }
 

@@ -10,8 +10,13 @@ data class Tag(
     val count: Int,
     val type: Int,
     val ambiguous: Boolean,
+    val excluded: Boolean = false,
 ) : Parcelable {
     override fun toString(): String {
-        return name
+        return if (excluded) {
+            "-$name"
+        } else {
+            name
+        }
     }
 }
