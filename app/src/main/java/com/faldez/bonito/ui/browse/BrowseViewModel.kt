@@ -50,6 +50,8 @@ class BrowseViewModel constructor(
 
         state =
             combine(getServer, searches, tagsScrolled, ::Triple).map { (server, search, scroll) ->
+                Log.d("BrowseViewModel",
+                    "${search.tags} != ${scroll.currentTags}) || (${search.serverUrl ?: scroll.currentServerUrl} != ${scroll.currentServerUrl})")
                 UiState(
                     server = server?.let {
                         Server(
@@ -60,7 +62,7 @@ class BrowseViewModel constructor(
                     },
                     tags = search.tags,
                     lastTagsScrolled = scroll.currentTags,
-                    hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (search.serverUrl != scroll.currentServerUrl)
+                    hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (search.serverUrl ?: scroll.currentServerUrl != scroll.currentServerUrl)
                 )
             }.stateIn(scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
@@ -69,11 +71,11 @@ class BrowseViewModel constructor(
 
         val serverChange = state.map { it.server }.distinctUntilChanged()
         pagingDataFlow = combine(serverChange, searches, ::Pair).flatMapLatest { (server, search) ->
+            Log.d("SearchPostViewModel", "pagingDataFlow $server $searches")
             searchPosts(server, tags = search.tags.toQuery()).map {
                 it.map { post ->
                     val postId =
                         favoriteRepository.queryByServerUrlAndPostId(post.serverUrl, post.postId)
-                    Log.d("SearchPostViewModel", "$postId")
                     post.favorite = postId != null
                     post
                 }

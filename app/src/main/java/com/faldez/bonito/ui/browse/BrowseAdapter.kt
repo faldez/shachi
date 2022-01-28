@@ -29,7 +29,8 @@ class BrowserAdapter(private val onClick: (Int) -> Unit) :
                 .placeholder(BitmapDrawable(imageView.resources,
                     Bitmap.createBitmap(it.previewWidth!!,
                         it.previewHeight!!,
-                        Bitmap.Config.ARGB_8888))).into(imageView)
+                        Bitmap.Config.ARGB_8888))).override(it.previewWidth!!, it.previewHeight!!)
+                .into(imageView)
 
             holder.binding.favoriteIcon.visibility = if (post.favorite) {
                 View.VISIBLE

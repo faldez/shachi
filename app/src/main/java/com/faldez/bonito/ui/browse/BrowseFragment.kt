@@ -200,6 +200,7 @@ class BrowseFragment : Fragment() {
 
         lifecycleScope.launch {
             shouldScrollToTop.collect { shouldScroll ->
+                Log.d(TAG, "shouldScroll $shouldScroll")
                 if (shouldScroll) postsRecyclerView.scrollToPosition(0)
             }
         }
