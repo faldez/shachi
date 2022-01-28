@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceFragmentCompat
+import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
 
 class MoreSettingsFragment : PreferenceFragmentCompat(),
@@ -26,19 +27,7 @@ class MoreSettingsFragment : PreferenceFragmentCompat(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key == "theme") {
-            setTheme(sharedPreferences)
+            (activity as MainActivity).setTheme()
         }
-    }
-
-    private fun setTheme(sharedPreferences: SharedPreferences?) {
-        val theme = sharedPreferences?.getString("theme", "follow_system")
-
-        val mode = when (theme) {
-            "light" -> AppCompatDelegate.MODE_NIGHT_NO
-            "dark" -> AppCompatDelegate.MODE_NIGHT_YES
-            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        }
-        Log.d("MainActivity", "$theme $mode")
-        AppCompatDelegate.setDefaultNightMode(mode)
     }
 }
