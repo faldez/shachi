@@ -5,6 +5,9 @@ import android.util.Log
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -39,6 +42,8 @@ class PostSlideFragment : Fragment() {
 
     private lateinit var topbarMenu: Menu
 
+    private var isAppBarHide = false
+
 
     private val viewModel: BrowseViewModel by
     navGraphViewModels(R.id.nav_graph) {
@@ -67,7 +72,25 @@ class PostSlideFragment : Fragment() {
     }
 
     private fun prepareViewPager(position: Int) {
-        postSlideAdapter = PostSlideAdapter(onLoadEnd = {
+        postSlideAdapter = PostSlideAdapter(
+            onTap = {
+                val window = (activity as MainActivity).window
+                isAppBarHide = if (isAppBarHide) {
+                    binding.postSlideAppbarLayout.animate().translationY(0f)
+                    WindowCompat.setDecorFitsSystemWindows(window, true)
+                    WindowInsetsControllerCompat(window, window.decorView).show(WindowInsetsCompat.Type.systemBars())
+                    false
+                } else {
+                    binding.postSlideAppbarLayout.animate().translationY(-binding.postSlideAppbarLayout.height.toFloat())
+                    WindowCompat.setDecorFitsSystemWindows(window, false)
+                    WindowInsetsControllerCompat(window, window.decorView).let { controller ->
+                        controller.hide(WindowInsetsCompat.Type.systemBars())
+                        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    }
+                    true
+                }
+            },
+            onLoadEnd = {
             binding.postLoadingIndicator.isVisible = false
         })
         binding.postViewPager.adapter = postSlideAdapter

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/post_image_view"
         android:layout_width="0dp"
         android:layout_height="0dp"

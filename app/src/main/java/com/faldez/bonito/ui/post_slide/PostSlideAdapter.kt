@@ -18,7 +18,7 @@ import com.faldez.bonito.databinding.PostSlideItemBinding
 import com.faldez.bonito.model.Post
 
 
-class PostSlideAdapter(private val onLoadEnd: () -> Unit) :
+class PostSlideAdapter(private val onTap: () -> Unit, private val onLoadEnd: () -> Unit) :
     PagingDataAdapter<Post, PostSlideViewHolder>(POST_COMPARATOR) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostSlideViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -32,6 +32,7 @@ class PostSlideAdapter(private val onLoadEnd: () -> Unit) :
 
         post?.let {
             val postImageView = holder.binding.postImageView
+            postImageView.setOnViewTapListener { view, x, y -> onTap()  }
             GlideApp.with(postImageView.context).load(it.fileUrl)
                 .thumbnail(Glide.with(postImageView.context).load(it.previewUrl))
                 .timeout(3000)
