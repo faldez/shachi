@@ -64,6 +64,7 @@ class SavedFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
         binding.savedSwipeRefreshLayout.setOnRefreshListener {
+            viewModel.clearPosts()
             viewModel.refreshAll()
         }
 
