@@ -4,22 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.pinned.PinnedFragment">
+    tools:context=".ui.saved.SavedFragment">
 
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/pinned_appbar_layout"
+        android:id="@+id/saved_appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/pinned_topappbar"
-            app:menu="@menu/post_slide_menu"
+            android:id="@+id/saved_topappbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
-            app:title="Pinned" />
+            app:title="@string/saved_search" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -27,6 +26,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="Pinned" />
+        android:text="@string/saved_search" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

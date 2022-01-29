@@ -1,7 +1,7 @@
-package com.faldez.bonito.ui.pinned
+package com.faldez.bonito.ui.saved
 
 import androidx.lifecycle.ViewModel
 
-class PinnedViewModel : ViewModel() {
+class SavedViewModel : ViewModel() {
     // TODO: Implement the ViewModel
 }

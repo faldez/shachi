@@ -13,7 +13,6 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
 import com.faldez.bonito.data.FavoriteRepository
@@ -96,7 +95,7 @@ class BrowseFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.posts_menu, menu)
+        inflater.inflate(R.menu.browse_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 

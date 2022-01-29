@@ -1,4 +1,4 @@
-package com.faldez.bonito.ui.pinned
+package com.faldez.bonito.ui.saved
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -6,16 +6,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.faldez.bonito.databinding.PinnedFragmentBinding
+import com.faldez.bonito.databinding.SavedFragmentBinding
 
-class PinnedFragment : Fragment() {
+class SavedFragment : Fragment() {
 
     companion object {
-        fun newInstance() = PinnedFragment()
+        fun newInstance() = SavedFragment()
     }
 
-    private lateinit var viewModel: PinnedViewModel
-    private var _binding: PinnedFragmentBinding? = null
+    private lateinit var viewModel: SavedViewModel
+    private var _binding: SavedFragmentBinding? = null
 
     private val binding get() = _binding!!
 
@@ -23,13 +23,13 @@ class PinnedFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        _binding = PinnedFragmentBinding.inflate(inflater, container, false)
+        _binding = SavedFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(PinnedViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(SavedViewModel::class.java)
         // TODO: Use the ViewModel
     }
 
