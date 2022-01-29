@@ -4,14 +4,12 @@ import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
 import com.faldez.bonito.model.Post
-import com.faldez.bonito.model.Server
+import com.faldez.bonito.model.SavedSearch
 import com.faldez.bonito.model.ServerType
 import com.faldez.bonito.model.response.GelbooruPostResponse
 import com.faldez.bonito.service.Action
 import com.faldez.bonito.service.BooruService
-import com.faldez.bonito.service.GelbooruService
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 import java.io.IOException
@@ -31,6 +29,33 @@ class PostRepository constructor(
                 PostPagingSource(action, service)
             }
         ).flow
+    }
+
+    suspend fun getSavedSearchPosts(action: Action.SearchSavedSearchPost): Pair<SavedSearch, List<Post>?> {
+        try {
+            when (action.savedSearch.server.type) {
+                ServerType.Gelbooru -> {
+                    val url = action.buildGelbooruUrl(0, 50).toString()
+
+                    Log.d("PostPagingSource", url)
+
+                    val posts =
+                        service.gelbooru.getPosts(url).mapToPost(action.savedSearch.server.url)
+
+                    return Pair(action.savedSearch, posts)
+                }
+                ServerType.Danbooru -> {
+                    TODO("not yet implemented")
+                }
+                null -> {
+                    throw Error("server not found")
+                }
+            }
+        } catch (exception: IOException) {
+            throw Error(exception)
+        } catch (exception: HttpException) {
+            throw Error(exception)
+        }
     }
 
     suspend fun testSearchPost(action: Action.SearchPost) {

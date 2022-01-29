@@ -19,4 +19,10 @@ data class Tag(
             name
         }
     }
+
+    companion object {
+        fun fromName(name: String): Tag {
+            return Tag(id = 0, name = name, count = 0, type = 0, ambiguous = false)
+        }
+    }
 }

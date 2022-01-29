@@ -1,7 +1,6 @@
 package com.faldez.bonito.ui.browse
 
 import android.util.Log
-import com.faldez.bonito.data.PostRepository
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +8,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.faldez.bonito.data.FavoriteRepository
+import com.faldez.bonito.data.PostRepository
+import com.faldez.bonito.data.SavedSearchRepository
 import com.faldez.bonito.data.ServerRepository
 import com.faldez.bonito.model.*
 import com.faldez.bonito.service.Action
@@ -16,9 +17,12 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class BrowseViewModel constructor(
+    server: Server?,
+    tags: String?,
     private val postRepository: PostRepository,
     private val serverRepository: ServerRepository,
     private val favoriteRepository: FavoriteRepository,
+    private val savedSearchRepository: SavedSearchRepository,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val state: StateFlow<UiState>
@@ -29,11 +33,13 @@ class BrowseViewModel constructor(
         Log.d("PostsViewModel",
             "init " + savedStateHandle.get(LAST_SEARCH_TAGS) + " " + savedStateHandle.get(
                 LAST_TAGS_SCROLLED))
-        val initialTags: List<Tag> = savedStateHandle.get(LAST_SEARCH_TAGS) ?: listOf()
+        val initialTags: List<Tag> =
+            tags?.split(" ")?.map { Tag.fromName(it) } ?: savedStateHandle.get(LAST_SEARCH_TAGS)
+            ?: listOf()
         val lastTagsScrolled: List<Tag> = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: listOf()
         val actionStateFlow = MutableSharedFlow<UiAction>()
         val searches = actionStateFlow.filterIsInstance<UiAction.Search>().distinctUntilChanged()
-            .onStart { emit(UiAction.Search(null, tags = initialTags)) }
+            .onStart { emit(UiAction.Search(server?.url, tags = initialTags)) }
         val tagsScrolled =
             actionStateFlow.filterIsInstance<UiAction.Scroll>().distinctUntilChanged()
                 .shareIn(scope = viewModelScope,
@@ -45,8 +51,14 @@ class BrowseViewModel constructor(
 
         val getServer =
             actionStateFlow.filterIsInstance<UiAction.GetSelectedServer>().distinctUntilChanged()
-                .onStart { emit(UiAction.GetSelectedServer) }
-                .flatMapLatest { getSelectedServer() }
+                .onStart { emit(UiAction.GetSelectedServer(server)) }
+                .flatMapLatest {
+                    if (it.server == null) {
+                        getSelectedServer()
+                    } else {
+                        selectServer(it.server)
+                    }
+                }
 
         state =
             combine(getServer, searches, tagsScrolled, ::Triple).map { (server, search, scroll) ->
@@ -91,6 +103,16 @@ class BrowseViewModel constructor(
         return serverRepository.getSelectedServer()
     }
 
+    private fun selectServer(server: Server) = flow {
+        emit(ServerWithSelected(
+            serverId = server.serverId,
+            url = server.url,
+            type = server.type,
+            title = server.title,
+            selected = false
+        ))
+    }
+
     private fun searchPosts(server: Server?, tags: String): Flow<PagingData<Post>> {
         val action = Action.SearchPost(server, tags)
         return postRepository.getSearchPostsResultStream(action)
@@ -105,6 +127,16 @@ class BrowseViewModel constructor(
     fun deleteFavoritePost(favorite: Post) {
         viewModelScope.launch {
             favoriteRepository.delete(favorite)
+        }
+    }
+
+    fun saveSearch() {
+        viewModelScope.launch {
+            state.value.server?.let { server ->
+                savedSearchRepository.insert(SavedSearch(server = server,
+                    tags = state.value.tags.toQuery()))
+
+            }
         }
     }
 
@@ -134,7 +166,9 @@ sealed class UiAction {
         val currentTags: List<Tag>,
     ) : UiAction()
 
-    object GetSelectedServer : UiAction()
+    data class GetSelectedServer(
+        val server: Server? = null,
+    ) : UiAction()
 }
 
 data class UiState(

@@ -8,7 +8,7 @@
         android:title="@string/search"
         app:showAsAction="always"/>
     <item
-        android:id="@+id/pin_tags_button"
+        android:id="@+id/save_search_button"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_save_24"
         android:title="@string/save_search"

@@ -4,11 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/savedFragment">
-
+    <action
+        android:id="@+id/action_global_to_browse"
+        app:destination="@id/browseServerFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true"
+        app:popUpToSaveState="true" />
+    <action
+        android:id="@+id/action_global_to_postslide"
+        app:destination="@id/postSlideFragment"
+        app:enterAnim="@anim/slide_in"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/slide_out" />
     <fragment
         android:id="@+id/savedFragment"
         android:name="com.faldez.bonito.ui.saved.SavedFragment"
-        android:label="pinned_fragment"
+        android:label="saved_fragment"
         tools:layout="@layout/saved_fragment" />
     <fragment
         android:id="@+id/favoriteFragment"
@@ -27,13 +39,6 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_out_down" />
-        <action
-            android:id="@+id/action_searchpost_to_postslide"
-            app:destination="@id/postSlideFragment"
-            app:enterAnim="@anim/slide_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out" />
         <action
             android:id="@+id/action_searchpost_to_servers"
             app:destination="@id/serversFragment"

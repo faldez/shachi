@@ -17,14 +17,19 @@ import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
 import com.faldez.bonito.data.FavoriteRepository
 import com.faldez.bonito.data.PostRepository
+import com.faldez.bonito.data.SavedSearchRepository
 import com.faldez.bonito.data.ServerRepository
 import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.databinding.BrowseFragmentBinding
 import com.faldez.bonito.model.Post
+import com.faldez.bonito.model.Server
 import com.faldez.bonito.model.Tag
 import com.faldez.bonito.service.BooruService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.snackbar.SnackbarContentLayout
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -37,11 +42,16 @@ class BrowseFragment : Fragment() {
 
     private val viewModel: BrowseViewModel by
     navGraphViewModels(R.id.nav_graph) {
+        val server = arguments?.get("server") as Server?
+        val tags = arguments?.get("tags") as String?
         val db = AppDatabase.build(requireContext())
         val favoriteRepository = FavoriteRepository(db)
-        BrowseViewModelFactory(PostRepository(BooruService()),
+        BrowseViewModelFactory(
+            server, tags,
+            PostRepository(BooruService()),
             ServerRepository(db),
             favoriteRepository,
+            SavedSearchRepository(db),
             this)
     }
 
@@ -108,7 +118,11 @@ class BrowseFragment : Fragment() {
                 hideBottomNavigationView()
                 return true
             }
-            R.id.pin_tags_button -> {
+            R.id.save_search_button -> {
+                if (viewModel.state.value.tags.isNotEmpty()) {
+                    viewModel.saveSearch()
+                    Snackbar.make(binding.root, "Saved", LENGTH_SHORT).show()
+                }
                 return true
             }
             R.id.manage_server_button -> {
@@ -134,7 +148,7 @@ class BrowseFragment : Fragment() {
         val postAdapter = BrowserAdapter(
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
-                findNavController().navigate(R.id.action_searchpost_to_postslide, bundle)
+                findNavController().navigate(R.id.action_global_to_postslide, bundle)
                 hideBottomNavigationView()
             }
         )

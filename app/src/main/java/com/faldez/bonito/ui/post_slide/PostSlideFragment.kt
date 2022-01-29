@@ -15,15 +15,9 @@ import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
-import com.faldez.bonito.data.FavoriteRepository
-import com.faldez.bonito.data.PostRepository
-import com.faldez.bonito.data.ServerRepository
-import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.databinding.PostSlideFragmentBinding
 import com.faldez.bonito.model.Post
-import com.faldez.bonito.service.BooruService
 import com.faldez.bonito.ui.browse.BrowseViewModel
-import com.faldez.bonito.ui.browse.BrowseViewModelFactory
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.collect
@@ -43,15 +37,7 @@ class PostSlideFragment : Fragment() {
     private var isAppBarHide = false
 
 
-    private val viewModel: BrowseViewModel by
-    navGraphViewModels(R.id.nav_graph) {
-        val db = AppDatabase.build(requireContext())
-        val favoriteRepository = FavoriteRepository(db)
-        BrowseViewModelFactory(PostRepository(BooruService()),
-            ServerRepository(db),
-            favoriteRepository,
-            this)
-    }
+    private val viewModel: BrowseViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

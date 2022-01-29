@@ -1,6 +1,7 @@
 package com.faldez.bonito.service
 
 import com.faldez.bonito.data.PostRepository.Companion.NETWORK_PAGE_SIZE
+import com.faldez.bonito.model.SavedSearch
 import com.faldez.bonito.model.Server
 import okhttp3.HttpUrl
 
@@ -14,6 +15,19 @@ sealed class Action {
                     .addQueryParameter("pid", page.toString())
                     .addQueryParameter("limit", limit.toString())
                     .addQueryParameter("tags", tags).build()
+            }
+        }
+    }
+
+    data class SearchSavedSearchPost(val savedSearch: SavedSearch) : Action() {
+        fun buildGelbooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
+            return savedSearch.server.let {
+                HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
+                    .addQueryParameter("page", "dapi")
+                    .addQueryParameter("q", "index").addQueryParameter("s", "post")
+                    .addQueryParameter("pid", page.toString())
+                    .addQueryParameter("limit", limit.toString())
+                    .addQueryParameter("tags", savedSearch.tags).build()
             }
         }
     }
