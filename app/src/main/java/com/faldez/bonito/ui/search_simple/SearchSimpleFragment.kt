@@ -62,7 +62,6 @@ class SearchSimpleFragment : Fragment() {
 
         binding.suggestionTagsRecyclerView.bind()
 
-
         return binding.root
     }
 
@@ -98,6 +97,7 @@ class SearchSimpleFragment : Fragment() {
         val supportActionBar = (activity as MainActivity).supportActionBar
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.loadingIndicator.isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -158,11 +158,13 @@ class SearchSimpleFragment : Fragment() {
                     searchSuggestionAdapter.clear()
                     binding.selectedTagsLayout.show()
                     binding.suggestionTagLayout.hide()
+                    binding.loadingIndicator.isVisible = false
                     searchSimpleMenu.getItem(0).isVisible = false
                 } else {
                     viewModel.accept(UiAction.SearchTag(viewModel.server, text.toString()))
                     binding.selectedTagsLayout.hide()
                     binding.suggestionTagLayout.show()
+                    binding.loadingIndicator.isVisible = true
                     searchSimpleMenu.getItem(0).isVisible = true
                 }
             }
@@ -190,6 +192,8 @@ class SearchSimpleFragment : Fragment() {
                 it?.let { tags ->
                     searchSuggestionAdapter.setSuggestion(tags)
                 }
+
+                binding.loadingIndicator.isVisible = false
             }
         }
 
@@ -240,7 +244,7 @@ class SearchSimpleFragment : Fragment() {
                         chip.bind(tag)
                     }
                 }
-
+                binding.loadingIndicator.isVisible = false
             }
         }
     }

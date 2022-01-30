@@ -3,10 +3,8 @@ package com.faldez.bonito.ui.search_simple
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faldez.bonito.data.ServerRepository
 import com.faldez.bonito.data.TagRepository
 import com.faldez.bonito.model.Server
-import com.faldez.bonito.model.ServerWithSelected
 import com.faldez.bonito.model.Tag
 import com.faldez.bonito.service.Action
 import kotlinx.coroutines.flow.*
@@ -18,7 +16,7 @@ class SearchSimpleViewModel(
     private val tagRepository: TagRepository,
 ) : ViewModel() {
     val tags: StateFlow<List<Tag>?>
-    var selectedTags: MutableStateFlow<List<Tag>> = MutableStateFlow(initialTags)
+    val selectedTags: MutableStateFlow<List<Tag>> = MutableStateFlow(listOf())
     val accept: (UiAction) -> Unit
 
     init {
@@ -35,6 +33,13 @@ class SearchSimpleViewModel(
         accept = {
             viewModelScope.launch {
                 actionStateFlow.emit(it)
+            }
+        }
+
+        viewModelScope.launch {
+            selectedTags.getAndUpdate { _ ->
+                tagRepository.getTags(Action.GetTags(server,
+                    initialTags.joinToString(" ") { it.name })) ?: listOf()
             }
         }
     }
@@ -82,6 +87,14 @@ class SearchSimpleViewModel(
             val list = tags.toMutableList()
             list.remove(tag)
             list
+        }
+    }
+
+    fun getTagsDetails(tags: List<Tag>) = viewModelScope.launch {
+        selectedTags.getAndUpdate { tags ->
+            tags.map {
+                tagRepository.getTag(Action.GetTag(server, it.name)) ?: it
+            }
         }
     }
 }

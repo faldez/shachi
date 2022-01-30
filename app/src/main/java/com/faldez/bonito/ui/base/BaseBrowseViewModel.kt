@@ -50,8 +50,9 @@ abstract class BaseBrowseViewModel constructor(
                 }
 
         val getServer =
-            actionStateFlow.filterIsInstance<UiAction.GetSelectedServer>().distinctUntilChanged()
-                .onStart { emit(UiAction.GetSelectedServer(server)) }
+            actionStateFlow.filterIsInstance<UiAction.GetSelectedOrSelectServer>()
+                .distinctUntilChanged()
+                .onStart { emit(UiAction.GetSelectedOrSelectServer(server)) }
                 .flatMapLatest {
                     if (it.server == null) {
                         getSelectedServer()
@@ -166,9 +167,7 @@ sealed class UiAction {
         val currentTags: List<Tag>,
     ) : UiAction()
 
-    data class GetSelectedServer(
-        val server: Server? = null,
-    ) : UiAction()
+    data class GetSelectedOrSelectServer(val server: Server? = null) : UiAction()
 }
 
 data class UiState(
