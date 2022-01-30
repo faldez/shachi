@@ -21,6 +21,7 @@ import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
 import com.faldez.bonito.data.TagRepository
 import com.faldez.bonito.databinding.SearchSimpleFragmentBinding
+import com.faldez.bonito.databinding.TagsDetailsBinding
 import com.faldez.bonito.model.Server
 import com.faldez.bonito.model.Tag
 import com.faldez.bonito.service.BooruService
@@ -33,6 +34,7 @@ import kotlinx.coroutines.launch
 
 class SearchSimpleFragment : Fragment() {
     private lateinit var binding: SearchSimpleFragmentBinding
+    private lateinit var tagDetailsBinding: TagsDetailsBinding
     private lateinit var viewModel: SearchSimpleViewModel
     private lateinit var searchSuggestionAdapter: SearchSuggestionAdapter
     private lateinit var searchSimpleMenu: Menu
@@ -48,6 +50,7 @@ class SearchSimpleFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = SearchSimpleFragmentBinding.inflate(inflater, container, false)
+        tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
         val initialTags: List<Tag>? = requireArguments().get("tags") as List<Tag>?
         val server = requireArguments().getParcelable<Server?>("server")
@@ -195,38 +198,38 @@ class SearchSimpleFragment : Fragment() {
                 val groupedTags = tags.groupBy { it.type }
                 Log.d("SearchSimpleFragment", "collect $groupedTags")
                 binding.selectedTagsHeader.isVisible = groupedTags.isNotEmpty()
-                binding.generalTagsHeader.isVisible = false
-                binding.artistTagsHeader.isVisible = false
-                binding.copyrightTagsHeader.isVisible = false
-                binding.characterTagsHeader.isVisible = false
-                binding.metadataTagsHeader.isVisible = false
-                binding.otherTagsHeader.isVisible = false
+                tagDetailsBinding.generalTagsHeader.isVisible = false
+                tagDetailsBinding.artistTagsHeader.isVisible = false
+                tagDetailsBinding.copyrightTagsHeader.isVisible = false
+                tagDetailsBinding.characterTagsHeader.isVisible = false
+                tagDetailsBinding.metadataTagsHeader.isVisible = false
+                tagDetailsBinding.otherTagsHeader.isVisible = false
 
                 groupedTags.forEach { (type, tags) ->
-                    var group = binding.otherTagsChipGroup
-                    var header = binding.otherTagsHeader
+                    var group = tagDetailsBinding.otherTagsChipGroup
+                    var header = tagDetailsBinding.otherTagsHeader
                     when (type) {
                         0 -> {
-                            group = binding.generalTagsChipGroup
-                            header = binding.generalTagsHeader
+                            group = tagDetailsBinding.generalTagsChipGroup
+                            header = tagDetailsBinding.generalTagsHeader
                         }
                         1 -> {
-                            group = binding.artistTagsChipGroup
-                            header = binding.artistTagsHeader
+                            group = tagDetailsBinding.artistTagsChipGroup
+                            header = tagDetailsBinding.artistTagsHeader
                         }
                         3 -> {
-                            group = binding.copyrightTagsChipGroup
-                            header = binding.copyrightTagsHeader
+                            group = tagDetailsBinding.copyrightTagsChipGroup
+                            header = tagDetailsBinding.copyrightTagsHeader
                         }
                         4 -> {
-                            group = binding.characterTagsChipGroup
-                            header = binding.characterTagsHeader
+                            group = tagDetailsBinding.characterTagsChipGroup
+                            header = tagDetailsBinding.characterTagsHeader
                         }
                         5 -> {
-                            group = binding.metadataTagsChipGroup
-                            header = binding.metadataTagsHeader
+                            group = tagDetailsBinding.metadataTagsChipGroup
+                            header = tagDetailsBinding.metadataTagsHeader
                         }
-                        else -> binding.otherTagsChipGroup
+                        else -> tagDetailsBinding.otherTagsChipGroup
                     }
                     group.removeAllViews()
                     header.isVisible = tags.isNotEmpty()
@@ -244,27 +247,27 @@ class SearchSimpleFragment : Fragment() {
 
     private fun Chip.bind(tag: Tag) {
         var textColor: Int? = null
-        var group = binding.otherTagsChipGroup
+        var group = tagDetailsBinding.otherTagsChipGroup
         when (tag.type) {
             0 -> {
                 textColor = R.color.tag_general
-                group = binding.generalTagsChipGroup
+                group = tagDetailsBinding.generalTagsChipGroup
             }
             1 -> {
                 textColor = R.color.tag_artist
-                group = binding.artistTagsChipGroup
+                group = tagDetailsBinding.artistTagsChipGroup
             }
             3 -> {
                 textColor = R.color.tag_copyright
-                group = binding.copyrightTagsChipGroup
+                group = tagDetailsBinding.copyrightTagsChipGroup
             }
             4 -> {
                 textColor = R.color.tag_character
-                group = binding.characterTagsChipGroup
+                group = tagDetailsBinding.characterTagsChipGroup
             }
             5 -> {
                 textColor = R.color.tag_metadata
-                group = binding.metadataTagsChipGroup
+                group = tagDetailsBinding.metadataTagsChipGroup
             }
         }
 

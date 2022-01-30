@@ -23,6 +23,7 @@
     <string name="clear">Clear</string>
     <string name="apply">Apply</string>
     <string name="selected_tags">Selected tags</string>
+    <string name="current_tags">Current tags</string>
     <string name="suggested_tags">Suggested tags</string>
     <string name="artist">Artist</string>
     <string name="character">Character</string>
