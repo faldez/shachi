@@ -1,22 +1,29 @@
 package com.faldez.bonito
 
+import android.animation.Animator
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.WindowCompat
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),
+    PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     lateinit var navController: NavController
     lateinit var sharedPreferences: SharedPreferences
+    lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,14 +34,13 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.navFragment) as NavHostFragment
         navController = navFragment.navController
 
-        val bottomNavigationView =
-            findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView =
+            findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setupWithNavController(navController)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         setTheme()
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -52,6 +58,55 @@ class MainActivity : AppCompatActivity() {
         }
         Log.d("MainActivity", "$theme $mode")
         AppCompatDelegate.setDefaultNightMode(mode)
+    }
+
+    override fun onPreferenceStartFragment(
+        caller: PreferenceFragmentCompat?,
+        pref: Preference?,
+    ): Boolean {
+        Log.d("MoreFragment", "${pref?.key}")
+        when (pref?.key) {
+            "servers" -> {
+                navController.navigate(R.id.action_global_to_servers)
+                hideBottomNavigation()
+                return true
+            }
+        }
+        return false
+    }
+
+    fun hideBottomNavigation() {
+        if (bottomNavigationView.isVisible) {
+            bottomNavigationView.animate().translationY(bottomNavigationView.height.toFloat())
+                .setListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(p0: Animator?) {}
+
+                    override fun onAnimationEnd(p0: Animator?) {
+                        bottomNavigationView.visibility = View.GONE
+                    }
+
+                    override fun onAnimationCancel(p0: Animator?) {}
+
+                    override fun onAnimationRepeat(p0: Animator?) {}
+                })
+        }
+    }
+
+    fun showBottomNavigation() {
+        if (!bottomNavigationView.isVisible) {
+            bottomNavigationView.animate().translationY(0f)
+                .setListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(p0: Animator?) {
+                        bottomNavigationView.visibility = View.VISIBLE
+                    }
+
+                    override fun onAnimationEnd(p0: Animator?) {}
+
+                    override fun onAnimationCancel(p0: Animator?) {}
+
+                    override fun onAnimationRepeat(p0: Animator?) {}
+                })
+        }
     }
 }
 @GlideModule
