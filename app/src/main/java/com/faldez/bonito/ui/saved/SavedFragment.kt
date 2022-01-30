@@ -2,7 +2,9 @@ package com.faldez.bonito.ui.saved
 
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +18,6 @@ import com.faldez.bonito.data.SavedSearchRepository
 import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.databinding.SavedFragmentBinding
 import com.faldez.bonito.service.BooruService
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -27,7 +28,7 @@ class SavedFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -35,11 +36,6 @@ class SavedFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         binding = SavedFragmentBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
 
         (activity as MainActivity).setSupportActionBar(binding.savedTopappbar)
 
@@ -72,6 +68,11 @@ class SavedFragment : Fragment() {
         binding.savedSwipeRefreshLayout.setOnRefreshListener {
             viewModel.clearPosts()
             viewModel.refreshAll()
+        }
+
+        binding.newSearchButton.setOnClickListener {
+            findNavController().navigate(R.id.action_saved_to_browse_new)
+            (activity as MainActivity).hideBottomNavigation()
         }
 
         lifecycleScope.launch {
@@ -109,6 +110,8 @@ class SavedFragment : Fragment() {
                 binding.savedSwipeRefreshLayout.isRefreshing = false
             }
         }
+
+        return binding.root
     }
 
     override fun onResume() {
@@ -120,22 +123,22 @@ class SavedFragment : Fragment() {
         super.onDestroy()
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.saved_search_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d("SavedFragment", "Search New")
-        when (item.itemId) {
-            R.id.browse_button -> {
-                findNavController().navigate(R.id.action_saved_to_browse_new)
-                (activity as MainActivity).hideBottomNavigation()
-                return true
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
+//
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        inflater.inflate(R.menu.saved_search_menu, menu)
+//        super.onCreateOptionsMenu(menu, inflater)
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        Log.d("SavedFragment", "Search New")
+//        when (item.itemId) {
+//            R.id.browse_button -> {
+//                findNavController().navigate(R.id.action_saved_to_browse_new)
+//                (activity as MainActivity).hideBottomNavigation()
+//                return true
+//            }
+//        }
+//
+//        return super.onOptionsItemSelected(item)
+//    }
 }
