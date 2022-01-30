@@ -58,7 +58,7 @@ class SavedFragment : Fragment() {
                 findNavController()
                     .navigate(R.id.action_saved_to_browse,
                         bundle)
-                hideBottomNavigation()
+                (activity as MainActivity).hideBottomNavigation()
             },
             onDelete = {
                 viewModel.delete(it)
@@ -113,7 +113,7 @@ class SavedFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        showBottomNavigation()
+        (activity as MainActivity).showBottomNavigation()
     }
 
     override fun onDestroy() {
@@ -129,25 +129,13 @@ class SavedFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d("SavedFragment", "Search New")
         when (item.itemId) {
-            R.id.saved_search_button -> {
+            R.id.browse_button -> {
                 findNavController().navigate(R.id.action_saved_to_browse_new)
-                hideBottomNavigation()
+                (activity as MainActivity).hideBottomNavigation()
                 return true
             }
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun showBottomNavigation() {
-        val bottomNavigationView =
-            (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.visibility = View.VISIBLE
-    }
-
-    private fun hideBottomNavigation() {
-        val bottomNavigationView =
-            (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.visibility = View.GONE
     }
 }

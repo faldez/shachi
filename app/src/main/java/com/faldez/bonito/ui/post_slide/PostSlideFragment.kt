@@ -1,5 +1,6 @@
 package com.faldez.bonito.ui.post_slide
 
+import android.animation.Animator
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -82,16 +83,50 @@ class PostSlideFragment : Fragment() {
         }
     }
 
+    private fun hideAppbar() {
+        if (binding.postSlideAppbarLayout.isVisible) {
+            binding.postSlideAppbarLayout.animate()
+                .translationY(-binding.postSlideAppbarLayout.height.toFloat())
+                .setListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(p0: Animator?) {}
+
+                    override fun onAnimationEnd(p0: Animator?) {
+                        binding.postSlideAppbarLayout.visibility = View.GONE
+                    }
+
+                    override fun onAnimationCancel(p0: Animator?) {}
+
+                    override fun onAnimationRepeat(p0: Animator?) {}
+                })
+        }
+    }
+
+    private fun showAppbar() {
+        if (!binding.postSlideAppbarLayout.isVisible) {
+            binding.postSlideAppbarLayout.animate().translationY(0f)
+                .setListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(p0: Animator?) {
+                        binding.postSlideAppbarLayout.visibility = View.VISIBLE
+                    }
+
+                    override fun onAnimationEnd(p0: Animator?) {}
+
+                    override fun onAnimationCancel(p0: Animator?) {}
+
+                    override fun onAnimationRepeat(p0: Animator?) {}
+                })
+        }
+    }
+
     private fun prepareViewPager(position: Int) {
         postSlideAdapter = PostSlideAdapter(
             onTap = {
                 isAppBarHide = if (isAppBarHide) {
-                    binding.postSlideAppbarLayout.animate().translationY(0f)
+                    showAppbar()
                     showSystemUi()
                     false
                 } else {
-                    binding.postSlideAppbarLayout.animate()
-                        .translationY(-binding.postSlideAppbarLayout.height.toFloat())
+                    hideAppbar()
                     hideSystemUi()
                     true
                 }
