@@ -52,15 +52,16 @@ class SearchSimpleFragment : Fragment() {
         binding = SearchSimpleFragmentBinding.inflate(inflater, container, false)
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
-        val initialTags: List<Tag>? = requireArguments().get("tags") as List<Tag>?
+        val initialTags: List<Tag> = requireArguments().get("tags") as List<Tag> ?: listOf()
         val server = requireArguments().getParcelable<Server?>("server")
         viewModel =
-            SearchSimpleViewModel(server, initialTags ?: listOf(), TagRepository(BooruService()))
+            SearchSimpleViewModel(server, initialTags, TagRepository(BooruService()))
 
         binding.searchSimpleTagsInputText.bind()
         prepareAppBar()
 
         binding.suggestionTagsRecyclerView.bind()
+        binding.loadingIndicator.isVisible = initialTags.isNotEmpty()
 
         return binding.root
     }
@@ -97,7 +98,6 @@ class SearchSimpleFragment : Fragment() {
         val supportActionBar = (activity as MainActivity).supportActionBar
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        binding.loadingIndicator.isVisible = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

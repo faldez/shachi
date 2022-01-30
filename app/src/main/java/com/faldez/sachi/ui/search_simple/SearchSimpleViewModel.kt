@@ -38,8 +38,12 @@ class SearchSimpleViewModel(
 
         viewModelScope.launch {
             selectedTags.getAndUpdate { _ ->
-                tagRepository.getTags(Action.GetTags(server,
-                    initialTags.joinToString(" ") { it.name })) ?: listOf()
+                if (initialTags.isNotEmpty()) {
+                    tagRepository.getTags(Action.GetTags(server,
+                        initialTags.joinToString(" ") { it.name })) ?: listOf()
+                } else {
+                    listOf()
+                }
             }
         }
     }
