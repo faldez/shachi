@@ -34,11 +34,9 @@ class MoreFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MoreViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
     override fun onResume() {
         super.onResume()
-        (activity as MainActivity).showBottomNavigation()
     }
 }
