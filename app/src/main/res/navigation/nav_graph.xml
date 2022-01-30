@@ -5,23 +5,42 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/savedFragment">
     <action
-        android:id="@+id/action_global_to_browse"
-        app:destination="@id/browseServerFragment"
-        app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="true"
-        app:popUpToSaveState="true" />
+        android:id="@+id/action_global_to_searchsimple"
+        app:destination="@id/search_simple_fragment"
+        app:enterAnim="@anim/slide_in_up"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/slide_out_down" />
     <action
-        android:id="@+id/action_global_to_postslide"
-        app:destination="@id/postSlideFragment"
+        android:id="@+id/action_global_to_servers"
+        app:destination="@id/serversFragment"
         app:enterAnim="@anim/slide_in"
         app:exitAnim="@anim/fade_out"
         app:popEnterAnim="@anim/fade_in"
         app:popExitAnim="@anim/slide_out" />
+    <action
+        android:id="@+id/action_postslide_to_postdetail"
+        app:destination="@id/post_detail_bottom_sheet_fragment" />
     <fragment
         android:id="@+id/savedFragment"
         android:name="com.faldez.bonito.ui.saved.SavedFragment"
         android:label="saved_fragment"
-        tools:layout="@layout/saved_fragment" />
+        tools:layout="@layout/saved_fragment">
+        <action
+            android:id="@+id/action_saved_to_browse_new"
+            app:destination="@id/browseServerFragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_down"/>
+        <action
+            android:id="@+id/action_saved_to_browse"
+            app:destination="@id/savedSearchBrowseServerFragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_down" />
+    </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.faldez.bonito.ui.favorite.FavoriteFragment"
@@ -30,18 +49,24 @@
     <fragment
         android:id="@+id/browseServerFragment"
         android:name="com.faldez.bonito.ui.browse.BrowseFragment"
-        android:label="posts_fragment"
+        android:label="browse_fragment"
         tools:layout="@layout/browse_fragment">
         <action
-            android:id="@+id/action_searchpost_to_searchsimple"
-            app:destination="@id/search_simple_fragment"
-            app:enterAnim="@anim/slide_in_up"
+            android:id="@+id/action_browse_new_to_postslide"
+            app:destination="@id/postSlideFragment"
+            app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down" />
+            app:popExitAnim="@anim/slide_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/savedSearchBrowseServerFragment"
+        android:name="com.faldez.bonito.ui.browse.BrowseFragment"
+        android:label="saved_search_browse_fragment"
+        tools:layout="@layout/browse_fragment">
         <action
-            android:id="@+id/action_searchpost_to_servers"
-            app:destination="@id/serversFragment"
+            android:id="@+id/action_saved_search_browse_to_postslide"
+            app:destination="@id/savedSearchPostSlideFragment"
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
@@ -56,11 +81,12 @@
         android:id="@+id/postSlideFragment"
         android:name="com.faldez.bonito.ui.post_slide.PostSlideFragment"
         android:label="post_slide_fragment"
-        tools:layout="@layout/post_slide_fragment">
-        <action
-            android:id="@+id/action_postslide_to_postdetail"
-            app:destination="@id/post_detail_bottom_sheet_fragment" />
-    </fragment>
+        tools:layout="@layout/post_slide_fragment"/>
+    <fragment
+        android:id="@+id/savedSearchPostSlideFragment"
+        android:name="com.faldez.bonito.ui.post_slide.PostSlideFragment"
+        android:label="saved_search_post_slide_fragment"
+        tools:layout="@layout/post_slide_fragment"/>
     <dialog
         android:id="@+id/post_detail_bottom_sheet_fragment"
         android:name="com.faldez.bonito.ui.post_detail.PostDetailBottomSheetFragment"

@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
+            app:menu="@menu/saved_search_menu"
             app:title="@string/saved_search" />
 
     </com.google.android.material.appbar.AppBarLayout>

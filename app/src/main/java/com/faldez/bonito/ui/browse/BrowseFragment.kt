@@ -3,6 +3,7 @@ package com.faldez.bonito.ui.browse
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -25,35 +26,21 @@ import com.faldez.bonito.model.Post
 import com.faldez.bonito.model.Server
 import com.faldez.bonito.model.Tag
 import com.faldez.bonito.service.BooruService
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.faldez.bonito.ui.base.BaseBrowseViewModel
+import com.faldez.bonito.ui.base.UiAction
+import com.faldez.bonito.ui.base.UiState
 import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.snackbar.SnackbarContentLayout
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class BrowseFragment : Fragment() {
     companion object {
-        const val TAG = "SearchPostFragment"
+        const val TAG = "BrowseFragment"
     }
 
     private lateinit var binding: BrowseFragmentBinding
 
-    private val viewModel: BrowseViewModel by
-    navGraphViewModels(R.id.nav_graph) {
-        val server = arguments?.get("server") as Server?
-        val tags = arguments?.get("tags") as String?
-        val db = AppDatabase.build(requireContext())
-        val favoriteRepository = FavoriteRepository(db)
-        BrowseViewModelFactory(
-            server, tags,
-            PostRepository(BooruService()),
-            ServerRepository(db),
-            favoriteRepository,
-            SavedSearchRepository(db),
-            this)
-    }
+    private lateinit var viewModel: BaseBrowseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,24 +55,54 @@ class BrowseFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = BrowseFragmentBinding.inflate(inflater, container, false)
 
+        prepareAppBar()
+
+        val currentDestinationId = findNavController().currentDestination?.id
+        Log.d(TAG, "$currentDestinationId ${R.id.browseServerFragment}")
+        when (currentDestinationId) {
+            R.id.browseServerFragment -> {
+                val vm: BrowseViewModel by navGraphViewModels(R.id.nav_graph) {
+                    val server = arguments?.get("server") as Server?
+                    val tags = arguments?.get("tags") as String?
+                    val db = AppDatabase.build(requireContext())
+                    val favoriteRepository = FavoriteRepository(db)
+                    BrowseViewModelFactory(
+                        server, tags,
+                        PostRepository(BooruService()),
+                        ServerRepository(db),
+                        favoriteRepository,
+                        SavedSearchRepository(db),
+                        this)
+                }
+
+                viewModel = vm
+            }
+            R.id.savedSearchBrowseServerFragment -> {
+                val vm: SavedSearchBrowseViewModel by navGraphViewModels(R.id.nav_graph) {
+                    val server = arguments?.get("server") as Server?
+                    val tags = arguments?.get("tags") as String?
+                    val db = AppDatabase.build(requireContext())
+                    val favoriteRepository = FavoriteRepository(db)
+                    BrowseViewModelFactory(
+                        server, tags,
+                        PostRepository(BooruService()),
+                        ServerRepository(db),
+                        favoriteRepository,
+                        SavedSearchRepository(db),
+                        this)
+                }
+
+                viewModel = vm
+            }
+        }
+
         val view = binding.root
-
-        (activity as MainActivity).setSupportActionBar(binding.searchPostTopAppBar)
-
-        binding.appBarLayout.statusBarForeground =
-            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
 
         binding.bindState(
             uiState = viewModel.state,
             pagingData = viewModel.pagingDataFlow,
             uiActions = viewModel.accept
         )
-
-        val bottomNavigationView =
-            (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        if (bottomNavigationView.visibility == View.GONE) {
-            bottomNavigationView.visibility = View.VISIBLE
-        }
 
         return view
     }
@@ -104,6 +121,10 @@ class BrowseFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.browse_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -114,20 +135,18 @@ class BrowseFragment : Fragment() {
             R.id.search_button -> {
                 val bundle = bundleOf("server" to viewModel.state.value.server,
                     "tags" to viewModel.state.value.tags)
-                findNavController().navigate(R.id.action_searchpost_to_searchsimple, bundle)
-                hideBottomNavigationView()
+                findNavController().navigate(R.id.action_global_to_searchsimple, bundle)
                 return true
             }
             R.id.save_search_button -> {
                 if (viewModel.state.value.tags.isNotEmpty()) {
                     viewModel.saveSearch()
-                    Snackbar.make(binding.root, "Saved", LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Saved", Toast.LENGTH_LONG).show()
                 }
                 return true
             }
             R.id.manage_server_button -> {
-                findNavController().navigate(R.id.action_searchpost_to_servers)
-                hideBottomNavigationView()
+                findNavController().navigate(R.id.action_global_to_servers)
                 return true
             }
         }
@@ -135,9 +154,13 @@ class BrowseFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun hideBottomNavigationView() {
-        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
-            View.GONE
+    private fun prepareAppBar() {
+        (activity as MainActivity).setSupportActionBar(binding.searchPostTopAppBar)
+        binding.appBarLayout.statusBarForeground =
+            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+        val supportActionBar = (activity as MainActivity).supportActionBar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
     private fun BrowseFragmentBinding.bindState(
@@ -148,16 +171,27 @@ class BrowseFragment : Fragment() {
         val postAdapter = BrowserAdapter(
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
-                findNavController().navigate(R.id.action_global_to_postslide, bundle)
-                hideBottomNavigationView()
+                val action = when (findNavController().currentDestination?.id) {
+                    R.id.browseServerFragment -> R.id.action_browse_new_to_postslide
+                    R.id.savedSearchBrowseServerFragment -> R.id.action_saved_search_browse_to_postslide
+                    else -> null
+                }
+
+                action?.let {
+                    findNavController().navigate(it, bundle)
+                }
             }
         )
+
+        postAdapter.stateRestorationPolicy =
+            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         postsRecyclerView.adapter = postAdapter
 
         val layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
 
         postsRecyclerView.layoutManager = layoutManager
+
 
         bindSearch(
             uiState = uiState,
@@ -187,8 +221,11 @@ class BrowseFragment : Fragment() {
         retryButton.setOnClickListener { postsAdapter.retry() }
         postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy != 0) onScrollChanged(UiAction.Scroll(uiState.value.server?.url,
-                    currentTags = uiState.value.tags))
+                if (dy != 0) {
+                    Log.d("BrowseFragment", "getPosition ${postsAdapter.getPosition()}")
+                    onScrollChanged(UiAction.Scroll(uiState.value.server?.url,
+                        currentTags = uiState.value.tags))
+                }
             }
         })
 

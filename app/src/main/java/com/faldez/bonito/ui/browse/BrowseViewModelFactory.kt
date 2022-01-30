@@ -33,6 +33,15 @@ class BrowseViewModelFactory constructor(
                 favoriteRepository,
                 this.savedSearchRepository,
                 handle) as T
+        } else if (modelClass.isAssignableFrom(SavedSearchBrowseViewModel::class.java)) {
+            SavedSearchBrowseViewModel(
+                this.server,
+                this.tags,
+                this.postRepository,
+                this.serverRepository,
+                favoriteRepository,
+                this.savedSearchRepository,
+                handle) as T
         } else {
             throw  IllegalArgumentException("ViewModel Not Found")
         }

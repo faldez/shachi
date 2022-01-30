@@ -19,7 +19,7 @@
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             app:menu="@menu/browse_menu"
-            app:title="@string/posts" />
+            app:title="@string/browse" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -8,7 +8,7 @@ import com.faldez.bonito.data.ServerRepository
 import com.faldez.bonito.model.Server
 import com.faldez.bonito.ui.base.BaseBrowseViewModel
 
-class BrowseViewModel constructor(
+class SavedSearchBrowseViewModel constructor(
     server: Server?,
     tags: String?,
     postRepository: PostRepository,

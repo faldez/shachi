@@ -17,8 +17,10 @@ import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
 import com.faldez.bonito.databinding.PostSlideFragmentBinding
 import com.faldez.bonito.model.Post
+import com.faldez.bonito.ui.base.BaseBrowseViewModel
+import com.faldez.bonito.ui.browse.BrowseFragment
 import com.faldez.bonito.ui.browse.BrowseViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.faldez.bonito.ui.browse.SavedSearchBrowseViewModel
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -36,8 +38,7 @@ class PostSlideFragment : Fragment() {
 
     private var isAppBarHide = false
 
-
-    private val viewModel: BrowseViewModel by navGraphViewModels(R.id.nav_graph)
+    private lateinit var viewModel: BaseBrowseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +51,18 @@ class PostSlideFragment : Fragment() {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = PostSlideFragmentBinding.inflate(inflater, container, false)
-
+        val currentDestinationId = findNavController().currentDestination?.id
+        Log.d(BrowseFragment.TAG, "$currentDestinationId ${R.id.browseServerFragment}")
+        when (currentDestinationId) {
+            R.id.postSlideFragment -> {
+                val vm: BrowseViewModel by navGraphViewModels(R.id.nav_graph)
+                viewModel = vm
+            }
+            R.id.savedSearchPostSlideFragment -> {
+                val vm: SavedSearchBrowseViewModel by navGraphViewModels(R.id.nav_graph)
+                viewModel = vm
+            }
+        }
 
         return binding.root
     }
@@ -142,8 +154,6 @@ class PostSlideFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility =
-            View.VISIBLE
         if (isAppBarHide) {
             showSystemUi()
         }

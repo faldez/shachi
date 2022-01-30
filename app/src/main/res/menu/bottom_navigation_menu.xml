@@ -6,11 +6,6 @@
         android:icon="@drawable/ic_baseline_saved_search_24"
         android:title="@string/saved"/>
     <item
-        android:id="@+id/browseServerFragment"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_explore_24"
-        android:title="@string/browse"/>
-    <item
         android:id="@+id/favoriteFragment"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_favorite_24"

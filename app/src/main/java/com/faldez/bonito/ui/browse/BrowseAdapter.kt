@@ -14,15 +14,21 @@ import com.faldez.bonito.model.Post
 
 class BrowserAdapter(private val onClick: (Int) -> Unit) :
     PagingDataAdapter<Post, BrowseItemViewHolder>(POST_COMPARATOR) {
+    private lateinit var binding: BrowseItemViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BrowseItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
 
-        val binding = PostCardItemBinding.inflate(inflater, parent, false)
-        return BrowseItemViewHolder(binding)
+        binding = BrowseItemViewHolder(PostCardItemBinding.inflate(inflater, parent, false))
+        return binding
+    }
+
+    fun getPosition(): Int {
+        return binding.bindingAdapterPosition
     }
 
     override fun onBindViewHolder(holder: BrowseItemViewHolder, position: Int) {
         val post = getItem(position)
+
         post?.let {
             val imageView = holder.binding.imageView
             Glide.with(imageView.context).load(it.previewUrl)

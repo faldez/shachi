@@ -2,13 +2,12 @@ package com.faldez.bonito.ui.saved
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.faldez.bonito.MainActivity
 import com.faldez.bonito.R
@@ -17,42 +16,49 @@ import com.faldez.bonito.data.SavedSearchRepository
 import com.faldez.bonito.database.AppDatabase
 import com.faldez.bonito.databinding.SavedFragmentBinding
 import com.faldez.bonito.service.BooruService
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class SavedFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = SavedFragment()
-    }
-
     private lateinit var viewModel: SavedViewModel
-    private var _binding: SavedFragmentBinding? = null
+    private lateinit var binding: SavedFragmentBinding
 
-    private val binding get() = _binding!!
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = SavedFragmentBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this,
-            SavedViewModelFactory(SavedSearchRepository(AppDatabase.build(requireContext())),
-                PostRepository(
-                    BooruService()))).get(
-            SavedViewModel::class.java)
+        binding = SavedFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        (activity as MainActivity).setSupportActionBar(binding.savedTopappbar)
+
+        binding.savedAppbarLayout.statusBarForeground =
+            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+
+        viewModel = ViewModelProvider(this,
+            SavedViewModelFactory(SavedSearchRepository(AppDatabase.build(requireContext())),
+                PostRepository(
+                    BooruService()))).get(
+            SavedViewModel::class.java)
+
         val adapter = SavedSearchAdapter(
             onBrowse = {
                 val bundle = bundleOf("server" to it.server, "tags" to it.tags)
-                (activity as MainActivity).navController
-                    .navigate(R.id.action_global_to_browse,
+                findNavController()
+                    .navigate(R.id.action_saved_to_browse,
                         bundle)
+                hideBottomNavigation()
             },
             onDelete = {
                 viewModel.delete(it)
@@ -107,11 +113,41 @@ class SavedFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        showBottomNavigation()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.saved_search_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d("SavedFragment", "Search New")
+        when (item.itemId) {
+            R.id.saved_search_button -> {
+                findNavController().navigate(R.id.action_saved_to_browse_new)
+                hideBottomNavigation()
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showBottomNavigation() {
+        val bottomNavigationView =
+            (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.visibility = View.VISIBLE
+    }
+
+    private fun hideBottomNavigation() {
+        val bottomNavigationView =
+            (activity as MainActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.visibility = View.GONE
+    }
 }
