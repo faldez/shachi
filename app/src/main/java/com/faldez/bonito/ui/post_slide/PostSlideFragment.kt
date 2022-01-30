@@ -213,8 +213,9 @@ class PostSlideFragment : Fragment() {
             }
             R.id.detail_button -> {
                 val post = postSlideAdapter.getPostItem(binding.postViewPager.currentItem)
-                Log.d(TAG, "$post")
-                val bundle = bundleOf("post" to post, "server" to viewModel.state.value.server)
+                val bundle = bundleOf("post" to post,
+                    "server" to viewModel.state.value.server,
+                    "tags" to viewModel.state.value.tags)
                 findNavController().navigate(R.id.action_postslide_to_postdetail, bundle)
                 return true
             }

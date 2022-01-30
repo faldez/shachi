@@ -5,12 +5,14 @@
         style="@style/TextAppearance.Material3.LabelMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="@string/artist"
         android:visibility="gone" />
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/artistTagsChipGroup"
         android:layout_width="match_parent"
+        android:layout_marginBottom="8dp"
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
@@ -18,6 +20,7 @@
         android:id="@+id/characterTagsHeader"
         style="@style/TextAppearance.Material3.LabelMedium"
         android:layout_width="match_parent"
+        android:layout_marginBottom="8dp"
         android:layout_height="wrap_content"
         android:text="@string/character"
         android:visibility="gone" />
@@ -25,6 +28,7 @@
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/characterTagsChipGroup"
         android:layout_width="match_parent"
+        android:layout_marginBottom="8dp"
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
@@ -33,12 +37,14 @@
         style="@style/TextAppearance.Material3.LabelMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="@string/copyright"
         android:visibility="gone" />
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/copyrightTagsChipGroup"
         android:layout_width="match_parent"
+        android:layout_marginBottom="8dp"
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
@@ -46,6 +52,7 @@
         android:id="@+id/generalTagsHeader"
         style="@style/TextAppearance.Material3.LabelMedium"
         android:layout_width="match_parent"
+        android:layout_marginBottom="8dp"
         android:layout_height="wrap_content"
         android:text="@string/general"
         android:visibility="gone" />
@@ -54,6 +61,7 @@
         android:id="@+id/generalTagsChipGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
     <TextView
@@ -61,12 +69,14 @@
         style="@style/TextAppearance.Material3.LabelMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="@string/metadata"
         android:visibility="gone" />
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/metadataTagsChipGroup"
         android:layout_width="match_parent"
+        android:layout_marginBottom="8dp"
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
@@ -75,12 +85,14 @@
         style="@style/TextAppearance.Material3.LabelMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="@string/other"
         android:visibility="gone" />
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/otherTagsChipGroup"
         android:layout_width="match_parent"
+        android:layout_marginBottom="8dp"
         android:layout_height="wrap_content"
         android:visibility="gone" />
 </merge>

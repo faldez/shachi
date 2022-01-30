@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="12dp"
     tools:context=".ui.post_detail.PostDetailBottomSheetFragment">
 
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -99,13 +98,24 @@
                 android:gravity="center"
                 android:text="loading tags..." />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/tag_list_chipgroup"
+            <TextView
+                android:id="@+id/currentSearchTagsHeader"
+                style="@style/TextAppearance.Material3.LabelMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:chipSpacingVertical="8dp" />
+                android:layout_marginBottom="8dp"
+                android:text="@string/current_tags"
+                android:visibility="gone" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/currentSearchTagsChipGroup"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="8dp"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <include layout="@layout/tags_details" />
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
