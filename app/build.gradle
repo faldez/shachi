@@ -10,7 +10,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.faldez.sachi"
+        applicationId "com.faldez.shachi"
         minSdk 26
         targetSdk 31
         versionCode 1

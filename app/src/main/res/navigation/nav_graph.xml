@@ -23,7 +23,7 @@
         app:destination="@id/post_detail_bottom_sheet_fragment" />
     <fragment
         android:id="@+id/savedFragment"
-        android:name="com.faldez.sachi.ui.saved.SavedFragment"
+        android:name="com.faldez.shachi.ui.saved.SavedFragment"
         android:label="saved_fragment"
         tools:layout="@layout/saved_fragment">
         <action
@@ -50,12 +50,12 @@
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
-        android:name="com.faldez.sachi.ui.favorite.FavoriteFragment"
+        android:name="com.faldez.shachi.ui.favorite.FavoriteFragment"
         android:label="favorite_fragment"
         tools:layout="@layout/favorite_fragment" />
     <fragment
         android:id="@+id/browseServerFragment"
-        android:name="com.faldez.sachi.ui.browse.BrowseFragment"
+        android:name="com.faldez.shachi.ui.browse.BrowseFragment"
         android:label="browse_fragment"
         tools:layout="@layout/browse_fragment">
         <action
@@ -68,7 +68,7 @@
     </fragment>
     <fragment
         android:id="@+id/savedSearchBrowseServerFragment"
-        android:name="com.faldez.sachi.ui.browse.BrowseFragment"
+        android:name="com.faldez.shachi.ui.browse.BrowseFragment"
         android:label="saved_search_browse_fragment"
         tools:layout="@layout/browse_fragment">
         <action
@@ -81,27 +81,27 @@
     </fragment>
     <fragment
         android:id="@+id/moreFragment"
-        android:name="com.faldez.sachi.ui.more.MoreFragment"
+        android:name="com.faldez.shachi.ui.more.MoreFragment"
         android:label="more_fragment"
         tools:layout="@layout/more_fragment" />
     <fragment
         android:id="@+id/postSlideFragment"
-        android:name="com.faldez.sachi.ui.post_slide.PostSlideFragment"
+        android:name="com.faldez.shachi.ui.post_slide.PostSlideFragment"
         android:label="post_slide_fragment"
         tools:layout="@layout/post_slide_fragment"/>
     <fragment
         android:id="@+id/savedSearchPostSlideFragment"
-        android:name="com.faldez.sachi.ui.post_slide.PostSlideFragment"
+        android:name="com.faldez.shachi.ui.post_slide.PostSlideFragment"
         android:label="saved_search_post_slide_fragment"
         tools:layout="@layout/post_slide_fragment"/>
     <dialog
         android:id="@+id/post_detail_bottom_sheet_fragment"
-        android:name="com.faldez.sachi.ui.post_detail.PostDetailBottomSheetFragment"
+        android:name="com.faldez.shachi.ui.post_detail.PostDetailBottomSheetFragment"
         android:label="post_detail"
         tools:layout="@layout/post_detail_bottom_sheet_fragment" />
     <fragment
         android:id="@+id/serversFragment"
-        android:name="com.faldez.sachi.ui.servers.ServersFragment"
+        android:name="com.faldez.shachi.ui.servers.ServersFragment"
         android:label="servers_fragment"
         tools:layout="@layout/servers_fragment">
         <action
@@ -114,12 +114,12 @@
     </fragment>
     <fragment
         android:id="@+id/server_edit_fragment"
-        android:name="com.faldez.sachi.ui.server_edit.ServerEditFragment"
+        android:name="com.faldez.shachi.ui.server_edit.ServerEditFragment"
         android:label="server_edit_fragment"
         tools:layout="@layout/server_edit_fragment" />
     <fragment
         android:id="@+id/search_simple_fragment"
-        android:name="com.faldez.sachi.ui.search_simple.SearchSimpleFragment"
+        android:name="com.faldez.shachi.ui.search_simple.SearchSimpleFragment"
         android:label="search_dialog"
         tools:layout="@layout/search_simple_fragment" />
 </navigation>
