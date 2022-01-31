@@ -136,12 +136,6 @@ class BrowseFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.search_button -> {
-                val bundle = bundleOf("server" to viewModel.state.value.server,
-                    "tags" to viewModel.state.value.tags)
-                findNavController().navigate(R.id.action_global_to_searchsimple, bundle)
-                return true
-            }
             R.id.save_search_button -> {
                 if (viewModel.state.value.tags.isEmpty()) {
                     Toast.makeText(requireContext(),
@@ -214,6 +208,12 @@ class BrowseFragment : Fragment() {
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
 
         postsRecyclerView.layoutManager = layoutManager
+
+        binding.searchFloatingButton.setOnClickListener {
+            val bundle = bundleOf("server" to viewModel.state.value.server,
+                "tags" to viewModel.state.value.tags)
+            findNavController().navigate(R.id.action_global_to_searchsimple, bundle)
+        }
 
         bindSearch(
             uiState = uiState,
