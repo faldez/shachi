@@ -65,6 +65,10 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_out" />
+
+        <action
+            android:id="@+id/action_browse_to_savedsearchtitledialogfragment"
+            app:destination="@id/saved_search_title_dialog_fragment" />
     </fragment>
     <fragment
         android:id="@+id/savedSearchBrowseServerFragment"
@@ -122,4 +126,9 @@
         android:name="com.faldez.shachi.ui.search_simple.SearchSimpleFragment"
         android:label="search_dialog"
         tools:layout="@layout/search_simple_fragment" />
+    <dialog
+        android:id="@+id/saved_search_title_dialog_fragment"
+        android:name="com.faldez.shachi.ui.browse.SavedSearchTitleDialogFragment"
+        android:label="saved_search_title_dialog_fragment"
+        tools:layout="@layout/saved_search_title_dialog_fragment" />
 </navigation>

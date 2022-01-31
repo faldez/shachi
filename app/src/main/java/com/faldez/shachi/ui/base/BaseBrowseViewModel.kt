@@ -131,12 +131,12 @@ abstract class BaseBrowseViewModel constructor(
         }
     }
 
-    fun saveSearch() {
+    fun saveSearch(title: String?) {
         viewModelScope.launch {
             state.value.server?.let { server ->
                 savedSearchRepository.insert(SavedSearch(server = server,
-                    tags = state.value.tags.toQuery()))
-
+                    tags = state.value.tags.toQuery(),
+                    savedSearchTitle = title ?: state.value.tags.first().name))
             }
         }
     }

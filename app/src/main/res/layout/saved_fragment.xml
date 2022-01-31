@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
-            app:title="@string/saved_search" />
+            app:title="@string/saved_searches" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -51,6 +51,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/saved_search" />
+        android:text="@string/saved_searches" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

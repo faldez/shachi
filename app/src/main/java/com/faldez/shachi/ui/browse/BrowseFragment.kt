@@ -1,8 +1,11 @@
 package com.faldez.shachi.ui.browse
 
+import android.app.Dialog
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.*
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -16,14 +19,14 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.faldez.shachi.R
-import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.MainActivity
+import com.faldez.shachi.R
 import com.faldez.shachi.data.FavoriteRepository
 import com.faldez.shachi.data.PostRepository
 import com.faldez.shachi.data.SavedSearchRepository
 import com.faldez.shachi.data.ServerRepository
 import com.faldez.shachi.database.AppDatabase
+import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.Tag
@@ -31,6 +34,7 @@ import com.faldez.shachi.service.BooruService
 import com.faldez.shachi.ui.base.BaseBrowseViewModel
 import com.faldez.shachi.ui.base.UiAction
 import com.faldez.shachi.ui.base.UiState
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -125,14 +129,6 @@ class BrowseFragment : Fragment() {
             }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.browse_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -147,11 +143,29 @@ class BrowseFragment : Fragment() {
                 return true
             }
             R.id.save_search_button -> {
-                if (viewModel.state.value.tags.isNotEmpty()) {
-                    viewModel.saveSearch()
-                    Toast.makeText(requireContext(), "Saved", Toast.LENGTH_LONG).show()
+                if (viewModel.state.value.tags.isEmpty()) {
+                    Toast.makeText(requireContext(),
+                        "Can't save search if selected tags is empty",
+                        Toast.LENGTH_LONG).show()
+                    return true
                 }
-                return true
+
+                val dialog =
+                    MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
+                        .setTitle(resources.getString(R.string.title))
+                        .setMessage(resources.getString(R.string.saved_search_description_title_text))
+                        .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
+                            val dialog_ = dialog as Dialog
+                            val title =
+                                dialog_.findViewById<EditText>(R.id.savedSearchTitleInput).text?.toString()
+
+                            if (viewModel.state.value.tags.isNotEmpty()) {
+                                viewModel.saveSearch(title)
+                                Toast.makeText(requireContext(), "Saved", Toast.LENGTH_LONG).show()
+                            }
+                        }.show()
+                dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
+                    SpannableStringBuilder(viewModel.state.value.tags.first().name)
             }
             R.id.manage_server_button -> {
                 findNavController().navigate(R.id.action_global_to_servers)
@@ -161,6 +175,7 @@ class BrowseFragment : Fragment() {
 
         return super.onOptionsItemSelected(item)
     }
+
 
     private fun prepareAppBar() {
         (activity as MainActivity).setSupportActionBar(binding.searchPostTopAppBar)

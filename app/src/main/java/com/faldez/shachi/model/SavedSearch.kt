@@ -10,4 +10,5 @@ data class SavedSearch(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "saved_search_id") val savedSearchId: Int = 0,
     @Embedded val server: Server,
     val tags: String,
+    @ColumnInfo(name = "saved_search_title") val savedSearchTitle: String,
 )

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.databinding.SavedSearchItemBinding
 import com.faldez.shachi.model.SavedSearch
+import com.google.android.material.chip.Chip
 
 class SavedSearchAdapter(
     private val onBrowse: (SavedSearch) -> Unit,
@@ -49,7 +50,7 @@ class SavedSearchAdapter(
     override fun onBindViewHolder(holder: SavedSearchItemViewHolder, position: Int) {
         val item = savedSearches[position]
         Log.d("SavedSearchAdapter", "$item")
-        holder.binding.savedSearchTagsTextView.text = item.savedSearch.tags
+        holder.binding.savedSearchTagsTextView.text = item.savedSearch.savedSearchTitle
         holder.binding.savedSearchUrlTextView.text = item.savedSearch.server.url
         val layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
@@ -62,7 +63,16 @@ class SavedSearchAdapter(
             onBrowse(item.savedSearch)
         }
 
-        holder.binding.deleteSavedSearchButton.setOnClickListener {
+        holder.binding.tagsChipGroup.removeAllViews()
+        item.savedSearch.tags.split(" ").forEach {
+            val chip = Chip(holder.binding.root.context)
+            chip.apply {
+                text = it
+                holder.binding.tagsChipGroup.addView(this)
+            }
+        }
+
+        holder.binding.removeSavedSearchButton.setOnClickListener {
             onDelete(item.savedSearch)
         }
     }
