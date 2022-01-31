@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.favorite.FavoriteFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -19,14 +18,15 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
-            app:title="Favorite"/>
+            app:title="Favorite" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favoriteRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Favorite" />
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        tools:listitem="@layout/post_card_item" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

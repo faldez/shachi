@@ -1,4 +1,4 @@
-package com.faldez.shachi.ui.browse
+package com.faldez.shachi.ui.favorite
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
 
-class BrowseAdapter(private val onClick: (Int) -> Unit) :
+class FavoriteAdapter(private val onClick: (Int) -> Unit) :
     PagingDataAdapter<Post, BrowseItemViewHolder>(POST_COMPARATOR) {
     private lateinit var binding: BrowseItemViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BrowseItemViewHolder {
@@ -37,12 +37,6 @@ class BrowseAdapter(private val onClick: (Int) -> Unit) :
                         it.previewHeight!!,
                         Bitmap.Config.ARGB_8888))).override(it.previewWidth!!, it.previewHeight!!)
                 .into(imageView)
-
-            holder.binding.favoriteIcon.visibility = if (post.favorite) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
 
             holder.binding.root.setOnClickListener { _ ->
                 onClick(position)

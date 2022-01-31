@@ -52,41 +52,35 @@
         android:id="@+id/favoriteFragment"
         android:name="com.faldez.shachi.ui.favorite.FavoriteFragment"
         android:label="favorite_fragment"
-        tools:layout="@layout/favorite_fragment" />
+        tools:layout="@layout/favorite_fragment">
+
+        <action
+            android:id="@+id/action_favorite_to_favoritepostslide"
+            app:destination="@id/favoritePostSlideFragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_down" />
+    </fragment>
     <fragment
         android:id="@+id/browseServerFragment"
         android:name="com.faldez.shachi.ui.browse.BrowseFragment"
         android:label="browse_fragment"
         tools:layout="@layout/browse_fragment">
+
         <action
-            android:id="@+id/action_browse_new_to_postslide"
+            android:id="@+id/action_browse_to_browsepostslide"
             app:destination="@id/postSlideFragment"
             app:enterAnim="@anim/slide_in_up"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_out_down" />
-
-        <action
-            android:id="@+id/action_browse_to_savedsearchtitledialogfragment"
-            app:destination="@id/saved_search_title_dialog_fragment"
-            app:enterAnim="@anim/slide_in_up"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down"/>
     </fragment>
     <fragment
         android:id="@+id/savedSearchBrowseServerFragment"
         android:name="com.faldez.shachi.ui.browse.BrowseFragment"
         android:label="saved_search_browse_fragment"
-        tools:layout="@layout/browse_fragment">
-        <action
-            android:id="@+id/action_saved_search_browse_to_postslide"
-            app:destination="@id/savedSearchPostSlideFragment"
-            app:enterAnim="@anim/slide_in_up"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down" />
-    </fragment>
+        tools:layout="@layout/browse_fragment"/>
     <fragment
         android:id="@+id/moreFragment"
         android:name="com.faldez.shachi.ui.more.MoreFragment"
@@ -98,9 +92,9 @@
         android:label="post_slide_fragment"
         tools:layout="@layout/post_slide_fragment"/>
     <fragment
-        android:id="@+id/savedSearchPostSlideFragment"
-        android:name="com.faldez.shachi.ui.post_slide.PostSlideFragment"
-        android:label="saved_search_post_slide_fragment"
+        android:id="@+id/favoritePostSlideFragment"
+        android:name="com.faldez.shachi.ui.post_slide.FavoritePostSlideFragment"
+        android:label="post_slide_fragment"
         tools:layout="@layout/post_slide_fragment"/>
     <dialog
         android:id="@+id/post_detail_bottom_sheet_fragment"
@@ -130,9 +124,4 @@
         android:name="com.faldez.shachi.ui.search_simple.SearchSimpleFragment"
         android:label="search_dialog"
         tools:layout="@layout/search_simple_fragment" />
-    <dialog
-        android:id="@+id/saved_search_title_dialog_fragment"
-        android:name="com.faldez.shachi.ui.browse.SavedSearchTitleDialogFragment"
-        android:label="saved_search_title_dialog_fragment"
-        tools:layout="@layout/saved_search_title_dialog_fragment" />
 </navigation>

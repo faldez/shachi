@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
-    tools:context=".ui.post_slide.PostSlideFragment">
+    tools:context=".ui.post_slide.FavoritePostSlideFragment">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/post_view_pager"

@@ -68,7 +68,6 @@ class BrowseFragment : Fragment() {
 
         prepareAppBar()
 
-
         val server = arguments?.get("server") as Server?
         val tags =
             (arguments?.get("tags") as String?)?.split(" ")?.map { name -> Tag.fromName(name) }
@@ -151,18 +150,10 @@ class BrowseFragment : Fragment() {
         server: Server?,
         tags: List<Tag>?,
     ) {
-        val postAdapter = BrowserAdapter(
+        val postAdapter = BrowseAdapter(
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
-                val action = when (findNavController().currentDestination?.id) {
-                    R.id.browseServerFragment -> R.id.action_browse_new_to_postslide
-                    R.id.savedSearchBrowseServerFragment -> R.id.action_saved_search_browse_to_postslide
-                    else -> null
-                }
-
-                action?.let {
-                    findNavController().navigate(it, bundle)
-                }
+                findNavController().navigate( R.id.action_browse_to_browsepostslide, bundle)
             }
         )
 
@@ -192,7 +183,7 @@ class BrowseFragment : Fragment() {
     }
 
     private fun BrowseFragmentBinding.bindList(
-        postsAdapter: BrowserAdapter,
+        postsAdapter: BrowseAdapter,
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (UiAction.Scroll) -> Unit,
