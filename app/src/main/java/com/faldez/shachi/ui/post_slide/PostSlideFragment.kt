@@ -18,10 +18,8 @@ import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.model.Post
-import com.faldez.shachi.ui.base.BaseBrowseViewModel
-import com.faldez.shachi.ui.browse.BrowseFragment
 import com.faldez.shachi.ui.browse.BrowseViewModel
-import com.faldez.shachi.ui.browse.SavedSearchBrowseViewModel
+import com.faldez.shachi.ui.browse.BrowseFragment
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -39,7 +37,7 @@ class PostSlideFragment : Fragment() {
 
     private var isAppBarHide = false
 
-    private lateinit var viewModel: BaseBrowseViewModel
+    private val viewModel: BrowseViewModel by navGraphViewModels(R.id.nav_graph)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,18 +50,6 @@ class PostSlideFragment : Fragment() {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = PostSlideFragmentBinding.inflate(inflater, container, false)
-        val currentDestinationId = findNavController().currentDestination?.id
-        Log.d(BrowseFragment.TAG, "$currentDestinationId ${R.id.browseServerFragment}")
-        when (currentDestinationId) {
-            R.id.postSlideFragment -> {
-                val vm: BrowseViewModel by navGraphViewModels(R.id.nav_graph)
-                viewModel = vm
-            }
-            R.id.savedSearchPostSlideFragment -> {
-                val vm: SavedSearchBrowseViewModel by navGraphViewModels(R.id.nav_graph)
-                viewModel = vm
-            }
-        }
 
         return binding.root
     }

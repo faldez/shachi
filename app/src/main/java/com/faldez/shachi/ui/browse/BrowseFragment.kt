@@ -31,9 +31,6 @@ import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.Tag
 import com.faldez.shachi.service.BooruService
-import com.faldez.shachi.ui.base.BaseBrowseViewModel
-import com.faldez.shachi.ui.base.UiAction
-import com.faldez.shachi.ui.base.UiState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.*
@@ -46,12 +43,20 @@ class BrowseFragment : Fragment() {
 
     private lateinit var binding: BrowseFragmentBinding
 
-    private lateinit var viewModel: BaseBrowseViewModel
+    private val viewModel: BrowseViewModel by navGraphViewModels(R.id.nav_graph) {
+        val db = AppDatabase.build(requireContext())
+        val favoriteRepository = FavoriteRepository(db)
+        BrowseViewModelFactory(
+            PostRepository(BooruService()),
+            ServerRepository(db),
+            favoriteRepository,
+            SavedSearchRepository(db),
+            this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        Log.d(TAG, "onCreate " + savedInstanceState.toString())
     }
 
     override fun onCreateView(
@@ -63,60 +68,20 @@ class BrowseFragment : Fragment() {
 
         prepareAppBar()
 
+
         val server = arguments?.get("server") as Server?
-        val tags = arguments?.get("tags") as String?
-        Log.d("SearchPostFragment", "$server $tags")
-
-        val currentDestinationId = findNavController().currentDestination?.id
-        Log.d(TAG, "$currentDestinationId ${R.id.browseServerFragment}")
-        when (currentDestinationId) {
-            R.id.browseServerFragment -> {
-                val vm: BrowseViewModel by navGraphViewModels(R.id.nav_graph) {
-                    val db = AppDatabase.build(requireContext())
-                    val favoriteRepository = FavoriteRepository(db)
-                    BrowseViewModelFactory(
-                        server, tags,
-                        PostRepository(BooruService()),
-                        ServerRepository(db),
-                        favoriteRepository,
-                        SavedSearchRepository(db),
-                        this)
-                }
-
-                viewModel = vm
-            }
-            R.id.savedSearchBrowseServerFragment -> {
-                val vm: SavedSearchBrowseViewModel by navGraphViewModels(R.id.nav_graph) {
-                    val db = AppDatabase.build(requireContext())
-                    val favoriteRepository = FavoriteRepository(db)
-                    BrowseViewModelFactory(
-                        server, tags,
-                        PostRepository(BooruService()),
-                        ServerRepository(db),
-                        favoriteRepository,
-                        SavedSearchRepository(db),
-                        this)
-                }
-
-                viewModel = vm
-            }
-        }
-
-        viewModel.accept(UiAction.GetSelectedOrSelectServer(server))
-        tags?.let {
-            viewModel.accept(UiAction.Search(server?.url,
-                it.split(" ").map { Tag.fromName(it) }))
-        }
-
-        val view = binding.root
+        val tags =
+            (arguments?.get("tags") as String?)?.split(" ")?.map { name -> Tag.fromName(name) }
+        Log.d("BrowseFragment", "$server $tags")
 
         binding.bindState(
             uiState = viewModel.state,
             pagingData = viewModel.pagingDataFlow,
-            uiActions = viewModel.accept
+            uiActions = viewModel.accept,
+            server, tags
         )
 
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -149,9 +114,8 @@ class BrowseFragment : Fragment() {
                         .setTitle(resources.getString(R.string.title))
                         .setMessage(resources.getString(R.string.saved_search_description_title_text))
                         .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
-                            val dialog_ = dialog as Dialog
                             val title =
-                                dialog_.findViewById<EditText>(R.id.savedSearchTitleInput).text?.toString()
+                                (dialog as Dialog).findViewById<EditText>(R.id.savedSearchTitleInput).text?.toString()
 
                             if (viewModel.state.value.tags.isNotEmpty()) {
                                 viewModel.saveSearch(title)
@@ -184,6 +148,8 @@ class BrowseFragment : Fragment() {
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         uiActions: (UiAction) -> Unit,
+        server: Server?,
+        tags: List<Tag>?,
     ) {
         val postAdapter = BrowserAdapter(
             onClick = { position ->
@@ -215,23 +181,14 @@ class BrowseFragment : Fragment() {
             findNavController().navigate(R.id.action_global_to_searchsimple, bundle)
         }
 
-        bindSearch(
-            uiState = uiState,
-            onTagsChanged = uiActions
-        )
-
         bindList(
             postsAdapter = postAdapter,
             uiState = uiState,
             pagingData = pagingData,
-            onScrollChanged = uiActions
+            onScrollChanged = uiActions,
+            server,
+            tags
         )
-    }
-
-    private fun BrowseFragmentBinding.bindSearch(
-        uiState: StateFlow<UiState>,
-        onTagsChanged: (UiAction.Search) -> Unit,
-    ) {
     }
 
     private fun BrowseFragmentBinding.bindList(
@@ -239,6 +196,8 @@ class BrowseFragment : Fragment() {
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (UiAction.Scroll) -> Unit,
+        server: Server?,
+        tags: List<Tag>?,
     ) {
         retryButton.setOnClickListener { postsAdapter.retry() }
         postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -267,7 +226,7 @@ class BrowseFragment : Fragment() {
         )
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                pagingData.collectLatest(postsAdapter::submitData)
+                pagingData.collect(postsAdapter::submitData)
             }
         }
 
@@ -289,5 +248,8 @@ class BrowseFragment : Fragment() {
 
             }
         }
+
+        viewModel.accept(UiAction.GetSelectedOrSelectServer(server))
+        viewModel.accept(UiAction.Search(server?.url, tags ?: listOf()))
     }
 }

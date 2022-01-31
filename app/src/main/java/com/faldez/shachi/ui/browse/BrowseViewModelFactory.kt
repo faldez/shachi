@@ -9,10 +9,9 @@ import com.faldez.shachi.data.PostRepository
 import com.faldez.shachi.data.SavedSearchRepository
 import com.faldez.shachi.data.ServerRepository
 import com.faldez.shachi.model.Server
+import com.faldez.shachi.ui.browse.BrowseViewModel
 
 class BrowseViewModelFactory constructor(
-    private val server: Server?,
-    private val tags: String?,
     private val postRepository: PostRepository,
     private val serverRepository: ServerRepository,
     private val favoriteRepository: FavoriteRepository,
@@ -26,17 +25,6 @@ class BrowseViewModelFactory constructor(
     ): T {
         return if (modelClass.isAssignableFrom(BrowseViewModel::class.java)) {
             BrowseViewModel(
-                this.server,
-                this.tags,
-                this.postRepository,
-                this.serverRepository,
-                favoriteRepository,
-                this.savedSearchRepository,
-                handle) as T
-        } else if (modelClass.isAssignableFrom(SavedSearchBrowseViewModel::class.java)) {
-            SavedSearchBrowseViewModel(
-                this.server,
-                this.tags,
                 this.postRepository,
                 this.serverRepository,
                 favoriteRepository,
