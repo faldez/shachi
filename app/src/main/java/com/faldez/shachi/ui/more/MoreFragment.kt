@@ -45,6 +45,7 @@ class MoreFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        (activity as MainActivity).showBottomNavigation()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
