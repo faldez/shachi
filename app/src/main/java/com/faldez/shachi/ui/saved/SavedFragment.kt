@@ -50,7 +50,7 @@ class SavedFragment : Fragment() {
             onBrowse = {
                 val bundle = bundleOf("server" to it.server, "tags" to it.tags)
                 findNavController()
-                    .navigate(R.id.action_saved_to_browse,
+                    .navigate(R.id.action_global_to_browse,
                         bundle)
                 (activity as MainActivity).hideBottomNavigation()
             },
@@ -69,7 +69,7 @@ class SavedFragment : Fragment() {
         }
 
         binding.newSearchButton.setOnClickListener {
-            findNavController().navigate(R.id.action_saved_to_browse_new)
+            findNavController().navigate(R.id.action_global_to_browse)
             (activity as MainActivity).hideBottomNavigation()
         }
 

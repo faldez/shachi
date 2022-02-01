@@ -5,6 +5,13 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/savedFragment">
     <action
+        android:id="@+id/action_global_to_browse"
+        app:destination="@id/browseServerFragment"
+        app:enterAnim="@anim/slide_in_up"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/slide_out_down"/>
+    <action
         android:id="@+id/action_global_to_searchsimple"
         app:destination="@id/search_simple_fragment"
         app:enterAnim="@anim/slide_in_up"
@@ -26,20 +33,6 @@
         android:name="com.faldez.shachi.ui.saved.SavedFragment"
         android:label="saved_fragment"
         tools:layout="@layout/saved_fragment">
-        <action
-            android:id="@+id/action_saved_to_browse_new"
-            app:destination="@id/browseServerFragment"
-            app:enterAnim="@anim/slide_in_up"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down"/>
-        <action
-            android:id="@+id/action_saved_to_browse"
-            app:destination="@id/savedSearchBrowseServerFragment"
-            app:enterAnim="@anim/slide_in_up"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down" />
         <action
             android:id="@+id/action_saved_to_more"
             app:destination="@id/moreFragment"
@@ -76,11 +69,6 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_out_down" />
     </fragment>
-    <fragment
-        android:id="@+id/savedSearchBrowseServerFragment"
-        android:name="com.faldez.shachi.ui.browse.BrowseFragment"
-        android:label="saved_search_browse_fragment"
-        tools:layout="@layout/browse_fragment"/>
     <fragment
         android:id="@+id/moreFragment"
         android:name="com.faldez.shachi.ui.more.MoreFragment"
