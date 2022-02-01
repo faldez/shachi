@@ -68,11 +68,6 @@ class SavedFragment : Fragment() {
             viewModel.refreshAll()
         }
 
-        binding.newSearchButton.setOnClickListener {
-            findNavController().navigate(R.id.action_global_to_browse)
-            (activity as MainActivity).hideBottomNavigation()
-        }
-
         lifecycleScope.launch {
             viewModel.savedSearches.collect { state ->
                 state?.let { savedSearches ->
@@ -130,6 +125,11 @@ class SavedFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d("SavedFragment", "Search New")
         when (item.itemId) {
+            R.id.new_search_button -> {
+                findNavController().navigate(R.id.action_global_to_browse)
+                (activity as MainActivity).hideBottomNavigation()
+                return true
+            }
             R.id.more_button -> {
                 findNavController().navigate(R.id.action_saved_to_more)
                 (activity as MainActivity).hideBottomNavigation()

@@ -1,14 +1,13 @@
 package com.faldez.shachi.ui.saved
 
+import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.databinding.SavedSearchItemBinding
-import com.faldez.shachi.model.SavedSearch
 import com.faldez.shachi.model.SavedSearchServer
-import com.google.android.material.chip.Chip
 
 class SavedSearchAdapter(
     private val onBrowse: (SavedSearchServer) -> Unit,
@@ -52,7 +51,7 @@ class SavedSearchAdapter(
         val item = savedSearches[position]
         Log.d("SavedSearchAdapter", "$item")
         holder.binding.savedSearchTagsTextView.text = item.savedSearch.savedSearch.savedSearchTitle
-        holder.binding.savedSearchUrlTextView.text = item.savedSearch.server.url
+        holder.binding.savedSearchServerTextView.text = item.savedSearch.server.title
         val layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
 
@@ -64,14 +63,7 @@ class SavedSearchAdapter(
             onBrowse(item.savedSearch)
         }
 
-        holder.binding.tagsChipGroup.removeAllViews()
-        item.savedSearch.savedSearch.tags.split(" ").forEach {
-            val chip = Chip(holder.binding.root.context)
-            chip.apply {
-                text = it
-                holder.binding.tagsChipGroup.addView(this)
-            }
-        }
+        holder.binding.tagsTextView.text = SpannableStringBuilder(item.savedSearch.savedSearch.tags)
 
         holder.binding.removeSavedSearchButton.setOnClickListener {
             onDelete(item.savedSearch)

@@ -37,15 +37,6 @@
             tools:listitem="@layout/saved_search_item" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/new_search_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:text="@string/new_search"
-        app:icon="@drawable/ic_baseline_search_24" />
-
     <TextView
         android:id="@+id/saved_search_help_text"
         android:visibility="gone"
