@@ -17,7 +17,16 @@ data class Server(
     val type: ServerType,
     val title: String,
     val url: String,
-) : Parcelable
+) : Parcelable {
+    fun toServerView(): ServerView {
+        return ServerView(
+            serverId = serverId,
+            type = type,
+            title = title,
+            url = url,
+        )
+    }
+}
 
 @Entity(
     tableName = "selected_server",
@@ -41,12 +50,21 @@ data class SelectedServer(
         "LEFT JOIN server_blacklisted_tag_cross_ref ON server.server_id = server_blacklisted_tag_cross_ref.server_id " +
         "LEFT JOIN blacklisted_tag ON server_blacklisted_tag_cross_ref.blacklisted_tag_id = blacklisted_tag.blacklisted_tag_id " +
         "GROUP BY server.server_id",
-    viewName = "server_with_selected")
+    viewName = "server_view")
 data class ServerView(
     @ColumnInfo(name = "server_id") val serverId: Int,
     val type: ServerType,
     val title: String,
     val url: String,
-    @ColumnInfo(name = "blacklisted_tag") val blacklistedTags: String?,
-    var selected: Boolean,
-)
+    @ColumnInfo(name = "blacklisted_tag") val blacklistedTags: String? = null,
+    var selected: Boolean = false,
+) {
+    fun toServer(): Server {
+        return Server(
+            serverId = serverId,
+            type = type,
+            title = title,
+            url = url
+        )
+    }
+}

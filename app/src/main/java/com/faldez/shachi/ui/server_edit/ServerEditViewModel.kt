@@ -8,7 +8,7 @@ import com.faldez.shachi.data.ServerRepository
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.service.Action
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class ServerEditViewModel(
@@ -70,7 +70,7 @@ class ServerEditViewModel(
         viewModelScope.launch {
             Log.d("ServerEditViewModel", "Insert")
             try {
-                postRepository.testSearchPost(Action.SearchPost(server, ""))
+                postRepository.testSearchPost(Action.SearchPost(server.toServerView(), ""))
                 if (isNew) {
                     serverRepository.insert(server)
                 } else {

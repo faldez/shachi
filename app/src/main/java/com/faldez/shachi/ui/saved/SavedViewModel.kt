@@ -7,6 +7,7 @@ import com.faldez.shachi.data.PostRepository
 import com.faldez.shachi.data.SavedSearchRepository
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.SavedSearch
+import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -15,8 +16,8 @@ class SavedViewModel(
     private val savedSearchRepository: SavedSearchRepository,
     private val postRepository: PostRepository,
 ) : ViewModel() {
-    val savedSearches: Flow<List<SavedSearch>?>
-    val state: MutableStateFlow<Map<SavedSearch, List<Post>?>> = MutableStateFlow(mapOf())
+    val savedSearches: Flow<List<SavedSearchServer>?>
+    val state: MutableStateFlow<Map<SavedSearchServer, List<Post>?>> = MutableStateFlow(mapOf())
 
     init {
         val actionStateFlow = MutableSharedFlow<UiAction>()
@@ -80,7 +81,7 @@ class SavedViewModel(
 }
 
 data class SavedSearchPost(
-    val savedSearch: SavedSearch,
+    val savedSearch: SavedSearchServer,
     val posts: List<Post>?,
 )
 

@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.SavedSearch
+import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.response.GelbooruPostResponse
 import com.faldez.shachi.service.Action
@@ -31,7 +32,7 @@ class PostRepository constructor(
         ).flow
     }
 
-    suspend fun getSavedSearchPosts(action: Action.SearchSavedSearchPost): Pair<SavedSearch, List<Post>?> {
+    suspend fun getSavedSearchPosts(action: Action.SearchSavedSearchPost): Pair<SavedSearchServer, List<Post>?> {
         try {
             when (action.savedSearch.server.type) {
                 ServerType.Gelbooru -> {

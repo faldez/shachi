@@ -114,7 +114,7 @@ class BrowseViewModel constructor(
     }
 
     private fun searchPosts(server: Server?, tags: String): Flow<PagingData<Post>> {
-        val action = Action.SearchPost(server, tags)
+        val action = Action.SearchPost(server?.toServerView(), tags)
         return postRepository.getSearchPostsResultStream(action)
     }
 
@@ -133,7 +133,7 @@ class BrowseViewModel constructor(
     fun saveSearch(title: String?) {
         viewModelScope.launch {
             state.value.server?.let { server ->
-                savedSearchRepository.insert(SavedSearch(server = server,
+                savedSearchRepository.insert(SavedSearch(serverId = server.serverId,
                     tags = state.value.tags.toQuery(),
                     savedSearchTitle = title ?: state.value.tags.first().name))
             }

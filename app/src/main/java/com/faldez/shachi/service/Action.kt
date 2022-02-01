@@ -1,12 +1,17 @@
 package com.faldez.shachi.service
 
 import com.faldez.shachi.data.PostRepository.Companion.NETWORK_PAGE_SIZE
-import com.faldez.shachi.model.SavedSearch
+import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.model.Server
+import com.faldez.shachi.model.ServerView
 import okhttp3.HttpUrl
 
 sealed class Action {
-    data class SearchPost(val server: Server?, val tags: String) : Action() {
+    data class SearchPost(
+        val server: ServerView?,
+        val tags: String = "*",
+    ) :
+        Action() {
         fun buildGelbooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
             return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
@@ -19,7 +24,7 @@ sealed class Action {
         }
     }
 
-    data class SearchSavedSearchPost(val savedSearch: SavedSearch) : Action() {
+    data class SearchSavedSearchPost(val savedSearch: SavedSearchServer) : Action() {
         fun buildGelbooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
             return savedSearch.server.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
@@ -27,7 +32,7 @@ sealed class Action {
                     .addQueryParameter("q", "index").addQueryParameter("s", "post")
                     .addQueryParameter("pid", page.toString())
                     .addQueryParameter("limit", limit.toString())
-                    .addQueryParameter("tags", savedSearch.tags).build()
+                    .addQueryParameter("tags", savedSearch.savedSearch.tags).build()
             }
         }
     }

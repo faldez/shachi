@@ -48,14 +48,14 @@ class SavedFragment : Fragment() {
 
         val adapter = SavedSearchAdapter(
             onBrowse = {
-                val bundle = bundleOf("server" to it.server, "tags" to it.tags)
+                val bundle = bundleOf("server" to it.server, "tags" to it.savedSearch.tags)
                 findNavController()
                     .navigate(R.id.action_global_to_browse,
                         bundle)
                 (activity as MainActivity).hideBottomNavigation()
             },
             onDelete = {
-                viewModel.delete(it)
+                viewModel.delete(it.savedSearch)
             }
         )
 

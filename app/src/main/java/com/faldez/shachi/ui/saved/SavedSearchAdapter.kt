@@ -7,11 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.databinding.SavedSearchItemBinding
 import com.faldez.shachi.model.SavedSearch
+import com.faldez.shachi.model.SavedSearchServer
 import com.google.android.material.chip.Chip
 
 class SavedSearchAdapter(
-    private val onBrowse: (SavedSearch) -> Unit,
-    private val onDelete: (SavedSearch) -> Unit,
+    private val onBrowse: (SavedSearchServer) -> Unit,
+    private val onDelete: (SavedSearchServer) -> Unit,
 ) :
     RecyclerView.Adapter<SavedSearchItemViewHolder>() {
     private val savedSearches: MutableList<SavedSearchPost> = mutableListOf()
@@ -50,7 +51,7 @@ class SavedSearchAdapter(
     override fun onBindViewHolder(holder: SavedSearchItemViewHolder, position: Int) {
         val item = savedSearches[position]
         Log.d("SavedSearchAdapter", "$item")
-        holder.binding.savedSearchTagsTextView.text = item.savedSearch.savedSearchTitle
+        holder.binding.savedSearchTagsTextView.text = item.savedSearch.savedSearch.savedSearchTitle
         holder.binding.savedSearchUrlTextView.text = item.savedSearch.server.url
         val layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
@@ -64,7 +65,7 @@ class SavedSearchAdapter(
         }
 
         holder.binding.tagsChipGroup.removeAllViews()
-        item.savedSearch.tags.split(" ").forEach {
+        item.savedSearch.savedSearch.tags.split(" ").forEach {
             val chip = Chip(holder.binding.root.context)
             chip.apply {
                 text = it
