@@ -3,17 +3,17 @@
     <item
         android:id="@+id/savedFragment"
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_home_24"
+        android:icon="@drawable/home"
         android:title="@string/home" />
     <item
         android:id="@+id/browseFragment"
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_search_24"
-        android:title="@string/search" />
+        android:icon="@drawable/browse"
+        android:title="@string/browse" />
     <item
         android:id="@+id/favoriteFragment"
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_favorite_24"
+        android:icon="@drawable/favorite"
         android:title="@string/favorite" />
     <item
         android:id="@+id/moreFragment"
