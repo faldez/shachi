@@ -33,6 +33,7 @@ import com.faldez.shachi.model.Tag
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -194,9 +195,13 @@ class BrowseFragment : Fragment() {
         postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy != 0) {
-                    Log.d("BrowseFragment", "getPosition ${postsAdapter.getPosition()}")
                     onScrollChanged(UiAction.Scroll(uiState.value.server?.url,
                         currentTags = uiState.value.tags))
+                }
+                if (dy > 0 && searchFloatingButton.isOrWillBeShown) {
+                    searchFloatingButton.hide()
+                } else if (dy < 0 && searchFloatingButton.isOrWillBeHidden) {
+                    searchFloatingButton.show()
                 }
             }
         })
