@@ -104,8 +104,6 @@ class ServerEditFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        Toast.makeText(activity?.applicationContext, "Test", Toast.LENGTH_SHORT).show()
-
         lifecycleScope.launch {
             viewModel.state.collect {
                 when (it) {

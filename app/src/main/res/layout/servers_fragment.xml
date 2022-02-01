@@ -18,7 +18,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
-            app:menu="@menu/servers_menu"
             app:title="@string/servers" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -29,5 +28,14 @@
         android:layout_height="wrap_content"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         tools:listitem="@layout/server_list_item" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/new_server_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/new_server"
+        app:srcCompat="@drawable/ic_baseline_add_24" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

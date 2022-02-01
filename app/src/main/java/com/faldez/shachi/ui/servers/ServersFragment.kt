@@ -2,7 +2,10 @@ package com.faldez.shachi.ui.servers
 
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -31,7 +34,7 @@ class ServersFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -85,6 +88,10 @@ class ServersFragment : Fragment() {
 
         })
 
+        binding.newServerButton.setOnClickListener {
+            findNavController().navigate(R.id.action_servers_to_serveredit)
+        }
+
         lifecycleScope.launch {
             viewModel.serverList.collect {
                 Log.d("ServersFragment", "$it")
@@ -102,23 +109,23 @@ class ServersFragment : Fragment() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.servers_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.home -> {
-                (activity as MainActivity).onBackPressed()
-                return true
-            }
-            R.id.new_server_button -> {
-                findNavController().navigate(R.id.action_servers_to_serveredit)
-                return true
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        inflater.inflate(R.menu.servers_menu, menu)
+//        super.onCreateOptionsMenu(menu, inflater)
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            R.id.home -> {
+//                (activity as MainActivity).onBackPressed()
+//                return true
+//            }
+//            R.id.new_server_button -> {
+//                findNavController().navigate(R.id.action_servers_to_serveredit)
+//                return true
+//            }
+//        }
+//
+//        return super.onOptionsItemSelected(item)
+//    }
 }
