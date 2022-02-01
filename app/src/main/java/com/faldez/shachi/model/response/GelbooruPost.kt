@@ -10,7 +10,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 data class GelbooruPostResponse(
-    val posts: GelbooruPosts,
+    val posts: GelbooruPosts?,
 )
 
 data class GelbooruPosts(

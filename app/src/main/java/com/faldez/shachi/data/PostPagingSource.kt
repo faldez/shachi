@@ -61,7 +61,7 @@ class PostPagingSource(
     }
 
     private fun GelbooruPostResponse.mapToPost(serverUrl: String): List<Post>? {
-        return this.posts.post?.map { post ->
+        return this.posts?.post?.map { post ->
             Post(
                 height = post.height,
                 width = post.width,
