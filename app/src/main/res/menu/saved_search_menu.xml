@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/new_search_button"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_search_24"
-        android:title="@string/new_search"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/more_button"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_settings_24"

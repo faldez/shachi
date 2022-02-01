@@ -19,7 +19,7 @@
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             android:layout_gravity="top"
-            app:title="@string/saved_searches" />
+            app:title="@string/home" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -33,7 +33,6 @@
             android:id="@+id/saved_search_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
             tools:listitem="@layout/saved_search_item" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

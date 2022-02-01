@@ -5,12 +5,12 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/savedFragment">
     <action
-        android:id="@+id/action_global_to_browse"
-        app:destination="@id/browseServerFragment"
+        android:id="@+id/action_global_to_postslide"
+        app:destination="@id/postSlideFragment"
         app:enterAnim="@anim/slide_in_up"
         app:exitAnim="@anim/fade_out"
         app:popEnterAnim="@anim/fade_in"
-        app:popExitAnim="@anim/slide_out_down"/>
+        app:popExitAnim="@anim/slide_out_down" />
     <action
         android:id="@+id/action_global_to_searchsimple"
         app:destination="@id/search_simple_fragment"
@@ -40,13 +40,21 @@
         android:name="com.faldez.shachi.ui.saved.SavedFragment"
         android:label="saved_fragment"
         tools:layout="@layout/saved_fragment">
+
+        <action
+            android:id="@+id/action_saved_to_browse"
+            app:destination="@id/browseSavedFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
         <action
             android:id="@+id/action_saved_to_more"
             app:destination="@id/moreFragment"
             app:enterAnim="@anim/slide_in_up"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down"/>
+            app:popExitAnim="@anim/slide_out_down" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
@@ -63,19 +71,15 @@
             app:popExitAnim="@anim/slide_out_down" />
     </fragment>
     <fragment
-        android:id="@+id/browseServerFragment"
+        android:id="@+id/browseFragment"
         android:name="com.faldez.shachi.ui.browse.BrowseFragment"
         android:label="browse_fragment"
-        tools:layout="@layout/browse_fragment">
-
-        <action
-            android:id="@+id/action_browse_to_browsepostslide"
-            app:destination="@id/postSlideFragment"
-            app:enterAnim="@anim/slide_in_up"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down" />
-    </fragment>
+        tools:layout="@layout/browse_fragment" />
+    <fragment
+        android:id="@+id/browseSavedFragment"
+        android:name="com.faldez.shachi.ui.browse.BrowseFragment"
+        android:label="browse_fragment"
+        tools:layout="@layout/browse_fragment" />
     <fragment
         android:id="@+id/moreFragment"
         android:name="com.faldez.shachi.ui.more.MoreFragment"

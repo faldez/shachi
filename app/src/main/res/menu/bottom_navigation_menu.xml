@@ -3,11 +3,16 @@
     <item
         android:id="@+id/savedFragment"
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_saved_search_24"
-        android:title="@string/saved"/>
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="@string/home" />
+    <item
+        android:id="@+id/browseFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="@string/search" />
     <item
         android:id="@+id/favoriteFragment"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_favorite_24"
-        android:title="@string/favorite"/>
+        android:title="@string/favorite" />
 </menu>

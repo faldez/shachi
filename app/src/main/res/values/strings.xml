@@ -22,6 +22,7 @@
     <string name="search">Search</string>
     <string name="name">Name</string>
     <string name="clear">Clear</string>
+    <string name="home">Home</string>
     <string name="apply">Apply</string>
     <string name="selected_tags">Selected tags</string>
     <string name="current_tags">Current tags</string>

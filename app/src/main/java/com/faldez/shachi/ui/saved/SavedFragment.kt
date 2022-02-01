@@ -50,9 +50,8 @@ class SavedFragment : Fragment() {
             onBrowse = {
                 val bundle = bundleOf("server" to it.server, "tags" to it.savedSearch.tags)
                 findNavController()
-                    .navigate(R.id.action_global_to_browse,
+                    .navigate(R.id.action_saved_to_browse,
                         bundle)
-                (activity as MainActivity).hideBottomNavigation()
             },
             onDelete = {
                 viewModel.delete(it.savedSearch)
@@ -125,11 +124,6 @@ class SavedFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d("SavedFragment", "Search New")
         when (item.itemId) {
-            R.id.new_search_button -> {
-                findNavController().navigate(R.id.action_global_to_browse)
-                (activity as MainActivity).hideBottomNavigation()
-                return true
-            }
             R.id.more_button -> {
                 findNavController().navigate(R.id.action_saved_to_more)
                 (activity as MainActivity).hideBottomNavigation()

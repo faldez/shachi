@@ -29,12 +29,10 @@ import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Server
-import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -85,6 +83,11 @@ class BrowseFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity).showBottomNavigation()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<List<Tag>>("tags")
@@ -102,6 +105,12 @@ class BrowseFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.search_button -> {
+                val bundle = bundleOf("server" to viewModel.state.value.server,
+                    "tags" to viewModel.state.value.tags)
+                findNavController().navigate(R.id.action_global_to_searchsimple, bundle)
+                (activity as MainActivity).hideBottomNavigation()
+            }
             R.id.save_search_button -> {
                 if (viewModel.state.value.tags.isEmpty()) {
                     Toast.makeText(requireContext(),
@@ -155,7 +164,7 @@ class BrowseFragment : Fragment() {
         val postAdapter = BrowseAdapter(
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
-                findNavController().navigate( R.id.action_browse_to_browsepostslide, bundle)
+                findNavController().navigate(R.id.action_global_to_postslide, bundle)
             }
         )
 
@@ -167,12 +176,6 @@ class BrowseFragment : Fragment() {
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
 
         postsRecyclerView.layoutManager = layoutManager
-
-        binding.searchFloatingButton.setOnClickListener {
-            val bundle = bundleOf("server" to viewModel.state.value.server,
-                "tags" to viewModel.state.value.tags)
-            findNavController().navigate(R.id.action_global_to_searchsimple, bundle)
-        }
 
         bindList(
             postsAdapter = postAdapter,
@@ -198,11 +201,6 @@ class BrowseFragment : Fragment() {
                 if (dy != 0) {
                     onScrollChanged(UiAction.Scroll(uiState.value.server?.url,
                         currentTags = uiState.value.tags))
-                }
-                if (dy > 0 && searchFloatingButton.isOrWillBeShown) {
-                    searchFloatingButton.hide()
-                } else if (dy < 0 && searchFloatingButton.isOrWillBeHidden) {
-                    searchFloatingButton.show()
                 }
             }
         })
