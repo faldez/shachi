@@ -13,6 +13,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun serverDao(): ServerDao
     abstract fun favoriteDao(): FavoriteDao
     abstract fun savedSearchDao(): SavedSearchDao
+    abstract fun blacklistedTagDao(): BlacklistedTagDao
 
     companion object {
         private var db: AppDatabase? = null

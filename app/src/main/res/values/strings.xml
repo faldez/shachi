@@ -49,6 +49,7 @@
     <string name="save_search">Save search</string>
     <string name="new_search">New search</string>
     <string name="refresh">Refresh</string>
+    <string name="blacklisted_tags">Blacklisted tags</string>
     <string name="cancel">Cancel</string>
     <string name="remove_search">Remove search</string>
     <string name="saved_search_description_title_text">Title of the saved search, default to first tag if empty</string>

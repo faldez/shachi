@@ -26,6 +26,13 @@
         app:popEnterAnim="@anim/fade_in"
         app:popExitAnim="@anim/slide_out" />
     <action
+        android:id="@+id/action_global_to_blacklisted_tags"
+        app:destination="@id/blacklisted_tags_fragment"
+        app:enterAnim="@anim/slide_in"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/slide_out" />
+    <action
         android:id="@+id/action_postslide_to_postdetail"
         app:destination="@id/post_detail_bottom_sheet_fragment" />
     <fragment
@@ -112,4 +119,9 @@
         android:name="com.faldez.shachi.ui.search_simple.SearchSimpleFragment"
         android:label="search_dialog"
         tools:layout="@layout/search_simple_fragment" />
+    <fragment
+        android:id="@+id/blacklisted_tags_fragment"
+        android:name="com.faldez.shachi.ui.blacklisted_tag.BlacklistedTagFragment"
+        android:label="blacklisted_tags_fragment"
+        tools:layout="@layout/blacklisted_tag_fragment" />
 </navigation>

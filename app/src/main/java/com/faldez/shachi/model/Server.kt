@@ -35,11 +35,12 @@ data class SelectedServer(
 @DatabaseView("SELECT " +
         "server.*, " +
         "selected_server.server_id IS NOT NULL AS selected, " +
-        "blacklisted_tag.tags AS blacklisted_tags " +
+        "GROUP_CONCAT(blacklisted_tag.tags, ',') AS blacklisted_tags " +
         "FROM server " +
         "LEFT JOIN selected_server ON server.server_id = selected_server.server_id " +
         "LEFT JOIN server_blacklisted_tag_cross_ref ON server.server_id = server_blacklisted_tag_cross_ref.server_id " +
-        "LEFT JOIN blacklisted_tag ON server_blacklisted_tag_cross_ref.blacklisted_tag_id = blacklisted_tag.blacklisted_tag_id",
+        "LEFT JOIN blacklisted_tag ON server_blacklisted_tag_cross_ref.blacklisted_tag_id = blacklisted_tag.blacklisted_tag_id " +
+        "GROUP BY server.server_id",
     viewName = "server_with_selected")
 data class ServerView(
     @ColumnInfo(name = "server_id") val serverId: Int,

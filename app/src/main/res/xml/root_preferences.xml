@@ -5,6 +5,11 @@
             app:key="servers"
             app:summary="@string/manage_servers"
             app:title="@string/servers" />
+        <Preference
+            app:fragment="com.faldez.shachi.ui.more.MoreFragment"
+            app:key="blacklisted_tags"
+            app:summary="@string/blacklisted_tags"
+            app:title="@string/blacklisted_tags" />
 
     </PreferenceCategory>
 

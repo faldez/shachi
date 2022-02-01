@@ -71,6 +71,11 @@ class MainActivity : AppCompatActivity(),
                 hideBottomNavigation()
                 return true
             }
+            "blacklisted_tags" -> {
+                navController.navigate(R.id.action_global_to_blacklisted_tags)
+                hideBottomNavigation()
+                return true
+            }
         }
         return false
     }
