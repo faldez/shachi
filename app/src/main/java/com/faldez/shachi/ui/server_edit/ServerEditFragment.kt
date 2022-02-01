@@ -19,6 +19,7 @@ import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.ServerEditFragmentBinding
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerType
+import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.collect
@@ -45,10 +46,10 @@ class ServerEditFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = ServerEditFragmentBinding.inflate(inflater, container, false)
 
-        val server = arguments?.getParcelable<Server>("server")
+        val server = arguments?.getParcelable<ServerView>("server")
 
         viewModel = ServerEditViewModelFactory(server, PostRepository(BooruService()),
             ServerRepository(AppDatabase.build(requireContext())),

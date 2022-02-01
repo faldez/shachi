@@ -29,6 +29,7 @@ import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Server
+import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -69,7 +70,7 @@ class BrowseFragment : Fragment() {
 
         prepareAppBar()
 
-        val server = arguments?.get("server") as Server?
+        val server = arguments?.get("server") as ServerView?
         val tags =
             (arguments?.get("tags") as String?)?.split(" ")?.map { name -> Tag.fromName(name) }
         Log.d("BrowseFragment", "$server $tags")
@@ -148,7 +149,7 @@ class BrowseFragment : Fragment() {
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         uiActions: (UiAction) -> Unit,
-        server: Server?,
+        server: ServerView?,
         tags: List<Tag>?,
     ) {
         val postAdapter = BrowseAdapter(
@@ -188,7 +189,7 @@ class BrowseFragment : Fragment() {
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (UiAction.Scroll) -> Unit,
-        server: Server?,
+        server: ServerView?,
         tags: List<Tag>?,
     ) {
         retryButton.setOnClickListener { postsAdapter.retry() }

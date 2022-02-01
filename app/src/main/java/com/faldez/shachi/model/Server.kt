@@ -17,16 +17,7 @@ data class Server(
     val type: ServerType,
     val title: String,
     val url: String,
-) : Parcelable {
-    fun toServerView(): ServerView {
-        return ServerView(
-            serverId = serverId,
-            type = type,
-            title = title,
-            url = url,
-        )
-    }
-}
+) : Parcelable
 
 @Entity(
     tableName = "selected_server",
@@ -41,6 +32,7 @@ data class SelectedServer(
     @ColumnInfo(name = "server_id") val serverId: Int,
 )
 
+@Parcelize
 @DatabaseView("SELECT " +
         "server.*, " +
         "selected_server.server_id IS NOT NULL AS selected, " +
@@ -56,9 +48,9 @@ data class ServerView(
     val type: ServerType,
     val title: String,
     val url: String,
-    @ColumnInfo(name = "blacklisted_tag") val blacklistedTags: String? = null,
+    @ColumnInfo(name = "blacklisted_tags") val blacklistedTags: String? = null,
     var selected: Boolean = false,
-) {
+) : Parcelable {
     fun toServer(): Server {
         return Server(
             serverId = serverId,

@@ -7,49 +7,38 @@ import com.faldez.shachi.data.PostRepository
 import com.faldez.shachi.data.ServerRepository
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerType
+import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class ServerEditViewModel(
-    val initialServer: Server?,
+    val initialServer: ServerView?,
     private val postRepository: PostRepository,
     private val serverRepository: ServerRepository,
 ) : ViewModel() {
-    val isNew = initialServer == null
-    val server: MutableStateFlow<Server?>
-    val state: MutableStateFlow<State>
-
-    init {
-        server = MutableStateFlow(initialServer)
-        state = MutableStateFlow(State.Idle)
-    }
+    private val isNew = initialServer == null
+    val server: MutableStateFlow<ServerView?> = MutableStateFlow(initialServer)
+    val state: MutableStateFlow<State> = MutableStateFlow(State.Idle)
 
     fun setTitle(title: String) {
         val value = server.value
-        server.value = if (value != null) {
-            value.copy(title = title)
-        } else {
-            Server(serverId = 0, title = title, type = ServerType.Gelbooru, url = "")
-        }
+        server.value = value?.copy(title = title)
+            ?: ServerView(serverId = 0, title = title, type = ServerType.Gelbooru, url = "")
     }
 
     fun setUrl(url: String) {
         val value = server.value
-        server.value = if (value != null) {
-            value.copy(url = url)
-        } else {
-            Server(serverId = 0, title = "", type = ServerType.Gelbooru, url = url)
-        }
+        server.value = value?.copy(url = url) ?: ServerView(serverId = 0,
+            title = "",
+            type = ServerType.Gelbooru,
+            url = url)
     }
 
     fun setType(type: ServerType) {
         val value = server.value
-        server.value = if (value != null) {
-            value.copy(type = type)
-        } else {
-            Server(serverId = 0, title = "", type = type, url = "")
-        }
+        server.value =
+            value?.copy(type = type) ?: ServerView(serverId = 0, title = "", type = type, url = "")
     }
 
     fun validate(): Error? {
@@ -66,15 +55,15 @@ class ServerEditViewModel(
         return null
     }
 
-    fun test(server: Server) {
+    fun test(server: ServerView) {
         viewModelScope.launch {
             Log.d("ServerEditViewModel", "Insert")
             try {
-                postRepository.testSearchPost(Action.SearchPost(server.toServerView(), ""))
+                postRepository.testSearchPost(Action.SearchPost(server, ""))
                 if (isNew) {
-                    serverRepository.insert(server)
+                    serverRepository.insert(server.toServer())
                 } else {
-                    serverRepository.update(server)
+                    serverRepository.update(server.toServer())
                 }
                 state.value = State.Success
             } catch (e: Error) {

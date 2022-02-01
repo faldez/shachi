@@ -7,10 +7,11 @@ import androidx.savedstate.SavedStateRegistryOwner
 import com.faldez.shachi.data.PostRepository
 import com.faldez.shachi.data.ServerRepository
 import com.faldez.shachi.model.Server
+import com.faldez.shachi.model.ServerView
 import java.lang.IllegalArgumentException
 
 class ServerEditViewModelFactory constructor(
-    private val server: Server?,
+    private val server: ServerView?,
     private val postRepository: PostRepository,
     private val serverRepository: ServerRepository,
     owner: SavedStateRegistryOwner,

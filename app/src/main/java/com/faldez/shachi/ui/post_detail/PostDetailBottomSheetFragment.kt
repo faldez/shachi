@@ -16,6 +16,7 @@ import com.faldez.shachi.databinding.PostDetailBottomSheetFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Server
+import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -37,7 +38,7 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
         binding = PostDetailBottomSheetFragmentBinding.inflate(inflater, container, false)
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
-        val server = requireArguments().get("server") as Server?
+        val server = requireArguments().get("server") as ServerView?
         val post = requireArguments().get("post") as Post?
 
         val currentSearchTags = requireArguments().get("tags") as List<Tag>?

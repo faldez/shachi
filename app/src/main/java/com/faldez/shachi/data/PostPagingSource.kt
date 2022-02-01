@@ -7,6 +7,7 @@ import androidx.paging.PagingState
 import com.faldez.shachi.data.PostRepository.Companion.STARTING_PAGE_INDEX
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerType
+import com.faldez.shachi.model.response.GelbooruPost
 import com.faldez.shachi.model.response.GelbooruPostResponse
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
@@ -34,7 +35,8 @@ class PostPagingSource(
                 ServerType.Gelbooru -> {
                     val url = action.buildGelbooruUrl(position).toString()
                     Log.d("PostPagingSource", url)
-                    service.gelbooru.getPosts(url).mapToPost(action.server.url) ?: listOf()
+                    service.gelbooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
+                        ?.mapToPost(action.server.url) ?: listOf()
                 }
                 ServerType.Danbooru -> {
                     TODO("not yet implemented")
@@ -60,8 +62,36 @@ class PostPagingSource(
         }
     }
 
-    private fun GelbooruPostResponse.mapToPost(serverUrl: String): List<Post>? {
-        return this.posts?.post?.map { post ->
+    private fun GelbooruPostResponse.applyBlacklist(tags: String?): List<GelbooruPost>? {
+        val blacklists = tags?.split(",")?.map {
+            it.split(" ")
+        }
+
+        Log.d("PostPagingSource", "applyBlacklist $tags to $blacklists")
+
+        if (blacklists.isNullOrEmpty()) {
+            return this.posts?.post
+        }
+
+        var counter = 0
+        val posts =  this.posts?.post?.filter { post ->
+            blacklists.forEach { tags ->
+                if (post.tags.split(" ").containsAll(tags)) {
+                    counter++
+                    return@filter false
+                }
+            }
+
+            true
+        }
+
+        Log.d("PostPagingSource", "applyBlacklist $counter filtered")
+
+        return posts
+    }
+
+    private fun List<GelbooruPost>.mapToPost(serverUrl: String): List<Post> {
+        return this.map { post ->
             Post(
                 height = post.height,
                 width = post.width,

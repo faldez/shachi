@@ -62,15 +62,9 @@ class BrowseViewModel constructor(
         state =
             combine(getServer, searches, tagsScrolled, ::Triple).map { (server, search, scroll) ->
                 Log.d("BrowseViewModel",
-                    "${search.tags} != ${scroll.currentTags}) || (${search.serverUrl ?: scroll.currentServerUrl} != ${scroll.currentServerUrl})")
+                    "$server ${search.tags} != ${scroll.currentTags}) || (${search.serverUrl ?: scroll.currentServerUrl} != ${scroll.currentServerUrl})")
                 UiState(
-                    server = server?.let {
-                        Server(
-                            serverId = it.serverId,
-                            title = it.title,
-                            url = it.url,
-                            type = it.type)
-                    },
+                    server = server,
                     tags = search.tags,
                     lastTagsScrolled = scroll.currentTags,
                     hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (search.serverUrl ?: scroll.currentServerUrl != scroll.currentServerUrl)
@@ -102,19 +96,12 @@ class BrowseViewModel constructor(
         return serverRepository.getSelectedServer()
     }
 
-    private fun selectServer(server: Server) = flow {
-        emit(ServerView(
-            serverId = server.serverId,
-            url = server.url,
-            type = server.type,
-            title = server.title,
-            selected = false,
-            blacklistedTags = null
-        ))
+    private fun selectServer(server: ServerView) = flow {
+        emit(server)
     }
 
-    private fun searchPosts(server: Server?, tags: String): Flow<PagingData<Post>> {
-        val action = Action.SearchPost(server?.toServerView(), tags)
+    private fun searchPosts(server: ServerView?, tags: String): Flow<PagingData<Post>> {
+        val action = Action.SearchPost(server, tags)
         return postRepository.getSearchPostsResultStream(action)
     }
 
@@ -166,11 +153,11 @@ sealed class UiAction {
         val currentTags: List<Tag>,
     ) : UiAction()
 
-    data class GetSelectedOrSelectServer(val server: Server? = null) : UiAction()
+    data class GetSelectedOrSelectServer(val server: ServerView? = null) : UiAction()
 }
 
 data class UiState(
-    val server: Server? = null,
+    val server: ServerView? = null,
     val tags: List<Tag> = listOf(),
     val lastTagsScrolled: List<Tag> = listOf(),
     val hasNotScrolledForCurrentTag: Boolean = false,
