@@ -15,4 +15,9 @@
         android:enabled="true"
         android:icon="@drawable/ic_baseline_favorite_24"
         android:title="@string/favorite" />
+    <item
+        android:id="@+id/moreFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_more_horiz_24"
+        android:title="@string/more" />
 </menu>

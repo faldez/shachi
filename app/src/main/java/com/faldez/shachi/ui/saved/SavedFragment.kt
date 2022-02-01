@@ -26,7 +26,7 @@ class SavedFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -116,21 +116,21 @@ class SavedFragment : Fragment() {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.saved_search_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d("SavedFragment", "Search New")
-        when (item.itemId) {
-            R.id.more_button -> {
-                findNavController().navigate(R.id.action_saved_to_more)
-                (activity as MainActivity).hideBottomNavigation()
-                return true
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        inflater.inflate(R.menu.saved_search_menu, menu)
+//        super.onCreateOptionsMenu(menu, inflater)
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        Log.d("SavedFragment", "Search New")
+//        when (item.itemId) {
+//            R.id.more_button -> {
+//                findNavController().navigate(R.id.action_saved_to_more)
+//                (activity as MainActivity).hideBottomNavigation()
+//                return true
+//            }
+//        }
+//
+//        return super.onOptionsItemSelected(item)
+//    }
 }
