@@ -5,13 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faldez.shachi.data.TagRepository
 import com.faldez.shachi.model.Server
+import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SearchSimpleViewModel(
-    val server: Server?,
+    val server: ServerView?,
     initialTags: List<Tag>,
     private val tagRepository: TagRepository,
 ) : ViewModel() {
@@ -25,7 +26,7 @@ class SearchSimpleViewModel(
         tags =
             actionStateFlow.filterIsInstance<UiAction.SearchTag>()
                 .distinctUntilChanged()
-                .flatMapLatest { searchTag(server, it.tag) }.stateIn(scope = viewModelScope,
+                .flatMapLatest { searchTag(server?.toServer(), it.tag) }.stateIn(scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(),
                     initialValue = null
                 )
@@ -39,7 +40,7 @@ class SearchSimpleViewModel(
         viewModelScope.launch {
             selectedTags.getAndUpdate { _ ->
                 if (initialTags.isNotEmpty()) {
-                    tagRepository.getTags(Action.GetTags(server,
+                    tagRepository.getTags(Action.GetTags(server?.toServer(),
                         initialTags.joinToString(" ") { it.name })) ?: listOf()
                 } else {
                     listOf()
@@ -76,7 +77,7 @@ class SearchSimpleViewModel(
 
     fun insertTagByName(name: String) {
         viewModelScope.launch {
-            tagRepository.getTag(Action.GetTag(server, name)).let { tag ->
+            tagRepository.getTag(Action.GetTag(server?.toServer(), name)).let { tag ->
                 selectedTags.getAndUpdate { tags ->
                     val list = tags.toMutableList()
                     list.add(list.size, tag ?: Tag.fromName(name))
@@ -97,7 +98,7 @@ class SearchSimpleViewModel(
     fun getTagsDetails(tags: List<Tag>) = viewModelScope.launch {
         selectedTags.getAndUpdate { tags ->
             tags.map {
-                tagRepository.getTag(Action.GetTag(server, it.name)) ?: it
+                tagRepository.getTag(Action.GetTag(server?.toServer(), it.name)) ?: it
             }
         }
     }

@@ -15,6 +15,10 @@ class ServerRepository(private val db: AppDatabase) {
         return db.serverDao().getSelectedServer()
     }
 
+    fun getServer(serverId: Int): Flow<ServerView?> {
+        return db.serverDao().getServer(serverId)
+    }
+
     suspend fun setSelectedServer(serverId: Int) {
         return db.serverDao().insertSelectedServer(SelectedServer(serverId = serverId))
     }

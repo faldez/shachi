@@ -96,9 +96,7 @@ class BrowseViewModel constructor(
         return serverRepository.getSelectedServer()
     }
 
-    private fun selectServer(server: ServerView) = flow {
-        emit(server)
-    }
+    private fun selectServer(server: Server) = serverRepository.getServer(server.serverId)
 
     private fun searchPosts(server: ServerView?, tags: String): Flow<PagingData<Post>> {
         val action = Action.SearchPost(server, tags)
@@ -153,7 +151,7 @@ sealed class UiAction {
         val currentTags: List<Tag>,
     ) : UiAction()
 
-    data class GetSelectedOrSelectServer(val server: ServerView? = null) : UiAction()
+    data class GetSelectedOrSelectServer(val server: Server? = null) : UiAction()
 }
 
 data class UiState(

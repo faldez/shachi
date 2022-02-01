@@ -16,7 +16,7 @@ interface ServerDao {
 
 
     @Query("SELECT * FROM server_view WHERE server_id = :serverId")
-    fun getServer(serverId: Int): ServerView?
+    fun getServer(serverId: Int): Flow<ServerView?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSelectedServer(server: SelectedServer)

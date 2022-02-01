@@ -23,6 +23,7 @@ import com.faldez.shachi.data.TagRepository
 import com.faldez.shachi.databinding.SearchSimpleFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.model.Server
+import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.chip.Chip
@@ -53,7 +54,7 @@ class SearchSimpleFragment : Fragment() {
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
         val initialTags: List<Tag> = requireArguments().get("tags") as List<Tag> ?: listOf()
-        val server = requireArguments().getParcelable<Server?>("server")
+        val server = requireArguments().getParcelable<ServerView?>("server")
         viewModel =
             SearchSimpleViewModel(server, initialTags, TagRepository(BooruService()))
 
@@ -161,7 +162,7 @@ class SearchSimpleFragment : Fragment() {
                     binding.loadingIndicator.isVisible = false
                     searchSimpleMenu.getItem(0).isVisible = false
                 } else {
-                    viewModel.accept(UiAction.SearchTag(viewModel.server, text.toString()))
+                    viewModel.accept(UiAction.SearchTag(viewModel.server?.toServer(), text.toString()))
                     binding.selectedTagsLayout.hide()
                     binding.suggestionTagLayout.show()
                     binding.loadingIndicator.isVisible = true

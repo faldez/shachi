@@ -70,7 +70,7 @@ class BrowseFragment : Fragment() {
 
         prepareAppBar()
 
-        val server = arguments?.get("server") as ServerView?
+        val server = arguments?.get("server") as Server?
         val tags =
             (arguments?.get("tags") as String?)?.split(" ")?.map { name -> Tag.fromName(name) }
         Log.d("BrowseFragment", "$server $tags")
@@ -149,7 +149,7 @@ class BrowseFragment : Fragment() {
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         uiActions: (UiAction) -> Unit,
-        server: ServerView?,
+        server: Server?,
         tags: List<Tag>?,
     ) {
         val postAdapter = BrowseAdapter(
@@ -189,7 +189,7 @@ class BrowseFragment : Fragment() {
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (UiAction.Scroll) -> Unit,
-        server: ServerView?,
+        server: Server?,
         tags: List<Tag>?,
     ) {
         retryButton.setOnClickListener { postsAdapter.retry() }
