@@ -76,10 +76,10 @@ class SearchSimpleViewModel(
 
     fun insertTagByName(name: String) {
         viewModelScope.launch {
-            tagRepository.getTag(Action.GetTag(server, name))?.let { tag ->
+            tagRepository.getTag(Action.GetTag(server, name)).let { tag ->
                 selectedTags.getAndUpdate { tags ->
                     val list = tags.toMutableList()
-                    list.add(list.size, tag)
+                    list.add(list.size, tag ?: Tag.fromName(name))
                     list
                 }
             }
