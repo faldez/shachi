@@ -6,7 +6,7 @@ import java.lang.reflect.Type
 
 
 data class GelbooruTagResponse(
-    val tags: GelbooruTags,
+    val tags: GelbooruTags?,
 )
 
 data class GelbooruTags(

@@ -61,7 +61,7 @@ class TagRepository(private val service: BooruService) {
     }
 
     private fun GelbooruTagResponse.mapToTags() =
-        this.tags.tag?.map {
+        this.tags?.tag?.map {
             Tag(
                 id = it.id,
                 name = it.name,
@@ -72,7 +72,7 @@ class TagRepository(private val service: BooruService) {
         }
 
     private fun GelbooruTagResponse.mapToTag() =
-        this.tags.tag?.first()?.let {
+        this.tags?.tag?.first()?.let {
             Tag(
                 id = it.id,
                 name = it.name,
