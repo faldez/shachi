@@ -3,16 +3,16 @@ package com.faldez.shachi.ui.servers
 import android.view.*
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.databinding.ServerListItemBinding
-import com.faldez.shachi.model.ServerWithSelected
+import com.faldez.shachi.model.ServerView
 
 class ServerListAdapter(
     private val onTap: (Int) -> Unit,
     private val onEdit: (Int) -> Unit,
     private val onDelete: (Int) -> Unit,
 ) : RecyclerView.Adapter<ServerListItemViewHolder>() {
-    var serverList: MutableList<ServerWithSelected> = mutableListOf()
+    var serverList: MutableList<ServerView> = mutableListOf()
 
-    fun setData(list: List<ServerWithSelected>) {
+    fun setData(list: List<ServerView>) {
         serverList = list.toMutableList()
         notifyDataSetChanged()
     }

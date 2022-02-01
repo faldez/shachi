@@ -98,17 +98,18 @@ class BrowseViewModel constructor(
         }
     }
 
-    private fun getSelectedServer(): Flow<ServerWithSelected?> {
+    private fun getSelectedServer(): Flow<ServerView?> {
         return serverRepository.getSelectedServer()
     }
 
     private fun selectServer(server: Server) = flow {
-        emit(ServerWithSelected(
+        emit(ServerView(
             serverId = server.serverId,
             url = server.url,
             type = server.type,
             title = server.title,
-            selected = false
+            selected = false,
+            blacklistedTags = null
         ))
     }
 

@@ -3,15 +3,15 @@ package com.faldez.shachi.data
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.model.SelectedServer
 import com.faldez.shachi.model.Server
-import com.faldez.shachi.model.ServerWithSelected
+import com.faldez.shachi.model.ServerView
 import kotlinx.coroutines.flow.Flow
 
 class ServerRepository(private val db: AppDatabase) {
-    fun getAllServers(): Flow<List<ServerWithSelected>?> {
+    fun getAllServers(): Flow<List<ServerView>?> {
         return db.serverDao().getAll()
     }
 
-    fun getSelectedServer(): Flow<ServerWithSelected?> {
+    fun getSelectedServer(): Flow<ServerView?> {
         return db.serverDao().getSelectedServer()
     }
 
