@@ -137,6 +137,7 @@ class BrowseFragment : Fragment() {
             }
             R.id.manage_server_button -> {
                 findNavController().navigate(R.id.action_global_to_servers)
+                (activity as MainActivity).hideBottomNavigation()
                 return true
             }
         }
