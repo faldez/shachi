@@ -59,4 +59,7 @@
     <color name="tag_copyright">#A0A</color>
     <color name="tag_general">#337ab7</color>
     <color name="tag_metadata">#F80</color>
+    <!--    custom color-->
+    <color name="full_width_background_color_light">#FFFFFF</color>
+    <color name="full_width_background_color_black">#000000</color>
 </resources>

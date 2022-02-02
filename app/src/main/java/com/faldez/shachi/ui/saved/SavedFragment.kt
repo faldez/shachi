@@ -1,6 +1,5 @@
 package com.faldez.shachi.ui.saved
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,6 +22,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+
 
 class SavedFragment : Fragment() {
     private lateinit var viewModel: SavedViewModel
@@ -59,20 +59,20 @@ class SavedFragment : Fragment() {
                     .navigate(R.id.action_saved_to_browse,
                         bundle)
             },
-            onDelete = {
-                MaterialAlertDialogBuilder(requireContext()).setTitle("Delete " + it.savedSearch.savedSearchTitle)
+            onDelete = { savedSearch ->
+                MaterialAlertDialogBuilder(requireContext()).setTitle("Delete " + savedSearch.savedSearch.savedSearchTitle)
                     .setMessage("Are you Sure?")
-                    .setPositiveButton("Yes", object : DialogInterface.OnClickListener {
-                        override fun onClick(dialog: DialogInterface?, which: Int) {
-                            viewModel.delete(it.savedSearch)
-                        }
-                    }).setNegativeButton("No", null).show()
+                    .setPositiveButton("Yes"
+                    ) { _, _ -> viewModel.delete(savedSearch.savedSearch) }
+                    .setNegativeButton("No", null).show()
             }
         )
 
         binding.savedSearchRecyclerView.adapter = adapter
-        binding.savedSearchRecyclerView.layoutManager =
+
+        val layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.savedSearchRecyclerView.layoutManager = layoutManager
 
         binding.savedSwipeRefreshLayout.setOnRefreshListener {
             viewModel.clearPosts()
@@ -97,7 +97,7 @@ class SavedFragment : Fragment() {
                 state?.let { savedSearches ->
                     val postMap = viewModel.state
                     val savedSearchPosts = savedSearches.map {
-                        SavedSearchPost(savedSearch = it, posts = postMap.value.get(it))
+                        SavedSearchPost(savedSearch = it, posts = postMap.value[it])
                     }
                     Log.d("SavedFragment", "$savedSearchPosts")
                     adapter.updateDate(savedSearchPosts)

@@ -45,5 +45,7 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="q">
             true
         </item>
+        <!--        custom-->
+        <item name="fullWidthCardBackground">@color/full_width_background_color_light</item>
     </style>
 </resources>

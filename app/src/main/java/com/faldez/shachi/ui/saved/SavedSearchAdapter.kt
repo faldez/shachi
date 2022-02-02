@@ -17,9 +17,6 @@ class SavedSearchAdapter(
     private val savedSearches: MutableList<SavedSearchPost> = mutableListOf()
 
     fun updateDate(savedSearch: List<SavedSearchPost>) {
-        savedSearch.forEach {
-
-        }
         savedSearches.clear()
         savedSearches.addAll(savedSearch)
         notifyDataSetChanged()
@@ -65,7 +62,7 @@ class SavedSearchAdapter(
 
         holder.binding.tagsTextView.text = SpannableStringBuilder(item.savedSearch.savedSearch.tags)
 
-        holder.binding.removeSavedSearchButton.setOnClickListener {
+        holder.binding.deleteSavedSearchButton.setOnClickListener {
             onDelete(item.savedSearch)
         }
     }
