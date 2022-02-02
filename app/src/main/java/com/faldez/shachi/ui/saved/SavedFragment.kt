@@ -1,8 +1,11 @@
 package com.faldez.shachi.ui.saved
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +19,7 @@ import com.faldez.shachi.data.SavedSearchRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SavedFragmentBinding
 import com.faldez.shachi.service.BooruService
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -54,7 +58,13 @@ class SavedFragment : Fragment() {
                         bundle)
             },
             onDelete = {
-                viewModel.delete(it.savedSearch)
+                MaterialAlertDialogBuilder(requireContext()).setTitle("Delete " + it.savedSearch.savedSearchTitle)
+                    .setMessage("Are you Sure?")
+                    .setPositiveButton("Yes", object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            viewModel.delete(it.savedSearch)
+                        }
+                    }).setNegativeButton("No", null).show()
             }
         )
 

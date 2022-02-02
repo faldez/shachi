@@ -29,7 +29,6 @@
         <item name="android:navigationBarColor">
             @android:color/transparent
         </item>
-
         <!-- Optional, if your app is drawing behind the status bar also. -->
         <item name="android:statusBarColor">
             @android:color/transparent
@@ -46,6 +45,6 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="q">
             true
         </item>
-        <item name="snackbarStyle">@style/Widget.Material3.Snackbar</item>
+        <item name="snackbarStyle">@style/ShapeAppearance.Shachi.Snackbar</item>
     </style>
 </resources>
