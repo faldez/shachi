@@ -45,6 +45,5 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="q">
             true
         </item>
-        <item name="snackbarStyle">@style/ShapeAppearance.Shachi.Snackbar</item>
     </style>
 </resources>
