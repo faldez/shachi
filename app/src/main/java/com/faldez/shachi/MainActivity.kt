@@ -76,11 +76,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onPreferenceStartFragment(
-        caller: PreferenceFragmentCompat?,
-        pref: Preference?,
+        caller: PreferenceFragmentCompat,
+        pref: Preference
     ): Boolean {
-        Log.d("MoreFragment", "${pref?.key}")
-        when (pref?.key) {
+        Log.d("MoreFragment", pref.key)
+        when (pref.key) {
             "servers" -> {
                 navController.navigate(R.id.action_global_to_servers)
                 hideBottomNavigation()
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(),
         return false
     }
 
-    fun hideBottomNavigation() {
+    private fun hideBottomNavigation() {
         if (binding.bottomNavigationView.isVisible) {
             val constraint = findViewById<ConstraintLayout>(R.id.mainLayout)
             val constraintSet = ConstraintSet()
@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    fun showBottomNavigation() {
+    private fun showBottomNavigation() {
         if (!binding.bottomNavigationView.isVisible) {
             val constraint = findViewById<ConstraintLayout>(R.id.mainLayout)
             val constraintSet = ConstraintSet()
