@@ -21,7 +21,7 @@ class FavoriteRepository(private val db: AppDatabase) {
         val query = tags.map { "tags:$it" }.joinToString(separator = " ")
         return Pager(
             config = PagingConfig(
-                pageSize = 50,
+                pageSize = 100,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {

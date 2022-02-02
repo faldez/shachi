@@ -118,6 +118,6 @@ class PostRepository constructor(
 
     companion object {
         const val STARTING_PAGE_INDEX = 0
-        const val NETWORK_PAGE_SIZE = 50
+        const val NETWORK_PAGE_SIZE = 100
     }
 }
