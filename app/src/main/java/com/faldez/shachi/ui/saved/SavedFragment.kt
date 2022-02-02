@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
@@ -73,6 +74,10 @@ class SavedFragment : Fragment() {
         val layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.savedSearchRecyclerView.layoutManager = layoutManager
+
+        val divider = DividerItemDecoration(binding.savedSearchRecyclerView.context,
+            layoutManager.orientation)
+        binding.savedSearchRecyclerView.addItemDecoration(divider)
 
         binding.savedSwipeRefreshLayout.setOnRefreshListener {
             viewModel.clearPosts()
