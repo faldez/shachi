@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.faldez.shachi.GlideApp
@@ -19,6 +20,7 @@ class PostSlideAdapter(
     private val onTap: () -> Unit,
     private val onLoadStart: () -> Unit,
     private val onLoadEnd: () -> Unit,
+    private val onLoadError: () -> Unit,
 ) :
     PagingDataAdapter<Post, PostSlideViewHolder>(POST_COMPARATOR) {
     var loadedPost: MutableSet<Int> = mutableSetOf()
@@ -47,7 +49,7 @@ class PostSlideAdapter(
                         target: Target<Drawable>?,
                         isFirstResource: Boolean,
                     ): Boolean {
-                        onLoadEnd()
+                        onLoadError()
                         return false
                     }
 
@@ -64,6 +66,7 @@ class PostSlideAdapter(
                     }
 
                 })
+                .transition(withCrossFade())
                 .into(postImageView)
         }
     }

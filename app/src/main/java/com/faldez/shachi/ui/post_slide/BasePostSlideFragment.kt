@@ -3,6 +3,7 @@ package com.faldez.shachi.ui.post_slide
 import android.animation.Animator
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -91,7 +92,11 @@ abstract class BasePostSlideFragment : Fragment() {
             },
             onLoadEnd = {
                 binding.postLoadingIndicator.isVisible = false
-            })
+            },
+            onLoadError = {
+                Toast.makeText(requireContext(), "Error load image", Toast.LENGTH_LONG).show()
+            }
+        )
         binding.postViewPager.adapter = postSlideAdapter
         lifecycleScope.launch {
             collectPagingData()

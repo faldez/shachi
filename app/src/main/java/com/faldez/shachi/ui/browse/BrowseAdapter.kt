@@ -9,8 +9,11 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
+
 
 class BrowseAdapter(private val onClick: (Int) -> Unit) :
     PagingDataAdapter<Post, BrowseItemViewHolder>(POST_COMPARATOR) {
@@ -30,8 +33,10 @@ class BrowseAdapter(private val onClick: (Int) -> Unit) :
         val post = getItem(position)
 
         post?.let {
+            val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
             val imageView = holder.binding.imageView
             Glide.with(imageView.context).load(it.previewUrl)
+                .transition(withCrossFade(factory))
                 .placeholder(BitmapDrawable(imageView.resources,
                     Bitmap.createBitmap(it.previewWidth!!,
                         it.previewHeight!!,
