@@ -6,11 +6,17 @@
         android:enabled="true"
         android:icon="@drawable/ic_baseline_favorite_border_24"
         android:title="@string/favorite"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/detail_button"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_info_24"
         android:title="@string/detail"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/share_button"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_share_24"
+        android:title="@string/share"
+        app:showAsAction="ifRoom" />
 </menu>
