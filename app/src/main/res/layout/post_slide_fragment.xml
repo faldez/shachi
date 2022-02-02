@@ -17,7 +17,7 @@
         android:id="@+id/post_slide_appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:alpha="0.75"
+        android:alpha="0.9"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar

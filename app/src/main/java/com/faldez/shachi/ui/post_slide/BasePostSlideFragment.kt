@@ -4,22 +4,15 @@ import android.animation.Animator
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.bundleOf
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.model.Post
-import com.faldez.shachi.ui.browse.BrowseViewModel
 import com.google.android.material.shape.MaterialShapeDrawable
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 abstract class BasePostSlideFragment : Fragment() {
@@ -45,21 +38,6 @@ abstract class BasePostSlideFragment : Fragment() {
         binding = PostSlideFragmentBinding.inflate(inflater, container, false)
 
         return binding.root
-    }
-
-    private fun showSystemUi() {
-        val window = (activity as MainActivity).window
-        WindowInsetsControllerCompat(window,
-            window.decorView).show(WindowInsetsCompat.Type.systemBars())
-    }
-
-    private fun hideSystemUi() {
-        val window = (activity as MainActivity).window
-        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
-            controller.hide(WindowInsetsCompat.Type.systemBars())
-            controller.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
     }
 
     private fun hideAppbar() {
@@ -102,11 +80,9 @@ abstract class BasePostSlideFragment : Fragment() {
             onTap = {
                 isAppBarHide = if (isAppBarHide) {
                     showAppbar()
-                    showSystemUi()
                     false
                 } else {
                     hideAppbar()
-                    hideSystemUi()
                     true
                 }
             },
@@ -169,10 +145,15 @@ abstract class BasePostSlideFragment : Fragment() {
         prepareViewPager(position)
     }
 
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity).hideBottomNavigation()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         if (isAppBarHide) {
-            showSystemUi()
+            (activity as MainActivity).showBottomNavigation()
         }
     }
 

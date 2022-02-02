@@ -17,26 +17,24 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.faldez.shachi.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(),
     PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     lateinit var navController: NavController
     lateinit var sharedPreferences: SharedPreferences
-    lateinit var bottomNavigationView: BottomNavigationView
+    lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContentView(R.layout.activity_main)
-
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         val navFragment =
             supportFragmentManager.findFragmentById(R.id.navFragment) as NavHostFragment
         navController = navFragment.navController
 
-        bottomNavigationView =
-            findViewById(R.id.bottomNavigationView)
-        bottomNavigationView.setupWithNavController(navController)
+        binding.bottomNavigationView.setupWithNavController(navController)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
@@ -81,13 +79,15 @@ class MainActivity : AppCompatActivity(),
     }
 
     fun hideBottomNavigation() {
-        if (bottomNavigationView.isVisible) {
-            bottomNavigationView.animate().translationY(bottomNavigationView.height.toFloat())
+        if (binding.bottomNavigationView.isVisible) {
+
+            binding.bottomNavigationView.animate()
+                .translationY(binding.bottomNavigationView.height.toFloat())
                 .setListener(object : Animator.AnimatorListener {
                     override fun onAnimationStart(p0: Animator?) {}
 
                     override fun onAnimationEnd(p0: Animator?) {
-                        bottomNavigationView.visibility = View.GONE
+                        binding.bottomNavigationView.visibility = View.GONE
                     }
 
                     override fun onAnimationCancel(p0: Animator?) {}
@@ -98,11 +98,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     fun showBottomNavigation() {
-        if (!bottomNavigationView.isVisible) {
-            bottomNavigationView.animate().translationY(0f)
+        if (!binding.bottomNavigationView.isVisible) {
+            binding.bottomNavigationView.animate().translationY(0f)
                 .setListener(object : Animator.AnimatorListener {
                     override fun onAnimationStart(p0: Animator?) {
-                        bottomNavigationView.visibility = View.VISIBLE
+                        binding.bottomNavigationView.visibility = View.VISIBLE
                     }
 
                     override fun onAnimationEnd(p0: Animator?) {}
