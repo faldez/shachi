@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
@@ -80,7 +82,14 @@ class MainActivity : AppCompatActivity(),
 
     fun hideBottomNavigation() {
         if (binding.bottomNavigationView.isVisible) {
-
+            val constraint = findViewById<ConstraintLayout>(R.id.mainLayout)
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(constraint)
+            constraintSet.connect(R.id.navFragment,
+                ConstraintSet.BOTTOM,
+                R.id.mainLayout,
+                ConstraintSet.BOTTOM)
+            constraintSet.applyTo(constraint)
             binding.bottomNavigationView.animate()
                 .translationY(binding.bottomNavigationView.height.toFloat())
                 .setListener(object : Animator.AnimatorListener {
@@ -99,6 +108,14 @@ class MainActivity : AppCompatActivity(),
 
     fun showBottomNavigation() {
         if (!binding.bottomNavigationView.isVisible) {
+            val constraint = findViewById<ConstraintLayout>(R.id.mainLayout)
+            val constraintSet = ConstraintSet()
+            constraintSet.clone(constraint)
+            constraintSet.connect(R.id.navFragment,
+                ConstraintSet.BOTTOM,
+                R.id.bottomNavigationView,
+                ConstraintSet.TOP)
+            constraintSet.applyTo(constraint)
             binding.bottomNavigationView.animate().translationY(0f)
                 .setListener(object : Animator.AnimatorListener {
                     override fun onAnimationStart(p0: Animator?) {
