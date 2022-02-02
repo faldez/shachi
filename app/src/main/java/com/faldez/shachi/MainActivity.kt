@@ -40,6 +40,22 @@ class MainActivity : AppCompatActivity(),
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val isShow = when (destination.id) {
+                R.id.savedFragment -> true
+                R.id.browseFragment -> true
+                R.id.browseSavedFragment -> true
+                R.id.moreFragment -> true
+                R.id.favoriteFragment -> true
+                else -> false
+            }
+            if (isShow) {
+                showBottomNavigation()
+
+            } else {
+                hideBottomNavigation()
+            }
+        }
         setTheme()
     }
 

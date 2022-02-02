@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/saved"
+    app:startDestination="@+id/savedFragment">
+    <fragment
+        android:id="@+id/savedFragment"
+        android:name="com.faldez.shachi.ui.saved.SavedFragment"
+        android:label="saved_fragment"
+        tools:layout="@layout/saved_fragment">
+
+        <action
+            android:id="@+id/action_saved_to_browse"
+            app:destination="@id/browseSavedFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:popUpTo="@id/browseSavedFragment"
+            app:popUpToInclusive="true"
+            app:popUpToSaveState="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/browseSavedFragment"
+        android:name="com.faldez.shachi.ui.browse.BrowseFragment"
+        android:label="browse_fragment"
+        tools:layout="@layout/browse_fragment" />
+</navigation>

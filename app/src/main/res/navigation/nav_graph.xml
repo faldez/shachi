@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/savedFragment">
+    app:startDestination="@+id/saved">
     <action
         android:id="@+id/action_global_to_postslide"
         app:destination="@id/postSlideFragment"
@@ -35,20 +35,7 @@
     <action
         android:id="@+id/action_postslide_to_postdetail"
         app:destination="@id/post_detail_bottom_sheet_fragment" />
-    <fragment
-        android:id="@+id/savedFragment"
-        android:name="com.faldez.shachi.ui.saved.SavedFragment"
-        android:label="saved_fragment"
-        tools:layout="@layout/saved_fragment">
-
-        <action
-            android:id="@+id/action_saved_to_browse"
-            app:destination="@id/browseSavedFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out" />
-    </fragment>
+    <include app:graph="@navigation/saved" />
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.faldez.shachi.ui.favorite.FavoriteFragment"
@@ -65,11 +52,6 @@
     </fragment>
     <fragment
         android:id="@+id/browseFragment"
-        android:name="com.faldez.shachi.ui.browse.BrowseFragment"
-        android:label="browse_fragment"
-        tools:layout="@layout/browse_fragment" />
-    <fragment
-        android:id="@+id/browseSavedFragment"
         android:name="com.faldez.shachi.ui.browse.BrowseFragment"
         android:label="browse_fragment"
         tools:layout="@layout/browse_fragment" />

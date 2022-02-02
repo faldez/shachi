@@ -160,18 +160,6 @@ abstract class BasePostSlideFragment : Fragment() {
         prepareViewPager(position)
     }
 
-    override fun onResume() {
-        super.onResume()
-        (activity as MainActivity).hideBottomNavigation()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (isAppBarHide) {
-            (activity as MainActivity).showBottomNavigation()
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.post_slide_menu, menu)
         topbarMenu = menu

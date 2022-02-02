@@ -67,7 +67,11 @@ class BrowseFragment : Fragment() {
         binding = BrowseFragmentBinding.inflate(inflater, container, false)
 
         prepareAppBar()
-
+        arguments?.getString("title")?.let {
+            binding.searchPostTopAppBar.title = it
+            val supportActionBar = (activity as MainActivity).supportActionBar
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }
         val server = arguments?.get("server") as Server?
         val tags =
             (arguments?.get("tags") as String?)?.split(" ")?.map { name -> Tag.fromName(name) }
@@ -81,11 +85,6 @@ class BrowseFragment : Fragment() {
         )
 
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        (activity as MainActivity).showBottomNavigation()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -109,7 +108,6 @@ class BrowseFragment : Fragment() {
                 val bundle = bundleOf("server" to viewModel.state.value.server,
                     "tags" to viewModel.state.value.tags)
                 findNavController().navigate(R.id.action_global_to_searchsimple, bundle)
-                (activity as MainActivity).hideBottomNavigation()
             }
             R.id.save_search_button -> {
                 if (viewModel.state.value.tags.isEmpty()) {
@@ -137,7 +135,6 @@ class BrowseFragment : Fragment() {
             }
             R.id.manage_server_button -> {
                 findNavController().navigate(R.id.action_global_to_servers)
-                (activity as MainActivity).hideBottomNavigation()
                 return true
             }
         }
@@ -150,7 +147,6 @@ class BrowseFragment : Fragment() {
         (activity as MainActivity).setSupportActionBar(binding.searchPostTopAppBar)
         binding.appBarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-        val supportActionBar = (activity as MainActivity).supportActionBar
     }
 
     private fun BrowseFragmentBinding.bindState(

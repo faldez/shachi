@@ -52,7 +52,9 @@ class SavedFragment : Fragment() {
 
         val adapter = SavedSearchAdapter(
             onBrowse = {
-                val bundle = bundleOf("server" to it.server, "tags" to it.savedSearch.tags)
+                val bundle = bundleOf("title" to it.savedSearch.savedSearchTitle,
+                    "server" to it.server,
+                    "tags" to it.savedSearch.tags)
                 findNavController()
                     .navigate(R.id.action_saved_to_browse,
                         bundle)
@@ -116,11 +118,6 @@ class SavedFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        (activity as MainActivity).showBottomNavigation()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
     }
@@ -136,7 +133,6 @@ class SavedFragment : Fragment() {
 //        when (item.itemId) {
 //            R.id.more_button -> {
 //                findNavController().navigate(R.id.action_saved_to_more)
-//                (activity as MainActivity).hideBottomNavigation()
 //                return true
 //            }
 //        }
