@@ -3,6 +3,7 @@ package com.faldez.shachi.ui.post_slide
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.paging.map
 import com.faldez.shachi.R
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.ui.favorite.FavoriteViewModel
@@ -17,13 +18,16 @@ class FavoritePostSlideFragment : BasePostSlideFragment() {
 
     override suspend fun collectPagingData() {
         viewModel.pagingDataFlow.collect {
-            postSlideAdapter.submitData(it)
+            val data = it.map { post ->
+                post.favorite = true
+                post
+            }
+            postSlideAdapter.submitData(data)
         }
     }
 
     override fun navigateToPostSlide(post: Post?) {
-        val bundle = bundleOf("post" to post,
-            "tags" to viewModel.state.value.tags)
+        val bundle = bundleOf("post" to post)
         findNavController().navigate(R.id.action_postslide_to_postdetail, bundle)
     }
 

@@ -11,11 +11,12 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.faldez.shachi.R
+import com.faldez.shachi.data.ServerRepository
 import com.faldez.shachi.data.TagRepository
+import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.PostDetailBottomSheetFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
 import com.faldez.shachi.service.BooruService
@@ -39,38 +40,57 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
         val server = requireArguments().get("server") as ServerView?
-        val post = requireArguments().get("post") as Post?
+        val post = requireArguments().get("post") as Post
+        Log.d("PostDetailBottomSheetFragment", "$post")
 
-        val currentSearchTags = requireArguments().get("tags") as List<Tag>?
+        val currentSearchTags =
+            (requireArguments().get("tags") as List<*>?)?.filterIsInstance<Tag>()
+
+        viewModel =
+            PostDetailBottomSheetViewModel(server,
+                post,
+                TagRepository(BooruService()),
+                ServerRepository(
+                    AppDatabase.build(requireContext())))
+
+        binding.bind(post, currentSearchTags)
+
+        return binding.root
+    }
+
+    private fun TagsDetailsBinding.hideAll() {
+        generalTagsHeader.isVisible = false
+        artistTagsHeader.isVisible = false
+        copyrightTagsHeader.isVisible = false
+        characterTagsHeader.isVisible = false
+        metadataTagsHeader.isVisible = false
+        otherTagsHeader.isVisible = false
+    }
+
+    private fun PostDetailBottomSheetFragmentBinding.bind(
+        post: Post?,
+        currentSearchTags: List<Tag>?,
+    ) {
         Log.d("PostDetailBottomSheetFragment", "currentSearchTags $currentSearchTags")
-        val currentSearchTagsSet = currentSearchTags?.map { it.name }?.toSet()
-
-        viewModel = PostDetailBottomSheetViewModel(server, TagRepository(BooruService()))
+        val currentSearchTagsSet = currentSearchTags?.map { it.name }?.toSet() ?: setOf()
 
         post?.let { p ->
-            binding.sizeTextview.text = "${p.width}x${p.height}"
-            binding.sourceUrl.text = p.source
-            binding.ratingTextview.text = p.rating
-            binding.scoreTextview.text = "${p.score ?: 0}"
-            binding.postedTextview.text = p.createdAt
-
-            viewModel.getTags(p.tags)
+            sizeTextview.text = "${p.width}x${p.height}"
+            sourceUrl.text = p.source
+            ratingTextview.text = p.rating
+            scoreTextview.text = "${p.score ?: 0}"
+            postedTextview.text = p.createdAt
         }
 
         lifecycleScope.launch {
-            viewModel.state.collect { tags ->
-                binding.loadingLabel.isVisible = tags == null
+            viewModel.state.collect { state ->
+                binding.loadingLabel.isVisible = state.tags == null
                 val splitTags =
-                    (tags ?: listOf()).groupBy { currentSearchTagsSet?.contains(it.name) ?: false }
+                    (state.tags ?: listOf()).groupBy { currentSearchTagsSet.contains(it.name) }
                 val groupedTags = splitTags[false]?.groupBy { it.type }
                 Log.d("SearchSimpleFragment", "collect $groupedTags")
-                binding.currentSearchTagsHeader.isVisible = false
-                tagDetailsBinding.generalTagsHeader.isVisible = false
-                tagDetailsBinding.artistTagsHeader.isVisible = false
-                tagDetailsBinding.copyrightTagsHeader.isVisible = false
-                tagDetailsBinding.characterTagsHeader.isVisible = false
-                tagDetailsBinding.metadataTagsHeader.isVisible = false
-                tagDetailsBinding.otherTagsHeader.isVisible = false
+                currentSearchTagsHeader.isVisible = false
+                tagDetailsBinding.hideAll()
 
                 binding.currentSearchTagsHeader.isVisible = !splitTags[true].isNullOrEmpty()
                 binding.currentSearchTagsChipGroup.isVisible = !splitTags[true].isNullOrEmpty()
@@ -85,7 +105,7 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
                     }
 
                     val chip = Chip(requireContext())
-                    chip.bind(binding.currentSearchTagsChipGroup, textColor, tag)
+                    chip.bind(currentSearchTagsChipGroup, textColor, tag)
                 }
 
                 groupedTags?.forEach { (type, tags) ->
@@ -133,8 +153,6 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
                 }
             }
         }
-
-        return binding.root
     }
 
     private fun Chip.bind(group: ChipGroup, textColor: Int?, tag: Tag) {

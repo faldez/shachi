@@ -10,11 +10,12 @@ import kotlinx.coroutines.flow.map
 
 class FavoriteRepository(private val db: AppDatabase) {
     suspend fun insert(favorite: Post) {
-        return db.favoriteDao().insert(favorite)
+        db.favoriteDao().insert(favorite)
     }
 
+
     suspend fun delete(favorite: Post) {
-        return db.favoriteDao().delete(favorite)
+        db.favoriteDao().delete(favorite)
     }
 
     fun query(tags: String): Flow<PagingData<Post>> {
@@ -34,11 +35,11 @@ class FavoriteRepository(private val db: AppDatabase) {
         ).flow
     }
 
-    fun queryByServerUrlAndPostIds(serverUrl: String, postIds: List<Int>): Flow<Set<Int>> {
-        return db.favoriteDao().queryByServerUrlAndPostIds(serverUrl, postIds).map { it.toSet() }
+    fun queryByServerUrlAndPostIds(serverId: Int, postIds: List<Int>): Flow<Set<Int>> {
+        return db.favoriteDao().queryByServerUrlAndPostIds(serverId, postIds).map { it.toSet() }
     }
 
-    suspend fun queryByServerUrlAndPostId(serverUrl: String, postId: Int): Int? {
-        return db.favoriteDao().queryByServerUrlAndPostId(serverUrl, postId)
+    suspend fun queryByServerUrlAndPostId(serverId: Int, postId: Int): Int? {
+        return db.favoriteDao().queryByServerUrlAndPostId(serverId, postId)
     }
 }

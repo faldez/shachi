@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.faldez.shachi.model.*
 
-@Database(entities = [Server::class, SelectedServer::class, Post::class, SavedSearch::class, BlacklistedTag::class, ServerBlacklistedTagCrossRef::class],
+@Database(entities = [Server::class, SelectedServer::class, Post::class, SavedSearch::class, BlacklistedTag::class, ServerBlacklistedTagCrossRef::class, PostTag::class],
     views = [ServerView::class],
     version = 2)
 abstract class AppDatabase : RoomDatabase() {

@@ -1,7 +1,9 @@
 package com.faldez.shachi.ui.post_slide
 
 import android.graphics.drawable.Drawable
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -14,10 +16,12 @@ import com.bumptech.glide.request.target.Target
 import com.faldez.shachi.GlideApp
 import com.faldez.shachi.databinding.PostSlideItemBinding
 import com.faldez.shachi.model.Post
+import java.lang.IndexOutOfBoundsException
 
 
 class PostSlideAdapter(
-    private val onTap: () -> Unit,
+    private val onTap: () -> Boolean,
+    private val onDoubleTap: () -> Boolean,
     private val onLoadStart: () -> Unit,
     private val onLoadEnd: () -> Unit,
     private val onLoadError: () -> Unit,
@@ -39,6 +43,14 @@ class PostSlideAdapter(
             onLoadStart()
             val postImageView = holder.binding.postImageView
             postImageView.setOnViewTapListener { view, x, y -> onTap() }
+            postImageView.setOnDoubleTapListener(object : GestureDetector.OnDoubleTapListener {
+                override fun onSingleTapConfirmed(event: MotionEvent?): Boolean = onTap()
+
+                override fun onDoubleTap(event: MotionEvent?): Boolean = onDoubleTap()
+
+                override fun onDoubleTapEvent(event: MotionEvent?): Boolean = false
+
+            })
             GlideApp.with(postImageView.context).load(it.fileUrl)
                 .thumbnail(GlideApp.with(postImageView.context).load(it.previewUrl))
                 .timeout(3000)
@@ -72,7 +84,11 @@ class PostSlideAdapter(
     }
 
     fun getPostItem(position: Int): Post? {
-        return getItem(position)
+        return try {
+            getItem(position)
+        } catch (exception: IndexOutOfBoundsException) {
+            null
+        }
     }
 
     fun setFavorite(position: Int, favorite: Boolean) {
@@ -86,7 +102,7 @@ class PostSlideAdapter(
     companion object {
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
-                oldItem.postId == newItem.postId && oldItem.serverUrl == newItem.serverUrl
+                oldItem.postId == newItem.postId && oldItem.serverId == newItem.serverId
 
 
             override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =

@@ -1,14 +1,14 @@
 package com.faldez.shachi.model
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Fts4
-import androidx.room.Ignore
+import androidx.room.*
 import kotlinx.parcelize.Parcelize
 
-@Fts4
-@Entity(tableName = "favorite")
+@Entity(tableName = "favorite",
+    primaryKeys = ["server_id", "post_id"],
+    foreignKeys = [ForeignKey(parentColumns = ["server_id"],
+        childColumns = ["server_id"],
+        entity = Server::class)])
 @Parcelize
 data class Post(
     val height: Int,
@@ -25,7 +25,7 @@ data class Post(
     val rating: String,
     val tags: String,
     @ColumnInfo(name = "post_id") val postId: Int,
-    @ColumnInfo(name = "server_url") val serverUrl: String,
+    @ColumnInfo(name = "server_id") val serverId: Int,
     val change: Int,
     val md5: String,
     @ColumnInfo(name = "creator_id") val creatorId: Int?,
@@ -39,3 +39,11 @@ data class Post(
     @Ignore
     var favorite: Boolean = false
 }
+
+@Fts4
+@Entity(tableName = "post_tag")
+data class PostTag(
+    @ColumnInfo(name = "post_id") val postId: Int,
+    @ColumnInfo(name = "server_id") val serverId: Int,
+    val tags: String,
+)

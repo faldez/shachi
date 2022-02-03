@@ -35,7 +35,7 @@ class FavoriteAdapter(private val onClick: (Int) -> Unit) :
                 .placeholder(BitmapDrawable(imageView.resources,
                     Bitmap.createBitmap(it.previewWidth!!,
                         it.previewHeight!!,
-                        Bitmap.Config.ARGB_8888))).override(it.previewWidth!!, it.previewHeight!!)
+                        Bitmap.Config.ARGB_8888))).override(it.previewWidth, it.previewHeight)
                 .into(imageView)
 
             holder.binding.root.setOnClickListener { _ ->
@@ -47,7 +47,7 @@ class FavoriteAdapter(private val onClick: (Int) -> Unit) :
     companion object {
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
-                oldItem.postId == newItem.postId && oldItem.serverUrl == newItem.serverUrl
+                oldItem.postId == newItem.postId && oldItem.serverId == newItem.serverId
 
 
             override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =

@@ -36,7 +36,7 @@ class PostPagingSource(
                     val url = action.buildGelbooruUrl(position).toString()
                     Log.d("PostPagingSource", url)
                     service.gelbooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
-                        ?.mapToPost(action.server.url) ?: listOf()
+                        ?.mapToPost(action.server.serverId) ?: listOf()
                 }
                 ServerType.Danbooru -> {
                     TODO("not yet implemented")
@@ -90,7 +90,7 @@ class PostPagingSource(
         return posts
     }
 
-    private fun List<GelbooruPost>.mapToPost(serverUrl: String): List<Post> {
+    private fun List<GelbooruPost>.mapToPost(serverId: Int): List<Post> {
         return this.map { post ->
             Post(
                 height = post.height,
@@ -107,7 +107,7 @@ class PostPagingSource(
                 rating = post.rating,
                 tags = post.tags,
                 postId = post.id,
-                serverUrl = serverUrl,
+                serverId = serverId,
                 change = post.change,
                 md5 = post.md5,
                 creatorId = post.creatorId,

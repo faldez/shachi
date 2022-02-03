@@ -5,6 +5,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import com.faldez.shachi.R
 import com.faldez.shachi.model.Post
+import com.faldez.shachi.model.Server
 import com.faldez.shachi.ui.browse.BrowseViewModel
 import kotlinx.coroutines.flow.collect
 

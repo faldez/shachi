@@ -3,8 +3,8 @@ package com.faldez.shachi.ui.browse
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +21,8 @@ class BrowseAdapter(private val onClick: (Int) -> Unit) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BrowseItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
 
-        binding = BrowseItemViewHolder(PostCardItemBinding.inflate(inflater, parent, false))
+        binding =
+            BrowseItemViewHolder(PostCardItemBinding.inflate(inflater, parent, false), onClick)
         return binding
     }
 
@@ -32,33 +33,13 @@ class BrowseAdapter(private val onClick: (Int) -> Unit) :
     override fun onBindViewHolder(holder: BrowseItemViewHolder, position: Int) {
         val post = getItem(position)
 
-        post?.let {
-            val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
-            val imageView = holder.binding.imageView
-            Glide.with(imageView.context).load(it.previewUrl)
-                .transition(withCrossFade(factory))
-                .placeholder(BitmapDrawable(imageView.resources,
-                    Bitmap.createBitmap(it.previewWidth!!,
-                        it.previewHeight!!,
-                        Bitmap.Config.ARGB_8888))).override(it.previewWidth!!, it.previewHeight!!)
-                .into(imageView)
-
-            holder.binding.favoriteIcon.visibility = if (post.favorite) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
-
-            holder.binding.root.setOnClickListener { _ ->
-                onClick(position)
-            }
-        }
+        post?.let { holder.bind(post) }
     }
 
     companion object {
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
-                oldItem.postId == newItem.postId && oldItem.serverUrl == newItem.serverUrl
+                oldItem.postId == newItem.postId && oldItem.serverId == newItem.serverId
 
 
             override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =
@@ -68,7 +49,23 @@ class BrowseAdapter(private val onClick: (Int) -> Unit) :
     }
 }
 
-class BrowseItemViewHolder(val binding: PostCardItemBinding) :
+class BrowseItemViewHolder(val binding: PostCardItemBinding, val onClick: (Int) -> Unit) :
     RecyclerView.ViewHolder(binding.root) {
+    fun bind(post: Post) {
+        val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
+        val imageView = binding.imageView
+        Glide.with(imageView.context).load(post.previewUrl)
+            .transition(withCrossFade(factory))
+            .placeholder(BitmapDrawable(imageView.resources,
+                Bitmap.createBitmap(post.previewWidth!!,
+                    post.previewHeight!!,
+                    Bitmap.Config.ARGB_8888))).override(post.previewWidth, post.previewHeight)
+            .into(imageView)
 
+        binding.favoriteIcon.isVisible = post.favorite
+
+        binding.root.setOnClickListener { _ ->
+            onClick(bindingAdapterPosition)
+        }
+    }
 }

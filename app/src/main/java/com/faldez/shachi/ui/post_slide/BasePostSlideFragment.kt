@@ -7,8 +7,8 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -31,7 +31,7 @@ abstract class BasePostSlideFragment : Fragment() {
 
     protected lateinit var binding: PostSlideFragmentBinding
 
-    private lateinit var topbarMenu: Menu
+    private var topbarMenu: Menu? = null
 
     private var isAppBarHide = false
 
@@ -47,6 +47,10 @@ abstract class BasePostSlideFragment : Fragment() {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = PostSlideFragmentBinding.inflate(inflater, container, false)
+
+        val position = requireArguments().getInt("position")
+        prepareAppBar()
+        prepareViewPager(position)
 
         return binding.root
     }
@@ -96,6 +100,11 @@ abstract class BasePostSlideFragment : Fragment() {
                     hideAppbar()
                     true
                 }
+                false
+            },
+            onDoubleTap = {
+                onFavoriteButton()
+                false
             },
             onLoadStart = {
 
@@ -104,27 +113,33 @@ abstract class BasePostSlideFragment : Fragment() {
                 binding.postLoadingIndicator.isVisible = false
             },
             onLoadError = {
-                Toast.makeText(requireContext(), "Error load image", Toast.LENGTH_LONG).show()
+                binding.postLoadingIndicator.isVisible = false
             }
         )
         binding.postViewPager.adapter = postSlideAdapter
         lifecycleScope.launch {
             collectPagingData()
         }
-
         binding.postViewPager.setCurrentItem(position, false)
         binding.postViewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                (activity as MainActivity).supportActionBar?.title =
-                    "" + (position + 1) + "/" + postSlideAdapter.itemCount
-                postSlideAdapter.getPostItem(position)?.let { setFavoriteButton(it) }
+                setTitle(position)
+                val post = postSlideAdapter.getPostItem(position)
+                if (post != null) {
+                    setFavoriteButton(post)
+                } else {
+                    (activity as MainActivity).onBackPressed()
+                }
 
                 binding.postLoadingIndicator.isVisible =
                     !postSlideAdapter.loadedPost.contains(position)
             }
         })
+        setTitle(position)
+    }
 
+    private fun setTitle(position: Int) {
         (activity as MainActivity).supportActionBar?.title =
             "" + (position + 1) + "/" + postSlideAdapter.itemCount
     }
@@ -132,14 +147,17 @@ abstract class BasePostSlideFragment : Fragment() {
     abstract suspend fun collectPagingData()
 
     private fun setFavoriteButton(post: Post) {
-        if (post.favorite) {
-            topbarMenu.getItem(0).icon =
-                ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_favorite_24,
-                    requireActivity().theme)
+        val icon = if (post.favorite) {
+            R.drawable.ic_baseline_favorite_24
         } else {
-            topbarMenu.getItem(0).icon =
+            R.drawable.ic_baseline_favorite_border_24
+        }
+
+        topbarMenu.apply {
+            Log.d("BasePostSlideFragment", "setFavoriteButton ${post.favorite}")
+            this?.getItem(0)?.icon =
                 ResourcesCompat.getDrawable(resources,
-                    R.drawable.ic_baseline_favorite_border_24,
+                    icon,
                     requireActivity().theme)
         }
     }
@@ -153,18 +171,12 @@ abstract class BasePostSlideFragment : Fragment() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        val position = requireArguments().getInt("position")
-        prepareAppBar()
-        prepareViewPager(position)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.post_slide_menu, menu)
         topbarMenu = menu
         postSlideAdapter.getPostItem(binding.postViewPager.currentItem)
             ?.let { setFavoriteButton(it) }
+        Log.d("BasePostSlideFragment", "onCreateOptionsMenu")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -178,8 +190,9 @@ abstract class BasePostSlideFragment : Fragment() {
                 return true
             }
             R.id.detail_button -> {
-                val post = postSlideAdapter.getPostItem(binding.postViewPager.currentItem)
-                navigateToPostSlide(post)
+                postSlideAdapter.getPostItem(binding.postViewPager.currentItem)?.let {
+                    navigateToPostSlide(it)
+                }
                 return true
             }
             R.id.share_button -> {
@@ -219,16 +232,16 @@ abstract class BasePostSlideFragment : Fragment() {
     abstract fun navigateToPostSlide(post: Post?)
 
     private fun onFavoriteButton() {
-        postSlideAdapter.getPostItem(binding.postViewPager.currentItem)?.let { post ->
+        val currentItem = binding.postViewPager.currentItem
+        postSlideAdapter.getPostItem(currentItem)?.let { post ->
+            Log.d("BasePostSlideFragment", "$post")
             if (post.favorite) {
                 deleteFavoritePost(post)
             } else {
                 favoritePost(post)
             }
-            postSlideAdapter.setFavorite(binding.postViewPager.currentItem, !post.favorite)
-            postSlideAdapter.getPostItem(binding.postViewPager.currentItem)?.let { post ->
-                setFavoriteButton(post)
-            }
+            postSlideAdapter.setFavorite(currentItem, !post.favorite)
+            setFavoriteButton(post)
         }
     }
 

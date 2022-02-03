@@ -41,15 +41,12 @@ class PostRepository constructor(
                     Log.d("PostPagingSource", url)
 
                     val posts =
-                        service.gelbooru.getPosts(url).mapToPost(action.savedSearch.server.url)
+                        service.gelbooru.getPosts(url).mapToPost(action.savedSearch.server.serverId)
 
                     return Pair(action.savedSearch, posts)
                 }
                 ServerType.Danbooru -> {
                     TODO("not yet implemented")
-                }
-                null -> {
-                    throw Error("server not found")
                 }
             }
         } catch (exception: IOException) {
@@ -65,7 +62,7 @@ class PostRepository constructor(
                 ServerType.Gelbooru -> {
                     val url = action.buildGelbooruUrl(0).toString()
                     Log.d("PostPagingSource", url)
-                    if (service.gelbooru.getPosts(url).mapToPost(action.server.url)
+                    if (service.gelbooru.getPosts(url).mapToPost(action.server.serverId)
                             .isNullOrEmpty()
                     ) {
                         throw Error("list empty")
@@ -85,7 +82,7 @@ class PostRepository constructor(
         }
     }
 
-    private fun GelbooruPostResponse.mapToPost(serverUrl: String): List<Post>? {
+    private fun GelbooruPostResponse.mapToPost(serverId: Int): List<Post>? {
         return this.posts?.post?.map { post ->
             Post(
                 height = post.height,
@@ -102,7 +99,7 @@ class PostRepository constructor(
                 rating = post.rating,
                 tags = post.tags,
                 postId = post.id,
-                serverUrl = serverUrl,
+                serverId = serverId,
                 change = post.change,
                 md5 = post.md5,
                 creatorId = post.creatorId,

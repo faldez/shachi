@@ -80,7 +80,7 @@ class BrowseViewModel constructor(
             searchPosts(server, tags = search.tags.toQuery()).map {
                 it.map { post ->
                     val postId =
-                        favoriteRepository.queryByServerUrlAndPostId(post.serverUrl, post.postId)
+                        favoriteRepository.queryByServerUrlAndPostId(post.serverId, post.postId)
                     post.favorite = postId != null
                     post
                 }
