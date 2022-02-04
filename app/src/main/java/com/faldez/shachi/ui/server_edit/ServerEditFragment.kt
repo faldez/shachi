@@ -4,21 +4,23 @@ import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.repository.PostRepository
-import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.ServerEditFragmentBinding
+import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.ServerView
+import com.faldez.shachi.repository.PostRepository
+import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.collect
@@ -48,11 +50,12 @@ class ServerEditFragment : Fragment() {
     ): View {
         binding = ServerEditFragmentBinding.inflate(inflater, container, false)
 
-        val server = arguments?.getParcelable<ServerView>("server")
+        val server = arguments?.getParcelable<Server>("server")
 
-        viewModel = ServerEditViewModelFactory(server, PostRepository(BooruService()),
-            ServerRepository(AppDatabase.build(requireContext())),
-            this).create(ServerEditViewModel::class.java)
+        viewModel = ViewModelProvider(this,
+            ServerEditViewModelFactory(server, PostRepository(BooruService()),
+                ServerRepository(AppDatabase.build(requireContext())),
+                this)).get(ServerEditViewModel::class.java)
 
         server?.let {
             binding.serverNewTopappbar.title = "Edit server"

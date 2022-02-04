@@ -17,7 +17,16 @@ data class Server(
     val type: ServerType,
     val title: String,
     val url: String,
-) : Parcelable
+) : Parcelable {
+    fun toServerView(): ServerView {
+        return  ServerView(
+            serverId = serverId,
+            type = type,
+            title = title,
+            url = url
+        )
+    }
+}
 
 @Entity(
     tableName = "selected_server",
