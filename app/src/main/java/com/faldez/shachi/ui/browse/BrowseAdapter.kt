@@ -54,13 +54,17 @@ class BrowseItemViewHolder(val binding: PostCardItemBinding, val onClick: (Int) 
     fun bind(post: Post) {
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val imageView = binding.imageView
-        Glide.with(imageView.context).load(post.previewUrl)
+        var glide = Glide.with(imageView.context).load(post.previewUrl)
             .transition(withCrossFade(factory))
-            .placeholder(BitmapDrawable(imageView.resources,
-                Bitmap.createBitmap(post.previewWidth!!,
-                    post.previewHeight!!,
+        if (post.previewWidth != null && post.previewHeight != null) {
+            glide = glide.placeholder(BitmapDrawable(imageView.resources,
+                Bitmap.createBitmap(post.previewWidth,
+                    post.previewHeight,
                     Bitmap.Config.ARGB_8888))).override(post.previewWidth, post.previewHeight)
-            .into(imageView)
+        } else {
+            glide = glide.fitCenter()
+        }
+        glide.into(imageView)
 
         binding.favoriteIcon.isVisible = post.favorite
 

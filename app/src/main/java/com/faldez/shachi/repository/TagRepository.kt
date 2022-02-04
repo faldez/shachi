@@ -3,6 +3,7 @@ package com.faldez.shachi.repository
 import android.util.Log
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.Tag
+import com.faldez.shachi.model.response.DanbooruTag
 import com.faldez.shachi.model.response.GelbooruTagResponse
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
@@ -14,7 +15,7 @@ class TagRepository(private val service: BooruService) {
                 service.gelbooru.getTags(action.buildGelbooruUrl().toString()).mapToTags()
             }
             ServerType.Danbooru -> {
-                TODO("not yet implemented")
+                service.danbooru.getTags(action.buildDanbooruUrl().toString()).mapToTags()
             }
             null -> {
                 null
@@ -28,7 +29,7 @@ class TagRepository(private val service: BooruService) {
                 service.gelbooru.getTags(action.buildGelbooruUrl().toString()).mapToTag()
             }
             ServerType.Danbooru -> {
-                TODO("not yet implemented")
+                service.danbooru.getTags(action.buildDanbooruUrl().toString()).mapToTag()
             }
             null -> {
                 null
@@ -52,7 +53,17 @@ class TagRepository(private val service: BooruService) {
                 }
             }
             ServerType.Danbooru -> {
-                TODO("not yet implemented")
+                val url = action.buildDanbooruUrl().toString()
+                Log.d("TagRepository", url)
+                val tags = service.danbooru.getTags(url).mapToTags()
+
+                action.tags.trim().split(" ").map { name ->
+                    tags?.find { it.name == name } ?: Tag(id = 0,
+                        name = name,
+                        count = 0,
+                        type = 0,
+                        ambiguous = false)
+                }
             }
             null -> {
                 null
@@ -79,6 +90,28 @@ class TagRepository(private val service: BooruService) {
                 count = it.count,
                 type = it.type,
                 ambiguous = it.ambiguous
+            )
+        }
+
+    private fun List<DanbooruTag>.mapToTags() =
+        this.map {
+            Tag(
+                id = it.id,
+                name = it.name,
+                count = it.postCount,
+                type = it.category,
+                ambiguous = false
+            )
+        }
+
+    private fun List<DanbooruTag>.mapToTag() =
+        this.first().let {
+            Tag(
+                id = it.id,
+                name = it.name,
+                count = it.postCount,
+                type = it.category,
+                ambiguous = false
             )
         }
 }

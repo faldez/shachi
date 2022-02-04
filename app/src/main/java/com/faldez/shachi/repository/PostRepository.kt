@@ -7,14 +7,13 @@ import androidx.paging.PagingData
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.model.ServerType
-import com.faldez.shachi.model.response.GelbooruPostResponse
+import com.faldez.shachi.model.response.mapToPost
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 import java.io.IOException
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
+import java.lang.Exception
 
 class PostRepository constructor(
     private val service: BooruService,
@@ -37,7 +36,7 @@ class PostRepository constructor(
                 ServerType.Gelbooru -> {
                     val url = action.buildGelbooruUrl(0, 50).toString()
 
-                    Log.d("PostPagingSource", url)
+                    Log.d("PostPagingSource/Gelbooru", url)
 
                     val posts =
                         service.gelbooru.getPosts(url).mapToPost(action.savedSearch.server.serverId)
@@ -45,7 +44,14 @@ class PostRepository constructor(
                     return Pair(action.savedSearch, posts)
                 }
                 ServerType.Danbooru -> {
-                    TODO("not yet implemented")
+                    val url = action.buildDanbooruUrl(0, 50).toString()
+
+                    Log.d("PostPagingSource/Danbooru", url)
+
+                    val posts =
+                        service.danbooru.getPosts(url).mapToPost(action.savedSearch.server.serverId)
+
+                    return Pair(action.savedSearch, posts)
                 }
             }
         } catch (exception: IOException) {
@@ -60,7 +66,7 @@ class PostRepository constructor(
             when (action.server?.type) {
                 ServerType.Gelbooru -> {
                     val url = action.buildGelbooruUrl(0).toString()
-                    Log.d("PostPagingSource", url)
+                    Log.d("PostPagingSource/Gelbooru", url)
                     if (service.gelbooru.getPosts(url).mapToPost(action.server.serverId)
                             .isNullOrEmpty()
                     ) {
@@ -68,52 +74,24 @@ class PostRepository constructor(
                     }
                 }
                 ServerType.Danbooru -> {
-                    TODO("not yet implemented")
+                    val url = action.buildDanbooruUrl(1).toString()
+                    Log.d("PostPagingSource/Danbooru", url)
+                    if (service.danbooru.getPosts(url).mapToPost(action.server.serverId)
+                            .isNullOrEmpty()
+                    ) {
+                        throw Error("list empty")
+                    }
                 }
                 null -> {
                     throw Error("server not found")
                 }
             }
-        } catch (exception: IOException) {
+        } catch (exception: Exception) {
             throw Error(exception)
-        } catch (exception: HttpException) {
-            throw Error(exception)
-        }
-    }
-
-    private fun GelbooruPostResponse.mapToPost(serverId: Int): List<Post>? {
-        return this.posts?.post?.map { post ->
-            Post(
-                height = post.height,
-                width = post.width,
-                score = post.score,
-                fileUrl = post.fileUrl,
-                parentId = post.parentId,
-                sampleUrl = post.sampleUrl,
-                sampleWidth = post.sampleWidth,
-                sampleHeight = post.sampleHeight,
-                previewUrl = post.previewUrl,
-                previewWidth = post.previewWidth,
-                previewHeight = post.previewHeight,
-                rating = post.rating,
-                tags = post.tags,
-                postId = post.id,
-                serverId = serverId,
-                change = post.change,
-                md5 = post.md5,
-                creatorId = post.creatorId,
-                hasChildren = post.hasChildren,
-                createdAt = post.createdAt?.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)),
-                status = post.status,
-                source = post.source,
-                hasNotes = post.hasNotes,
-                hasComments = post.hasComments,
-            )
         }
     }
 
     companion object {
-        const val STARTING_PAGE_INDEX = 0
         const val NETWORK_PAGE_SIZE = 100
     }
 }

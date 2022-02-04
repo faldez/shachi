@@ -1,7 +1,7 @@
 package com.faldez.shachi.service
 
-import com.faldez.shachi.model.response.DanbooruPostResponse
-import com.faldez.shachi.model.response.DanbooruTagResponse
+import com.faldez.shachi.model.response.DanbooruPost
+import com.faldez.shachi.model.response.DanbooruTag
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -11,12 +11,14 @@ import retrofit2.http.Url
 
 interface DanbooruService {
     @GET
-    suspend fun getPosts(@Url url: String): DanbooruPostResponse
+    suspend fun getPosts(@Url url: String): List<DanbooruPost>
 
     @GET
-    suspend fun getTags(@Url url: String): DanbooruTagResponse
+    suspend fun getTags(@Url url: String): List<DanbooruTag>
 
     companion object {
+        const val STARTING_PAGE_INDEX = 1
+
         private val retrofitService: DanbooruService by lazy {
             val client =
                 OkHttpClient().newBuilder().build()

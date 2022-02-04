@@ -4,13 +4,13 @@ import android.util.Log
 import androidx.core.os.LocaleListCompat
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.faldez.shachi.repository.PostRepository.Companion.STARTING_PAGE_INDEX
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerType
-import com.faldez.shachi.model.response.GelbooruPost
-import com.faldez.shachi.model.response.GelbooruPostResponse
+import com.faldez.shachi.model.response.*
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.service.DanbooruService
+import com.faldez.shachi.service.GelbooruService
 import retrofit2.HttpException
 import java.io.IOException
 import java.time.format.DateTimeFormatter
@@ -29,17 +29,25 @@ class PostPagingSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
-        val position = params.key ?: STARTING_PAGE_INDEX
+        val startingPageIndex = when (action.server?.type) {
+            ServerType.Gelbooru -> GelbooruService.STARTING_PAGE_INDEX
+            ServerType.Danbooru -> DanbooruService.STARTING_PAGE_INDEX
+            else -> 1
+        }
+        val position = params.key ?: startingPageIndex
         try {
             val posts = when (action.server?.type) {
                 ServerType.Gelbooru -> {
                     val url = action.buildGelbooruUrl(position).toString()
-                    Log.d("PostPagingSource", url)
+                    Log.d("PostPagingSource/Gelbooru", url)
                     service.gelbooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
                         ?.mapToPost(action.server.serverId) ?: listOf()
                 }
                 ServerType.Danbooru -> {
-                    TODO("not yet implemented")
+                    val url = action.buildDanbooruUrl(position).toString()
+                    Log.d("PostPagingSource/Danbooru", url)
+                    service.danbooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
+                        ?.mapToPost(action.server.serverId) ?: listOf()
                 }
                 null -> {
                     return LoadResult.Error(Error("server not found"))
@@ -53,7 +61,7 @@ class PostPagingSource(
             }
 
             return LoadResult.Page(data = posts,
-                prevKey = if (position == STARTING_PAGE_INDEX) null else position,
+                prevKey = if (position == startingPageIndex) null else position,
                 nextKey = nextKey)
         } catch (exception: IOException) {
             return LoadResult.Error(exception)
@@ -90,35 +98,31 @@ class PostPagingSource(
         return posts
     }
 
-    private fun List<GelbooruPost>.mapToPost(serverId: Int): List<Post> {
-        return this.map { post ->
-            Post(
-                height = post.height,
-                width = post.width,
-                score = post.score,
-                fileUrl = post.fileUrl,
-                parentId = post.parentId,
-                sampleUrl = post.sampleUrl,
-                sampleWidth = post.sampleWidth,
-                sampleHeight = post.sampleHeight,
-                previewUrl = post.previewUrl,
-                previewWidth = post.previewWidth,
-                previewHeight = post.previewHeight,
-                rating = post.rating,
-                tags = post.tags,
-                postId = post.id,
-                serverId = serverId,
-                change = post.change,
-                md5 = post.md5,
-                creatorId = post.creatorId,
-                hasChildren = post.hasChildren,
-                createdAt = post.createdAt?.format(DateTimeFormatter.ofPattern("cccc, dd MMMM y hh:mm:ss a",
-                    LocaleListCompat.getDefault().get(0))),
-                status = post.status,
-                source = post.source,
-                hasNotes = post.hasNotes,
-                hasComments = post.hasComments,
-            )
+    private fun List<DanbooruPost>.applyBlacklist(tags: String?): List<DanbooruPost>? {
+        val blacklists = tags?.split(",")?.map {
+            it.split(" ")
         }
+
+        Log.d("PostPagingSource", "applyBlacklist $tags to $blacklists")
+
+        if (blacklists.isNullOrEmpty()) {
+            return this
+        }
+
+        var counter = 0
+        val posts = this.filter { post ->
+            blacklists.forEach { tags ->
+                if (post.tagString.split(" ").containsAll(tags)) {
+                    counter++
+                    return@filter false
+                }
+            }
+
+            true
+        }
+
+        Log.d("PostPagingSource", "applyBlacklist $counter filtered")
+
+        return posts
     }
 }

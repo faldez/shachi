@@ -1,9 +1,9 @@
 package com.faldez.shachi.service
 
-import com.faldez.shachi.repository.PostRepository.Companion.NETWORK_PAGE_SIZE
 import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerView
+import com.faldez.shachi.repository.PostRepository.Companion.NETWORK_PAGE_SIZE
 import okhttp3.HttpUrl
 
 sealed class Action {
@@ -22,6 +22,15 @@ sealed class Action {
                     .addQueryParameter("tags", tags).build()
             }
         }
+
+        fun buildDanbooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
+            return server?.let {
+                HttpUrl.get(it.url).newBuilder().addPathSegment("posts.json")
+                    .addQueryParameter("page", page.toString())
+                    .addQueryParameter("limit", limit.toString())
+                    .addQueryParameter("tags", tags).build()
+            }
+        }
     }
 
     data class SearchSavedSearchPost(val savedSearch: SavedSearchServer) : Action() {
@@ -31,6 +40,15 @@ sealed class Action {
                     .addQueryParameter("page", "dapi")
                     .addQueryParameter("q", "index").addQueryParameter("s", "post")
                     .addQueryParameter("pid", page.toString())
+                    .addQueryParameter("limit", limit.toString())
+                    .addQueryParameter("tags", savedSearch.savedSearch.tags).build()
+            }
+        }
+
+        fun buildDanbooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
+            return savedSearch.server.let {
+                HttpUrl.get(it.url).newBuilder().addPathSegment("posts.json")
+                    .addQueryParameter("page", page.toString())
                     .addQueryParameter("limit", limit.toString())
                     .addQueryParameter("tags", savedSearch.savedSearch.tags).build()
             }
@@ -50,6 +68,14 @@ sealed class Action {
                     .build()
             }
         }
+
+        fun buildDanbooruUrl(): HttpUrl? {
+            return server?.let {
+                HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json")
+                    .addQueryParameter("search[name_like]", "$tag*").build()
+
+            }
+        }
     }
 
     data class GetTag(val server: Server?, val tag: String) : Action() {
@@ -59,6 +85,14 @@ sealed class Action {
                     .addQueryParameter("page", "dapi")
                     .addQueryParameter("q", "index").addQueryParameter("s", "tag")
                     .addQueryParameter("name", tag)
+                    .build()
+            }
+        }
+
+        fun buildDanbooruUrl(): HttpUrl? {
+            return server?.let {
+                HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json")
+                    .addQueryParameter("search[name]", tag)
                     .build()
             }
         }
@@ -72,6 +106,17 @@ sealed class Action {
                     .addQueryParameter("q", "index").addQueryParameter("s", "tag")
                     .addQueryParameter("names", tags)
                     .build()
+            }
+        }
+
+        fun buildDanbooruUrl(): HttpUrl? {
+            return server?.let {
+                HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json").apply {
+                    tags.split(" ").forEach { tag ->
+                        addQueryParameter("search[name_array][]", tag)
+                    }
+                }.build()
+
             }
         }
     }

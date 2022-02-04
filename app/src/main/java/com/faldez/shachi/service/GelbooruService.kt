@@ -18,6 +18,8 @@ interface GelbooruService {
     suspend fun getTags(@Url url: String): GelbooruTagResponse
 
     companion object {
+        const val STARTING_PAGE_INDEX = 0
+
         private val retrofitService: GelbooruService by lazy {
             val client =
                 OkHttpClient().newBuilder().addInterceptor(XmlToJsonInterceptor()).build()

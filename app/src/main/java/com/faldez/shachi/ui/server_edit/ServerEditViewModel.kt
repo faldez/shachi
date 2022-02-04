@@ -67,6 +67,7 @@ class ServerEditViewModel(
                 }
                 state.value = State.Success
             } catch (e: Error) {
+                Log.d("ServerEditViewModel/test", "$e")
                 state.value = State.Failed
             }
         }

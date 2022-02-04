@@ -26,3 +26,24 @@ class ZonedDateTimeAdapter : JsonDeserializer<ZonedDateTime?>,
         return JsonPrimitive(src?.format(format)!!)
     }
 }
+
+class JsonDateTimeAdapter : JsonDeserializer<ZonedDateTime?>,
+    JsonSerializer<ZonedDateTime?> {
+    private val format: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+
+    override fun deserialize(
+        json: JsonElement?,
+        typeOfT: Type?,
+        context: JsonDeserializationContext?,
+    ): ZonedDateTime? {
+        return ZonedDateTime.parse(json?.asString, format)
+    }
+
+    override fun serialize(
+        src: ZonedDateTime?,
+        typeOfSrc: Type?,
+        context: JsonSerializationContext?,
+    ): JsonElement {
+        return JsonPrimitive(src?.format(format)!!)
+    }
+}
