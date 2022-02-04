@@ -81,6 +81,10 @@ class MainActivity : AppCompatActivity(),
     ): Boolean {
         Log.d("MoreFragment", pref.key)
         when (pref.key) {
+            "settings" -> {
+                navController.navigate(R.id.action_more_to_settings)
+                return true
+            }
             "servers" -> {
                 navController.navigate(R.id.action_global_to_servers)
                 hideBottomNavigation()

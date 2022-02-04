@@ -1,4 +1,4 @@
-package com.faldez.shachi.ui.more
+package com.faldez.shachi.ui.settings
 
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -6,11 +6,11 @@ import androidx.preference.PreferenceFragmentCompat
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 
-class MoreSettingsFragment : PreferenceFragmentCompat(),
+class RootSettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.more_preferences, rootKey)
+        setPreferencesFromResource(R.xml.root_preferences, rootKey)
     }
 
     override fun onResume() {
@@ -24,6 +24,8 @@ class MoreSettingsFragment : PreferenceFragmentCompat(),
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-
+        if (key == "theme") {
+            (activity as MainActivity).setTheme()
+        }
     }
 }

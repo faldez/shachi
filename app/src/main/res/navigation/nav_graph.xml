@@ -59,17 +59,31 @@
         android:id="@+id/moreFragment"
         android:name="com.faldez.shachi.ui.more.MoreFragment"
         android:label="more_fragment"
-        tools:layout="@layout/more_fragment" />
+        tools:layout="@layout/more_fragment">
+
+        <action
+            android:id="@+id/action_more_to_settings"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.faldez.shachi.ui.settings.SettingsFragment"
+        android:label="settings_fragment"
+        tools:layout="@layout/settings_fragment" />
     <fragment
         android:id="@+id/postSlideFragment"
         android:name="com.faldez.shachi.ui.post_slide.PostSlideFragment"
         android:label="post_slide_fragment"
-        tools:layout="@layout/post_slide_fragment"/>
+        tools:layout="@layout/post_slide_fragment" />
     <fragment
         android:id="@+id/favoritePostSlideFragment"
         android:name="com.faldez.shachi.ui.post_slide.FavoritePostSlideFragment"
         android:label="post_slide_fragment"
-        tools:layout="@layout/post_slide_fragment"/>
+        tools:layout="@layout/post_slide_fragment" />
     <dialog
         android:id="@+id/post_detail_bottom_sheet_fragment"
         android:name="com.faldez.shachi.ui.post_detail.PostDetailBottomSheetFragment"

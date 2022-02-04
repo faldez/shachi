@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+        app:fragment="com.faldez.shachi.ui.settings.SettingsFragment"
+        app:key="settings"
+        app:title="@string/settings"
+        app:icon="@drawable/ic_baseline_settings_24"/>
+</PreferenceScreen>

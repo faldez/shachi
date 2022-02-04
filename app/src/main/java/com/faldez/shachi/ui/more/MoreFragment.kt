@@ -19,7 +19,6 @@ class MoreFragment : Fragment() {
     }
 
     private lateinit var binding: MoreFragmentBinding
-    private lateinit var viewModel: MoreViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +39,6 @@ class MoreFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MoreViewModel::class.java)
     }
 
 
