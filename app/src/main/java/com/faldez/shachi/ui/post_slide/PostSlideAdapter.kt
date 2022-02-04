@@ -43,14 +43,14 @@ class PostSlideAdapter(
             onLoadStart()
             val postImageView = holder.binding.postImageView
             postImageView.setOnViewTapListener { view, x, y -> onTap() }
-            postImageView.setOnDoubleTapListener(object : GestureDetector.OnDoubleTapListener {
-                override fun onSingleTapConfirmed(event: MotionEvent?): Boolean = onTap()
-
-                override fun onDoubleTap(event: MotionEvent?): Boolean = onDoubleTap()
-
-                override fun onDoubleTapEvent(event: MotionEvent?): Boolean = false
-
-            })
+//            postImageView.setOnDoubleTapListener(object : GestureDetector.OnDoubleTapListener {
+//                override fun onSingleTapConfirmed(event: MotionEvent?): Boolean = onTap()
+//
+//                override fun onDoubleTap(event: MotionEvent?): Boolean = onDoubleTap()
+//
+//                override fun onDoubleTapEvent(event: MotionEvent?): Boolean = false
+//
+//            })
             GlideApp.with(postImageView.context).load(it.fileUrl)
                 .thumbnail(GlideApp.with(postImageView.context).load(it.previewUrl))
                 .timeout(3000)
