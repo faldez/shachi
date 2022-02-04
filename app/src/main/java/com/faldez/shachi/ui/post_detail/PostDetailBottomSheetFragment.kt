@@ -11,8 +11,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.faldez.shachi.R
-import com.faldez.shachi.data.ServerRepository
-import com.faldez.shachi.data.TagRepository
+import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.PostDetailBottomSheetFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding

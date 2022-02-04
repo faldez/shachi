@@ -3,8 +3,8 @@ package com.faldez.shachi.ui.saved
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faldez.shachi.data.PostRepository
-import com.faldez.shachi.data.SavedSearchRepository
+import com.faldez.shachi.repository.PostRepository
+import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.SavedSearch
 import com.faldez.shachi.model.SavedSearchServer

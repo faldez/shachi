@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.data.ServerRepository
+import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.ServersFragmentBinding
 import com.faldez.shachi.model.Server

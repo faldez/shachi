@@ -1,6 +1,6 @@
 package com.faldez.shachi.service
 
-import com.faldez.shachi.data.PostRepository.Companion.NETWORK_PAGE_SIZE
+import com.faldez.shachi.repository.PostRepository.Companion.NETWORK_PAGE_SIZE
 import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerView

@@ -1,11 +1,10 @@
-package com.faldez.shachi.data
+package com.faldez.shachi.repository
 
 import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.SavedSearch
 import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.response.GelbooruPostResponse

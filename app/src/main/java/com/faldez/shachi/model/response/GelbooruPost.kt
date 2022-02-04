@@ -1,6 +1,9 @@
 package com.faldez.shachi.model.response
 
 import android.os.Parcelable
+import com.faldez.shachi.util.type_adapter.EmptyStringAsNullTypeAdapter
+import com.faldez.shachi.util.type_adapter.SingleObjectAsArrayTypeAdapter
+import com.faldez.shachi.util.type_adapter.ZonedDateTimeAdapter
 import com.google.gson.*
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
@@ -46,44 +49,3 @@ data class GelbooruPost(
     @SerializedName("has_notes") val hasNotes: Boolean,
     @SerializedName("has_comments") val hasComments: Boolean,
 ) : Parcelable
-
-internal class ZonedDateTimeAdapter : JsonDeserializer<ZonedDateTime?>,
-    JsonSerializer<ZonedDateTime?> {
-    private val format: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss Z yyyy")
-
-    override fun deserialize(
-        json: JsonElement?,
-        typeOfT: Type?,
-        context: JsonDeserializationContext?,
-    ): ZonedDateTime? {
-        return ZonedDateTime.parse(json?.asString, format)
-    }
-
-    override fun serialize(
-        src: ZonedDateTime?,
-        typeOfSrc: Type?,
-        context: JsonSerializationContext?,
-    ): JsonElement {
-        return JsonPrimitive(src?.format(format)!!)
-    }
-}
-
-class EmptyStringAsNullTypeAdapter<T>  // Let Gson instantiate it itself
-private constructor() : JsonDeserializer<T?> {
-    @Throws(JsonParseException::class)
-    override fun deserialize(
-        jsonElement: JsonElement,
-        type: Type,
-        context: JsonDeserializationContext,
-    ): T? {
-        if (jsonElement.isJsonPrimitive) {
-            val jsonPrimitive = jsonElement.asJsonPrimitive
-            if (jsonPrimitive.isString && jsonPrimitive.asString.isEmpty()) {
-                return null
-            }
-        } else if (jsonElement.isJsonObject) {
-            return null
-        }
-        return context.deserialize(jsonElement, type)
-    }
-}

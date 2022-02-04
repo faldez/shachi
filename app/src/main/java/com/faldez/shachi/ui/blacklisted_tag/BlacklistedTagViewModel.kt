@@ -3,8 +3,8 @@ package com.faldez.shachi.ui.blacklisted_tag
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faldez.shachi.data.BlacklistTagRepository
-import com.faldez.shachi.data.ServerRepository
+import com.faldez.shachi.repository.BlacklistTagRepository
+import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.model.BlacklistedTag
 import com.faldez.shachi.model.BlacklistedTagWithServer
 import com.faldez.shachi.model.ServerBlacklistedTagCrossRef

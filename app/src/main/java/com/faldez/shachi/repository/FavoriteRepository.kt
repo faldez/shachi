@@ -1,4 +1,4 @@
-package com.faldez.shachi.data
+package com.faldez.shachi.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig

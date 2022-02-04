@@ -3,7 +3,7 @@ package com.faldez.shachi.ui.search_simple
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faldez.shachi.data.TagRepository
+import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag

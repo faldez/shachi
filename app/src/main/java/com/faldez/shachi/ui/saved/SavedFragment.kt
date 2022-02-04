@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.data.PostRepository
-import com.faldez.shachi.data.SavedSearchRepository
+import com.faldez.shachi.repository.PostRepository
+import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SavedFragmentBinding
 import com.faldez.shachi.service.BooruService

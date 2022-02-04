@@ -1,10 +1,10 @@
-package com.faldez.shachi.data
+package com.faldez.shachi.repository
 
 import android.util.Log
 import androidx.core.os.LocaleListCompat
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.faldez.shachi.data.PostRepository.Companion.STARTING_PAGE_INDEX
+import com.faldez.shachi.repository.PostRepository.Companion.STARTING_PAGE_INDEX
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.response.GelbooruPost

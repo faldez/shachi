@@ -3,8 +3,8 @@ package com.faldez.shachi.ui.post_detail
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faldez.shachi.data.ServerRepository
-import com.faldez.shachi.data.TagRepository
+import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag

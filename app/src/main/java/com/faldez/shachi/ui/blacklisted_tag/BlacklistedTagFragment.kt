@@ -14,8 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.faldez.shachi.MainActivity
-import com.faldez.shachi.data.BlacklistTagRepository
-import com.faldez.shachi.data.ServerRepository
+import com.faldez.shachi.repository.BlacklistTagRepository
+import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.BlacklistedTagEditDialogBinding
 import com.faldez.shachi.databinding.BlacklistedTagFragmentBinding
@@ -23,7 +23,6 @@ import com.faldez.shachi.model.BlacklistedTag
 import com.faldez.shachi.model.BlacklistedTagWithServer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

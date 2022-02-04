@@ -13,11 +13,10 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.data.PostRepository
-import com.faldez.shachi.data.ServerRepository
+import com.faldez.shachi.repository.PostRepository
+import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.ServerEditFragmentBinding
-import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.service.BooruService

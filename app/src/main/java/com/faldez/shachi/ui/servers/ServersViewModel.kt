@@ -3,7 +3,7 @@ package com.faldez.shachi.ui.servers
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faldez.shachi.data.ServerRepository
+import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerView
 import kotlinx.coroutines.flow.*

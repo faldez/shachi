@@ -1,4 +1,4 @@
-package com.faldez.shachi.data
+package com.faldez.shachi.repository
 
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.model.SelectedServer

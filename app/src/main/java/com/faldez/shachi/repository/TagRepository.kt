@@ -1,4 +1,4 @@
-package com.faldez.shachi.data
+package com.faldez.shachi.repository
 
 import android.util.Log
 import com.faldez.shachi.model.ServerType

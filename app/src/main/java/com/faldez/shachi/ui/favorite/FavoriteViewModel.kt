@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.faldez.shachi.data.FavoriteRepository
+import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.model.Post
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

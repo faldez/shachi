@@ -2,8 +2,8 @@ package com.faldez.shachi.ui.blacklisted_tag
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.faldez.shachi.data.BlacklistTagRepository
-import com.faldez.shachi.data.ServerRepository
+import com.faldez.shachi.repository.BlacklistTagRepository
+import com.faldez.shachi.repository.ServerRepository
 
 class BlacklistedTagViewModelFactory(
     private val serverRepository: ServerRepository,

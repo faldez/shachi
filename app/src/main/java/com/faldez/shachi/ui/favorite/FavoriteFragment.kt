@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.data.FavoriteRepository
+import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
 import com.google.android.material.shape.MaterialShapeDrawable

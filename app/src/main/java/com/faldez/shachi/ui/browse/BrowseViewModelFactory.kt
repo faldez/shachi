@@ -4,12 +4,10 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.faldez.shachi.data.FavoriteRepository
-import com.faldez.shachi.data.PostRepository
-import com.faldez.shachi.data.SavedSearchRepository
-import com.faldez.shachi.data.ServerRepository
-import com.faldez.shachi.model.Server
-import com.faldez.shachi.ui.browse.BrowseViewModel
+import com.faldez.shachi.repository.FavoriteRepository
+import com.faldez.shachi.repository.PostRepository
+import com.faldez.shachi.repository.SavedSearchRepository
+import com.faldez.shachi.repository.ServerRepository
 
 class BrowseViewModelFactory constructor(
     private val postRepository: PostRepository,
