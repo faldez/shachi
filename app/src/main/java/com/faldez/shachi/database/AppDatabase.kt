@@ -8,7 +8,7 @@ import com.faldez.shachi.model.*
 
 @Database(entities = [Server::class, SelectedServer::class, Post::class, SavedSearch::class, BlacklistedTag::class, ServerBlacklistedTagCrossRef::class, PostTag::class],
     views = [ServerView::class],
-    version = 2)
+    version = 3)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun serverDao(): ServerDao
     abstract fun favoriteDao(): FavoriteDao
