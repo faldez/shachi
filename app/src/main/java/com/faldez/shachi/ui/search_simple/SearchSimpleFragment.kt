@@ -22,7 +22,6 @@ import com.faldez.shachi.R
 import com.faldez.shachi.data.TagRepository
 import com.faldez.shachi.databinding.SearchSimpleFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
-import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
 import com.faldez.shachi.service.BooruService
@@ -53,7 +52,8 @@ class SearchSimpleFragment : Fragment() {
         binding = SearchSimpleFragmentBinding.inflate(inflater, container, false)
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
-        val initialTags: List<Tag> = requireArguments().get("tags") as List<Tag> ?: listOf()
+        val initialTags: List<Tag> =
+            (requireArguments().get("tags") as List<*>?)?.filterIsInstance<Tag>() ?: listOf()
         val server = requireArguments().getParcelable<ServerView?>("server")
         viewModel =
             SearchSimpleViewModel(server, initialTags, TagRepository(BooruService()))
@@ -112,14 +112,18 @@ class SearchSimpleFragment : Fragment() {
                 return true
             }
             R.id.apply_button -> {
-                findNavController().previousBackStackEntry?.savedStateHandle?.set("tags",
-                    viewModel.selectedTags.value)
-                (activity as MainActivity).onBackPressed()
+                applySearch()
                 return true
             }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun applySearch() {
+        findNavController().previousBackStackEntry?.savedStateHandle?.set("tags",
+            viewModel.selectedTags.value)
+        (activity as MainActivity).onBackPressed()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -175,6 +179,8 @@ class SearchSimpleFragment : Fragment() {
                     if (text.isNotEmpty()) {
                         viewModel.insertTagByName(text)
                         binding.searchSimpleTagsInputText.text?.clear()
+                    } else if (text.isEmpty() && viewModel.selectedTags.value.isNotEmpty()) {
+                        applySearch()
                     }
                     true
                 } else {
