@@ -30,16 +30,17 @@ class FavoriteAdapter(private val onClick: (Int) -> Unit) :
 
         post?.let {
             val imageView = holder.binding.imageView
-            var glide = Glide.with(imageView.context).load(it.previewUrl)
-            glide = if (post.previewWidth != null && post.previewHeight != null) {
-                glide.placeholder(BitmapDrawable(imageView.resources,
-                    Bitmap.createBitmap(post.previewWidth,
-                        post.previewHeight,
-                        Bitmap.Config.ARGB_8888))).override(post.previewWidth, post.previewHeight)
-            } else {
-                glide.fitCenter()
-            }
-            glide.into(imageView)
+
+            val previewWidth = post.previewWidth ?: 150
+            val previewHeight = post.previewHeight
+                ?: (previewWidth * (post.height.toFloat() / post.width.toFloat())).toInt()
+
+            Glide.with(imageView.context).load(it.previewUrl)
+                .placeholder(BitmapDrawable(imageView.resources,
+                    Bitmap.createBitmap(previewWidth,
+                        previewHeight,
+                        Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
+                .into(imageView)
 
             holder.binding.root.setOnClickListener { _ ->
                 onClick(position)

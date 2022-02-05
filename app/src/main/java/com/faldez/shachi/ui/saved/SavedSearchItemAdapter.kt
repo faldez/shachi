@@ -28,17 +28,15 @@ class SavedSearchItemAdapter :
         val item = getItem(position)
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val imageView = holder.binding.previewImage
-        var glide = Glide.with(imageView.context).load(item.previewUrl)
+        val previewWidth = item.previewWidth ?: 250
+        val previewHeight = item.previewHeight ?: (previewWidth * (item.height.toFloat() / item.width.toFloat())).toInt()
+        Glide.with(imageView.context).load(item.previewUrl)
             .transition(withCrossFade(factory))
-        glide = if (item.previewWidth != null && item.previewHeight != null) {
-            glide.placeholder(BitmapDrawable(imageView.resources,
-                Bitmap.createBitmap(item.previewWidth,
-                    item.previewHeight,
-                    Bitmap.Config.ARGB_8888))).override(item.previewWidth, item.previewHeight)
-        } else {
-            glide.fitCenter()
-        }
-        glide.into(imageView)
+            .placeholder(BitmapDrawable(imageView.resources,
+                Bitmap.createBitmap(previewWidth,
+                    previewHeight,
+                    Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
+            .into(imageView)
     }
 
     companion object {
