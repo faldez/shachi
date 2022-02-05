@@ -14,10 +14,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.repository.PostRepository
-import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SavedFragmentBinding
+import com.faldez.shachi.repository.PostRepository
+import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -92,31 +92,22 @@ class SavedFragment : Fragment() {
                         SavedSearchPost(savedSearch = it, posts = postMap.value.get(it))
                     }
                     Log.d("SavedFragment", "$savedSearchPosts")
-                    adapter.updateDate(savedSearchPosts)
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.savedSearches.collect { state ->
-                state?.let { savedSearches ->
-                    val postMap = viewModel.state
-                    val savedSearchPosts = savedSearches.map {
-                        SavedSearchPost(savedSearch = it, posts = postMap.value[it])
-                    }
-                    Log.d("SavedFragment", "$savedSearchPosts")
-                    adapter.updateDate(savedSearchPosts)
+                    adapter.submitList(savedSearchPosts)
+                    binding.savedSwipeRefreshLayout.isRefreshing = false
                 }
             }
         }
 
         lifecycleScope.launch {
             viewModel.state.collect { state ->
-                state.forEach { (savedSearch, list) ->
-                    Log.d("SavedFragment", "$savedSearch $list")
-                    adapter.updatePosts(SavedSearchPost(savedSearch, list))
+                state.let { savedSearches ->
+                    val savedSearchPosts = savedSearches.map { (savedSearch, posts) ->
+                        SavedSearchPost(savedSearch = savedSearch, posts = posts)
+                    }
+                    Log.d("SavedFragment", "$savedSearchPosts")
+                    adapter.submitList(savedSearchPosts)
+                    binding.savedSwipeRefreshLayout.isRefreshing = false
                 }
-                binding.savedSwipeRefreshLayout.isRefreshing = false
             }
         }
 
