@@ -41,7 +41,7 @@ fun List<GelbooruPost>.mapToPost(serverId: Int): List<Post> {
 }
 
 @JvmName("danbooruMapToPost")
-fun List<DanbooruPost>.mapToPost(serverId: Int): List<Post> {
+fun List<Danbooru2Post>.mapToPost(serverId: Int): List<Post> {
     return this.map { post ->
         Log.d("mapToPost", "$post")
         Post(

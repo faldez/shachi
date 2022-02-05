@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName
 import java.lang.reflect.Type
 import java.time.ZonedDateTime
 
-data class DanbooruTag(
+data class Danbooru2Tag(
     val id: Int,
     val name: String,
     @SerializedName("post_count") val postCount: Int,

@@ -1,7 +1,6 @@
 package com.faldez.shachi.repository
 
 import android.util.Log
-import androidx.core.os.LocaleListCompat
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.faldez.shachi.model.Post
@@ -9,11 +8,10 @@ import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.response.*
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
-import com.faldez.shachi.service.DanbooruService
+import com.faldez.shachi.service.Danbooru2Service
 import com.faldez.shachi.service.GelbooruService
 import retrofit2.HttpException
 import java.io.IOException
-import java.time.format.DateTimeFormatter
 
 class PostPagingSource(
     private val action: Action.SearchPost,
@@ -31,7 +29,7 @@ class PostPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
         val startingPageIndex = when (action.server?.type) {
             ServerType.Gelbooru -> GelbooruService.STARTING_PAGE_INDEX
-            ServerType.Danbooru -> DanbooruService.STARTING_PAGE_INDEX
+            ServerType.Danbooru -> Danbooru2Service.STARTING_PAGE_INDEX
             else -> 1
         }
         val position = params.key ?: startingPageIndex
@@ -46,7 +44,7 @@ class PostPagingSource(
                 ServerType.Danbooru -> {
                     val url = action.buildDanbooruUrl(position).toString()
                     Log.d("PostPagingSource/Danbooru", url)
-                    service.danbooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
+                    service.danbooru2.getPosts(url).applyBlacklist(action.server.blacklistedTags)
                         ?.mapToPost(action.server.serverId) ?: listOf()
                 }
                 null -> {
@@ -98,7 +96,7 @@ class PostPagingSource(
         return posts
     }
 
-    private fun List<DanbooruPost>.applyBlacklist(tags: String?): List<DanbooruPost>? {
+    private fun List<Danbooru2Post>.applyBlacklist(tags: String?): List<Danbooru2Post>? {
         val blacklists = tags?.split(",")?.map {
             it.split(" ")
         }

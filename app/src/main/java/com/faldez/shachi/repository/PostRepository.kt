@@ -49,7 +49,7 @@ class PostRepository constructor(
                     Log.d("PostPagingSource/Danbooru", url)
 
                     val posts =
-                        service.danbooru.getPosts(url).mapToPost(action.savedSearch.server.serverId)
+                        service.danbooru2.getPosts(url).mapToPost(action.savedSearch.server.serverId)
 
                     return Pair(action.savedSearch, posts)
                 }
@@ -76,7 +76,7 @@ class PostRepository constructor(
                 ServerType.Danbooru -> {
                     val url = action.buildDanbooruUrl(1).toString()
                     Log.d("PostPagingSource/Danbooru", url)
-                    if (service.danbooru.getPosts(url).mapToPost(action.server.serverId)
+                    if (service.danbooru2.getPosts(url).mapToPost(action.server.serverId)
                             .isNullOrEmpty()
                     ) {
                         throw Error("list empty")
