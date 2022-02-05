@@ -3,7 +3,6 @@ package com.faldez.shachi.ui.favorite
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -31,12 +30,16 @@ class FavoriteAdapter(private val onClick: (Int) -> Unit) :
 
         post?.let {
             val imageView = holder.binding.imageView
-            Glide.with(imageView.context).load(it.previewUrl)
-                .placeholder(BitmapDrawable(imageView.resources,
-                    Bitmap.createBitmap(it.previewWidth!!,
-                        it.previewHeight!!,
-                        Bitmap.Config.ARGB_8888))).override(it.previewWidth, it.previewHeight)
-                .into(imageView)
+            var glide = Glide.with(imageView.context).load(it.previewUrl)
+            glide = if (post.previewWidth != null && post.previewHeight != null) {
+                glide.placeholder(BitmapDrawable(imageView.resources,
+                    Bitmap.createBitmap(post.previewWidth,
+                        post.previewHeight,
+                        Bitmap.Config.ARGB_8888))).override(post.previewWidth, post.previewHeight)
+            } else {
+                glide.fitCenter()
+            }
+            glide.into(imageView)
 
             holder.binding.root.setOnClickListener { _ ->
                 onClick(position)
