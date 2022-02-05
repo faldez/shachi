@@ -41,7 +41,7 @@ fun List<GelbooruPost>.mapToPost(serverId: Int): List<Post> {
 }
 
 @JvmName("danbooruMapToPost")
-fun List<Danbooru2Post>.mapToPost(serverId: Int): List<Post> {
+fun List<DanbooruPost>.mapToPost(serverId: Int): List<Post> {
     return this.map { post ->
         Log.d("mapToPost", "$post")
         Post(
@@ -62,6 +62,40 @@ fun List<Danbooru2Post>.mapToPost(serverId: Int): List<Post> {
             serverId = serverId,
             change = 0,
             md5 = post.md5 ?: "",
+            creatorId = null,
+            hasChildren = post.hasChildren,
+            createdAt = post.createdAt?.format(DateTimeFormatter.ofPattern("cccc, dd MMMM y hh:mm:ss a",
+                LocaleListCompat.getDefault().get(0))),
+            status = "",
+            source = post.source,
+            hasNotes = false,
+            hasComments = false,
+        )
+    }
+}
+
+@JvmName("moebooruMapToPost")
+fun List<MoebooruPost>.mapToPost(serverId: Int): List<Post> {
+    return this.map { post ->
+        Log.d("mapToPost", "$post")
+        Post(
+            height = post.height,
+            width = post.width,
+            score = post.score,
+            fileUrl = post.fileUrl,
+            parentId = post.parentId,
+            sampleUrl = post.fileUrl,
+            sampleWidth = null,
+            sampleHeight = null,
+            previewUrl = post.previewUrl,
+            previewWidth = null,
+            previewHeight = null,
+            rating = post.rating,
+            tags = post.tags,
+            postId = post.id,
+            serverId = serverId,
+            change = 0,
+            md5 = post.md5,
             creatorId = null,
             hasChildren = post.hasChildren,
             createdAt = post.createdAt?.format(DateTimeFormatter.ofPattern("cccc, dd MMMM y hh:mm:ss a",

@@ -7,7 +7,8 @@ import kotlinx.parcelize.Parcelize
 
 enum class ServerType {
     Gelbooru,
-    Danbooru
+    Danbooru,
+    Moebooru
 }
 
 @Parcelize

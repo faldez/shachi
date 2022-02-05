@@ -23,6 +23,15 @@ sealed class Action {
             }
         }
 
+        fun buildMoebooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
+            return server?.let {
+                HttpUrl.get(it.url).newBuilder().addPathSegment("post.json")
+                    .addQueryParameter("page", page.toString())
+                    .addQueryParameter("limit", limit.toString())
+                    .addQueryParameter("tags", tags).build()
+            }
+        }
+
         fun buildDanbooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
             return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("posts.json")
@@ -40,6 +49,15 @@ sealed class Action {
                     .addQueryParameter("page", "dapi")
                     .addQueryParameter("q", "index").addQueryParameter("s", "post")
                     .addQueryParameter("pid", page.toString())
+                    .addQueryParameter("limit", limit.toString())
+                    .addQueryParameter("tags", savedSearch.savedSearch.tags).build()
+            }
+        }
+
+        fun buildMoebooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
+            return savedSearch.server.let {
+                HttpUrl.get(it.url).newBuilder().addPathSegment("post.json")
+                    .addQueryParameter("page", page.toString())
                     .addQueryParameter("limit", limit.toString())
                     .addQueryParameter("tags", savedSearch.savedSearch.tags).build()
             }
@@ -69,6 +87,16 @@ sealed class Action {
             }
         }
 
+        fun buildMoebooruUrl(): HttpUrl? {
+            return server?.let {
+                HttpUrl.get(it.url).newBuilder().addPathSegment("tag.json")
+                    .addQueryParameter("name", tag)
+                    .addQueryParameter("order", "count")
+                    .addQueryParameter("limit", limit.toString())
+                    .build()
+            }
+        }
+
         fun buildDanbooruUrl(): HttpUrl? {
             return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json")
@@ -85,6 +113,15 @@ sealed class Action {
                     .addQueryParameter("page", "dapi")
                     .addQueryParameter("q", "index").addQueryParameter("s", "tag")
                     .addQueryParameter("name", tag)
+                    .build()
+            }
+        }
+
+        fun buildMoebooruUrl(): HttpUrl? {
+            return server?.let {
+                HttpUrl.get(it.url).newBuilder().addPathSegment("tag.json")
+                    .addQueryParameter("name", "$tag*")
+                    .addQueryParameter("limit", "1")
                     .build()
             }
         }
@@ -108,6 +145,8 @@ sealed class Action {
                     .build()
             }
         }
+
+        fun buildMoebooruUrl(): HttpUrl? = null
 
         fun buildDanbooruUrl(): HttpUrl? {
             return server?.let {

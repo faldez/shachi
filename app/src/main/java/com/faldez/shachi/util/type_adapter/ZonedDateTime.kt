@@ -2,6 +2,8 @@ package com.faldez.shachi.util.type_adapter
 
 import com.google.gson.*
 import java.lang.reflect.Type
+import java.time.Instant
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -37,6 +39,27 @@ class JsonDateTimeAdapter : JsonDeserializer<ZonedDateTime?>,
         context: JsonDeserializationContext?,
     ): ZonedDateTime? {
         return ZonedDateTime.parse(json?.asString, format)
+    }
+
+    override fun serialize(
+        src: ZonedDateTime?,
+        typeOfSrc: Type?,
+        context: JsonSerializationContext?,
+    ): JsonElement {
+        return JsonPrimitive(src?.format(format)!!)
+    }
+}
+
+class TimestampDateTimeAdapter : JsonDeserializer<ZonedDateTime?>,
+    JsonSerializer<ZonedDateTime?> {
+    private val format: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+
+    override fun deserialize(
+        json: JsonElement?,
+        typeOfT: Type?,
+        context: JsonDeserializationContext?,
+    ): ZonedDateTime? {
+        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(1644069330), ZoneOffset.UTC)
     }
 
     override fun serialize(

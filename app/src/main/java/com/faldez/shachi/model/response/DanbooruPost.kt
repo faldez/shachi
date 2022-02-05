@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 import java.time.ZonedDateTime
 
 @Parcelize
-data class Danbooru2Post(
+data class DanbooruPost(
     val id: Int?,
     @JsonAdapter(JsonDateTimeAdapter::class) @SerializedName("created_at") val createdAt: ZonedDateTime?,
     @SerializedName("uploader_id") val uploaderId: Int,

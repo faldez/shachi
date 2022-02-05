@@ -3,8 +3,8 @@ package com.faldez.shachi.repository
 import android.util.Log
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.Tag
-import com.faldez.shachi.model.response.Danbooru2Tag
-import com.faldez.shachi.model.response.GelbooruTagResponse
+import com.faldez.shachi.model.response.mapToTag
+import com.faldez.shachi.model.response.mapToTags
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
 
@@ -15,7 +15,10 @@ class TagRepository(private val service: BooruService) {
                 service.gelbooru.getTags(action.buildGelbooruUrl().toString()).mapToTags()
             }
             ServerType.Danbooru -> {
-                service.danbooru2.getTags(action.buildDanbooruUrl().toString()).mapToTags()
+                service.danbooru.getTags(action.buildDanbooruUrl().toString()).mapToTags()
+            }
+            ServerType.Moebooru -> {
+                service.moebooru.getTags(action.buildMoebooruUrl().toString()).mapToTags()
             }
             null -> {
                 null
@@ -29,7 +32,10 @@ class TagRepository(private val service: BooruService) {
                 service.gelbooru.getTags(action.buildGelbooruUrl().toString()).mapToTag()
             }
             ServerType.Danbooru -> {
-                service.danbooru2.getTags(action.buildDanbooruUrl().toString()).mapToTag()
+                service.danbooru.getTags(action.buildDanbooruUrl().toString()).mapToTag()
+            }
+            ServerType.Moebooru -> {
+                service.moebooru.getTags(action.buildMoebooruUrl().toString()).mapToTag()
             }
             null -> {
                 null
@@ -55,7 +61,21 @@ class TagRepository(private val service: BooruService) {
             ServerType.Danbooru -> {
                 val url = action.buildDanbooruUrl().toString()
                 Log.d("TagRepository", url)
-                val tags = service.danbooru2.getTags(url).mapToTags()
+                val tags = service.danbooru.getTags(url).mapToTags()
+
+                action.tags.trim().split(" ").map { name ->
+                    tags.find { it.name == name } ?: Tag(id = 0,
+                        name = name,
+                        count = 0,
+                        type = 0,
+                        ambiguous = false)
+                }
+            }
+            ServerType.Moebooru -> {
+                val tags = action.buildMoebooruUrl()?.toString()?.let { url ->
+                    Log.d("TagRepository", url)
+                    service.moebooru.getTags(url).mapToTags()
+                }
 
                 action.tags.trim().split(" ").map { name ->
                     tags?.find { it.name == name } ?: Tag(id = 0,
@@ -70,48 +90,4 @@ class TagRepository(private val service: BooruService) {
             }
         }
     }
-
-    private fun GelbooruTagResponse.mapToTags() =
-        this.tags?.tag?.map {
-            Tag(
-                id = it.id,
-                name = it.name,
-                count = it.count,
-                type = it.type,
-                ambiguous = it.ambiguous
-            )
-        }
-
-    private fun GelbooruTagResponse.mapToTag() =
-        this.tags?.tag?.first()?.let {
-            Tag(
-                id = it.id,
-                name = it.name,
-                count = it.count,
-                type = it.type,
-                ambiguous = it.ambiguous
-            )
-        }
-
-    private fun List<Danbooru2Tag>.mapToTags() =
-        this.map {
-            Tag(
-                id = it.id,
-                name = it.name,
-                count = it.postCount,
-                type = it.category,
-                ambiguous = false
-            )
-        }
-
-    private fun List<Danbooru2Tag>.mapToTag() =
-        this.first().let {
-            Tag(
-                id = it.id,
-                name = it.name,
-                count = it.postCount,
-                type = it.category,
-                ambiguous = false
-            )
-        }
 }

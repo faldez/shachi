@@ -8,7 +8,7 @@ import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.response.*
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
-import com.faldez.shachi.service.Danbooru2Service
+import com.faldez.shachi.service.DanbooruService
 import com.faldez.shachi.service.GelbooruService
 import retrofit2.HttpException
 import java.io.IOException
@@ -29,7 +29,7 @@ class PostPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
         val startingPageIndex = when (action.server?.type) {
             ServerType.Gelbooru -> GelbooruService.STARTING_PAGE_INDEX
-            ServerType.Danbooru -> Danbooru2Service.STARTING_PAGE_INDEX
+            ServerType.Danbooru -> DanbooruService.STARTING_PAGE_INDEX
             else -> 1
         }
         val position = params.key ?: startingPageIndex
@@ -44,7 +44,13 @@ class PostPagingSource(
                 ServerType.Danbooru -> {
                     val url = action.buildDanbooruUrl(position).toString()
                     Log.d("PostPagingSource/Danbooru", url)
-                    service.danbooru2.getPosts(url).applyBlacklist(action.server.blacklistedTags)
+                    service.danbooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
+                        ?.mapToPost(action.server.serverId) ?: listOf()
+                }
+                ServerType.Moebooru -> {
+                    val url = action.buildMoebooruUrl(position).toString()
+                    Log.d("PostPagingSource/Moebooru", url)
+                    service.moebooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
                         ?.mapToPost(action.server.serverId) ?: listOf()
                 }
                 null -> {
@@ -96,7 +102,8 @@ class PostPagingSource(
         return posts
     }
 
-    private fun List<Danbooru2Post>.applyBlacklist(tags: String?): List<Danbooru2Post>? {
+    @JvmName("danbooruPostApplyBlacklist")
+    private fun List<DanbooruPost>.applyBlacklist(tags: String?): List<DanbooruPost>? {
         val blacklists = tags?.split(",")?.map {
             it.split(" ")
         }
@@ -111,6 +118,35 @@ class PostPagingSource(
         val posts = this.filter { post ->
             blacklists.forEach { tags ->
                 if (post.tagString.split(" ").containsAll(tags)) {
+                    counter++
+                    return@filter false
+                }
+            }
+
+            true
+        }
+
+        Log.d("PostPagingSource", "applyBlacklist $counter filtered")
+
+        return posts
+    }
+
+    @JvmName("moebooruPostApplyBlacklist")
+    private fun List<MoebooruPost>.applyBlacklist(tags: String?): List<MoebooruPost>? {
+        val blacklists = tags?.split(",")?.map {
+            it.split(" ")
+        }
+
+        Log.d("PostPagingSource", "applyBlacklist $tags to $blacklists")
+
+        if (blacklists.isNullOrEmpty()) {
+            return this
+        }
+
+        var counter = 0
+        val posts = this.filter { post ->
+            blacklists.forEach { tags ->
+                if (post.tags.split(" ").containsAll(tags)) {
                     counter++
                     return@filter false
                 }
