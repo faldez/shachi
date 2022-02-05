@@ -56,13 +56,13 @@ class BrowseItemViewHolder(val binding: PostCardItemBinding, val onClick: (Int) 
         val imageView = binding.imageView
         var glide = Glide.with(imageView.context).load(post.previewUrl)
             .transition(withCrossFade(factory))
-        if (post.previewWidth != null && post.previewHeight != null) {
-            glide = glide.placeholder(BitmapDrawable(imageView.resources,
+        glide = if (post.previewWidth != null && post.previewHeight != null) {
+            glide.placeholder(BitmapDrawable(imageView.resources,
                 Bitmap.createBitmap(post.previewWidth,
                     post.previewHeight,
                     Bitmap.Config.ARGB_8888))).override(post.previewWidth, post.previewHeight)
         } else {
-            glide = glide.fitCenter()
+            glide.fitCenter()
         }
         glide.into(imageView)
 
