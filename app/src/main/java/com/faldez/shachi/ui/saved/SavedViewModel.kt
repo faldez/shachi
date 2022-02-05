@@ -37,6 +37,16 @@ class SavedViewModel(
         viewModelScope.launch {
             savedSearches.collect { list ->
                 list?.forEach { savedSearch ->
+                    state.getAndUpdate { state ->
+                        state.toMutableMap().let { map ->
+                            map[savedSearch] = null
+                            return@getAndUpdate map.toMap()
+                        }
+                    }
+                    Log.d("SavedViewModel", "${state.value}")
+                }
+
+                list?.forEach { savedSearch ->
                     val posts =
                         postRepository.getSavedSearchPosts(Action.SearchSavedSearchPost(savedSearch))
                     state.getAndUpdate { state ->

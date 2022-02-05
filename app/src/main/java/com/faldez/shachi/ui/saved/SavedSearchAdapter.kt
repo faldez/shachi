@@ -33,7 +33,7 @@ class SavedSearchAdapter(
                 oldItem: SavedSearchPost,
                 newItem: SavedSearchPost,
             ): Boolean =
-                oldItem.savedSearch == newItem.savedSearch
+                oldItem.savedSearch.savedSearch.savedSearchId == newItem.savedSearch.savedSearch.savedSearchId
 
 
             override fun areContentsTheSame(
@@ -60,10 +60,12 @@ class SavedSearchItemViewHolder(
         val layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
 
+        val adapter = SavedSearchItemAdapter()
         binding.savedSearchItemRecyclerView.apply {
             setLayoutManager(layoutManager)
-            adapter = SavedSearchItemAdapter(item.posts ?: listOf())
+            setAdapter(adapter)
         }
+        adapter.submitList(item.posts ?: listOf())
 
         binding.root.setOnClickListener {
             onBrowse(item.savedSearch)

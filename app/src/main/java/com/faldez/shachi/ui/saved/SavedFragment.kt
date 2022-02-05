@@ -85,20 +85,6 @@ class SavedFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.savedSearches.collect { state ->
-                state?.let { savedSearches ->
-                    val postMap = viewModel.state
-                    val savedSearchPosts = savedSearches.map {
-                        SavedSearchPost(savedSearch = it, posts = postMap.value.get(it))
-                    }
-                    Log.d("SavedFragment", "$savedSearchPosts")
-                    adapter.submitList(savedSearchPosts)
-                    binding.savedSwipeRefreshLayout.isRefreshing = false
-                }
-            }
-        }
-
-        lifecycleScope.launch {
             viewModel.state.collect { state ->
                 state.let { savedSearches ->
                     val savedSearchPosts = savedSearches.map { (savedSearch, posts) ->
