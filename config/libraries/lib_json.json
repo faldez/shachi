@@ -1,0 +1,15 @@
+{
+  "uniqueId": "org.json:json",
+  "developers": [
+    {
+      "name": "Douglas Crockford"
+    }
+  ],
+  "artifactVersion": "20211205",
+  "description": "JSON is a light-weight, language independent, data interchange format.\n        See http://www.JSON.org/\n\n        The files in this package implement JSON encoders/decoders in Java.\n        It also includes the capability to convert between JSON and XML, HTTP\n        headers, Cookies, and CDL.\n\n        This is a reference implementation. There is a large number of JSON packages\n        in Java. Perhaps someday the Java community will standardize on one. Until\n        then, choose carefully.\n\n        The license includes this restriction: \"The software shall be used for good,\n        not evil.\" If your conscience cannot live with that, then choose a different\n        package.",
+  "name": "JSON in Java",
+  "website": "https://github.com/douglascrockford/JSON-java",
+  "licenses": [
+    "JSON"
+  ]
+}

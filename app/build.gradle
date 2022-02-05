@@ -39,6 +39,10 @@ android {
     }
 }
 
+aboutLibraries {
+    configPath = "./config"
+}
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -86,5 +90,5 @@ dependencies {
 
     // oss-licenses
     implementation "com.mikepenz:aboutlibraries-core:10.0.0-b09"
-    implementation "com.mikepenz:aboutlibraries-compose:10.0.0-b09"
+    implementation "com.mikepenz:aboutlibraries:10.0.0-b09"
 }

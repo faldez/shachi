@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.more.OssFragment">
+    tools:context=".ui.oss.OssFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/more_appbar_layout"
@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
-            app:title="More" />
+            app:title="@string/open_source_notices" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

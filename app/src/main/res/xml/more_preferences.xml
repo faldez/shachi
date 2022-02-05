@@ -6,4 +6,11 @@
         app:key="settings"
         app:title="@string/settings"
         app:icon="@drawable/ic_baseline_settings_24"/>
+
+    <PreferenceCategory app:title="@string/other">
+        <Preference
+            app:fragment="com.faldez.shachi.ui.oss.OssFragment"
+            app:key="oss_notices"
+            app:title="@string/open_source_notices"/>
+    </PreferenceCategory>
 </PreferenceScreen>

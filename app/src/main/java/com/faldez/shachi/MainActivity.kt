@@ -87,12 +87,14 @@ class MainActivity : AppCompatActivity(),
             }
             "servers" -> {
                 navController.navigate(R.id.action_global_to_servers)
-                hideBottomNavigation()
                 return true
             }
             "blacklisted_tags" -> {
                 navController.navigate(R.id.action_global_to_blacklisted_tags)
-                hideBottomNavigation()
+                return true
+            }
+            "oss_notices" -> {
+                navController.navigate(R.id.action_more_to_oss)
                 return true
             }
         }

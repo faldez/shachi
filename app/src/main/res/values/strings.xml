@@ -55,6 +55,7 @@
     <string name="cancel">Cancel</string>
     <string name="settings">Settings</string>
     <string name="remove_search">Remove search</string>
+    <string name="open_source_notices">Open source notices</string>
     <string name="saved_search_description_title_text">Title of the saved search, default to first tag if empty</string>
     <string name="empty_server_help_text">There is no server setup. To setup your server click ⋮ > Manage Server > + > fill title, host url and select server type > save</string>
     <!-- Preference Key -->

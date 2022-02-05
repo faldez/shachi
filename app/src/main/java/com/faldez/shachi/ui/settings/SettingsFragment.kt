@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.SettingsFragmentBinding
-import com.faldez.shachi.ui.more.MoreSettingsFragment
 import com.google.android.material.shape.MaterialShapeDrawable
 
 class SettingsFragment : Fragment() {
