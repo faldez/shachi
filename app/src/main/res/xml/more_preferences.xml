@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <Preference
-        app:fragment="com.faldez.shachi.ui.settings.SettingsFragment"
-        app:key="settings"
-        app:title="@string/settings"
-        app:icon="@drawable/ic_baseline_settings_24"/>
+
+    <PreferenceCategory app:title="@string/servers">
+        <Preference
+            app:fragment="com.faldez.shachi.ui.servers.ServersFragment"
+            app:key="servers"
+            app:summary="@string/manage_servers"
+            app:title="@string/servers" />
+        <Preference
+            app:fragment="com.faldez.shachi.ui.blacklisted_tag.BlacklistedTagFragment"
+            app:key="blacklisted_tags"
+            app:summary="@string/blacklisted_tags"
+            app:title="@string/blacklisted_tags" />
+
+    </PreferenceCategory>
+
+   <PreferenceCategory app:title="@string/settings">
+       <Preference
+           app:fragment="com.faldez.shachi.ui.settings.SettingsFragment"
+           app:key="settings"
+           app:title="@string/settings"
+           app:icon="@drawable/ic_baseline_settings_24"/>
+   </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/other">
         <Preference

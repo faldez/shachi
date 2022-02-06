@@ -1,17 +1,4 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory app:title="@string/servers">
-        <Preference
-            app:fragment="com.faldez.shachi.ui.servers.ServersFragment"
-            app:key="servers"
-            app:summary="@string/manage_servers"
-            app:title="@string/servers" />
-        <Preference
-            app:fragment="com.faldez.shachi.ui.blacklisted_tag.BlacklistedTagFragment"
-            app:key="blacklisted_tags"
-            app:summary="@string/blacklisted_tags"
-            app:title="@string/blacklisted_tags" />
-
-    </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/appearance">
 
