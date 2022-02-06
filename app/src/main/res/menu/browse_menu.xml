@@ -14,8 +14,9 @@
         android:title="@string/save_search"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/manage_server_button"
+        android:id="@+id/select_server_button"
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_search_24"
-        android:title="@string/manage_servers" />
+        android:icon="@drawable/ic_baseline_storage_24"
+        android:title="@string/select_server"
+        app:showAsAction="ifRoom"  />
 </menu>

@@ -133,8 +133,8 @@ class BrowseFragment : Fragment() {
                 dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
                     SpannableStringBuilder(viewModel.state.value.tags.first().name)
             }
-            R.id.manage_server_button -> {
-                findNavController().navigate(R.id.action_global_to_servers)
+            R.id.select_server_button -> {
+                findNavController().navigate(R.id.action_global_to_serverdialog)
                 return true
             }
         }

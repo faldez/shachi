@@ -35,6 +35,9 @@
     <action
         android:id="@+id/action_postslide_to_postdetail"
         app:destination="@id/post_detail_bottom_sheet_fragment" />
+    <action
+        android:id="@+id/action_global_to_serverdialog"
+        app:destination="@id/server_dialog_fragment" />
     <include app:graph="@navigation/saved" />
     <fragment
         android:id="@+id/favoriteFragment"
@@ -101,6 +104,11 @@
         android:name="com.faldez.shachi.ui.post_detail.PostDetailBottomSheetFragment"
         android:label="post_detail"
         tools:layout="@layout/post_detail_bottom_sheet_fragment" />
+    <dialog
+        android:id="@+id/server_dialog_fragment"
+        android:name="com.faldez.shachi.ui.server_dialog.ServerDialogFragment"
+        android:label="server_dialog"
+        tools:layout="@layout/server_dialog_fragment" />
     <fragment
         android:id="@+id/serversFragment"
         android:name="com.faldez.shachi.ui.servers.ServersFragment"

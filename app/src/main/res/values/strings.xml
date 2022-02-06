@@ -10,7 +10,9 @@
     <string name="pin_tags">Pin tags</string>
     <string name="servers">Servers</string>
     <string name="manage_servers">Manage servers</string>
+    <string name="select_server">Select server</string>
     <string name="new_server">New server</string>
+    <string name="ok">Ok</string>
     <string name="source">Source</string>
     <string name="tags">Tags</string>
     <string name="size">Size</string>
