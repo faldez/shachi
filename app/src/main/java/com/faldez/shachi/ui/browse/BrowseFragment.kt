@@ -228,7 +228,7 @@ class BrowseFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            postsAdapter.loadStateFlow.collect { loadState ->
+            postsAdapter.loadStateFlow.collectLatest { loadState ->
                 val isListEmpty =
                     loadState.refresh is LoadState.NotLoading && postsAdapter.itemCount == 0
                 postsRecyclerView.isVisible = !isListEmpty

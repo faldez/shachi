@@ -41,5 +41,8 @@ class SettingsFragment : Fragment() {
         (activity as MainActivity).setSupportActionBar(binding.settingsTopappbar)
         binding.settingsAppbarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+        val supportActionBar = (activity as MainActivity).supportActionBar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 }
