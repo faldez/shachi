@@ -7,11 +7,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.faldez.shachi.model.*
 import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.repository.PostRepository
 import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.repository.ServerRepository
-import com.faldez.shachi.model.*
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -31,21 +31,20 @@ class BrowseViewModel constructor(
         Log.d("PostsViewModel",
             "init " + savedStateHandle.get(LAST_SEARCH_TAGS) + " " + savedStateHandle.get(
                 LAST_TAGS_SCROLLED))
-        val initialTags: List<Tag> =
+        val initialTags: List<TagDetail> =
             savedStateHandle.get(LAST_SEARCH_TAGS)
                 ?: listOf()
-        val lastTagsScrolled: List<Tag> = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: listOf()
+        val lastTagsScrolled: List<TagDetail> = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: listOf()
         val actionStateFlow = MutableSharedFlow<UiAction>()
         val searches = actionStateFlow.filterIsInstance<UiAction.Search>().distinctUntilChanged()
-//            .onStart { emit(UiAction.Search(null, tags = initialTags)) }
         val tagsScrolled =
             actionStateFlow.filterIsInstance<UiAction.Scroll>().distinctUntilChanged()
-//                .shareIn(scope = viewModelScope,
-//                    started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-//                    replay = 1)
                 .onStart {
                     emit(UiAction.Scroll(null, currentTags = lastTagsScrolled))
                 }
+                .shareIn(scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                    replay = 1)
 
         val getServer =
             actionStateFlow.filterIsInstance<UiAction.GetSelectedOrSelectServer>()
@@ -133,7 +132,7 @@ class BrowseViewModel constructor(
             "onCleared " + state.value.tags + " " + state.value.lastTagsScrolled)
     }
 
-    private fun List<Tag>.toQuery(): String {
+    private fun List<TagDetail>.toQuery(): String {
         return this.joinToString(" ") {
             if (it.excluded) {
                 "-${it.name}"
@@ -145,10 +144,10 @@ class BrowseViewModel constructor(
 }
 
 sealed class UiAction {
-    data class Search(val serverUrl: String?, val tags: List<Tag>) : UiAction()
+    data class Search(val serverUrl: String?, val tags: List<TagDetail>) : UiAction()
     data class Scroll(
         val currentServerUrl: String?,
-        val currentTags: List<Tag>,
+        val currentTags: List<TagDetail>,
     ) : UiAction()
 
     data class GetSelectedOrSelectServer(val server: Server? = null) : UiAction()
@@ -156,8 +155,8 @@ sealed class UiAction {
 
 data class UiState(
     val server: ServerView? = null,
-    val tags: List<Tag> = listOf(),
-    val lastTagsScrolled: List<Tag> = listOf(),
+    val tags: List<TagDetail> = listOf(),
+    val lastTagsScrolled: List<TagDetail> = listOf(),
     val hasNotScrolledForCurrentTag: Boolean = false,
 )
 

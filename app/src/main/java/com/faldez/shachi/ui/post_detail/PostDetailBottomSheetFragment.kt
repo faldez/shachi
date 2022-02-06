@@ -9,21 +9,21 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.faldez.shachi.R
-import com.faldez.shachi.repository.ServerRepository
-import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.PostDetailBottomSheetFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
+import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
@@ -46,12 +46,13 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
         val currentSearchTags =
             (requireArguments().get("tags") as List<*>?)?.filterIsInstance<Tag>()
 
-        viewModel =
-            PostDetailBottomSheetViewModel(server,
-                post,
-                TagRepository(BooruService()),
-                ServerRepository(
-                    AppDatabase.build(requireContext())))
+        val db = AppDatabase.build(requireContext())
+        val factory = PostDetailBottomSheetViewModelFactory(server, post,
+            TagRepository(BooruService(), db),
+            ServerRepository(db),
+            this)
+        viewModel = ViewModelProvider(this, factory).get(PostDetailBottomSheetViewModel::class.java)
+
 
         binding.bind(post, currentSearchTags)
 
@@ -86,7 +87,8 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
             viewModel.state.collect { state ->
                 binding.loadingLabel.isVisible = state.tags == null
                 val splitTags =
-                    (state.tags ?: listOf()).groupBy { currentSearchTagsSet.contains(it.name) }
+                    (state.tags
+                        ?: listOf()).groupBy { currentSearchTagsSet.contains(it.name) }
                 val groupedTags = splitTags[false]?.groupBy { it.type }
                 Log.d("SearchSimpleFragment", "collect $groupedTags")
                 currentSearchTagsHeader.isVisible = false

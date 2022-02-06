@@ -29,7 +29,7 @@ import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Server
-import com.faldez.shachi.model.Tag
+import com.faldez.shachi.model.TagDetail
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -74,7 +74,7 @@ class BrowseFragment : Fragment() {
         }
         val server = arguments?.get("server") as Server?
         val tags =
-            (arguments?.get("tags") as String?)?.split(" ")?.map { name -> Tag.fromName(name) }
+            (arguments?.get("tags") as String?)?.split(" ")?.map { name -> TagDetail.fromName(name) }
         Log.d("BrowseFragment", "$server $tags")
 
         binding.bindState(
@@ -89,7 +89,7 @@ class BrowseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<List<Tag>>("tags")
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<List<TagDetail>>("tags")
             ?.observe(viewLifecycleOwner) { result ->
                 Log.d("SearchPostFragment", "$result")
                 viewModel.accept(UiAction.Search(viewModel.state.value.server?.url,
@@ -154,7 +154,7 @@ class BrowseFragment : Fragment() {
         pagingData: Flow<PagingData<Post>>,
         uiActions: (UiAction) -> Unit,
         server: Server?,
-        tags: List<Tag>?,
+        tags: List<TagDetail>?,
     ) {
         val postAdapter = BrowseAdapter(
             onClick = { position ->
@@ -188,7 +188,7 @@ class BrowseFragment : Fragment() {
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (UiAction.Scroll) -> Unit,
         server: Server?,
-        tags: List<Tag>?,
+        tags: List<TagDetail>?,
     ) {
         retryButton.setOnClickListener { postsAdapter.retry() }
         postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

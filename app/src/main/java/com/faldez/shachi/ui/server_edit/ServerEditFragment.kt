@@ -18,12 +18,11 @@ import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.ServerEditFragmentBinding
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerType
-import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.repository.PostRepository
 import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.shape.MaterialShapeDrawable
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ServerEditFragment : Fragment() {
@@ -52,9 +51,11 @@ class ServerEditFragment : Fragment() {
 
         val server = arguments?.getParcelable<Server>("server")
 
+        val db = AppDatabase.build(requireContext())
+        val service = BooruService()
         viewModel = ViewModelProvider(this,
-            ServerEditViewModelFactory(server, PostRepository(BooruService()),
-                ServerRepository(AppDatabase.build(requireContext())),
+            ServerEditViewModelFactory(server, PostRepository(service),
+                ServerRepository(db), TagRepository(service, db),
                 this)).get(ServerEditViewModel::class.java)
 
         server?.let {

@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -19,23 +20,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.repository.TagRepository
+import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SearchSimpleFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
+import com.faldez.shachi.model.TagDetail
+import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.chip.Chip
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
 class SearchSimpleFragment : Fragment() {
     private lateinit var binding: SearchSimpleFragmentBinding
     private lateinit var tagDetailsBinding: TagsDetailsBinding
-    private lateinit var viewModel: SearchSimpleViewModel
+    private val viewModel: SearchSimpleViewModel by viewModels {
+        SearchSimpleViewModelFactory(TagRepository(BooruService(),
+            AppDatabase.build(requireContext())), this)
+    }
     private lateinit var searchSuggestionAdapter: SearchSuggestionAdapter
     private lateinit var searchSimpleMenu: Menu
 
@@ -52,19 +57,74 @@ class SearchSimpleFragment : Fragment() {
         binding = SearchSimpleFragmentBinding.inflate(inflater, container, false)
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
-        val initialTags: List<Tag> =
-            (requireArguments().get("tags") as List<*>?)?.filterIsInstance<Tag>() ?: listOf()
+        val initialTags: List<TagDetail> =
+            (requireArguments().get("tags") as List<*>?)?.filterIsInstance<TagDetail>() ?: listOf()
         val server = requireArguments().getParcelable<ServerView?>("server")
-        viewModel =
-            SearchSimpleViewModel(server, initialTags, TagRepository(BooruService()))
-
         binding.searchSimpleTagsInputText.bind()
         prepareAppBar()
 
         binding.suggestionTagsRecyclerView.bind()
         binding.loadingIndicator.isVisible = initialTags.isNotEmpty()
 
+        bindSelectedTags(server, initialTags)
+
         return binding.root
+    }
+
+    private fun bindSelectedTags(server: ServerView?, initialTags: List<TagDetail>) {
+        lifecycleScope.launch {
+            viewModel.selectedTags.collect { tags ->
+                val groupedTags = tags.groupBy { it.type }
+                Log.d("SearchSimpleFragment", "collect $groupedTags")
+                binding.selectedTagsHeader.isVisible = groupedTags.isNotEmpty()
+                tagDetailsBinding.generalTagsHeader.isVisible = false
+                tagDetailsBinding.artistTagsHeader.isVisible = false
+                tagDetailsBinding.copyrightTagsHeader.isVisible = false
+                tagDetailsBinding.characterTagsHeader.isVisible = false
+                tagDetailsBinding.metadataTagsHeader.isVisible = false
+                tagDetailsBinding.otherTagsHeader.isVisible = false
+
+                groupedTags.forEach { (type, tags) ->
+                    var group = tagDetailsBinding.otherTagsChipGroup
+                    var header = tagDetailsBinding.otherTagsHeader
+                    when (type) {
+                        0 -> {
+                            group = tagDetailsBinding.generalTagsChipGroup
+                            header = tagDetailsBinding.generalTagsHeader
+                        }
+                        1 -> {
+                            group = tagDetailsBinding.artistTagsChipGroup
+                            header = tagDetailsBinding.artistTagsHeader
+                        }
+                        3 -> {
+                            group = tagDetailsBinding.copyrightTagsChipGroup
+                            header = tagDetailsBinding.copyrightTagsHeader
+                        }
+                        4 -> {
+                            group = tagDetailsBinding.characterTagsChipGroup
+                            header = tagDetailsBinding.characterTagsHeader
+                        }
+                        5 -> {
+                            group = tagDetailsBinding.metadataTagsChipGroup
+                            header = tagDetailsBinding.metadataTagsHeader
+                        }
+                        else -> tagDetailsBinding.otherTagsChipGroup
+                    }
+                    group.removeAllViews()
+                    header.isVisible = tags.isNotEmpty()
+                    group.isVisible = tags.isNotEmpty()
+
+                    tags.forEach { tag ->
+                        val chip = Chip(requireContext())
+                        chip.bind(tag)
+                    }
+                }
+                binding.loadingIndicator.isVisible = false
+            }
+        }
+
+        viewModel.setServer(server)
+        viewModel.setInitialTags(initialTags)
     }
 
     private fun RecyclerView.bind() {
@@ -88,7 +148,6 @@ class SearchSimpleFragment : Fragment() {
         this.apply {
             adapter = searchSuggestionAdapter
             layoutManager = linearLayoutManager
-
         }
     }
 
@@ -166,7 +225,7 @@ class SearchSimpleFragment : Fragment() {
                     binding.loadingIndicator.isVisible = false
                     searchSimpleMenu.getItem(0).isVisible = false
                 } else {
-                    viewModel.accept(UiAction.SearchTag(viewModel.server?.toServer(), text.toString()))
+                    viewModel.accept(UiAction.SearchTag(viewModel.server.value, text.toString()))
                     binding.selectedTagsLayout.hide()
                     binding.suggestionTagLayout.show()
                     binding.loadingIndicator.isVisible = true
@@ -190,7 +249,7 @@ class SearchSimpleFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.tags.collect {
+            viewModel.suggestionTags.collect {
                 if (it.isNullOrEmpty()) {
                     binding.suggestionTagsHeader.visibility = View.GONE
                 } else {
@@ -203,60 +262,9 @@ class SearchSimpleFragment : Fragment() {
                 binding.loadingIndicator.isVisible = false
             }
         }
-
-        lifecycleScope.launch {
-            viewModel.selectedTags.collect { tags ->
-                val groupedTags = tags.groupBy { it.type }
-                Log.d("SearchSimpleFragment", "collect $groupedTags")
-                binding.selectedTagsHeader.isVisible = groupedTags.isNotEmpty()
-                tagDetailsBinding.generalTagsHeader.isVisible = false
-                tagDetailsBinding.artistTagsHeader.isVisible = false
-                tagDetailsBinding.copyrightTagsHeader.isVisible = false
-                tagDetailsBinding.characterTagsHeader.isVisible = false
-                tagDetailsBinding.metadataTagsHeader.isVisible = false
-                tagDetailsBinding.otherTagsHeader.isVisible = false
-
-                groupedTags.forEach { (type, tags) ->
-                    var group = tagDetailsBinding.otherTagsChipGroup
-                    var header = tagDetailsBinding.otherTagsHeader
-                    when (type) {
-                        0 -> {
-                            group = tagDetailsBinding.generalTagsChipGroup
-                            header = tagDetailsBinding.generalTagsHeader
-                        }
-                        1 -> {
-                            group = tagDetailsBinding.artistTagsChipGroup
-                            header = tagDetailsBinding.artistTagsHeader
-                        }
-                        3 -> {
-                            group = tagDetailsBinding.copyrightTagsChipGroup
-                            header = tagDetailsBinding.copyrightTagsHeader
-                        }
-                        4 -> {
-                            group = tagDetailsBinding.characterTagsChipGroup
-                            header = tagDetailsBinding.characterTagsHeader
-                        }
-                        5 -> {
-                            group = tagDetailsBinding.metadataTagsChipGroup
-                            header = tagDetailsBinding.metadataTagsHeader
-                        }
-                        else -> tagDetailsBinding.otherTagsChipGroup
-                    }
-                    group.removeAllViews()
-                    header.isVisible = tags.isNotEmpty()
-                    group.isVisible = tags.isNotEmpty()
-
-                    tags.forEach { tag ->
-                        val chip = Chip(requireContext())
-                        chip.bind(tag)
-                    }
-                }
-                binding.loadingIndicator.isVisible = false
-            }
-        }
     }
 
-    private fun Chip.bind(tag: Tag) {
+    private fun Chip.bind(tag: TagDetail) {
         var textColor: Int? = null
         var group = tagDetailsBinding.otherTagsChipGroup
         when (tag.type) {

@@ -2,11 +2,15 @@ package com.faldez.shachi.service
 
 import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.model.Server
+import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.repository.PostRepository.Companion.NETWORK_PAGE_SIZE
 import okhttp3.HttpUrl
 
 sealed class Action {
+    /*
+    Search post
+     */
     data class SearchPost(
         val server: ServerView?,
         val tags: String = "*",
@@ -42,6 +46,9 @@ sealed class Action {
         }
     }
 
+    /*
+    Search post of saved search tags
+     */
     data class SearchSavedSearchPost(val savedSearch: SavedSearchServer) : Action() {
         fun buildGelbooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
             return savedSearch.server.let {
@@ -73,6 +80,9 @@ sealed class Action {
         }
     }
 
+    /*
+    Search tag with pattern
+     */
     data class SearchTag(val server: Server?, val tag: String, val limit: Int = 10) : Action() {
         fun buildGelbooruUrl(): HttpUrl? {
             return server?.let {
@@ -106,6 +116,9 @@ sealed class Action {
         }
     }
 
+    /*
+    Get single exact tag details
+     */
     data class GetTag(val server: Server?, val tag: String) : Action() {
         fun buildGelbooruUrl(): HttpUrl? {
             return server?.let {
@@ -135,6 +148,9 @@ sealed class Action {
         }
     }
 
+    /*
+    Get multiple tags details
+     */
     data class GetTags(val server: Server?, val tags: String) : Action() {
         fun buildGelbooruUrl(): HttpUrl? {
             return server?.let {
@@ -157,6 +173,13 @@ sealed class Action {
                 }.build()
 
             }
+        }
+    }
+
+    data class GetTagsSummary(val server: Server?) : Action() {
+        fun buildMoebooruUrl(): HttpUrl? = server?.let {
+            HttpUrl.get(it.url).newBuilder().addPathSegment("tag").addPathSegment("summary.json")
+                .build()
         }
     }
 }

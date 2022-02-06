@@ -1,18 +1,12 @@
-package com.faldez.shachi.ui.server_edit
+package com.faldez.shachi.ui.search_simple
 
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.faldez.shachi.model.Server
-import com.faldez.shachi.repository.PostRepository
-import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.repository.TagRepository
 
-class ServerEditViewModelFactory constructor(
-    private val server: Server?,
-    private val postRepository: PostRepository,
-    private val serverRepository: ServerRepository,
+class SearchSimpleViewModelFactory constructor(
     private val tagRepository: TagRepository,
     owner: SavedStateRegistryOwner,
 ) : AbstractSavedStateViewModelFactory(owner, null) {
@@ -21,11 +15,8 @@ class ServerEditViewModelFactory constructor(
         modelClass: Class<T>,
         handle: SavedStateHandle,
     ): T {
-        return if (modelClass.isAssignableFrom(ServerEditViewModel::class.java)) {
-            ServerEditViewModel(server,
-                this.postRepository,
-                this.serverRepository,
-                this.tagRepository) as T
+        return if (modelClass.isAssignableFrom(SearchSimpleViewModel::class.java)) {
+            SearchSimpleViewModel(this.tagRepository) as T
         } else {
             throw  IllegalArgumentException("ViewModel Not Found")
         }

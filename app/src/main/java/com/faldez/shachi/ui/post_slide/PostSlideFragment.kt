@@ -5,9 +5,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import com.faldez.shachi.R
 import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.Server
+import com.faldez.shachi.model.mapToTags
 import com.faldez.shachi.ui.browse.BrowseViewModel
-import kotlinx.coroutines.flow.collect
 
 class PostSlideFragment : BasePostSlideFragment() {
     companion object {
@@ -25,7 +24,7 @@ class PostSlideFragment : BasePostSlideFragment() {
     override fun navigateToPostSlide(post: Post?) {
         val bundle = bundleOf("post" to post,
             "server" to viewModel.state.value.server,
-            "tags" to viewModel.state.value.tags)
+            "tags" to viewModel.state.value.tags.mapToTags())
         findNavController().navigate(R.id.action_postslide_to_postdetail, bundle)
     }
 

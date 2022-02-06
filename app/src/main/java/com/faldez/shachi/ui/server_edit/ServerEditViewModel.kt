@@ -3,19 +3,22 @@ package com.faldez.shachi.ui.server_edit
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faldez.shachi.repository.PostRepository
-import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerType
-import com.faldez.shachi.model.ServerView
+import com.faldez.shachi.repository.PostRepository
+import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.service.Action
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class ServerEditViewModel(
-    val initialServer: Server?,
+    initialServer: Server?,
     private val postRepository: PostRepository,
     private val serverRepository: ServerRepository,
+    private val tagRepository: TagRepository,
 ) : ViewModel() {
     private val isNew = initialServer == null
     val server: MutableStateFlow<Server?> = MutableStateFlow(initialServer)
@@ -56,10 +59,11 @@ class ServerEditViewModel(
     }
 
     fun test(server: Server) {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             Log.d("ServerEditViewModel", "Insert")
             try {
                 postRepository.testSearchPost(Action.SearchPost(server.toServerView(), ""))
+                tagRepository.getTagsSummary(Action.GetTagsSummary(server))
                 if (isNew) {
                     serverRepository.insert(server)
                 } else {
@@ -74,14 +78,6 @@ class ServerEditViewModel(
 
 
     }
-}
-
-sealed class UiAction {
-    data class EditTitle(val title: String) : UiAction()
-    data class EditUrl(val url: String) : UiAction()
-    data class EditType(val url: String) : UiAction()
-    data class Insert(val server: Server) : UiAction()
-    data class Test(val server: Server) : UiAction()
 }
 
 sealed class State {

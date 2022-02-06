@@ -43,7 +43,6 @@ fun List<GelbooruPost>.mapToPost(serverId: Int): List<Post> {
 @JvmName("danbooruMapToPost")
 fun List<DanbooruPost>.mapToPost(serverId: Int): List<Post> {
     return this.map { post ->
-        Log.d("mapToPost", "$post")
         Post(
             height = post.imageHeight,
             width = post.imageWidth,
@@ -77,7 +76,6 @@ fun List<DanbooruPost>.mapToPost(serverId: Int): List<Post> {
 @JvmName("moebooruMapToPost")
 fun List<MoebooruPost>.mapToPost(serverId: Int): List<Post> {
     return this.map { post ->
-        Log.d("mapToPost", "$post")
         Post(
             height = post.height,
             width = post.width,

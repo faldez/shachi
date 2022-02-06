@@ -3,12 +3,14 @@ package com.faldez.shachi.ui.post_detail
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faldez.shachi.repository.ServerRepository
-import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
+import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.service.Action
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -40,7 +42,11 @@ class PostDetailBottomSheetViewModel(
                         emit(tagRepository.getTags(Action.GetTags(it.server?.toServer(),
                             post.tags)))
                     }
-                }
+                }.shareIn(
+                    scope = CoroutineScope(Dispatchers.IO),
+                    started = SharingStarted.WhileSubscribed(),
+                    replay = 1
+                )
 
         state = combine(getServerFlow, getTagsFlow, ::Pair).map { (server, tags) ->
             Log.d("PostDetailBottomSheetViewModel", "combine $server")

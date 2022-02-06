@@ -53,9 +53,9 @@ class PostRepository constructor(
                     return Pair(action.savedSearch, posts)
                 }
                 ServerType.Moebooru -> {
-                    val url = action.buildDanbooruUrl(0, 50).toString()
+                    val url = action.buildMoebooruUrl(0, 50).toString()
 
-                    Log.d("PostPagingSource/Danbooru", url)
+                    Log.d("PostPagingSource/Moebooru", url)
 
                     val posts =
                         service.moebooru.getPosts(url).mapToPost(action.savedSearch.server.serverId)

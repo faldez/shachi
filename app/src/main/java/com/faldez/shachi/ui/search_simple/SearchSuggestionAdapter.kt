@@ -6,20 +6,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.SearchSuggestionTagListItemBinding
-import com.faldez.shachi.model.Tag
+import com.faldez.shachi.model.TagDetail
 
 class SearchSuggestionAdapter(
     val setTextColor: (Int) -> ColorStateList,
-    val onClick: (Tag) -> Unit,
+    val onClick: (TagDetail) -> Unit,
 ) :
     RecyclerView.Adapter<SearchSugestionViewHolder>() {
-    var suggestions: MutableList<Tag> = mutableListOf()
+    var suggestions: MutableList<TagDetail> = mutableListOf()
 
     fun clear() {
         suggestions.clear()
     }
 
-    fun setSuggestion(tags: List<Tag>) {
+    fun setSuggestion(tags: List<TagDetail>) {
         suggestions.clear()
         suggestions.addAll(tags)
         notifyDataSetChanged()
@@ -33,23 +33,12 @@ class SearchSuggestionAdapter(
 
     override fun onBindViewHolder(holder: SearchSugestionViewHolder, position: Int) {
         suggestions[position].let { tag ->
-            var textColor: Int? = null
-            when (tag.type) {
-                0 -> {
-                    textColor = R.color.tag_general
-                }
-                1 -> {
-                    textColor = R.color.tag_artist
-                }
-                3 -> {
-                    textColor = R.color.tag_copyright
-                }
-                4 -> {
-                    textColor = R.color.tag_character
-                }
-                5 -> {
-                    textColor = R.color.tag_metadata
-                }
+            val textColor  = when (tag.type) {
+                0 -> R.color.tag_general
+                1 -> R.color.tag_artist
+                3 -> R.color.tag_copyright
+                4 -> R.color.tag_character
+                5 -> R.color.tag_metadata
                 else -> null
             }
             textColor?.let {
