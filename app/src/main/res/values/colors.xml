@@ -59,4 +59,7 @@
     <color name="tag_copyright">#A0A</color>
     <color name="tag_general">#337ab7</color>
     <color name="tag_metadata">#F80</color>
+    <!--    custom color-->
+    <color name="loadingCardBackgroundColor">#4D1C1B1F</color>
+    <color name="loadingCardColor">#F3F3F3</color>
 </resources>

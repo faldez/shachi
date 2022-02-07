@@ -92,19 +92,6 @@ abstract class BasePostSlideFragment : Fragment() {
                     true
                 }
                 false
-            },
-            onDoubleTap = {
-                onFavoriteButton()
-                false
-            },
-            onLoadStart = {
-
-            },
-            onLoadEnd = {
-                binding.postLoadingIndicator.isVisible = false
-            },
-            onLoadError = {
-                binding.postLoadingIndicator.isVisible = false
             }
         )
         binding.postViewPager.adapter = postSlideAdapter
@@ -122,9 +109,6 @@ abstract class BasePostSlideFragment : Fragment() {
                 } else {
                     (activity as MainActivity).onBackPressed()
                 }
-
-                binding.postLoadingIndicator.isVisible =
-                    !postSlideAdapter.loadedPost.contains(position)
             }
         })
         setTitle(position)

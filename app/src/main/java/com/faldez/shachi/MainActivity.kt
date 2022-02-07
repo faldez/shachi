@@ -152,5 +152,3 @@ class MainActivity : AppCompatActivity(),
         }
     }
 }
-@GlideModule
-class MyGlideModule : AppGlideModule()

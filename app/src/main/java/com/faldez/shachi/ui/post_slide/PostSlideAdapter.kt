@@ -1,10 +1,9 @@
 package com.faldez.shachi.ui.post_slide
 
 import android.graphics.drawable.Drawable
-import android.view.GestureDetector
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -13,21 +12,16 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.faldez.shachi.GlideApp
 import com.faldez.shachi.databinding.PostSlideItemBinding
 import com.faldez.shachi.model.Post
-import java.lang.IndexOutOfBoundsException
+import com.faldez.shachi.util.glide.GlideApp
+import com.faldez.shachi.util.glide.GlideModule
 
 
 class PostSlideAdapter(
     private val onTap: () -> Boolean,
-    private val onDoubleTap: () -> Boolean,
-    private val onLoadStart: () -> Unit,
-    private val onLoadEnd: () -> Unit,
-    private val onLoadError: () -> Unit,
 ) :
     PagingDataAdapter<Post, PostSlideViewHolder>(POST_COMPARATOR) {
-    var loadedPost: MutableSet<Int> = mutableSetOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostSlideViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -40,17 +34,15 @@ class PostSlideAdapter(
         val post = getItem(position)
 
         post?.let {
-            onLoadStart()
             val postImageView = holder.binding.postImageView
             postImageView.setOnViewTapListener { view, x, y -> onTap() }
-//            postImageView.setOnDoubleTapListener(object : GestureDetector.OnDoubleTapListener {
-//                override fun onSingleTapConfirmed(event: MotionEvent?): Boolean = onTap()
-//
-//                override fun onDoubleTap(event: MotionEvent?): Boolean = onDoubleTap()
-//
-//                override fun onDoubleTapEvent(event: MotionEvent?): Boolean = false
-//
-//            })
+            holder.binding.postLoadingIndicator.isIndeterminate = true
+            GlideModule.setOnProgress(it.fileUrl,
+                onProgress = { bytesRead, totalContentLength, done ->
+                    holder.binding.postLoadingIndicator.max = totalContentLength.toInt()
+                    holder.binding.postLoadingIndicator.progress = bytesRead.toInt()
+                    holder.binding.postLoadingIndicator.isIndeterminate = false
+                })
             GlideApp.with(postImageView.context).load(it.fileUrl)
                 .thumbnail(GlideApp.with(postImageView.context).load(it.previewUrl))
                 .timeout(3000)
@@ -61,7 +53,8 @@ class PostSlideAdapter(
                         target: Target<Drawable>?,
                         isFirstResource: Boolean,
                     ): Boolean {
-                        onLoadError()
+                        holder.binding.postLoadingIndicator.isVisible = false
+                        holder.binding.loadingCard.isVisible = false
                         return false
                     }
 
@@ -72,13 +65,12 @@ class PostSlideAdapter(
                         dataSource: DataSource?,
                         isFirstResource: Boolean,
                     ): Boolean {
-                        onLoadEnd()
-                        loadedPost.add(holder.bindingAdapterPosition)
+                        holder.binding.postLoadingIndicator.isVisible = false
+                        holder.binding.loadingCard.isVisible = false
                         return false
                     }
 
                 })
-                .transition(withCrossFade())
                 .into(postImageView)
         }
     }
