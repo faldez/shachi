@@ -11,6 +11,7 @@ import com.faldez.shachi.model.response.mapToTagDetails
 import com.faldez.shachi.model.response.mapToTags
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
+import kotlinx.coroutines.delay
 
 class TagRepository(private val service: BooruService, private val db: AppDatabase) {
     suspend fun queryTags(action: Action.SearchTag): List<TagDetail>? {
@@ -71,6 +72,7 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
     }
 
     suspend fun getTags(action: Action.GetTags): List<Tag>? {
+        Log.d("TagRepository/getTags", "tags ${action.tags}")
         /*
         Try to query from database first before make request
          */
@@ -81,19 +83,27 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
             }
             Pair(it, where)
         }.let { (tags, where) ->
-            val sqlQuery = SimpleSQLiteQuery("SELECT * FROM tag WHERE $where",
-                tags.toTypedArray())
-            db.tagDao().getTags(sqlQuery)
+            val queryStr = "SELECT * FROM tag WHERE $where"
+            Log.d("TagRepository/getTags", "queryStr $queryStr")
+            val sqlQuery = SimpleSQLiteQuery(queryStr, tags.toTypedArray()
+            )
+            val result = db.tagDao().getTags(sqlQuery)
+            if (result.isNullOrEmpty()) null else result
         }
+        Log.d("TagRepository/getTags", "cachedTags $cachedTags")
 
         // filter tags from tagsToQuery that is not on database to query to server
         val cachedTagsSet = cachedTags?.map { it.name }?.toSet()
-        val uncachedTags = tagsToQuery.filter { cachedTagsSet?.contains(it) == true }
+        val uncachedTags = tagsToQuery.filter { cachedTagsSet?.contains(it) != true }
+        Log.d("TagRepository/getTags", "uncachedTags $uncachedTags")
+
+        if (uncachedTags.isNullOrEmpty())
+            return cachedTags
 
         // create new action which contains tags not found on database
         val newAction = action.copy(tags = uncachedTags.joinToString(" "))
 
-        val remoteTags = when (action.server?.type) {
+        val bulkQueriedTags = when (action.server?.type) {
             ServerType.Gelbooru -> {
                 newAction.buildGelbooruUrl()?.toString()?.let { url ->
                     Log.d("TagRepository/Gelbooru", url)
@@ -119,21 +129,31 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
         }.let { tags ->
             // only get tags specified by action, create new generic tag if not found on remote server
             tags?.associateBy { it.name }?.let { tagsMap ->
-                newAction.tags.trim().split(" ").map { name ->
-                    tagsMap[name] ?: Tag(name = name, type = 0)
+                uncachedTags.mapNotNull { name ->
+                    tagsMap[name]
                 }
             }
         }
 
-        val result =
-            (listOf(cachedTags ?: listOf(),
-                remoteTags ?: listOf()).flatten() as List<*>).filterIsInstance<Tag>()
-
-        Log.d("TagRepository/getTags", "$result")
-
-        if (remoteTags?.isNotEmpty() == true) {
-            db.tagDao().insertTags(remoteTags)
+        if (bulkQueriedTags?.isNotEmpty() == true) {
+            db.tagDao().insertTags(bulkQueriedTags)
         }
+
+        val bulkQueriedTagMap = bulkQueriedTags?.associateBy { it.name }
+
+        val eachQueriedTags =
+            uncachedTags.filter { bulkQueriedTagMap?.containsKey(it) != true }.mapNotNull {
+                Log.d("TagRepository/getTags", "eachQueriedTags $it")
+                delay(100)
+                val eachTagAction = Action.GetTag(server = action.server, it)
+                getTag(eachTagAction)
+            }
+
+        val result =
+            (listOf(cachedTags ?: listOf(), bulkQueriedTags ?: listOf(),
+                eachQueriedTags).flatten() as List<*>).filterIsInstance<Tag>()
+
+        Log.d("TagRepository/getTags", "result $result")
 
         return result
 

@@ -24,6 +24,7 @@ import com.faldez.shachi.service.BooruService
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
@@ -84,13 +85,13 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.state.collect { state ->
+            viewModel.state.collectLatest { state ->
                 binding.loadingLabel.isVisible = state.tags == null
                 val splitTags =
                     (state.tags
                         ?: listOf()).groupBy { currentSearchTagsSet.contains(it.name) }
                 val groupedTags = splitTags[false]?.groupBy { it.type }
-                Log.d("SearchSimpleFragment", "collect $groupedTags")
+                Log.d("PostDetailBottomSheetFragment", "collect $groupedTags")
                 currentSearchTagsHeader.isVisible = false
                 tagDetailsBinding.hideAll()
 

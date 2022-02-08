@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class PostDetailBottomSheetViewModel(
-    val server: ServerView?,
-    val post: Post,
+    server: ServerView?,
+    post: Post,
     private val tagRepository: TagRepository,
     private val serverRepository: ServerRepository,
 ) : ViewModel() {
@@ -24,18 +24,11 @@ class PostDetailBottomSheetViewModel(
 
     init {
         val actionStateFlow = MutableSharedFlow<UiAction>()
-        val getServerFlow =
-            actionStateFlow.filterIsInstance<UiAction.GetServer>().distinctUntilChanged()
-                .filter { server == null }
-                .onStart { emit(UiAction.GetServer) }
-                .flatMapLatest {
-                    Log.d("PostDetailBottomSheetViewModel", "GetServer")
-                    serverRepository.getServer(post.serverId)
-                }
 
         val getTagsFlow =
             actionStateFlow.filterIsInstance<UiAction.GetTags>().distinctUntilChanged()
                 .onStart { emit(UiAction.GetTags(server)) }
+                .filter { it.server != null }
                 .flatMapLatest {
                     flow {
                         Log.d("PostDetailBottomSheetViewModel", "GetTags")
@@ -48,25 +41,37 @@ class PostDetailBottomSheetViewModel(
                     replay = 1
                 )
 
-        state = combine(getServerFlow, getTagsFlow, ::Pair).map { (server, tags) ->
-            Log.d("PostDetailBottomSheetViewModel", "combine $server")
-            UiState(
-                post = post,
-                tags = tags,
-                server = server,
-            )
+        state = if (server == null) {
+            val getServerFlow =
+                actionStateFlow.filterIsInstance<UiAction.GetServer>()
+                    .distinctUntilChanged()
+                    .onStart { emit(UiAction.GetServer) }
+                    .flatMapLatest {
+                        Log.d("PostDetailBottomSheetViewModel", "GetServer $server")
+                        serverRepository.getServer(post.serverId)
+                    }
+            combine(getServerFlow, getTagsFlow, ::Pair).map { (server, tags) ->
+                Log.d("PostDetailBottomSheetViewModel", "combine $server")
+                UiState(
+                    post = post,
+                    tags = tags,
+                    server = server,
+                )
+            }
+        } else {
+            getTagsFlow.map { tags ->
+                Log.d("PostDetailBottomSheetViewModel", "combine $server")
+                UiState(
+                    post = post,
+                    tags = tags,
+                    server = server,
+                )
+            }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
             initialValue = UiState(post, null, server)
         )
-
-        viewModelScope.launch {
-            state.collect {
-                Log.d("PostDetailBottomSheetViewModel", "state ${it.server}")
-                actionStateFlow.emit(UiAction.GetTags(it.server))
-            }
-        }
     }
 }
 

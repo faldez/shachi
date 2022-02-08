@@ -1,6 +1,7 @@
 package com.faldez.shachi.model
 
 import android.os.Parcelable
+import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
@@ -8,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "tag")
 data class Tag(
     @PrimaryKey val name: String,
-    val type: Int,
+    @NonNull val type: Int,
 )
 
 /*
@@ -31,7 +32,7 @@ data class TagDetail(
 
     companion object {
         fun fromName(name: String): TagDetail {
-            return TagDetail(name = name, count = 0, type = 0)
+            return TagDetail(name = name, type = 0)
         }
     }
 }
