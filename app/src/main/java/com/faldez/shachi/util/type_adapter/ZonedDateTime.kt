@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter
 
 class ZonedDateTimeAdapter : JsonDeserializer<ZonedDateTime?>,
     JsonSerializer<ZonedDateTime?> {
-    private val format: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss Z yyyy")
+    private val format: DateTimeFormatter = DateTimeFormatter.ofPattern("eee MMM d HH:mm:ss Z yyyy")
 
     override fun deserialize(
         json: JsonElement?,
@@ -59,7 +59,7 @@ class TimestampDateTimeAdapter : JsonDeserializer<ZonedDateTime?>,
         typeOfT: Type?,
         context: JsonDeserializationContext?,
     ): ZonedDateTime? {
-        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(1644069330), ZoneOffset.UTC)
+        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(json?.asLong ?: 0), ZoneOffset.UTC)
     }
 
     override fun serialize(
