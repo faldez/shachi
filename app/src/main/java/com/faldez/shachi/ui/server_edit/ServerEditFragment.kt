@@ -120,8 +120,10 @@ class ServerEditFragment : Fragment() {
                         (activity as MainActivity).onBackPressed()
                         binding.testProgressBar.isVisible = false
                     }
-                    State.Failed -> {
-                        Toast.makeText(activity?.applicationContext, "Failed", Toast.LENGTH_SHORT)
+                    is State.Failed -> {
+                        Toast.makeText(activity?.applicationContext,
+                            "Failed: ${it.reason}",
+                            Toast.LENGTH_SHORT)
                             .show()
                         Log.d("ServerEditFragement", "Failed")
                         binding.testProgressBar.isVisible = false

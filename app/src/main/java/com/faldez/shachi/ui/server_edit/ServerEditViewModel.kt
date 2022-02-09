@@ -2,7 +2,6 @@ package com.faldez.shachi.ui.server_edit
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.repository.PostRepository
@@ -72,7 +71,7 @@ class ServerEditViewModel(
                 state.value = State.Success
             } catch (e: Error) {
                 Log.d("ServerEditViewModel/test", "$e")
-                state.value = State.Failed
+                state.value = State.Failed("$e")
             }
         }
 
@@ -83,5 +82,5 @@ class ServerEditViewModel(
 sealed class State {
     object Idle : State()
     object Success : State()
-    object Failed : State()
+    data class Failed(val reason: String) : State()
 }
