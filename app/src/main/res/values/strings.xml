@@ -47,6 +47,10 @@
     <string name="dark">Dark</string>
     <string name="light">Light</string>
     <string name="follow_system">Follow system</string>
+    <string name="staggered">Staggered</string>
+    <string name="square">Square</string>
+    <string name="grid_column">Grid column</string>
+    <string name="grid_mode">Grid mode</string>
     <string name="saved">Saved</string>
     <string name="saved_search">Saved search</string>
     <string name="saved_searches">Saved searches</string>

@@ -1,6 +1,7 @@
 package com.faldez.shachi.ui.browse
 
 import android.app.Dialog
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
@@ -17,19 +18,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.repository.FavoriteRepository
-import com.faldez.shachi.repository.PostRepository
-import com.faldez.shachi.repository.SavedSearchRepository
-import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.TagDetail
+import com.faldez.shachi.repository.FavoriteRepository
+import com.faldez.shachi.repository.PostRepository
+import com.faldez.shachi.repository.SavedSearchRepository
+import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -52,6 +55,10 @@ class BrowseFragment : Fragment() {
             favoriteRepository,
             SavedSearchRepository(db),
             this)
+    }
+
+    private val preferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,7 +163,11 @@ class BrowseFragment : Fragment() {
         server: Server?,
         tags: List<TagDetail>?,
     ) {
+        val gridCount = preferences.getString("grid_column", null)?.toInt() ?: 3
+        val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
+
         val postAdapter = BrowseAdapter(
+            gridMode = gridMode,
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 findNavController().navigate(R.id.action_global_to_postslide, bundle)
@@ -166,11 +177,15 @@ class BrowseFragment : Fragment() {
         postAdapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         postsRecyclerView.adapter = postAdapter
-
-        val layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
-        layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
-
-        postsRecyclerView.layoutManager = layoutManager
+        postsRecyclerView.layoutManager = if (gridMode == "staggered") {
+            val layoutManager =
+                StaggeredGridLayoutManager(gridCount, StaggeredGridLayoutManager.VERTICAL)
+            layoutManager.gapStrategy =
+                StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+            layoutManager
+        } else {
+            GridLayoutManager(requireContext(), gridCount)
+        }
 
         bindList(
             postsAdapter = postAdapter,

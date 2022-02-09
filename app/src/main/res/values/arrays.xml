@@ -24,4 +24,28 @@
         <item>light</item>
         <item>dark</item>
     </string-array>
+
+    <!-- Grid Column Preference -->
+    <string-array name="grid_column_entries">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="grid_column_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <!-- Grid Column Preference -->
+    <string-array name="grid_mode_entries">
+        <item>@string/staggered</item>
+        <item>@string/square</item>
+    </string-array>
+
+    <string-array name="grid_mode_values">
+        <item>staggered</item>
+        <item>square</item>
+    </string-array>
 </resources>

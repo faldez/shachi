@@ -12,6 +12,22 @@
             app:title="@string/theme"
             app:useSimpleSummaryProvider="true" />
 
+        <ListPreference
+            app:defaultValue="3"
+            app:entries="@array/grid_column_entries"
+            app:entryValues="@array/grid_column_values"
+            app:key="grid_column"
+            app:title="@string/grid_column"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="staggered"
+            app:entries="@array/grid_mode_entries"
+            app:entryValues="@array/grid_mode_values"
+            app:key="grid_mode"
+            app:title="@string/grid_column"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/general">

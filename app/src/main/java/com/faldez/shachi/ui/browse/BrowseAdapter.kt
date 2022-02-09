@@ -15,14 +15,16 @@ import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
 
 
-class BrowseAdapter(private val onClick: (Int) -> Unit) :
+class BrowseAdapter(private val gridMode: String, private val onClick: (Int) -> Unit) :
     PagingDataAdapter<Post, BrowseItemViewHolder>(POST_COMPARATOR) {
     private lateinit var binding: BrowseItemViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BrowseItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
 
         binding =
-            BrowseItemViewHolder(PostCardItemBinding.inflate(inflater, parent, false), onClick)
+            BrowseItemViewHolder(PostCardItemBinding.inflate(inflater, parent, false),
+                gridMode,
+                onClick)
         return binding
     }
 
@@ -49,15 +51,23 @@ class BrowseAdapter(private val onClick: (Int) -> Unit) :
     }
 }
 
-class BrowseItemViewHolder(val binding: PostCardItemBinding, val onClick: (Int) -> Unit) :
+class BrowseItemViewHolder(
+    val binding: PostCardItemBinding,
+    val gridMode: String,
+    val onClick: (Int) -> Unit,
+) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post) {
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val imageView = binding.imageView
 
         val previewWidth = post.previewWidth ?: 250
-        val previewHeight = post.previewHeight
-            ?: (previewWidth * (post.height.toFloat() / post.width.toFloat())).toInt()
+        val previewHeight = if (gridMode == "staggered") {
+            post.previewHeight
+                ?: (previewWidth * (post.height.toFloat() / post.width.toFloat())).toInt()
+        } else {
+            previewWidth
+        }
 
         Glide.with(imageView.context).load(post.previewUrl)
             .transition(withCrossFade(factory))
