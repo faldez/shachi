@@ -1,9 +1,13 @@
 package com.faldez.shachi
 
 import android.animation.Animator
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -68,6 +72,8 @@ class MainActivity : AppCompatActivity(),
         if (permissions.isNotEmpty()) {
             requestPermission()
         }
+
+        createNotificationChannel()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -183,5 +189,17 @@ class MainActivity : AppCompatActivity(),
             types = listOf(StoragePermissions.FileType.Image, StoragePermissions.FileType.Video),
             createdBy = StoragePermissions.CreatedBy.Self
         ))
+    }
+
+    private fun createNotificationChannel() {
+        val name = "download"
+        val descriptionText = "Download notification channel"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel("DOWNLOAD", name, importance).apply {
+            description = descriptionText
+        }
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 }

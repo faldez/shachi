@@ -5,6 +5,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -219,6 +221,16 @@ abstract class BasePostSlideFragment : Fragment() {
             .show()
     }
 
+    private fun showNotification(text: Int) {
+        var builder = NotificationCompat.Builder(requireContext(), "DOWNLOAD")
+            .setSmallIcon(R.drawable.ic_baseline_download_24)
+            .setContentTitle(resources.getText(text))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        with(NotificationManagerCompat.from(requireContext())) {
+            notify(0, builder.build())
+        }
+    }
+
     private fun downloadFile(downloadDir: DocumentFile, fileUrl: String) =
         CoroutineScope(Dispatchers.IO).launch {
             withContext(Dispatchers.IO) {
@@ -228,7 +240,7 @@ abstract class BasePostSlideFragment : Fragment() {
                     requireContext().contentResolver.openOutputStream(file!!.uri)
                         ?.use { output ->
                             input.copyTo(output)
-                            showSnackbar(R.string.download_finished)
+                            showNotification(R.string.download_finished)
                         }
                 }
             }
