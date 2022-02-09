@@ -60,6 +60,7 @@
     <string name="blacklisted_tags">Blacklisted tags</string>
     <string name="cancel">Cancel</string>
     <string name="settings">Settings</string>
+    <string name="display">Display</string>
     <string name="remove_search">Remove search</string>
     <string name="open_source_notices">Open source notices</string>
     <string name="loading">Loading…</string>
@@ -71,23 +72,8 @@
     <string name="not_set_message">Not set</string>
     <string name="saved_search_description_title_text">Title of the saved search, default to first tag if empty</string>
     <string name="empty_server_help_text">There is no server setup. To setup your server click ⋮ > Manage Server > + > fill title, host url and select server type > save</string>
-    <!-- Preference Key -->
-    <string name="server_list_key">SERVER_LIST_KEY</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="preview_quality">Preview Quality</string>
+    <string name="preview">Preview</string>
+    <string name="sample">Sample</string>
+    <string name="original">Original</string>
 </resources>

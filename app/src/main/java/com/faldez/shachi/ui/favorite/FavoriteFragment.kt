@@ -1,5 +1,6 @@
 package com.faldez.shachi.ui.favorite
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,21 +13,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
+import com.faldez.shachi.repository.FavoriteRepository
 import com.google.android.material.shape.MaterialShapeDrawable
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class FavoriteFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = FavoriteFragment()
+    private val preferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
     }
 
     private lateinit var binding: FavoriteFragmentBinding
@@ -57,7 +58,13 @@ class FavoriteFragment : Fragment() {
 
     private fun FavoriteFragmentBinding.bind(
     ) {
+        val gridCount = preferences.getString("grid_column", null)?.toInt() ?: 3
+        val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
+        val quality = preferences.getString("preview_quality", null) ?: "preview"
+
         val favoriteAdapter = FavoriteAdapter(
+            gridMode,
+            quality,
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 findNavController().navigate(R.id.action_favorite_to_favoritepostslide, bundle)
@@ -68,10 +75,15 @@ class FavoriteFragment : Fragment() {
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         favoriteRecyclerView.adapter = favoriteAdapter
 
-
-        val layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
-        layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
-        favoriteRecyclerView.layoutManager = layoutManager
+        favoriteRecyclerView.layoutManager = if (gridMode == "staggered") {
+            val layoutManager =
+                StaggeredGridLayoutManager(gridCount, StaggeredGridLayoutManager.VERTICAL)
+            layoutManager.gapStrategy =
+                StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+            layoutManager
+        } else {
+            GridLayoutManager(requireContext(), gridCount)
+        }
 
         favoriteRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

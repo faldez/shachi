@@ -15,7 +15,11 @@ import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
 
 
-class BrowseAdapter(private val gridMode: String, private val onClick: (Int) -> Unit) :
+class BrowseAdapter(
+    private val gridMode: String,
+    private val quality: String,
+    private val onClick: (Int) -> Unit,
+) :
     PagingDataAdapter<Post, BrowseItemViewHolder>(POST_COMPARATOR) {
     private lateinit var binding: BrowseItemViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BrowseItemViewHolder {
@@ -24,6 +28,7 @@ class BrowseAdapter(private val gridMode: String, private val onClick: (Int) -> 
         binding =
             BrowseItemViewHolder(PostCardItemBinding.inflate(inflater, parent, false),
                 gridMode,
+                quality,
                 onClick)
         return binding
     }
@@ -53,7 +58,8 @@ class BrowseAdapter(private val gridMode: String, private val onClick: (Int) -> 
 
 class BrowseItemViewHolder(
     val binding: PostCardItemBinding,
-    val gridMode: String,
+    private val gridMode: String,
+    val quality: String,
     val onClick: (Int) -> Unit,
 ) :
     RecyclerView.ViewHolder(binding.root) {
@@ -69,7 +75,13 @@ class BrowseItemViewHolder(
             previewWidth
         }
 
-        Glide.with(imageView.context).load(post.previewUrl)
+        val url = when (quality) {
+            "sample" -> post.sampleUrl ?: post.previewUrl
+            "original" -> post.fileUrl
+            else -> post.previewUrl ?: post.sampleUrl
+        } ?: post.fileUrl
+
+        Glide.with(imageView.context).load(url)
             .transition(withCrossFade(factory))
             .placeholder(BitmapDrawable(imageView.resources,
                 Bitmap.createBitmap(previewWidth,

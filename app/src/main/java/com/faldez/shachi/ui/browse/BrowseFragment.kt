@@ -165,9 +165,11 @@ class BrowseFragment : Fragment() {
     ) {
         val gridCount = preferences.getString("grid_column", null)?.toInt() ?: 3
         val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
+        val quality = preferences.getString("preview_quality", null) ?: "preview"
 
         val postAdapter = BrowseAdapter(
             gridMode = gridMode,
+            quality = quality,
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 findNavController().navigate(R.id.action_global_to_postslide, bundle)
