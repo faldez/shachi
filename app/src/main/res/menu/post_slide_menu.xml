@@ -19,4 +19,10 @@
         android:icon="@drawable/ic_baseline_share_24"
         android:title="@string/share"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/download_button"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_download_24"
+        android:title="@string/download"
+        app:showAsAction="ifRoom" />
 </menu>

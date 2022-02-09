@@ -59,6 +59,12 @@
     <string name="remove_search">Remove search</string>
     <string name="open_source_notices">Open source notices</string>
     <string name="loading">Loading…</string>
+    <string name="downloading">Downloading…</string>
+    <string name="download">Download</string>
+    <string name="download_finished">Download finished</string>
+    <string name="download_path">Download path</string>
+    <string name="download_path_not_set">Download path not set</string>
+    <string name="not_set_message">Not set</string>
     <string name="saved_search_description_title_text">Title of the saved search, default to first tag if empty</string>
     <string name="empty_server_help_text">There is no server setup. To setup your server click ⋮ > Manage Server > + > fill title, host url and select server type > save</string>
     <!-- Preference Key -->

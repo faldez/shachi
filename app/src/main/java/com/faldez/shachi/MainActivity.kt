@@ -1,14 +1,19 @@
 package com.faldez.shachi
 
 import android.animation.Animator
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
@@ -85,7 +90,6 @@ class MainActivity : AppCompatActivity(),
         caller: PreferenceFragmentCompat,
         pref: Preference
     ): Boolean {
-        Log.d("MoreFragment", pref.key)
         when (pref.key) {
             "settings" -> {
                 navController.navigate(R.id.action_more_to_settings)
