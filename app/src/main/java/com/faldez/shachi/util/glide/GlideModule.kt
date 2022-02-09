@@ -15,6 +15,7 @@ import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okio.*
+import okio.`-DeprecatedOkio`.buffer
 import java.io.InputStream
 import java.util.concurrent.ConcurrentHashMap
 
@@ -49,7 +50,7 @@ class GlideModule : AppGlideModule() {
         private val progressListener: ProgressListener,
     ) : ResponseBody() {
         private val bufferedSource: BufferedSource by lazy {
-            Okio.buffer(source(responseBody.source()))
+            source(responseBody.source()).buffer()
         }
 
         override fun contentType(): MediaType? {

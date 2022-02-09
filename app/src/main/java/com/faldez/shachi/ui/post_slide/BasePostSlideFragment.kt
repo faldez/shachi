@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
@@ -170,37 +172,45 @@ abstract class BasePostSlideFragment : Fragment() {
                 }
                 return true
             }
-//            R.id.share_button -> {
-//                postSlideAdapter.getPostItem(binding.postViewPager.currentItem)?.let { post ->
-//                    GlideApp.with(requireContext()).asBitmap().load(post.fileUrl)
-//                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                        .into(object : CustomTarget<Bitmap>() {
-//                            override fun onResourceReady(
-//                                resource: Bitmap,
-//                                transition: Transition<in Bitmap>?,
-//                            ) {
-//                                val shareIntent = Intent().apply {
-//                                    action = Intent.ACTION_SEND
-//                                    putExtra(Intent.EXTRA_STREAM,
-//                                        Uri.parse(MediaStore.Images.Media.insertImage(requireContext().contentResolver,
-//                                            resource,
-//                                            post.md5,
-//                                            null)))
-//                                    type = "image/*"
-//                                }
-//
-//                                startActivity(Intent.createChooser(shareIntent, null))
-//                            }
-//
-//                            override fun onLoadCleared(placeholder: Drawable?) {}
-//                        })
-//
-//                    return true
-//                }
-//            }
+            R.id.share_button -> {
+                val post = postSlideAdapter.getPostItem(binding.postViewPager.currentItem)
+                val bundle = bundleOf("post" to  post)
+                findNavController().navigate(R.id.action_global_to_sharedialog, bundle)
+                return true
+            }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun shareImage(): Boolean {
+//        postSlideAdapter.getPostItem(binding.postViewPager.currentItem)?.let { post ->
+//            GlideApp.with(requireContext()).asBitmap().load(post.fileUrl)
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .into(object : CustomTarget<Bitmap>() {
+//                    override fun onResourceReady(
+//                        resource: Bitmap,
+//                        transition: Transition<in Bitmap>?,
+//                    ) {
+//                        val shareIntent = Intent().apply {
+//                            action = Intent.ACTION_SEND
+//                            putExtra(Intent.EXTRA_STREAM,
+//                                Uri.parse(MediaStore.Images.Media.insertImage(requireContext().contentResolver,
+//                                    resource,
+//                                    post.md5,
+//                                    null)))
+//                            type = "image/*"
+//                        }
+//
+//                        startActivity(Intent.createChooser(shareIntent, null))
+//                    }
+//
+//                    override fun onLoadCleared(placeholder: Drawable?) {}
+//                })
+//
+//            return true
+//        }
+        return true
     }
 
     abstract fun navigateToPostSlide(post: Post?)

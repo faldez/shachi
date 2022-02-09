@@ -17,9 +17,9 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import com.bumptech.glide.annotation.GlideModule
-import com.bumptech.glide.module.AppGlideModule
 import com.faldez.shachi.databinding.ActivityMainBinding
+import com.google.modernstorage.permissions.RequestAccess
+import com.google.modernstorage.permissions.StoragePermissions
 
 class MainActivity : AppCompatActivity(),
     PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -57,6 +57,12 @@ class MainActivity : AppCompatActivity(),
             }
         }
         setTheme()
+
+        val permissions = checkPermission()
+        Log.d("MainActivity", "permission $permissions")
+        if (permissions.isNotEmpty()) {
+            requestPermission()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -150,5 +156,28 @@ class MainActivity : AppCompatActivity(),
                     override fun onAnimationRepeat(p0: Animator?) {}
                 })
         }
+    }
+
+    private fun checkPermission(): List<String> {
+        return StoragePermissions.getPermissions(
+            action = StoragePermissions.Action.READ_AND_WRITE,
+            types = listOf(StoragePermissions.FileType.Image, StoragePermissions.FileType.Video),
+            createdBy = StoragePermissions.CreatedBy.Self
+        )
+    }
+
+    private val requestAccess = registerForActivityResult(RequestAccess()) { hasAccess ->
+        if (hasAccess) {
+            Log.d("MainActivity", "$hasAccess")
+        }
+    }
+
+    private fun requestPermission() {
+        Log.d("MainActivity", "request permission")
+        requestAccess.launch(RequestAccess.Args(
+            action = StoragePermissions.Action.READ_AND_WRITE,
+            types = listOf(StoragePermissions.FileType.Image, StoragePermissions.FileType.Video),
+            createdBy = StoragePermissions.CreatedBy.Self
+        ))
     }
 }
