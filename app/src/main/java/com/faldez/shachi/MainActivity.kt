@@ -1,23 +1,18 @@
 package com.faldez.shachi
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
@@ -27,6 +22,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.faldez.shachi.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.modernstorage.permissions.RequestAccess
 import com.google.modernstorage.permissions.StoragePermissions
 
@@ -117,55 +113,59 @@ class MainActivity : AppCompatActivity(),
         return false
     }
 
-    private fun hideBottomNavigation() {
-        if (binding.bottomNavigationView.isVisible) {
-            val constraint = findViewById<ConstraintLayout>(R.id.mainLayout)
-            val constraintSet = ConstraintSet()
-            constraintSet.clone(constraint)
-            constraintSet.connect(R.id.navFragment,
-                ConstraintSet.BOTTOM,
-                R.id.mainLayout,
-                ConstraintSet.BOTTOM)
-            constraintSet.applyTo(constraint)
-            binding.bottomNavigationView.animate()
-                .translationY(binding.bottomNavigationView.height.toFloat())
-                .setListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(p0: Animator?) {}
-
-                    override fun onAnimationEnd(p0: Animator?) {
-                        binding.bottomNavigationView.visibility = View.GONE
-                    }
-
-                    override fun onAnimationCancel(p0: Animator?) {}
-
-                    override fun onAnimationRepeat(p0: Animator?) {}
-                })
-        }
+    fun showBottomNavigation() {
+        binding.bottomNavigationView.show()
     }
 
-    private fun showBottomNavigation() {
-        if (!binding.bottomNavigationView.isVisible) {
-            val constraint = findViewById<ConstraintLayout>(R.id.mainLayout)
-            val constraintSet = ConstraintSet()
-            constraintSet.clone(constraint)
-            constraintSet.connect(R.id.navFragment,
-                ConstraintSet.BOTTOM,
-                R.id.bottomNavigationView,
-                ConstraintSet.TOP)
-            constraintSet.applyTo(constraint)
-            binding.bottomNavigationView.animate().translationY(0f)
-                .setListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(p0: Animator?) {
-                        binding.bottomNavigationView.visibility = View.VISIBLE
-                    }
+    fun hideBottomNavigation() {
+        binding.bottomNavigationView.hide()
+    }
 
-                    override fun onAnimationEnd(p0: Animator?) {}
+    private fun BottomNavigationView.hide() {
+        if (!isVisible) return
+        animate()
+            .translationY(binding.bottomNavigationView.height.toFloat())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator?) {
+                    super.onAnimationStart(animation)
+                    val constraint = binding.mainLayout
+                    val constraintSet = ConstraintSet()
+                    constraintSet.clone(binding.mainLayout)
+                    constraintSet.connect(R.id.navFragment,
+                        ConstraintSet.BOTTOM,
+                        R.id.mainLayout,
+                        ConstraintSet.BOTTOM)
+                    constraintSet.applyTo(constraint)
+                }
 
-                    override fun onAnimationCancel(p0: Animator?) {}
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    visibility = View.GONE
+                }
+            })
+    }
 
-                    override fun onAnimationRepeat(p0: Animator?) {}
-                })
-        }
+    private fun BottomNavigationView.show() {
+        if (isVisible) return
+        animate().translationY(0f)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator?) {
+                    super.onAnimationStart(animation)
+                    visibility = View.VISIBLE
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    val constraint = binding.mainLayout
+                    val constraintSet = ConstraintSet()
+                    constraintSet.clone(constraint)
+                    constraintSet.connect(R.id.navFragment,
+                        ConstraintSet.BOTTOM,
+                        R.id.bottomNavigationView,
+                        ConstraintSet.TOP)
+                    constraintSet.applyTo(constraint)
+                }
+            })
     }
 
     private fun checkPermission(): List<String> {
