@@ -6,7 +6,15 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.faldez.shachi.model.*
 
-@Database(entities = [Server::class, SelectedServer::class, Post::class, SavedSearch::class, BlacklistedTag::class, ServerBlacklistedTagCrossRef::class, PostTag::class, Tag::class],
+@Database(entities = [
+    Server::class,
+    SelectedServer::class,
+    Post::class,
+    SavedSearch::class,
+    BlacklistedTag::class,
+    ServerBlacklistedTagCrossRef::class,
+    PostTag::class, Tag::class,
+    SearchHistory::class],
     views = [ServerView::class],
     version = 3)
 abstract class AppDatabase : RoomDatabase() {
@@ -15,6 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun savedSearchDao(): SavedSearchDao
     abstract fun blacklistedTagDao(): BlacklistedTagDao
     abstract fun tagDao(): TagDao
+    abstract fun searchHistoryDao(): SearchHistoryDao
 
     companion object {
         private var db: AppDatabase? = null

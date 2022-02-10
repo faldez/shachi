@@ -4,16 +4,14 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.faldez.shachi.repository.FavoriteRepository
-import com.faldez.shachi.repository.PostRepository
-import com.faldez.shachi.repository.SavedSearchRepository
-import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.repository.*
 
 class BrowseViewModelFactory constructor(
     private val postRepository: PostRepository,
     private val serverRepository: ServerRepository,
     private val favoriteRepository: FavoriteRepository,
     private val savedSearchRepository: SavedSearchRepository,
+    private val searchHistoryRepository: SearchHistoryRepository,
     owner: SavedStateRegistryOwner,
 ) : AbstractSavedStateViewModelFactory(owner, null) {
     override fun <T : ViewModel?> create(
@@ -23,10 +21,11 @@ class BrowseViewModelFactory constructor(
     ): T {
         return if (modelClass.isAssignableFrom(BrowseViewModel::class.java)) {
             BrowseViewModel(
-                this.postRepository,
-                this.serverRepository,
+                postRepository,
+                serverRepository,
                 favoriteRepository,
-                this.savedSearchRepository,
+                savedSearchRepository,
+                searchHistoryRepository,
                 handle) as T
         } else {
             throw  IllegalArgumentException("ViewModel Not Found")

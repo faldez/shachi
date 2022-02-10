@@ -8,23 +8,26 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.faldez.shachi.model.*
-import com.faldez.shachi.repository.FavoriteRepository
-import com.faldez.shachi.repository.PostRepository
-import com.faldez.shachi.repository.SavedSearchRepository
-import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.repository.*
 import com.faldez.shachi.service.Action
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.ZonedDateTime
 
 class BrowseViewModel constructor(
     private val postRepository: PostRepository,
     private val serverRepository: ServerRepository,
     private val favoriteRepository: FavoriteRepository,
     private val savedSearchRepository: SavedSearchRepository,
+    private val searchHistoryRepository: SearchHistoryRepository,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val state: StateFlow<UiState>
     val pagingDataFlow: Flow<PagingData<Post>>
+    val searchHistoryFlow: StateFlow<List<SearchHistoryServer>?>
     val accept: (UiAction) -> Unit
 
     init {
@@ -62,6 +65,7 @@ class BrowseViewModel constructor(
             combine(getServer, searches, tagsScrolled, ::Triple).map { (server, search, scroll) ->
                 Log.d("BrowseViewModel",
                     "$server ${search.tags} != ${scroll.currentTags}) || (${search.serverUrl ?: scroll.currentServerUrl} != ${scroll.currentServerUrl})")
+
                 UiState(
                     server = server,
                     tags = search.tags,
@@ -86,8 +90,30 @@ class BrowseViewModel constructor(
             }
         }.cachedIn(viewModelScope)
 
+        searchHistoryFlow =
+            actionStateFlow.filterIsInstance<UiAction.GetSearchHistory>().distinctUntilChanged()
+                .onStart { emit(UiAction.GetSearchHistory) }
+                .flatMapLatest { searchHistoryRepository.getAll() }
+                .stateIn(scope = viewModelScope,
+                    started = SharingStarted.Eagerly,
+                    initialValue = null
+                )
+
         accept = { action ->
             viewModelScope.launch { actionStateFlow.emit(action) }
+        }
+
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                state.collect {
+                    if (it.server != null && it.tags.isNotEmpty()) {
+                        val tags = it.tags.joinToString(" ") { tag -> tag.toString() }
+                        Log.d("BrowseViewModel",
+                            "insert ${it.server.serverId} $tags to history")
+                        insertTagsTagsToHistory(it.server.serverId, tags)
+                    }
+                }
+            }
         }
     }
 
@@ -124,6 +150,13 @@ class BrowseViewModel constructor(
         }
     }
 
+    private fun insertTagsTagsToHistory(serverId: Int, tags: String) =
+        CoroutineScope(Dispatchers.IO).launch {
+            searchHistoryRepository.insert(SearchHistory(tags = tags,
+                createdAt = ZonedDateTime.now().toInstant().toEpochMilli(),
+                serverId = serverId))
+        }
+
     override fun onCleared() {
         savedStateHandle.set(LAST_SEARCH_TAGS, state.value.tags)
         savedStateHandle.set(LAST_TAGS_SCROLLED, state.value.lastTagsScrolled)
@@ -151,6 +184,7 @@ sealed class UiAction {
     ) : UiAction()
 
     data class GetSelectedOrSelectServer(val server: Server? = null) : UiAction()
+    object GetSearchHistory : UiAction()
 }
 
 data class UiState(

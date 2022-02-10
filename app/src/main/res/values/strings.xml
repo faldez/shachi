@@ -76,4 +76,5 @@
     <string name="preview">Preview</string>
     <string name="sample">Sample</string>
     <string name="original">Original</string>
+    <string name="search_history">Search history</string>
 </resources>

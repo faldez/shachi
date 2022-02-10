@@ -24,7 +24,6 @@ import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SearchSimpleFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.model.ServerView
-import com.faldez.shachi.model.Tag
 import com.faldez.shachi.model.TagDetail
 import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.service.BooruService
@@ -181,7 +180,7 @@ class SearchSimpleFragment : Fragment() {
 
     private fun applySearch() {
         findNavController().previousBackStackEntry?.savedStateHandle?.set("tags",
-            viewModel.selectedTags.value)
+            Pair(null, viewModel.selectedTags.value))
         (activity as MainActivity).onBackPressed()
     }
 

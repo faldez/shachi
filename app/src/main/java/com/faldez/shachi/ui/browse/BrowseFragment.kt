@@ -29,10 +29,7 @@ import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.TagDetail
-import com.faldez.shachi.repository.FavoriteRepository
-import com.faldez.shachi.repository.PostRepository
-import com.faldez.shachi.repository.SavedSearchRepository
-import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.repository.*
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -54,6 +51,7 @@ class BrowseFragment : Fragment() {
             ServerRepository(db),
             favoriteRepository,
             SavedSearchRepository(db),
+            SearchHistoryRepository(db),
             this)
     }
 
@@ -81,7 +79,11 @@ class BrowseFragment : Fragment() {
         }
         val server = arguments?.get("server") as Server?
         val tags =
-            (arguments?.get("tags") as String?)?.split(" ")?.map { name -> TagDetail.fromName(name) }
+            (arguments?.get("tags") as String?)?.split(" ")?.map { tag ->
+                val name = tag.substringAfter('-')
+                val exclude = tag.startsWith('-')
+                TagDetail(name = name, excluded = exclude, type = 0)
+            }
         Log.d("BrowseFragment", "$server $tags")
 
         binding.bindState(
@@ -96,11 +98,14 @@ class BrowseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<List<TagDetail>>("tags")
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<Server?, List<TagDetail>>>(
+            "tags")
             ?.observe(viewLifecycleOwner) { result ->
-                Log.d("SearchPostFragment", "$result")
-                viewModel.accept(UiAction.Search(viewModel.state.value.server?.url,
-                    result))
+                Log.d("BrowseFragment/onViewCreated", "$result")
+                val server = result.first?: viewModel.state.value.server?.toServer()
+                val tags = result.second
+                viewModel.accept(UiAction.GetSelectedOrSelectServer(server))
+                viewModel.accept(UiAction.Search(server?.url, tags))
             }
     }
 
@@ -109,21 +114,19 @@ class BrowseFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.search_button -> {
-                val bundle = bundleOf("server" to viewModel.state.value.server,
-                    "tags" to viewModel.state.value.tags)
-                findNavController().navigate(R.id.action_global_to_searchsimple, bundle)
-            }
-            R.id.save_search_button -> {
-                if (viewModel.state.value.tags.isEmpty()) {
-                    Toast.makeText(requireContext(),
-                        "Can't save search if selected tags is empty",
-                        Toast.LENGTH_LONG).show()
-                    return true
-                }
-
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.search_button -> {
+            val bundle = bundleOf("server" to viewModel.state.value.server,
+                "tags" to viewModel.state.value.tags)
+            findNavController().navigate(R.id.action_global_to_searchsimple, bundle)
+            true
+        }
+        R.id.save_search_button -> {
+            if (viewModel.state.value.tags.isEmpty()) {
+                Toast.makeText(requireContext(),
+                    "Can't save search if selected tags is empty",
+                    Toast.LENGTH_LONG).show()
+            } else {
                 val dialog =
                     MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
                         .setTitle(resources.getString(R.string.title))
@@ -140,13 +143,19 @@ class BrowseFragment : Fragment() {
                 dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
                     SpannableStringBuilder(viewModel.state.value.tags.first().name)
             }
-            R.id.select_server_button -> {
-                findNavController().navigate(R.id.action_global_to_serverdialog)
-                return true
-            }
+            true
         }
-
-        return super.onOptionsItemSelected(item)
+        R.id.select_server_button -> {
+            findNavController().navigate(R.id.action_global_to_serverdialog)
+            true
+        }
+        R.id.search_history_button -> {
+            val searchHistories = viewModel.searchHistoryFlow.value
+            val bundle = bundleOf("search_histories" to searchHistories)
+            findNavController().navigate(R.id.action_global_to_searchhistory, bundle)
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
 
