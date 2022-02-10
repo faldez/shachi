@@ -63,6 +63,24 @@ class BrowseFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
+        binding = BrowseFragmentBinding.inflate(inflater, container, false)
+
+        prepareAppBar()
+
+        arguments?.getString("title")?.let {
+            binding.searchPostTopAppBar.title = it
+            val supportActionBar = (activity as MainActivity).supportActionBar
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }
+
+
         val server = arguments?.get("server") as Server?
         val tags =
             (arguments?.get("tags") as String?)?.split(" ")?.map { tag ->
@@ -77,21 +95,6 @@ class BrowseFragment : Fragment() {
             viewModel.selectServer(server)
         }
         viewModel.accept(UiAction.Search(tags ?: listOf()))
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        binding = BrowseFragmentBinding.inflate(inflater, container, false)
-
-        prepareAppBar()
-        arguments?.getString("title")?.let {
-            binding.searchPostTopAppBar.title = it
-            val supportActionBar = (activity as MainActivity).supportActionBar
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        }
 
         binding.bindState(
             uiState = viewModel.state,
