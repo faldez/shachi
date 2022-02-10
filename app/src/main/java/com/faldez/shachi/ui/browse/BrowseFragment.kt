@@ -62,6 +62,21 @@ class BrowseFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        val server = arguments?.get("server") as Server?
+        val tags =
+            (arguments?.get("tags") as String?)?.split(" ")?.map { tag ->
+                val name = tag.substringAfter('-')
+                val exclude = tag.startsWith('-')
+                TagDetail(name = name, excluded = exclude, type = 0)
+            }
+
+        Log.d("BrowseFragment/onCreate", "server: $server tags: $tags")
+
+        if (server != null) {
+            viewModel.selectServer(server)
+        }
+        viewModel.accept(UiAction.Search(tags ?: listOf()))
     }
 
     override fun onCreateView(
@@ -77,20 +92,11 @@ class BrowseFragment : Fragment() {
             val supportActionBar = (activity as MainActivity).supportActionBar
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
-        val server = arguments?.get("server") as Server?
-        val tags =
-            (arguments?.get("tags") as String?)?.split(" ")?.map { tag ->
-                val name = tag.substringAfter('-')
-                val exclude = tag.startsWith('-')
-                TagDetail(name = name, excluded = exclude, type = 0)
-            }
-        Log.d("BrowseFragment", "$server $tags")
 
         binding.bindState(
             uiState = viewModel.state,
             pagingData = viewModel.pagingDataFlow,
             uiActions = viewModel.accept,
-            server, tags
         )
 
         return binding.root
@@ -102,10 +108,12 @@ class BrowseFragment : Fragment() {
             "tags")
             ?.observe(viewLifecycleOwner) { result ->
                 Log.d("BrowseFragment/onViewCreated", "$result")
-                val server = result.first?: viewModel.state.value.server?.toServer()
+                val server = result.first ?: viewModel.state.value.server?.toServer()
                 val tags = result.second
-                viewModel.accept(UiAction.GetSelectedOrSelectServer(server))
-                viewModel.accept(UiAction.Search(server?.url, tags))
+                server?.let {
+                    viewModel.selectServer(it)
+                }
+                viewModel.accept(UiAction.Search(tags))
             }
     }
 
@@ -169,8 +177,6 @@ class BrowseFragment : Fragment() {
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         uiActions: (UiAction) -> Unit,
-        server: Server?,
-        tags: List<TagDetail>?,
     ) {
         val gridCount = preferences.getString("grid_column", null)?.toInt() ?: 3
         val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
@@ -203,8 +209,6 @@ class BrowseFragment : Fragment() {
             uiState = uiState,
             pagingData = pagingData,
             onScrollChanged = uiActions,
-            server,
-            tags
         )
     }
 
@@ -213,8 +217,6 @@ class BrowseFragment : Fragment() {
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (UiAction.Scroll) -> Unit,
-        server: Server?,
-        tags: List<TagDetail>?,
     ) {
         retryButton.setOnClickListener { postsAdapter.retry() }
         postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -225,6 +227,9 @@ class BrowseFragment : Fragment() {
                 }
             }
         })
+
+        retryButton.isVisible = false
+        serverHelpText.isVisible = viewModel.state.value.server == null
 
         swipeRefreshLayout.setOnRefreshListener {
             postsAdapter.refresh()
@@ -241,31 +246,34 @@ class BrowseFragment : Fragment() {
             Boolean::and
         )
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 pagingData.collect(postsAdapter::submitData)
             }
         }
 
-        lifecycleScope.launch {
-            shouldScrollToTop.collect { shouldScroll ->
-                Log.d(TAG, "shouldScroll $shouldScroll")
-                if (shouldScroll) postsRecyclerView.scrollToPosition(0)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                shouldScrollToTop.collect { shouldScroll ->
+                    Log.d(TAG, "shouldScroll $shouldScroll")
+                    if (shouldScroll) postsRecyclerView.scrollToPosition(0)
+                }
             }
         }
 
-        lifecycleScope.launch {
-            postsAdapter.loadStateFlow.collectLatest { loadState ->
-                val isListEmpty =
-                    loadState.refresh is LoadState.NotLoading && postsAdapter.itemCount == 0
-                postsRecyclerView.isVisible = !isListEmpty
-                swipeRefreshLayout.isRefreshing = loadState.source.refresh is LoadState.Loading
-                retryButton.isVisible =
-                    loadState.source.refresh is LoadState.Error && viewModel.state.value.server != null
-
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                postsAdapter.loadStateFlow.collectLatest { loadState ->
+                    val server = viewModel.state.value.server
+                    Log.d("BrowseFragment", "postsAdapter.loadStateFlow.collectLatest $loadState")
+                    val isListEmpty =
+                        loadState.refresh is LoadState.NotLoading && postsAdapter.itemCount == 0
+                    postsRecyclerView.isVisible = !isListEmpty
+                    swipeRefreshLayout.isRefreshing = loadState.source.refresh is LoadState.Loading
+                    retryButton.isVisible =
+                        loadState.source.refresh is LoadState.Error && server != null
+                    serverHelpText.isVisible = server == null
+                }
             }
         }
-
-        viewModel.accept(UiAction.GetSelectedOrSelectServer(server))
-        viewModel.accept(UiAction.Search(server?.url, tags ?: listOf()))
     }
 }

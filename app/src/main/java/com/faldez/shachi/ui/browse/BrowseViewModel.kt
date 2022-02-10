@@ -40,6 +40,7 @@ class BrowseViewModel constructor(
         val lastTagsScrolled: List<TagDetail> = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: listOf()
         val actionStateFlow = MutableSharedFlow<UiAction>()
         val searches = actionStateFlow.filterIsInstance<UiAction.Search>().distinctUntilChanged()
+            .onStart { emit(UiAction.Search(initialTags)) }
         val tagsScrolled =
             actionStateFlow.filterIsInstance<UiAction.Scroll>().distinctUntilChanged()
                 .onStart {
@@ -50,27 +51,23 @@ class BrowseViewModel constructor(
                     replay = 1)
 
         val getServer =
-            actionStateFlow.filterIsInstance<UiAction.GetSelectedOrSelectServer>()
+            actionStateFlow.filterIsInstance<UiAction.GetSelectedServer>()
                 .distinctUntilChanged()
-                .onStart { emit(UiAction.GetSelectedOrSelectServer()) }
+                .onStart { emit(UiAction.GetSelectedServer) }
                 .flatMapLatest {
-                    if (it.server == null) {
-                        getSelectedServer()
-                    } else {
-                        selectServer(it.server)
-                    }
+                    getSelectedServer()
                 }
 
         state =
             combine(getServer, searches, tagsScrolled, ::Triple).map { (server, search, scroll) ->
                 Log.d("BrowseViewModel",
-                    "$server ${search.tags} != ${scroll.currentTags}) || (${search.serverUrl ?: scroll.currentServerUrl} != ${scroll.currentServerUrl})")
+                    "$server ${search.tags} != ${scroll.currentTags}) || (${server?.url ?: scroll.currentServerUrl} != ${scroll.currentServerUrl})")
 
                 UiState(
                     server = server,
                     tags = search.tags,
                     lastTagsScrolled = scroll.currentTags,
-                    hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (search.serverUrl ?: scroll.currentServerUrl != scroll.currentServerUrl)
+                    hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (server?.url ?: scroll.currentServerUrl != scroll.currentServerUrl)
                 )
             }.stateIn(scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
@@ -78,17 +75,20 @@ class BrowseViewModel constructor(
             )
 
         val serverChange = state.map { it.server }.distinctUntilChanged()
-        pagingDataFlow = combine(serverChange, searches, ::Pair).flatMapLatest { (server, search) ->
-            Log.d("BrowseViewModel", "pagingDataFlow $server $searches")
-            searchPosts(server, tags = search.tags.toQuery()).map {
-                it.map { post ->
-                    val postId =
-                        favoriteRepository.queryByServerUrlAndPostId(post.serverId, post.postId)
-                    post.favorite = postId != null
-                    post
-                }
-            }
-        }.cachedIn(viewModelScope)
+        pagingDataFlow =
+            combine(serverChange, searches, ::Pair).filter { (server, _) -> server != null }
+                .flatMapLatest { (server, search) ->
+                    Log.d("BrowseViewModel", "pagingDataFlow $server $searches")
+                    searchPosts(server!!, tags = search.tags.toQuery()).map {
+                        it.map { post ->
+                            val postId =
+                                favoriteRepository.queryByServerUrlAndPostId(post.serverId,
+                                    post.postId)
+                            post.favorite = postId != null
+                            post
+                        }
+                    }
+                }.cachedIn(viewModelScope)
 
         searchHistoryFlow =
             actionStateFlow.filterIsInstance<UiAction.GetSearchHistory>().distinctUntilChanged()
@@ -121,9 +121,14 @@ class BrowseViewModel constructor(
         return serverRepository.getSelectedServer()
     }
 
-    private fun selectServer(server: Server) = serverRepository.getServer(server.serverId)
+    fun selectServer(server: Server) {
+        CoroutineScope(Dispatchers.IO).launch {
+            serverRepository.setSelectedServer(server.serverId)
+        }
+    }
 
-    private fun searchPosts(server: ServerView?, tags: String): Flow<PagingData<Post>> {
+
+    private fun searchPosts(server: ServerView, tags: String): Flow<PagingData<Post>> {
         val action = Action.SearchPost(server, tags)
         return postRepository.getSearchPostsResultStream(action)
     }
@@ -177,13 +182,13 @@ class BrowseViewModel constructor(
 }
 
 sealed class UiAction {
-    data class Search(val serverUrl: String?, val tags: List<TagDetail>) : UiAction()
+    data class Search(val tags: List<TagDetail>) : UiAction()
     data class Scroll(
         val currentServerUrl: String?,
         val currentTags: List<TagDetail>,
     ) : UiAction()
 
-    data class GetSelectedOrSelectServer(val server: Server? = null) : UiAction()
+    object GetSelectedServer : UiAction()
     object GetSearchHistory : UiAction()
 }
 

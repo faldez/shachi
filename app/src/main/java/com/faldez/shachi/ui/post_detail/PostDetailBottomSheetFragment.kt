@@ -40,7 +40,7 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
         binding = PostDetailBottomSheetFragmentBinding.inflate(inflater, container, false)
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
-        val server = requireArguments().get("server") as ServerView?
+        val server = requireArguments().get("server") as ServerView
         val post = requireArguments().get("post") as Post
         Log.d("PostDetailBottomSheetFragment", "$post")
 
@@ -50,7 +50,6 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
         val db = AppDatabase.build(requireContext())
         val factory = PostDetailBottomSheetViewModelFactory(server, post,
             TagRepository(BooruService(), db),
-            ServerRepository(db),
             this)
         viewModel = ViewModelProvider(this, factory).get(PostDetailBottomSheetViewModel::class.java)
 

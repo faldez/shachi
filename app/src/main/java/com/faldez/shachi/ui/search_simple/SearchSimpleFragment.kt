@@ -37,7 +37,8 @@ class SearchSimpleFragment : Fragment() {
     private lateinit var binding: SearchSimpleFragmentBinding
     private lateinit var tagDetailsBinding: TagsDetailsBinding
     private val viewModel: SearchSimpleViewModel by viewModels {
-        SearchSimpleViewModelFactory(TagRepository(BooruService(),
+        val server : ServerView = requireArguments().getParcelable<ServerView>("server") as ServerView
+        SearchSimpleViewModelFactory(server, TagRepository(BooruService(),
             AppDatabase.build(requireContext())), this)
     }
     private lateinit var searchSuggestionAdapter: SearchSuggestionAdapter
@@ -58,19 +59,19 @@ class SearchSimpleFragment : Fragment() {
 
         val initialTags: List<TagDetail> =
             (requireArguments().get("tags") as List<*>?)?.filterIsInstance<TagDetail>() ?: listOf()
-        val server = requireArguments().getParcelable<ServerView?>("server")
+
         binding.searchSimpleTagsInputText.bind()
         prepareAppBar()
 
         binding.suggestionTagsRecyclerView.bind()
         binding.loadingIndicator.isVisible = initialTags.isNotEmpty()
 
-        bindSelectedTags(server, initialTags)
+        bindSelectedTags(initialTags)
 
         return binding.root
     }
 
-    private fun bindSelectedTags(server: ServerView?, initialTags: List<TagDetail>) {
+    private fun bindSelectedTags(initialTags: List<TagDetail>) {
         lifecycleScope.launch {
             viewModel.selectedTags.collect { tags ->
                 val groupedTags = tags.groupBy { it.type }
@@ -122,7 +123,6 @@ class SearchSimpleFragment : Fragment() {
             }
         }
 
-        viewModel.setServer(server)
         viewModel.setInitialTags(initialTags)
     }
 
@@ -224,7 +224,7 @@ class SearchSimpleFragment : Fragment() {
                     binding.loadingIndicator.isVisible = false
                     searchSimpleMenu.getItem(0).isVisible = false
                 } else {
-                    viewModel.accept(UiAction.SearchTag(viewModel.server.value, text.toString()))
+                    viewModel.accept(UiAction.SearchTag(text.toString()))
                     binding.selectedTagsLayout.hide()
                     binding.suggestionTagLayout.show()
                     binding.loadingIndicator.isVisible = true

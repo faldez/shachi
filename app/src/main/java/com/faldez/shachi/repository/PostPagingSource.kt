@@ -27,14 +27,14 @@ class PostPagingSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
-        val startingPageIndex = when (action.server?.type) {
+        val startingPageIndex = when (action.server.type) {
             ServerType.Gelbooru -> GelbooruService.STARTING_PAGE_INDEX
             ServerType.Danbooru -> DanbooruService.STARTING_PAGE_INDEX
             else -> 1
         }
         val position = params.key ?: startingPageIndex
         try {
-            val posts = when (action.server?.type) {
+            val posts = when (action.server.type) {
                 ServerType.Gelbooru -> {
                     val url = action.buildGelbooruUrl(position).toString()
                     Log.d("PostPagingSource/Gelbooru", url)
@@ -52,9 +52,6 @@ class PostPagingSource(
                     Log.d("PostPagingSource/Moebooru", url)
                     service.moebooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
                         ?.mapToPost(action.server.serverId) ?: listOf()
-                }
-                null -> {
-                    return LoadResult.Error(Error("server not found"))
                 }
             }
 
@@ -103,7 +100,7 @@ class PostPagingSource(
     }
 
     @JvmName("danbooruPostApplyBlacklist")
-    private fun List<DanbooruPost>.applyBlacklist(tags: String?): List<DanbooruPost>? {
+    private fun List<DanbooruPost>.applyBlacklist(tags: String?): List<DanbooruPost> {
         val blacklists = tags?.split(",")?.map {
             it.split(" ")
         }
@@ -132,7 +129,7 @@ class PostPagingSource(
     }
 
     @JvmName("moebooruPostApplyBlacklist")
-    private fun List<MoebooruPost>.applyBlacklist(tags: String?): List<MoebooruPost>? {
+    private fun List<MoebooruPost>.applyBlacklist(tags: String?): List<MoebooruPost> {
         val blacklists = tags?.split(",")?.map {
             it.split(" ")
         }

@@ -14,9 +14,9 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class SearchSimpleViewModel(
+    private val server: ServerView,
     private val tagRepository: TagRepository,
 ) : ViewModel() {
-    val server: MutableStateFlow<ServerView?> = MutableStateFlow(null)
     val suggestionTags: StateFlow<List<TagDetail>?>
     val selectedTags: MutableStateFlow<List<TagDetail>> = MutableStateFlow(listOf())
     val accept: (UiAction) -> Unit
@@ -27,7 +27,7 @@ class SearchSimpleViewModel(
         suggestionTags =
             actionStateFlow.filterIsInstance<UiAction.SearchTag>()
                 .distinctUntilChanged()
-                .flatMapLatest { searchTag(it.server?.toServer(), it.tag) }
+                .flatMapLatest { searchTag(server.toServer(), it.tag) }
                 .stateIn(scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(),
                     initialValue = null
@@ -40,15 +40,11 @@ class SearchSimpleViewModel(
         }
     }
 
-    fun setServer(s: ServerView?) {
-        server.value = s
-    }
-
     fun setInitialTags(tags: List<TagDetail>) =
         CoroutineScope(Dispatchers.IO).launch {
             selectedTags.getAndUpdate { _ ->
                 if (tags.isNotEmpty()) {
-                    tagRepository.getTags(Action.GetTags(server.value?.toServer(),
+                    tagRepository.getTags(Action.GetTags(server.toServer(),
                         tags.joinToString(" ") { it.name }))?.let { result ->
                         val resultMap = result.associateBy { tag -> tag.name }
 
@@ -62,7 +58,7 @@ class SearchSimpleViewModel(
             }
         }
 
-    private fun searchTag(server: Server?, tag: String): Flow<List<TagDetail>?> = flow {
+    private fun searchTag(server: Server, tag: String): Flow<List<TagDetail>?> = flow {
         val res = tagRepository.queryTags(Action.SearchTag(server, tag))
         Log.d("SearchSimpleViewModel", "res $res")
         emit(res)
@@ -89,7 +85,7 @@ class SearchSimpleViewModel(
     }
 
     fun insertTagByName(name: String) = CoroutineScope(Dispatchers.IO).launch {
-        tagRepository.getTag(Action.GetTag(server.value?.toServer(), name)).let { tag ->
+        tagRepository.getTag(Action.GetTag(server.toServer(), name)).let { tag ->
             selectedTags.getAndUpdate { tags ->
                 val list = tags.toMutableList()
                 list.add(list.size, TagDetail(name = name, type = tag?.type ?: 0))
@@ -108,7 +104,7 @@ class SearchSimpleViewModel(
 }
 
 sealed class UiAction {
-    data class SearchTag(val server: ServerView?, val tag: String) : UiAction()
+    data class SearchTag(val tag: String) : UiAction()
     data class InsertTag(val tag: String) : UiAction()
     object GetSelectedServer : UiAction()
 }

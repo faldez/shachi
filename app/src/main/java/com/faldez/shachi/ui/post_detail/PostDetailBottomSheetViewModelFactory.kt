@@ -10,10 +10,9 @@ import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.repository.TagRepository
 
 class PostDetailBottomSheetViewModelFactory constructor(
-    val server: ServerView?,
+    val server: ServerView,
     val post: Post,
     private val tagRepository: TagRepository,
-    private val serverRepository: ServerRepository,
     owner: SavedStateRegistryOwner,
 ) : AbstractSavedStateViewModelFactory(owner, null) {
     override fun <T : ViewModel?> create(
@@ -25,8 +24,7 @@ class PostDetailBottomSheetViewModelFactory constructor(
             PostDetailBottomSheetViewModel(
                 server,
                 this.post,
-                this.tagRepository,
-                this.serverRepository) as T
+                this.tagRepository) as T
         } else {
             throw  IllegalArgumentException("ViewModel Not Found")
         }

@@ -4,9 +4,11 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
+import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.repository.TagRepository
 
 class SearchSimpleViewModelFactory constructor(
+    private val server: ServerView,
     private val tagRepository: TagRepository,
     owner: SavedStateRegistryOwner,
 ) : AbstractSavedStateViewModelFactory(owner, null) {
@@ -16,7 +18,7 @@ class SearchSimpleViewModelFactory constructor(
         handle: SavedStateHandle,
     ): T {
         return if (modelClass.isAssignableFrom(SearchSimpleViewModel::class.java)) {
-            SearchSimpleViewModel(this.tagRepository) as T
+            SearchSimpleViewModel(server, tagRepository) as T
         } else {
             throw  IllegalArgumentException("ViewModel Not Found")
         }
