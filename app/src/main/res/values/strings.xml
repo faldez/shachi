@@ -77,4 +77,5 @@
     <string name="sample">Sample</string>
     <string name="original">Original</string>
     <string name="search_history">Search history</string>
+    <string name="advanced_search">Advanced search</string>
 </resources>

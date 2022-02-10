@@ -58,7 +58,9 @@ class SearchSimpleFragment : Fragment() {
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
         val initialTags: List<TagDetail> =
-            (requireArguments().get("tags") as List<*>?)?.filterIsInstance<TagDetail>() ?: listOf()
+            (requireArguments().get("tags") as String?)?.split(" ")
+                ?.mapNotNull { if (it.isNotEmpty()) TagDetail.fromName(it) else null }
+                ?: listOf()
 
         binding.searchSimpleTagsInputText.bind()
         prepareAppBar()
@@ -180,7 +182,7 @@ class SearchSimpleFragment : Fragment() {
 
     private fun applySearch() {
         findNavController().previousBackStackEntry?.savedStateHandle?.set("tags",
-            Pair(null, viewModel.selectedTags.value))
+            Pair(null, viewModel.selectedTags.value.joinToString(" ") { it.toString() }))
         (activity as MainActivity).onBackPressed()
     }
 

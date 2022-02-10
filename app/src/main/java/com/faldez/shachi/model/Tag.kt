@@ -32,7 +32,9 @@ data class TagDetail(
 
     companion object {
         fun fromName(name: String): TagDetail {
-            return TagDetail(name = name, type = 0)
+            val name = name.removePrefix("-")
+            val exclude = name.startsWith('-')
+            return TagDetail(name = name, type = 0, excluded = exclude)
         }
     }
 }

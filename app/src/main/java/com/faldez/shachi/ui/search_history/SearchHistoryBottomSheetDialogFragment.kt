@@ -9,7 +9,6 @@ import androidx.navigation.fragment.findNavController
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.databinding.SearchHistoryBottomSheetDialogFragmentBinding
 import com.faldez.shachi.model.SearchHistoryServer
-import com.faldez.shachi.model.TagDetail
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class SearchHistoryBottomSheetDialogFragment : BottomSheetDialogFragment() {
@@ -35,13 +34,8 @@ class SearchHistoryBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private fun SearchHistoryBottomSheetDialogFragmentBinding.bind(searchHistories: List<SearchHistoryServer>) {
         val adapter = SearchHistoryAdapter(
             onClick = { searchHistoryServer ->
-                val tags = searchHistoryServer.searchHistory.tags.split(" ").map {
-                    val name = it.substringAfter('-')
-                    val exclude = it.startsWith('-')
-                    TagDetail(name = name, excluded = exclude, type = 0)
-                }
                 findNavController().previousBackStackEntry?.savedStateHandle?.set("tags",
-                    Pair(searchHistoryServer.server, tags))
+                    Pair(searchHistoryServer.server, searchHistoryServer.searchHistory.tags))
                 (activity as MainActivity).onBackPressed()
             }
         ).apply {

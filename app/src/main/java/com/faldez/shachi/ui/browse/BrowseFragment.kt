@@ -28,7 +28,6 @@ import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Server
-import com.faldez.shachi.model.TagDetail
 import com.faldez.shachi.repository.*
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -82,12 +81,7 @@ class BrowseFragment : Fragment() {
 
 
         val server = arguments?.get("server") as Server?
-        val tags =
-            (arguments?.get("tags") as String?)?.split(" ")?.map { tag ->
-                val name = tag.substringAfter('-')
-                val exclude = tag.startsWith('-')
-                TagDetail(name = name, excluded = exclude, type = 0)
-            }
+        val tags = arguments?.get("tags") as String? ?: ""
 
         Log.d("BrowseFragment/onCreate", "server: $server tags: $tags")
 
@@ -95,7 +89,7 @@ class BrowseFragment : Fragment() {
             viewModel.selectServer(server)
         }
         viewModel.accept(UiAction.GetSelectedServer)
-        viewModel.accept(UiAction.Search(tags ?: listOf()))
+        viewModel.accept(UiAction.Search(tags))
 
         binding.bindState(
             uiState = viewModel.state,
@@ -108,7 +102,7 @@ class BrowseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<Server?, List<TagDetail>>>(
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<Server?, String>>(
             "tags")
             ?.observe(viewLifecycleOwner) { result ->
                 Log.d("BrowseFragment/onViewCreated", "$result")
@@ -153,7 +147,7 @@ class BrowseFragment : Fragment() {
                             }
                         }.show()
                 dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
-                    SpannableStringBuilder(viewModel.state.value.tags.first().name)
+                    SpannableStringBuilder(viewModel.state.value.tags.split(" ").first())
             }
             true
         }
@@ -165,6 +159,11 @@ class BrowseFragment : Fragment() {
             val searchHistories = viewModel.searchHistoryFlow.value
             val bundle = bundleOf("search_histories" to searchHistories)
             findNavController().navigate(R.id.action_global_to_searchhistory, bundle)
+            true
+        }
+        R.id.advanced_search_button -> {
+            val bundle = bundleOf("tags" to viewModel.state.value.tags)
+            findNavController().navigate(R.id.action_global_to_searchadvanced, bundle)
             true
         }
         else -> super.onOptionsItemSelected(item)

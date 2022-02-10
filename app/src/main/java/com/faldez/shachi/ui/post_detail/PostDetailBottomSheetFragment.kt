@@ -18,7 +18,6 @@ import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
-import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -44,11 +43,10 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
         val post = requireArguments().get("post") as Post
         Log.d("PostDetailBottomSheetFragment", "$post")
 
-        val currentSearchTags =
-            (requireArguments().get("tags") as List<*>?)?.filterIsInstance<Tag>()
+        val currentSearchTags: String = requireArguments().getString("tags", null)
 
         val db = AppDatabase.build(requireContext())
-        val factory = PostDetailBottomSheetViewModelFactory(server, post,
+        val factory = PostDetailBottomSheetViewModelFactory(server, currentSearchTags, post,
             TagRepository(BooruService(), db),
             this)
         viewModel = ViewModelProvider(this, factory).get(PostDetailBottomSheetViewModel::class.java)
@@ -70,10 +68,10 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun PostDetailBottomSheetFragmentBinding.bind(
         post: Post?,
-        currentSearchTags: List<Tag>?,
+        currentSearchTags: String?,
     ) {
         Log.d("PostDetailBottomSheetFragment", "currentSearchTags $currentSearchTags")
-        val currentSearchTagsSet = currentSearchTags?.map { it.name }?.toSet() ?: setOf()
+        val currentSearchTagsSet = currentSearchTags?.split(" ")?.toSet() ?: setOf()
 
         post?.let { p ->
             sizeTextview.text = "${p.width}x${p.height}"

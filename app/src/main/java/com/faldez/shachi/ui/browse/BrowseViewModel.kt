@@ -34,10 +34,10 @@ class BrowseViewModel constructor(
         Log.d("PostsViewModel",
             "init " + savedStateHandle.get(LAST_SEARCH_TAGS) + " " + savedStateHandle.get(
                 LAST_TAGS_SCROLLED))
-        val initialTags: List<TagDetail> =
+        val initialTags: String =
             savedStateHandle.get(LAST_SEARCH_TAGS)
-                ?: listOf()
-        val lastTagsScrolled: List<TagDetail> = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: listOf()
+                ?: ""
+        val lastTagsScrolled: String = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: ""
         val actionStateFlow = MutableSharedFlow<UiAction>()
         val searches = actionStateFlow.filterIsInstance<UiAction.Search>().distinctUntilChanged()
         val tagsScrolled =
@@ -77,7 +77,7 @@ class BrowseViewModel constructor(
             state.filter { it.server != null }
                 .flatMapLatest {
                     Log.d("BrowseViewModel", "pagingDataFlow")
-                    searchPosts(it.server!!, tags = it.tags.toQuery()).map {
+                    searchPosts(it.server!!, tags = it.tags).map {
                         it.map { post ->
                             val postId =
                                 favoriteRepository.queryByServerUrlAndPostId(post.serverId,
@@ -105,7 +105,7 @@ class BrowseViewModel constructor(
             withContext(Dispatchers.IO) {
                 state.collect {
                     if (it.server != null && it.tags.isNotEmpty()) {
-                        val tags = it.tags.joinToString(" ") { tag -> tag.toString() }
+                        val tags = it.tags
                         Log.d("BrowseViewModel",
                             "insert ${it.server.serverId} $tags to history")
                         insertTagsTagsToHistory(it.server.serverId, tags)
@@ -147,8 +147,8 @@ class BrowseViewModel constructor(
         viewModelScope.launch {
             state.value.server?.let { server ->
                 savedSearchRepository.insert(SavedSearch(serverId = server.serverId,
-                    tags = state.value.tags.toQuery(),
-                    savedSearchTitle = title ?: state.value.tags.first().name))
+                    tags = state.value.tags,
+                    savedSearchTitle = title ?: state.value.tags.split(" ").first()))
             }
         }
     }
@@ -180,10 +180,10 @@ class BrowseViewModel constructor(
 }
 
 sealed class UiAction {
-    data class Search(val tags: List<TagDetail>) : UiAction()
+    data class Search(val tags: String) : UiAction()
     data class Scroll(
         val currentServerUrl: String?,
-        val currentTags: List<TagDetail>,
+        val currentTags: String,
     ) : UiAction()
 
     object GetSelectedServer : UiAction()
@@ -192,8 +192,8 @@ sealed class UiAction {
 
 data class UiState(
     val server: ServerView? = null,
-    val tags: List<TagDetail> = listOf(),
-    val lastTagsScrolled: List<TagDetail> = listOf(),
+    val tags: String = "",
+    val lastTagsScrolled: String = "",
     val hasNotScrolledForCurrentTag: Boolean = false,
 )
 

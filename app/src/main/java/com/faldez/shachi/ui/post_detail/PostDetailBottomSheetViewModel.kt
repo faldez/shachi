@@ -13,11 +13,16 @@ import kotlinx.coroutines.flow.*
 
 class PostDetailBottomSheetViewModel(
     server: ServerView,
+    currentTags: String?,
     post: Post,
     private val tagRepository: TagRepository,
 ) : ViewModel() {
-    val state: StateFlow<UiState> =
-        MutableSharedFlow<UiAction>().filterIsInstance<UiAction.GetTags>().distinctUntilChanged()
+    val state: StateFlow<UiState>
+
+    init {
+        val actionStateFlow = MutableSharedFlow<UiAction>()
+        val getPostTags = actionStateFlow
+            .filterIsInstance<UiAction.GetTags>().distinctUntilChanged()
             .onStart { emit(UiAction.GetTags) }
             .flatMapLatest {
                 flow {
@@ -25,18 +30,41 @@ class PostDetailBottomSheetViewModel(
                     emit(tagRepository.getTags(Action.GetTags(server.toServer(),
                         post.tags)))
                 }
-            }.map { tags ->
+            }
+        state = if (currentTags == null) {
+            getPostTags.map { tags ->
                 Log.d("PostDetailBottomSheetViewModel", "combine $server")
                 UiState(
                     post = post,
                     tags = tags,
                     server = server,
+                    currentTags = listOf()
                 )
-            }.stateIn(
-                scope = CoroutineScope(Dispatchers.IO),
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = UiState(post, null, server)
-            )
+            }
+        } else {
+            val getCurrentTags = actionStateFlow
+                .filterIsInstance<UiAction.GetTags>().distinctUntilChanged()
+                .onStart { emit(UiAction.GetTags) }.flatMapLatest {
+                    flow {
+                        Log.d("PostDetailBottomSheetViewModel", "GetTags")
+                        emit(tagRepository.getTags(Action.GetTags(server.toServer(),
+                            post.tags)))
+                    }
+                }
+            getPostTags.zip(getCurrentTags) { postTags, tags ->
+                UiState(
+                    post = post,
+                    tags = postTags,
+                    server = server,
+                    currentTags = tags
+                )
+            }
+        }.stateIn(
+            scope = CoroutineScope(Dispatchers.IO),
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = UiState(post, null, null, server)
+        )
+    }
 }
 
 sealed class UiAction {
@@ -47,5 +75,6 @@ sealed class UiAction {
 data class UiState(
     val post: Post,
     val tags: List<Tag>?,
+    val currentTags: List<Tag>?,
     val server: ServerView?,
 )
