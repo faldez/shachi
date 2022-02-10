@@ -40,21 +40,20 @@ class BrowseViewModel constructor(
         val lastTagsScrolled: List<TagDetail> = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: listOf()
         val actionStateFlow = MutableSharedFlow<UiAction>()
         val searches = actionStateFlow.filterIsInstance<UiAction.Search>().distinctUntilChanged()
-            .onStart { emit(UiAction.Search(initialTags)) }
         val tagsScrolled =
             actionStateFlow.filterIsInstance<UiAction.Scroll>().distinctUntilChanged()
                 .onStart {
                     emit(UiAction.Scroll(null, currentTags = lastTagsScrolled))
                 }
                 .shareIn(scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                    started = SharingStarted.Eagerly,
                     replay = 1)
 
         val getServer =
             actionStateFlow.filterIsInstance<UiAction.GetSelectedServer>()
                 .distinctUntilChanged()
-                .onStart { emit(UiAction.GetSelectedServer) }
                 .flatMapLatest {
+                    Log.d("BrowseViewModel", "getServer")
                     getSelectedServer()
                 }
 
@@ -70,16 +69,15 @@ class BrowseViewModel constructor(
                     hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (server?.url ?: scroll.currentServerUrl != scroll.currentServerUrl)
                 )
             }.stateIn(scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                started = SharingStarted.Eagerly,
                 initialValue = UiState()
             )
 
-        val serverChange = state.map { it.server }.distinctUntilChanged()
         pagingDataFlow =
-            combine(serverChange, searches, ::Pair).filter { (server, _) -> server != null }
-                .flatMapLatest { (server, search) ->
-                    Log.d("BrowseViewModel", "pagingDataFlow $server $searches")
-                    searchPosts(server!!, tags = search.tags.toQuery()).map {
+            state.filter { it.server != null }
+                .flatMapLatest {
+                    Log.d("BrowseViewModel", "pagingDataFlow")
+                    searchPosts(it.server!!, tags = it.tags.toQuery()).map {
                         it.map { post ->
                             val postId =
                                 favoriteRepository.queryByServerUrlAndPostId(post.serverId,

@@ -94,6 +94,7 @@ class BrowseFragment : Fragment() {
         if (server != null) {
             viewModel.selectServer(server)
         }
+        viewModel.accept(UiAction.GetSelectedServer)
         viewModel.accept(UiAction.Search(tags ?: listOf()))
 
         binding.bindState(
