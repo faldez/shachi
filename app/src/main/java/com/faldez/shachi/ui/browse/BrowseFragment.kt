@@ -238,6 +238,12 @@ class BrowseFragment : Fragment() {
             postsAdapter.refresh()
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                pagingData.collect(postsAdapter::submitData)
+            }
+        }
+
         val notLoading = postsAdapter.loadStateFlow.distinctUntilChangedBy { it.source.refresh }
             .map { it.source.refresh is LoadState.NotLoading }
         val hasNotScrolledForCurrentSearch =
@@ -248,17 +254,13 @@ class BrowseFragment : Fragment() {
             hasNotScrolledForCurrentSearch,
             Boolean::and
         )
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                pagingData.collect(postsAdapter::submitData)
-            }
-        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 shouldScrollToTop.collect { shouldScroll ->
-                    Log.d(TAG, "shouldScroll $shouldScroll")
-                    if (shouldScroll) postsRecyclerView.scrollToPosition(0)
+                    val isNotEmpty = postsAdapter.itemCount != 0
+                    Log.d(TAG, "shouldScroll=$shouldScroll postsAdapter.itemCount=${postsAdapter.itemCount }")
+                    if (shouldScroll && isNotEmpty) postsRecyclerView.scrollToPosition(0)
                 }
             }
         }
@@ -267,9 +269,10 @@ class BrowseFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 postsAdapter.loadStateFlow.collectLatest { loadState ->
                     val server = viewModel.state.value.server
-                    Log.d("BrowseFragment", "postsAdapter.loadStateFlow.collectLatest $loadState")
+                    Log.d("BrowseFragment/postsAdapter.loadStateFlow.collectLatest", "$loadState")
                     val isListEmpty =
                         loadState.refresh is LoadState.NotLoading && postsAdapter.itemCount == 0
+                    Log.d("BrowseFragment", "isListEmpty $isListEmpty")
                     postsRecyclerView.isVisible = !isListEmpty
                     swipeRefreshLayout.isRefreshing = loadState.source.refresh is LoadState.Loading
                     retryButton.isVisible =
