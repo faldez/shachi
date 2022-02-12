@@ -1,16 +1,13 @@
 package com.faldez.shachi.ui.post_slide
 
 import android.animation.Animator
-import android.net.Uri
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -20,13 +17,10 @@ import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.model.Post
+import com.faldez.shachi.service.DownloadService
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.URL
 
 
 abstract class BasePostSlideFragment : Fragment() {
@@ -193,7 +187,7 @@ abstract class BasePostSlideFragment : Fragment() {
                     val downloadDir = getDownloadDir()
                     if (downloadDir != null) {
                         showSnackbar(R.string.downloading)
-                        downloadFile(downloadDir, post.fileUrl)
+                        downloadFile(downloadDir, post)
                     } else {
                         showSnackbar(R.string.download_path_not_set)
                     }
@@ -208,12 +202,9 @@ abstract class BasePostSlideFragment : Fragment() {
     private fun getCurrentPost(): Post? =
         postSlideAdapter.getPostItem(binding.postViewPager.currentItem)
 
-
-    private fun getDownloadDir(): DocumentFile? {
+    private fun getDownloadDir(): String? {
         return PreferenceManager.getDefaultSharedPreferences(requireContext())
-            .getString("download_path", null)?.let {
-                DocumentFile.fromTreeUri(requireContext(), Uri.parse(it))
-            }
+            .getString("download_path", null)
     }
 
     private fun showSnackbar(text: Int) {
@@ -221,30 +212,13 @@ abstract class BasePostSlideFragment : Fragment() {
             .show()
     }
 
-    private fun showNotification(text: Int) {
-        var builder = NotificationCompat.Builder(requireContext(), "DOWNLOAD")
-            .setSmallIcon(R.drawable.ic_baseline_download_24)
-            .setContentTitle(resources.getText(text))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        with(NotificationManagerCompat.from(requireContext())) {
-            notify(0, builder.build())
+    private fun downloadFile(downloadDir: String, post: Post) {
+        Intent(requireContext(), DownloadService::class.java).also { intent ->
+            val bundle = bundleOf("download_dir" to downloadDir, "post" to post)
+            intent.putExtras(bundle)
+            requireContext().startService(intent)
         }
     }
-
-    private fun downloadFile(downloadDir: DocumentFile, fileUrl: String) =
-        CoroutineScope(Dispatchers.IO).launch {
-            withContext(Dispatchers.IO) {
-                val fileUri = Uri.parse(fileUrl)
-                val file = downloadDir.createFile("image/*", fileUri.lastPathSegment!!)
-                URL(fileUrl).openStream().use { input ->
-                    requireContext().contentResolver.openOutputStream(file!!.uri)
-                        ?.use { output ->
-                            input.copyTo(output)
-                            showNotification(R.string.download_finished)
-                        }
-                }
-            }
-        }
 
     abstract fun navigateToPostSlide(post: Post?)
 
