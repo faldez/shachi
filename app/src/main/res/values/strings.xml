@@ -78,4 +78,5 @@
     <string name="original">Original</string>
     <string name="search_history">Search history</string>
     <string name="advanced_search">Advanced search</string>
+    <string name="simple_search">Simple search</string>
 </resources>

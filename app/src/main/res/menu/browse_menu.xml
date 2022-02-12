@@ -25,10 +25,4 @@
         android:icon="@drawable/ic_baseline_storage_24"
         android:title="@string/select_server"
         app:showAsAction="ifRoom"  />
-    <item
-        android:id="@+id/advanced_search_button"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_mode_24"
-        android:title="@string/advanced_search"
-        app:showAsAction="ifRoom"  />
 </menu>

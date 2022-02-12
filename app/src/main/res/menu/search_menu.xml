@@ -14,4 +14,10 @@
         android:icon="@drawable/ic_baseline_search_24"
         android:title="@string/search"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/search_mode_button"
+        android:checkable="true"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_mode_24"
+        android:title="@string/advanced_search" />
 </menu>

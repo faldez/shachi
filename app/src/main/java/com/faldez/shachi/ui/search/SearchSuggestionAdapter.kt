@@ -1,4 +1,4 @@
-package com.faldez.shachi.ui.search_simple
+package com.faldez.shachi.ui.search
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater

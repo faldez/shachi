@@ -124,7 +124,7 @@ class BrowseFragment : Fragment() {
         R.id.search_button -> {
             val bundle = bundleOf("server" to viewModel.state.value.server,
                 "tags" to viewModel.state.value.tags)
-            findNavController().navigate(R.id.action_global_to_searchsimple, bundle)
+            findNavController().navigate(R.id.action_global_to_search, bundle)
             true
         }
         R.id.save_search_button -> {
@@ -159,11 +159,6 @@ class BrowseFragment : Fragment() {
             val searchHistories = viewModel.searchHistoryFlow.value
             val bundle = bundleOf("search_histories" to searchHistories)
             findNavController().navigate(R.id.action_global_to_searchhistory, bundle)
-            true
-        }
-        R.id.advanced_search_button -> {
-            val bundle = bundleOf("tags" to viewModel.state.value.tags)
-            findNavController().navigate(R.id.action_global_to_searchadvanced, bundle)
             true
         }
         else -> super.onOptionsItemSelected(item)

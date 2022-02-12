@@ -1,4 +1,4 @@
-package com.faldez.shachi.ui.search_simple
+package com.faldez.shachi.ui.search
 
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
@@ -7,7 +7,7 @@ import androidx.savedstate.SavedStateRegistryOwner
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.repository.TagRepository
 
-class SearchSimpleViewModelFactory constructor(
+class SearchViewModelFactory constructor(
     private val server: ServerView,
     private val tagRepository: TagRepository,
     owner: SavedStateRegistryOwner,
