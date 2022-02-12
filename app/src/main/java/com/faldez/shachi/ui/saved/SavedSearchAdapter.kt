@@ -35,13 +35,11 @@ class SavedSearchAdapter(
             ): Boolean =
                 oldItem.savedSearch.savedSearch.savedSearchId == newItem.savedSearch.savedSearch.savedSearchId
 
-
             override fun areContentsTheSame(
                 oldItem: SavedSearchPost,
                 newItem: SavedSearchPost,
             ): Boolean =
                 oldItem == newItem
-
         }
     }
 }

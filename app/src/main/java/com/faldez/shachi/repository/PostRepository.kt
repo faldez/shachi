@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.model.ServerType
+import com.faldez.shachi.model.applyBlacklist
 import com.faldez.shachi.model.response.mapToPost
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
@@ -38,7 +39,8 @@ class PostRepository constructor(
                     Log.d("PostPagingSource/Gelbooru", url)
 
                     val posts =
-                        service.gelbooru.getPosts(url).mapToPost(action.savedSearch.server.serverId)
+                        service.gelbooru.getPosts(url).applyBlacklist(action.savedSearch.server.blacklistedTags)
+                            ?.mapToPost(action.savedSearch.server.serverId)
 
                     return Pair(action.savedSearch, posts)
                 }
@@ -48,7 +50,8 @@ class PostRepository constructor(
                     Log.d("PostPagingSource/Danbooru", url)
 
                     val posts =
-                        service.danbooru.getPosts(url).mapToPost(action.savedSearch.server.serverId)
+                        service.danbooru.getPosts(url).applyBlacklist(action.savedSearch.server.blacklistedTags)
+                            .mapToPost(action.savedSearch.server.serverId)
 
                     return Pair(action.savedSearch, posts)
                 }
@@ -58,7 +61,8 @@ class PostRepository constructor(
                     Log.d("PostPagingSource/Moebooru", url)
 
                     val posts =
-                        service.moebooru.getPosts(url).mapToPost(action.savedSearch.server.serverId)
+                        service.moebooru.getPosts(url).applyBlacklist(action.savedSearch.server.blacklistedTags)
+                            .mapToPost(action.savedSearch.server.serverId)
 
                     return Pair(action.savedSearch, posts)
                 }

@@ -119,7 +119,7 @@ class BrowseViewModel constructor(
         return serverRepository.getSelectedServer()
     }
 
-    fun selectServer(server: Server) {
+    fun selectServer(server: ServerView) {
         CoroutineScope(Dispatchers.IO).launch {
             serverRepository.setSelectedServer(server.serverId)
         }

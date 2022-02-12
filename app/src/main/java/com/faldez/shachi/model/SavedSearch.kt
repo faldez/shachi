@@ -19,7 +19,7 @@ data class SavedSearchServer(
         parentColumn = "server_id",
         entityColumn = "server_id"
     )
-    val server: Server,
+    val server: ServerView,
 )
 
 @Entity(tableName = "saved_search_server_cross_ref",

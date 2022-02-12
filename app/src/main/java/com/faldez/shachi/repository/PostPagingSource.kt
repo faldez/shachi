@@ -5,6 +5,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerType
+import com.faldez.shachi.model.applyBlacklist
 import com.faldez.shachi.model.response.*
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
@@ -69,91 +70,5 @@ class PostPagingSource(
         } catch (exception: HttpException) {
             return LoadResult.Error(exception)
         }
-    }
-
-    private fun GelbooruPostResponse.applyBlacklist(tags: String?): List<GelbooruPost>? {
-        val blacklists = tags?.split(",")?.map {
-            it.split(" ")
-        }
-
-        Log.d("PostPagingSource", "applyBlacklist $tags to $blacklists")
-
-        if (blacklists.isNullOrEmpty()) {
-            return this.posts?.post
-        }
-
-        var counter = 0
-        val posts =  this.posts?.post?.filter { post ->
-            blacklists.forEach { tags ->
-                if (post.tags.split(" ").containsAll(tags)) {
-                    counter++
-                    return@filter false
-                }
-            }
-
-            true
-        }
-
-        Log.d("PostPagingSource", "applyBlacklist $counter filtered")
-
-        return posts
-    }
-
-    @JvmName("danbooruPostApplyBlacklist")
-    private fun List<DanbooruPost>.applyBlacklist(tags: String?): List<DanbooruPost> {
-        val blacklists = tags?.split(",")?.map {
-            it.split(" ")
-        }
-
-        Log.d("PostPagingSource", "applyBlacklist $tags to $blacklists")
-
-        if (blacklists.isNullOrEmpty()) {
-            return this
-        }
-
-        var counter = 0
-        val posts = this.filter { post ->
-            blacklists.forEach { tags ->
-                if (post.tagString.split(" ").containsAll(tags)) {
-                    counter++
-                    return@filter false
-                }
-            }
-
-            true
-        }
-
-        Log.d("PostPagingSource", "applyBlacklist $counter filtered")
-
-        return posts
-    }
-
-    @JvmName("moebooruPostApplyBlacklist")
-    private fun List<MoebooruPost>.applyBlacklist(tags: String?): List<MoebooruPost> {
-        val blacklists = tags?.split(",")?.map {
-            it.split(" ")
-        }
-
-        Log.d("PostPagingSource", "applyBlacklist $tags to $blacklists")
-
-        if (blacklists.isNullOrEmpty()) {
-            return this
-        }
-
-        var counter = 0
-        val posts = this.filter { post ->
-            blacklists.forEach { tags ->
-                if (post.tags.split(" ").containsAll(tags)) {
-                    counter++
-                    return@filter false
-                }
-            }
-
-            true
-        }
-
-        Log.d("PostPagingSource", "applyBlacklist $counter filtered")
-
-        return posts
     }
 }

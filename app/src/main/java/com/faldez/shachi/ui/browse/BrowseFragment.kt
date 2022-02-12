@@ -27,7 +27,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.Server
+import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.repository.*
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -80,7 +80,7 @@ class BrowseFragment : Fragment() {
         }
 
 
-        val server = arguments?.get("server") as Server?
+        val server = arguments?.get("server") as ServerView?
         val tags = arguments?.get("tags") as String? ?: ""
 
         Log.d("BrowseFragment/onCreate", "server: $server tags: $tags")
@@ -102,16 +102,20 @@ class BrowseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<Server?, String>>(
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<ServerView?, String>>(
             "tags")
             ?.observe(viewLifecycleOwner) { result ->
                 Log.d("BrowseFragment/onViewCreated", "$result")
-                val server = result.first ?: viewModel.state.value.server?.toServer()
+                val server = result.first ?: viewModel.state.value.server
                 val tags = result.second
-                server?.let {
-                    viewModel.selectServer(it)
+                if (server != viewModel.state.value.server) {
+                    server?.let {
+                        viewModel.selectServer(it)
+                    }
                 }
-                viewModel.accept(UiAction.Search(tags))
+                if (tags != viewModel.state.value.tags) {
+                    viewModel.accept(UiAction.Search(tags))
+                }
             }
     }
 
