@@ -32,7 +32,11 @@ class StringUtil {
                 while (i < text.length - 1 && text[i + 1] != ' ') {
                     i += 1
                 }
-                i
+                if (i < text.length) {
+                    i
+                } else {
+                    text.length - 1
+                }
             }
             return if (text[end] == '}') end - 1
             else end
