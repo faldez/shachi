@@ -13,6 +13,7 @@ import android.widget.ScrollView
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -167,15 +168,20 @@ class SearchFragment : Fragment() {
             },
             onClick = {
                 if (viewModel.state.value.isAdvancedMode) {
-                    val text = binding.searchSimpleTagsInputText.text.toString()
-                    val selectionStart = binding.searchSimpleTagsInputText.selectionStart - 1
-                    val start =
-                        StringUtil.findTokenStart(text, selectionStart)
-                    val end = StringUtil.findTokenEnd(text, selectionStart)
-                    Log.d("SearchFragment",
-                        "selectionStart=$selectionStart text=$text replace start=$start to end=$end with=${it.name}")
-                    binding.searchSimpleTagsInputText.text?.replace(start, end + 1, it.name)
-                    binding.searchSimpleTagsInputText.setSelection(start + it.name.length)
+                    val text = binding.searchSimpleTagsInputText.text?.toString()
+                    if (text.isNullOrEmpty()) {
+                        binding.searchSimpleTagsInputText.text = SpannableStringBuilder(it.name)
+                        binding.searchSimpleTagsInputText.setSelection(it.name.length)
+                    } else {
+                        val selectionStart = binding.searchSimpleTagsInputText.selectionStart - 1
+                        val start =
+                            StringUtil.findTokenStart(text, selectionStart)
+                        val end = StringUtil.findTokenEnd(text, selectionStart)
+                        Log.d("SearchFragment",
+                            "selectionStart=$selectionStart text=$text replace start=$start to end=$end with=${it.name}")
+                        binding.searchSimpleTagsInputText.text?.replace(start, end + 1, it.name)
+                        binding.searchSimpleTagsInputText.setSelection(start + it.name.length)
+                    }
                 } else {
                     viewModel.insertTag(it)
                     binding.searchSimpleTagsInputText.text?.clear()
@@ -283,15 +289,22 @@ class SearchFragment : Fragment() {
     private fun TextInputEditText.bind() {
         this.apply {
             setImeActionLabel("Add", KeyEvent.KEYCODE_ENTER)
+            doAfterTextChanged { s ->
+                if (viewModel.state.value.isAdvancedMode) {
+                    s?.toString()?.let {
+                        viewModel.state.value =
+                            viewModel.state.value.copy(selectedTags = SelectedTags.Advance(it))
+                    }
+                }
+            }
             doOnTextChanged { text, start, before, count ->
                 if (viewModel.state.value.isAdvancedMode) {
                     Log.d("SearchFragment", "text=$text start=$start before=$before count=$count")
                     text?.toString()?.trim()?.let {
+                        Log.d("SearchFragment", "text.isNotEmpty=${it.isNotEmpty()}")
                         if (it.isNotEmpty()) {
                             val tag = StringUtil.getCurrentToken(it, start)
                             viewModel.accept(UiAction.SearchTag(tag))
-                            viewModel.state.value =
-                                viewModel.state.value.copy(selectedTags = SelectedTags.Advance(it))
                         }
                     }
                 } else {
