@@ -58,7 +58,7 @@ class BrowseViewModel constructor(
                 }
 
         state =
-            combine(getServer, searches, tagsScrolled, ::Triple).map { (server, search, scroll) ->
+            combine(getServer, searches, tagsScrolled, ::Triple).distinctUntilChanged().map { (server, search, scroll) ->
                 Log.d("BrowseViewModel",
                     "$server ${search.tags} != ${scroll.currentTags}) || (${server?.url ?: scroll.currentServerUrl} != ${scroll.currentServerUrl})")
 
