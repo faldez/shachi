@@ -175,6 +175,7 @@ class SearchFragment : Fragment() {
                     Log.d("SearchFragment",
                         "selectionStart=$selectionStart text=$text replace start=$start to end=$end with=${it.name}")
                     binding.searchSimpleTagsInputText.text?.replace(start, end + 1, it.name)
+                    binding.searchSimpleTagsInputText.setSelection(start + it.name.length)
                 } else {
                     viewModel.insertTag(it)
                     binding.searchSimpleTagsInputText.text?.clear()
