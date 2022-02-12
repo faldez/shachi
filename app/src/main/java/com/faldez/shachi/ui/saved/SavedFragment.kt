@@ -1,14 +1,15 @@
 package com.faldez.shachi.ui.saved
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,13 +22,13 @@ import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
 class SavedFragment : Fragment() {
     private lateinit var viewModel: SavedViewModel
     private lateinit var binding: SavedFragmentBinding
+    private lateinit var adapter: SavedSearchAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +52,7 @@ class SavedFragment : Fragment() {
                     BooruService()))).get(
             SavedViewModel::class.java)
 
-        val adapter = SavedSearchAdapter(
+        adapter = SavedSearchAdapter(
             onBrowse = {
                 val bundle = bundleOf("title" to it.savedSearch.savedSearchTitle,
                     "server" to it.server,
@@ -80,18 +81,13 @@ class SavedFragment : Fragment() {
         binding.savedSearchRecyclerView.addItemDecoration(divider)
 
         binding.savedSwipeRefreshLayout.setOnRefreshListener {
-            viewModel.clearPosts()
-            viewModel.refreshAll()
+            adapter.refresh()
         }
 
-        lifecycleScope.launch {
-            viewModel.state.collect { state ->
-                state.let { savedSearches ->
-                    val savedSearchPosts = savedSearches.map { (savedSearch, posts) ->
-                        SavedSearchPost(savedSearch = savedSearch, posts = posts)
-                    }
-                    Log.d("SavedFragment", "$savedSearchPosts")
-                    adapter.submitList(savedSearchPosts)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.state.collect { state ->
+                    adapter.submitData(state)
                     binding.savedSwipeRefreshLayout.isRefreshing = false
                 }
             }
@@ -99,11 +95,6 @@ class SavedFragment : Fragment() {
 
         return binding.root
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
 
 //    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 //        inflater.inflate(R.menu.saved_search_menu, menu)
