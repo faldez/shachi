@@ -9,20 +9,8 @@ import com.faldez.shachi.model.SavedSearchServer
 import kotlinx.coroutines.flow.Flow
 
 class SavedSearchRepository(private val db: AppDatabase) {
-    fun getSavedSearchesStream(): Flow<PagingData<SavedSearchServer>?> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 10,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                SavedSearchPagingSource(db)
-            }
-        ).flow
-    }
-
-    fun getAll(): Flow<List<SavedSearchServer>?> {
-        return db.savedSearchDao().getAllFlow()
+    fun getAll(): Flow<List<SavedSearchServer>> {
+        return db.savedSearchDao().getAll()
     }
 
     suspend fun insert(savedSearch: SavedSearch) {

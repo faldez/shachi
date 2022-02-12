@@ -11,10 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SavedSearchDao {
     @Query("SELECT * FROM saved_search")
-    suspend fun getAll(): List<SavedSearchServer>?
-
-    @Query("SELECT * FROM saved_search")
-    fun getAllFlow(): Flow<List<SavedSearchServer>?>
+    fun getAll(): Flow<List<SavedSearchServer>>
 
     @Insert
     suspend fun insert(savedSearch: SavedSearch)

@@ -19,27 +19,17 @@ class SavedViewModel(
     private val savedSearchRepository: SavedSearchRepository,
     private val postRepository: PostRepository,
 ) : ViewModel() {
-    val savedSearchesFlow: Flow<List<SavedSearchServer>?>
     val state: Flow<PagingData<SavedSearchPost>>
     val accept: (UiAction) -> Unit
 
     init {
         val actionStateFlow = MutableSharedFlow<UiAction>()
 
-        savedSearchesFlow = actionStateFlow.filterIsInstance<UiAction.GetSavedSearchFlow>()
-            .onStart { emit(UiAction.GetSavedSearchFlow) }
-            .flatMapLatest { savedSearchRepository.getAll() }
-
-        val getSavedSearches =
-            actionStateFlow.filterIsInstance<UiAction.GetSavedSearch>()
-                .flatMapLatest {
-                    savedSearchRepository.getSavedSearchesStream()
-                }
-
         state =
-            getSavedSearches.filter { it != null }
+            savedSearchRepository.getAll().distinctUntilChanged()
                 .map { data ->
-                    data!!.map { savedSearch ->
+                    Log.d("SavedViewModel", "collect savedSearches")
+                    val list = data.map { savedSearch ->
                         val posts =
                             postRepository.getSearchPostsResultStream(Action.SearchPost(server = savedSearch.server,
                                 tags = savedSearch.savedSearch.tags)).map { pagingData ->
@@ -49,6 +39,7 @@ class SavedViewModel(
                             }.cachedIn(viewModelScope)
                         SavedSearchPost(savedSearch = savedSearch, posts = posts)
                     }
+                    PagingData.from(list)
                 }.cachedIn(viewModelScope)
 
         accept = {
@@ -56,18 +47,10 @@ class SavedViewModel(
                 actionStateFlow.emit(it)
             }
         }
-
-        viewModelScope.launch {
-            savedSearchesFlow.collectLatest {
-                Log.d("SavedViewModel", "collect savedSearchesFlow")
-                accept(UiAction.GetSavedSearch)
-            }
-        }
     }
 
     fun delete(savedSearch: SavedSearch) = viewModelScope.launch {
         savedSearchRepository.delete(savedSearch)
-//        accept(UiAction.GetSavedSearch)
     }
 }
 

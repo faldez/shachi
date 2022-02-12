@@ -1,13 +1,14 @@
 package com.faldez.shachi.ui.saved
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
@@ -22,11 +23,16 @@ import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
 class SavedFragment : Fragment() {
-    private lateinit var viewModel: SavedViewModel
+    private val viewModel: SavedViewModel by viewModels {
+        SavedViewModelFactory(SavedSearchRepository(AppDatabase.build(requireContext())),
+            PostRepository(
+                BooruService()))
+    }
     private lateinit var binding: SavedFragmentBinding
     private lateinit var adapter: SavedSearchAdapter
 
@@ -39,18 +45,13 @@ class SavedFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        Log.d("SavedFragment", "onCreateView")
         binding = SavedFragmentBinding.inflate(inflater, container, false)
 
         (activity as MainActivity).setSupportActionBar(binding.savedTopappbar)
 
         binding.savedAppbarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-
-        viewModel = ViewModelProvider(this,
-            SavedViewModelFactory(SavedSearchRepository(AppDatabase.build(requireContext())),
-                PostRepository(
-                    BooruService()))).get(
-            SavedViewModel::class.java)
 
         adapter = SavedSearchAdapter(
             onBrowse = {
