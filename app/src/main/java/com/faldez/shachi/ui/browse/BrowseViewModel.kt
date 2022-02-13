@@ -51,7 +51,6 @@ class BrowseViewModel constructor(
 
         val getServer =
             actionStateFlow.filterIsInstance<UiAction.GetSelectedServer>()
-                .distinctUntilChanged()
                 .flatMapLatest {
                     Log.d("BrowseViewModel", "getServer")
                     getSelectedServer()
