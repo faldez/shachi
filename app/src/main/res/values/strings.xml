@@ -4,6 +4,7 @@
     <string name="title">Title</string>
     <string name="posts">Posts</string>
     <string name="favorite">Favorite</string>
+    <string name="unfavorite">Unfavorite</string>
     <string name="more">More</string>
     <string name="detail">Detail</string>
     <string name="pin">Pin</string>

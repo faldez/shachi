@@ -1,6 +1,7 @@
 package com.faldez.shachi.ui.post_slide
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -56,16 +57,11 @@ abstract class BasePostSlideFragment : Fragment() {
         if (binding.postSlideAppbarLayout.isVisible) {
             binding.postSlideAppbarLayout.animate()
                 .translationY(-binding.postSlideAppbarLayout.height.toFloat())
-                .setListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(p0: Animator?) {}
-
-                    override fun onAnimationEnd(p0: Animator?) {
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        super.onAnimationEnd(animation)
                         binding.postSlideAppbarLayout.visibility = View.GONE
                     }
-
-                    override fun onAnimationCancel(p0: Animator?) {}
-
-                    override fun onAnimationRepeat(p0: Animator?) {}
                 })
         }
     }
@@ -73,16 +69,11 @@ abstract class BasePostSlideFragment : Fragment() {
     private fun showAppbar() {
         if (!binding.postSlideAppbarLayout.isVisible) {
             binding.postSlideAppbarLayout.animate().translationY(0f)
-                .setListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(p0: Animator?) {
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationStart(animation: Animator?) {
+                        super.onAnimationStart(animation)
                         binding.postSlideAppbarLayout.visibility = View.VISIBLE
                     }
-
-                    override fun onAnimationEnd(p0: Animator?) {}
-
-                    override fun onAnimationCancel(p0: Animator?) {}
-
-                    override fun onAnimationRepeat(p0: Animator?) {}
                 })
         }
     }
@@ -122,25 +113,27 @@ abstract class BasePostSlideFragment : Fragment() {
 
     private fun setTitle(position: Int) {
         (activity as MainActivity).supportActionBar?.title =
-            "" + (position + 1) + "/" + postSlideAdapter.itemCount
+            postSlideAdapter.getPostItem(position)?.postId.toString()
     }
 
     abstract suspend fun collectPagingData()
 
     private fun setFavoriteButton(post: Post) {
-        val icon = if (post.favorite) {
-            R.drawable.ic_baseline_favorite_24
+        val (favoriteIcon, favoriteTitle) = if (post.favorite) {
+            Pair(R.drawable.ic_baseline_favorite_24, R.string.unfavorite)
         } else {
-            R.drawable.ic_baseline_favorite_border_24
+            Pair(R.drawable.ic_baseline_favorite_border_24, R.string.favorite)
         }
 
-        topbarMenu.apply {
-            Log.d("BasePostSlideFragment", "setFavoriteButton ${post.favorite}")
-            this?.getItem(0)?.icon =
+        topbarMenu?.getItem(0)?.apply {
+            icon =
                 ResourcesCompat.getDrawable(resources,
-                    icon,
+                    favoriteIcon,
                     requireActivity().theme)
+            title = getText(favoriteTitle)
         }
+
+
     }
 
     private fun prepareAppBar() {
