@@ -25,22 +25,25 @@ class SavedViewModel(
     init {
         val actionStateFlow = MutableSharedFlow<UiAction>()
 
-        state =
-            savedSearchRepository.getAll().distinctUntilChanged()
-                .map { data ->
-                    Log.d("SavedViewModel", "collect savedSearches")
-                    val list = data.map { savedSearch ->
-                        val posts =
-                            postRepository.getSearchPostsResultStream(Action.SearchPost(server = savedSearch.server,
-                                tags = savedSearch.savedSearch.tags)).map { pagingData ->
-                                pagingData.map {
-                                    SavedSearchPost(post = it)
-                                }
-                            }.cachedIn(viewModelScope)
-                        SavedSearchPost(savedSearch = savedSearch, posts = posts)
-                    }
-                    PagingData.from(list)
-                }.cachedIn(viewModelScope)
+        val getSavedSearchFlow = actionStateFlow.filterIsInstance<UiAction.GetSavedSearch>()
+            .onStart { emit(UiAction.GetSavedSearch) }
+        val savedSearchFlow = savedSearchRepository.getAll().distinctUntilChanged()
+
+        state = combine(getSavedSearchFlow, savedSearchFlow, ::Pair)
+            .map { (_, data) ->
+                Log.d("SavedViewModel", "collect savedSearches")
+                val list = data.map { savedSearch ->
+                    val posts =
+                        postRepository.getSearchPostsResultStream(Action.SearchPost(server = savedSearch.server,
+                            tags = savedSearch.savedSearch.tags)).map { pagingData ->
+                            pagingData.map {
+                                SavedSearchPost(post = it)
+                            }
+                        }.cachedIn(viewModelScope)
+                    SavedSearchPost(savedSearch = savedSearch, posts = posts)
+                }
+                PagingData.from(list)
+            }.cachedIn(viewModelScope)
 
         accept = {
             viewModelScope.launch {
