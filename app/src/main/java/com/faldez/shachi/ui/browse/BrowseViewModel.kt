@@ -133,7 +133,8 @@ class BrowseViewModel constructor(
 
     fun favoritePost(favorite: Post) {
         viewModelScope.launch {
-            favoriteRepository.insert(favorite)
+            favoriteRepository.insert(favorite.copy(dateAdded = ZonedDateTime.now().toInstant()
+                .toEpochMilli()))
         }
     }
 

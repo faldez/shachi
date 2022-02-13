@@ -35,6 +35,8 @@ data class Post(
     val source: String,
     @ColumnInfo(name = "has_notes") val hasNotes: Boolean,
     @ColumnInfo(name = "has_comments") val hasComments: Boolean,
+    @ColumnInfo(name = "date_added",
+        defaultValue = "CURRENT_TIMESTAMP") val dateAdded: Long? = null,
 ) : Parcelable {
     @Ignore
     var favorite: Boolean = false

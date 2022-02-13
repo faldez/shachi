@@ -42,7 +42,7 @@ interface FavoriteDao {
     @Query("SELECT * FROM favorite NATURAL JOIN (SELECT server_id, post_id FROM post_tag WHERE post_tag MATCH :query) JOIN server ON favorite.server_id = server.server_id")
     fun queryByTags(query: String): PagingSource<Int, Post>
 
-    @Query("SELECT * FROM favorite")
+    @Query("SELECT * FROM favorite ORDER BY date_added DESC")
     fun query(): PagingSource<Int, Post>
 
     @Query("SELECT post_id FROM favorite WHERE server_id = :serverId AND post_id IN (:postIds)")
