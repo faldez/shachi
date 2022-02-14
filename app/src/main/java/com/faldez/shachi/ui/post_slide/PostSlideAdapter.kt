@@ -19,7 +19,7 @@ import com.faldez.shachi.util.glide.GlideModule
 
 class PostSlideAdapter(
     private val quality: String,
-    private val onTap: () -> Boolean,
+    private val onTap: () -> Unit,
 ) :
     PagingDataAdapter<Post, PostSlideViewHolder>(POST_COMPARATOR) {
 
@@ -70,7 +70,7 @@ class PostSlideAdapter(
 class PostSlideViewHolder(
     private val binding: PostSlideItemBinding,
     private val quality: String,
-    private val onTap: () -> Boolean,
+    private val onTap: () -> Unit,
 ) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(it: Post) {

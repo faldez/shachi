@@ -54,14 +54,9 @@ abstract class BasePostSlideFragment : Fragment() {
         postSlideAdapter = PostSlideAdapter(
             quality,
             onTap = {
-                isAppBarHide = if (isAppBarHide) {
-                    showAppbar()
-                    false
-                } else {
-                    hideAppbar()
-                    true
+                getCurrentPost()?.let {
+                    navigateToPostSlide(it)
                 }
-                false
             }
         )
 
@@ -75,32 +70,6 @@ abstract class BasePostSlideFragment : Fragment() {
         val position = requireArguments().getInt("position")
         binding.postViewPager.bind(position)
     }
-
-    private fun hideAppbar() {
-        if (binding.postSlideAppbarLayout.isVisible) {
-            binding.postSlideAppbarLayout.animate()
-                .translationY(-binding.postSlideAppbarLayout.height.toFloat())
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator?) {
-                        super.onAnimationEnd(animation)
-                        binding.postSlideAppbarLayout.visibility = View.GONE
-                    }
-                })
-        }
-    }
-
-    private fun showAppbar() {
-        if (!binding.postSlideAppbarLayout.isVisible) {
-            binding.postSlideAppbarLayout.animate().translationY(0f)
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationStart(animation: Animator?) {
-                        super.onAnimationStart(animation)
-                        binding.postSlideAppbarLayout.visibility = View.VISIBLE
-                    }
-                })
-        }
-    }
-
 
     private fun ViewPager2.bind(position: Int) {
         adapter = postSlideAdapter
