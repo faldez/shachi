@@ -73,13 +73,6 @@ class BrowseFragment : Fragment() {
 
         prepareAppBar()
 
-        arguments?.getString("title")?.let {
-            binding.searchPostTopAppBar.title = it
-            val supportActionBar = (activity as MainActivity).supportActionBar
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        }
-
-
         val server = arguments?.get("server") as ServerView?
         val tags = arguments?.get("tags") as String? ?: ""
 
@@ -170,9 +163,27 @@ class BrowseFragment : Fragment() {
 
 
     private fun prepareAppBar() {
+        val savedSearchTitle = arguments?.getString("title")
+
         (activity as MainActivity).setSupportActionBar(binding.searchPostTopAppBar)
         binding.appBarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+
+        if (savedSearchTitle != null) {
+            binding.searchPostTopAppBar.title = savedSearchTitle
+            (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        } else {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                    viewModel.state.collectLatest { state ->
+                        state.server?.title?.let {
+                            binding.searchPostTopAppBar.title = SpannableStringBuilder(it)
+                        }
+                    }
+                }
+            }
+
+        }
     }
 
     private fun BrowseFragmentBinding.bindState(
@@ -204,16 +215,6 @@ class BrowseFragment : Fragment() {
             layoutManager
         } else {
             GridLayoutManager(requireContext(), gridCount)
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.state.collectLatest { state ->
-                    state.server?.title?.let {
-                        searchPostTopAppBar.title = SpannableStringBuilder(it)
-                    }
-                }
-            }
         }
 
         bindList(
