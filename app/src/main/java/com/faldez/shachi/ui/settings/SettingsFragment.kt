@@ -12,11 +12,6 @@ import com.faldez.shachi.databinding.SettingsFragmentBinding
 import com.google.android.material.shape.MaterialShapeDrawable
 
 class SettingsFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = SettingsFragment()
-    }
-
     private lateinit var binding: SettingsFragmentBinding
     private lateinit var viewModel: SettingsViewModel
 
@@ -27,8 +22,12 @@ class SettingsFragment : Fragment() {
         binding = SettingsFragmentBinding.inflate(inflater, container, false)
         (activity as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.settingsFrameLayout, RootSettingsFragment()).commit()
-        prepareAppBar()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareAppBar()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -38,11 +37,11 @@ class SettingsFragment : Fragment() {
     }
 
     private fun prepareAppBar() {
-        (activity as MainActivity).setSupportActionBar(binding.settingsTopappbar)
         binding.settingsAppbarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-        val supportActionBar = (activity as MainActivity).supportActionBar
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.settingsTopappbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        binding.settingsTopappbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
     }
 }

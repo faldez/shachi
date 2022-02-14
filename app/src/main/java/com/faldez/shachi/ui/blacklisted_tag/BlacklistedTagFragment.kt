@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.faldez.shachi.MainActivity
+import com.faldez.shachi.R
 import com.faldez.shachi.repository.BlacklistTagRepository
 import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.database.AppDatabase
@@ -45,18 +46,22 @@ class BlacklistedTagFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = BlacklistedTagFragmentBinding.inflate(inflater, container, false)
-        prepareAppBar()
         binding.bind()
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareAppBar()
+    }
+
     private fun prepareAppBar() {
-        (activity as MainActivity).setSupportActionBar(binding.blacklistedTagToolbar)
         binding.blacklistedTagAppbarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-        val supportActionBar = (activity as MainActivity).supportActionBar
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.blacklistedTagToolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        binding.blacklistedTagToolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
     }
 
     private fun BlacklistedTagFragmentBinding.bind() {

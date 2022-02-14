@@ -7,7 +7,10 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ScrollView
 import androidx.core.content.edit
@@ -55,7 +58,6 @@ class SearchFragment : Fragment() {
     }
 
     private lateinit var searchSuggestionAdapter: SearchSuggestionAdapter
-    private lateinit var searchSimpleMenu: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,8 +73,6 @@ class SearchFragment : Fragment() {
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
         binding.searchSimpleTagsInputText.bind()
-        prepareAppBar()
-
         binding.suggestionTagsRecyclerView.bind()
 
         val initialTags: String = requireArguments().get("tags") as String
@@ -89,6 +89,11 @@ class SearchFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareAppBar()
     }
 
     private fun bindSelectedTags(initialTags: String) {
@@ -195,35 +200,39 @@ class SearchFragment : Fragment() {
     }
 
     private fun prepareAppBar() {
-        (activity as MainActivity).setSupportActionBar(binding.searchSimpleTopAppBar)
         binding.searchSimpleAppBarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-        val supportActionBar = (activity as MainActivity).supportActionBar
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.home -> {
-                (activity as MainActivity).onBackPressed()
-                return true
-            }
-            R.id.clear_button -> {
-                binding.searchSimpleTagsInputText.text?.clear()
-                return true
-            }
-            R.id.apply_button -> {
-                applySearch()
-                return true
-            }
-            R.id.search_mode_button -> {
-                viewModel.setMode(!viewModel.state.value.isAdvancedMode)
-                return true
+        binding.searchSimpleTopAppBar.menu.clear()
+        binding.searchSimpleTopAppBar.inflateMenu(R.menu.search_menu)
+        binding.searchSimpleTopAppBar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        binding.searchSimpleTopAppBar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
+        binding.searchSimpleTopAppBar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.clear_button -> {
+                    binding.searchSimpleTagsInputText.text?.clear()
+                    true
+                }
+                R.id.apply_button -> {
+                    applySearch()
+                    true
+                }
+                R.id.search_mode_button -> {
+                    viewModel.setMode(!viewModel.state.value.isAdvancedMode)
+                    true
+                }
+                else -> false
             }
         }
-
-        return super.onOptionsItemSelected(item)
+        lifecycleScope.launch {
+            viewModel.state.collect { state ->
+                binding.searchSimpleTopAppBar.menu.findItem(R.id.search_mode_button).isChecked =
+                    state.isAdvancedMode
+                saveSearchMode(mode = state.isAdvancedMode)
+            }
+        }
     }
 
     private fun applySearch() {
@@ -240,22 +249,6 @@ class SearchFragment : Fragment() {
         }
         findNavController().previousBackStackEntry?.savedStateHandle?.set("tags", Pair(null, value))
         (activity as MainActivity).onBackPressed()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.search_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-        searchSimpleMenu = menu
-        searchSimpleMenu.bind()
-    }
-
-    private fun Menu.bind() {
-        lifecycleScope.launch {
-            viewModel.state.collect { state ->
-                getItem(2).isChecked = state.isAdvancedMode
-                saveSearchMode(mode = state.isAdvancedMode)
-            }
-        }
     }
 
     private fun getSearchMode(): Boolean = sharedPreferences.getBoolean("search_mode", false)
@@ -313,13 +306,15 @@ class SearchFragment : Fragment() {
                         binding.selectedTagsLayout.show()
                         binding.suggestionTagLayout.hide()
                         binding.loadingIndicator.isVisible = false
-                        searchSimpleMenu.getItem(0).isVisible = false
+                        binding.searchSimpleTopAppBar.menu.findItem(R.id.clear_button).isVisible =
+                            false
                     } else {
                         viewModel.accept(UiAction.SearchTag(text.toString()))
                         binding.selectedTagsLayout.hide()
                         binding.suggestionTagLayout.show()
                         binding.loadingIndicator.isVisible = true
-                        searchSimpleMenu.getItem(0).isVisible = true
+                        binding.searchSimpleTopAppBar.menu.findItem(R.id.clear_button).isVisible =
+                            true
                     }
                 }
             }

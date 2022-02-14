@@ -3,7 +3,9 @@ package com.faldez.shachi.ui.server_edit
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -29,18 +31,32 @@ class ServerEditFragment : Fragment() {
     private lateinit var viewModel: ServerEditViewModel
     private lateinit var binding: ServerEditFragmentBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     private fun prepareAppBar() {
-        (activity as MainActivity).setSupportActionBar(binding.serverNewTopappbar)
         binding.serverNewAppbarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-        val supportActionBar = (activity as MainActivity).supportActionBar
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
+        binding.serverNewTopappbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        binding.serverNewTopappbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
+        binding.serverNewTopappbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.save_server_edit_button -> {
+                    Log.d("ServerEditFragment", "Save")
+                    val error = viewModel.validate()
+                    if (error != null) {
+                        true
+                    }
+
+                    binding.testProgressBar.isVisible = true
+
+                    viewModel.server.value?.let {
+                        viewModel.test(it)
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     override fun onCreateView(
@@ -65,8 +81,6 @@ class ServerEditFragment : Fragment() {
             val position = ServerType.values().indexOf(it.type)
             binding.serverTypeSpinner.setSelection(position)
         }
-
-        prepareAppBar()
 
         ArrayAdapter(requireContext(),
             R.layout.support_simple_spinner_dropdown_item,
@@ -104,8 +118,9 @@ class ServerEditFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareAppBar()
 
         lifecycleScope.launch {
             viewModel.state.collect {
@@ -132,35 +147,5 @@ class ServerEditFragment : Fragment() {
                 viewModel.state.value = State.Idle
             }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.server_edit_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.home -> {
-                (activity as MainActivity).onBackPressed()
-                return true
-            }
-            R.id.save_server_edit_button -> {
-                Log.d("ServerEditFragment", "Save")
-                val error = viewModel.validate()
-                if (error != null) {
-                    return true
-                }
-
-                binding.testProgressBar.isVisible = true
-
-                viewModel.server.value?.let {
-                    viewModel.test(it)
-                }
-
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

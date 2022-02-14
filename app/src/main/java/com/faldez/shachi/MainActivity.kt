@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(),
             supportFragmentManager.findFragmentById(R.id.navFragment) as NavHostFragment
         navController = navFragment.navController
         binding.bottomNavigationView?.setupWithNavController(navController)
-        binding.sideNavigationRail?.setupWithNavController(navController)
+//        binding.sideNavigationRail?.setupWithNavController(navController)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -120,12 +120,12 @@ class MainActivity : AppCompatActivity(),
 
     fun showNavigation() {
         binding.bottomNavigationView?.show()
-        binding.sideNavigationRail?.show()
+//        binding.sideNavigationRail?.show()
     }
 
     fun hideNavigation() {
         binding.bottomNavigationView?.hide()
-        binding.sideNavigationRail?.hide()
+//        binding.sideNavigationRail?.hide()
     }
 
     private fun BottomNavigationView.hide() {

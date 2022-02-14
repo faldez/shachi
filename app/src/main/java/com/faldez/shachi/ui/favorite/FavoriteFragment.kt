@@ -17,7 +17,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
@@ -43,15 +42,18 @@ class FavoriteFragment : Fragment() {
     ): View? {
         binding = FavoriteFragmentBinding.inflate(inflater, container, false)
 
-        prepareAppBar()
 
         binding.bind()
 
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareAppBar()
+    }
+
     private fun prepareAppBar() {
-        (activity as MainActivity).setSupportActionBar(binding.favoriteTopappbar)
         binding.favoriteAppbarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
     }

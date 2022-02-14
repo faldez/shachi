@@ -5,7 +5,9 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -58,12 +60,6 @@ class BrowseFragment : Fragment() {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -110,68 +106,69 @@ class BrowseFragment : Fragment() {
                     viewModel.accept(UiAction.Search(tags))
                 }
             }
-    }
+        binding.searchPostTopAppBar.menu.clear()
+        binding.searchPostTopAppBar.inflateMenu(R.menu.browse_menu)
+        binding.searchPostTopAppBar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.search_button -> {
+                    val bundle = bundleOf("server" to viewModel.state.value.server,
+                        "tags" to viewModel.state.value.tags)
+                    findNavController().navigate(R.id.action_global_to_search, bundle)
+                    true
+                }
+                R.id.save_search_button -> {
+                    if (viewModel.state.value.tags.isEmpty()) {
+                        Toast.makeText(requireContext(),
+                            "Can't save search if selected tags is empty",
+                            Toast.LENGTH_LONG).show()
+                    } else {
+                        val dialog =
+                            MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
+                                .setTitle(resources.getString(R.string.title))
+                                .setMessage(resources.getString(R.string.saved_search_description_title_text))
+                                .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
+                                    val title =
+                                        (dialog as Dialog).findViewById<EditText>(R.id.savedSearchTitleInput).text?.toString()
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.browse_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.search_button -> {
-            val bundle = bundleOf("server" to viewModel.state.value.server,
-                "tags" to viewModel.state.value.tags)
-            findNavController().navigate(R.id.action_global_to_search, bundle)
-            true
-        }
-        R.id.save_search_button -> {
-            if (viewModel.state.value.tags.isEmpty()) {
-                Toast.makeText(requireContext(),
-                    "Can't save search if selected tags is empty",
-                    Toast.LENGTH_LONG).show()
-            } else {
-                val dialog =
-                    MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
-                        .setTitle(resources.getString(R.string.title))
-                        .setMessage(resources.getString(R.string.saved_search_description_title_text))
-                        .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
-                            val title =
-                                (dialog as Dialog).findViewById<EditText>(R.id.savedSearchTitleInput).text?.toString()
-
-                            if (viewModel.state.value.tags.isNotEmpty()) {
-                                viewModel.saveSearch(title)
-                                Toast.makeText(requireContext(), "Saved", Toast.LENGTH_LONG).show()
-                            }
-                        }.show()
-                dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
-                    SpannableStringBuilder(viewModel.state.value.tags.split(" ").first())
+                                    if (viewModel.state.value.tags.isNotEmpty()) {
+                                        viewModel.saveSearch(title)
+                                        Toast.makeText(requireContext(), "Saved", Toast.LENGTH_LONG)
+                                            .show()
+                                    }
+                                }.show()
+                        dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
+                            SpannableStringBuilder(viewModel.state.value.tags.split(" ").first())
+                    }
+                    true
+                }
+                R.id.select_server_button -> {
+                    findNavController().navigate(R.id.action_global_to_serverdialog)
+                    true
+                }
+                R.id.search_history_button -> {
+                    val searchHistories = viewModel.searchHistoryFlow.value
+                    val bundle = bundleOf("search_histories" to searchHistories)
+                    findNavController().navigate(R.id.action_global_to_searchhistory, bundle)
+                    true
+                }
+                else -> super.onOptionsItemSelected(item)
             }
-            true
-        }
-        R.id.select_server_button -> {
-            findNavController().navigate(R.id.action_global_to_serverdialog)
-            true
-        }
-        R.id.search_history_button -> {
-            val searchHistories = viewModel.searchHistoryFlow.value
-            val bundle = bundleOf("search_histories" to searchHistories)
-            findNavController().navigate(R.id.action_global_to_searchhistory, bundle)
-            true
-        }
-        else -> super.onOptionsItemSelected(item)
-    }
 
+        }
+    }
 
     private fun prepareAppBar() {
         val savedSearchTitle = arguments?.getString("title")
 
-        (activity as MainActivity).setSupportActionBar(binding.searchPostTopAppBar)
         binding.appBarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
 
         if (savedSearchTitle != null) {
+            binding.searchPostTopAppBar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+            binding.searchPostTopAppBar.setNavigationOnClickListener {
+                requireActivity().onBackPressed()
+            }
             binding.searchPostTopAppBar.title = savedSearchTitle
-            (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         } else {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

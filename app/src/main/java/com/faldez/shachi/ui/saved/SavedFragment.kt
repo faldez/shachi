@@ -14,7 +14,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SavedFragmentBinding
@@ -36,22 +35,12 @@ class SavedFragment : Fragment() {
     private lateinit var binding: SavedFragmentBinding
     private lateinit var adapter: SavedSearchAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         Log.d("SavedFragment", "onCreateView")
         binding = SavedFragmentBinding.inflate(inflater, container, false)
-
-        (activity as MainActivity).setSupportActionBar(binding.savedTopappbar)
-
-        binding.savedAppbarLayout.statusBarForeground =
-            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
 
         adapter = SavedSearchAdapter(
             onBrowse = {
@@ -97,20 +86,10 @@ class SavedFragment : Fragment() {
         return binding.root
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        inflater.inflate(R.menu.saved_search_menu, menu)
-//        super.onCreateOptionsMenu(menu, inflater)
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        Log.d("SavedFragment", "Search New")
-//        when (item.itemId) {
-//            R.id.more_button -> {
-//                findNavController().navigate(R.id.action_saved_to_more)
-//                return true
-//            }
-//        }
-//
-//        return super.onOptionsItemSelected(item)
-//    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.savedAppbarLayout.statusBarForeground =
+            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+    }
 }

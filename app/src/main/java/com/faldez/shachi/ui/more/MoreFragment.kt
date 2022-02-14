@@ -2,11 +2,9 @@ package com.faldez.shachi.ui.more
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.MoreFragmentBinding
@@ -20,11 +18,6 @@ class MoreFragment : Fragment() {
 
     private lateinit var binding: MoreFragmentBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -33,14 +26,13 @@ class MoreFragment : Fragment() {
 
         (activity as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.moreFrameLayout, MoreSettingsFragment()).commit()
-        prepareAppBar()
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareAppBar()
     }
-
 
 //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 //        when (item.itemId) {

@@ -13,14 +13,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.ServersFragmentBinding
 import com.faldez.shachi.model.Server
+import com.faldez.shachi.repository.ServerRepository
 import com.google.android.material.shape.MaterialShapeDrawable
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ServersFragment : Fragment() {
@@ -32,11 +30,6 @@ class ServersFragment : Fragment() {
     private lateinit var binding: ServersFragmentBinding
     private lateinit var adapter: ServerListAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -45,8 +38,8 @@ class ServersFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         prepareAppBar()
 
@@ -101,31 +94,11 @@ class ServersFragment : Fragment() {
     }
 
     private fun prepareAppBar() {
-        (activity as MainActivity).setSupportActionBar(binding.serversTopappbar)
         binding.serversAppbarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-        val supportActionBar = (activity as MainActivity).supportActionBar
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.serversTopappbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        binding.serversTopappbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        inflater.inflate(R.menu.servers_menu, menu)
-//        super.onCreateOptionsMenu(menu, inflater)
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.home -> {
-//                (activity as MainActivity).onBackPressed()
-//                return true
-//            }
-//            R.id.new_server_button -> {
-//                findNavController().navigate(R.id.action_servers_to_serveredit)
-//                return true
-//            }
-//        }
-//
-//        return super.onOptionsItemSelected(item)
-//    }
 }

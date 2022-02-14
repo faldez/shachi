@@ -13,17 +13,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.mikepenz.aboutlibraries.LibsBuilder
 
 class OssFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = OssFragment()
-    }
-
     private lateinit var binding: OssFragmentBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        setHasOptionsMenu(true)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,30 +28,20 @@ class OssFragment : Fragment() {
 
         (activity as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.moreFrameLayout, fragment).commit()
-        prepareAppBar()
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.home -> {
-                (activity as MainActivity).onBackPressed()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareAppBar()
     }
 
     private fun prepareAppBar() {
-        (activity as MainActivity).setSupportActionBar(binding.moreTopappbar)
         binding.moreAppbarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-        val supportActionBar = (activity as MainActivity).supportActionBar
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
+        binding.moreTopappbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        binding.moreTopappbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
     }
 }
