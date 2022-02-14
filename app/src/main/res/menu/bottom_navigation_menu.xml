@@ -6,17 +6,17 @@
         android:icon="@drawable/home"
         android:title="@string/home" />
     <item
-        android:id="@+id/browseFragment"
+        android:id="@+id/browse"
         android:enabled="true"
         android:icon="@drawable/browse"
         android:title="@string/browse" />
     <item
-        android:id="@+id/favoriteFragment"
+        android:id="@+id/favorite"
         android:enabled="true"
         android:icon="@drawable/favorite"
         android:title="@string/favorite" />
     <item
-        android:id="@+id/moreFragment"
+        android:id="@+id/more"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_more_horiz_24"
         android:title="@string/more" />

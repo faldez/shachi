@@ -174,7 +174,7 @@ class BrowseFragment : Fragment() {
             (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         } else {
             viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.state.collectLatest { state ->
                         state.server?.title?.let {
                             binding.searchPostTopAppBar.title = SpannableStringBuilder(it)
@@ -200,7 +200,14 @@ class BrowseFragment : Fragment() {
             quality = quality,
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
-                findNavController().navigate(R.id.action_global_to_postslide, bundle)
+                val id = when (findNavController().currentDestination?.id) {
+                    R.id.browseSavedFragment -> R.id.action_browsesaved_to_postslide
+                    R.id.browseFragment -> R.id.action_browse_to_postslide
+                    else -> null
+                }
+                id?.let {
+                    findNavController().navigate(it, bundle)
+                }
             }
         )
 
@@ -249,7 +256,7 @@ class BrowseFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 pagingData.collect(postsAdapter::submitData)
             }
         }
@@ -266,17 +273,18 @@ class BrowseFragment : Fragment() {
         )
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 shouldScrollToTop.collect { shouldScroll ->
                     val isNotEmpty = postsAdapter.itemCount != 0
-                    Log.d(TAG, "shouldScroll=$shouldScroll postsAdapter.itemCount=${postsAdapter.itemCount }")
+                    Log.d(TAG,
+                        "shouldScroll=$shouldScroll postsAdapter.itemCount=${postsAdapter.itemCount}")
                     if (shouldScroll && isNotEmpty) postsRecyclerView.scrollToPosition(0)
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 postsAdapter.loadStateFlow.collectLatest { loadState ->
                     val server = viewModel.state.value.server
                     Log.d("BrowseFragment/postsAdapter.loadStateFlow.collectLatest", "$loadState")

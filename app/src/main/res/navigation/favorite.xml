@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/favorite"
+    app:startDestination="@id/favoriteFragment">
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="com.faldez.shachi.ui.favorite.FavoriteFragment"
+        android:label="favorite_fragment"
+        tools:layout="@layout/favorite_fragment">
+
+        <action
+            android:id="@+id/action_favorite_to_favoritepostslide"
+            app:destination="@id/favoritePostSlideFragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_down" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/favoritePostSlideFragment"
+        android:name="com.faldez.shachi.ui.post_slide.FavoritePostSlideFragment"
+        android:label="post_slide_fragment"
+        tools:layout="@layout/post_slide_fragment" />
+</navigation>
