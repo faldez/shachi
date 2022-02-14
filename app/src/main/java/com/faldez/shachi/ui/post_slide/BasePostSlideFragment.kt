@@ -3,6 +3,7 @@ package com.faldez.shachi.ui.post_slide
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -32,6 +33,10 @@ abstract class BasePostSlideFragment : Fragment() {
     private var topbarMenu: Menu? = null
 
     private var isAppBarHide = false
+
+    private val preferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,7 +84,10 @@ abstract class BasePostSlideFragment : Fragment() {
     }
 
     private fun prepareViewPager(position: Int) {
+        val quality = preferences.getString("detail_quality", null) ?: "sample"
+
         postSlideAdapter = PostSlideAdapter(
+            quality,
             onTap = {
                 isAppBarHide = if (isAppBarHide) {
                     showAppbar()

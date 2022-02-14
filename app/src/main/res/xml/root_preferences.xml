@@ -30,10 +30,18 @@
 
         <ListPreference
             app:defaultValue="preview"
-            app:entries="@array/preview_quality_entries"
-            app:entryValues="@array/preview_quality_values"
+            app:entries="@array/image_quality_entries"
+            app:entryValues="@array/image_quality_values"
             app:key="preview_quality"
             app:title="@string/preview_quality"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="sample"
+            app:entries="@array/image_quality_entries"
+            app:entryValues="@array/image_quality_values"
+            app:key="detail_quality"
+            app:title="@string/detail_quality"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
