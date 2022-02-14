@@ -11,11 +11,6 @@ import com.faldez.shachi.databinding.MoreFragmentBinding
 import com.google.android.material.shape.MaterialShapeDrawable
 
 class MoreFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = MoreFragment()
-    }
-
     private lateinit var binding: MoreFragmentBinding
 
     override fun onCreateView(
@@ -34,19 +29,9 @@ class MoreFragment : Fragment() {
         prepareAppBar()
     }
 
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.home -> {
-//                (activity as MainActivity).onBackPressed()
-//                return true
-//            }
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
-
     private fun prepareAppBar() {
-        (activity as MainActivity).setSupportActionBar(binding.moreTopappbar)
         binding.moreAppbarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+        binding.moreTopappbar.menu.clear()
     }
 }

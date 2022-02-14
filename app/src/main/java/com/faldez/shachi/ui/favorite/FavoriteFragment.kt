@@ -56,6 +56,7 @@ class FavoriteFragment : Fragment() {
     private fun prepareAppBar() {
         binding.favoriteAppbarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+        binding.favoriteTopappbar.menu.clear()
     }
 
     private fun FavoriteFragmentBinding.bind(

@@ -91,5 +91,6 @@ class SavedFragment : Fragment() {
 
         binding.savedAppbarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+        binding.savedTopappbar.menu.clear()
     }
 }
