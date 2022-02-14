@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
@@ -23,6 +22,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.faldez.shachi.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigationrail.NavigationRailView
 import com.google.modernstorage.permissions.RequestAccess
 import com.google.modernstorage.permissions.StoragePermissions
 
@@ -37,13 +37,10 @@ class MainActivity : AppCompatActivity(),
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val navFragment =
-            supportFragmentManager.findFragmentById(R.id.navFragment) as NavHostFragment
-        navController = navFragment.navController
-
-        binding.bottomNavigationView.setupWithNavController(navController)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        setupNavController()
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val isShow = when (destination.id) {
@@ -55,10 +52,10 @@ class MainActivity : AppCompatActivity(),
                 else -> false
             }
             if (isShow) {
-                showBottomNavigation()
+                showNavigation()
 
             } else {
-                hideBottomNavigation()
+                hideNavigation()
             }
         }
         setTheme()
@@ -70,6 +67,14 @@ class MainActivity : AppCompatActivity(),
         }
 
         createNotificationChannel()
+    }
+
+    private fun setupNavController() {
+        val navFragment =
+            supportFragmentManager.findFragmentById(R.id.navFragment) as NavHostFragment
+        navController = navFragment.navController
+        binding.bottomNavigationView?.setupWithNavController(navController)
+        binding.sideNavigationRail?.setupWithNavController(navController)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -113,18 +118,20 @@ class MainActivity : AppCompatActivity(),
         return false
     }
 
-    fun showBottomNavigation() {
-        binding.bottomNavigationView.show()
+    fun showNavigation() {
+        binding.bottomNavigationView?.show()
+        binding.sideNavigationRail?.show()
     }
 
-    fun hideBottomNavigation() {
-        binding.bottomNavigationView.hide()
+    fun hideNavigation() {
+        binding.bottomNavigationView?.hide()
+        binding.sideNavigationRail?.hide()
     }
 
     private fun BottomNavigationView.hide() {
         if (!isVisible) return
         animate()
-            .translationY(binding.bottomNavigationView.height.toFloat())
+            .translationY(height.toFloat())
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator?) {
                     super.onAnimationStart(animation)
@@ -143,6 +150,10 @@ class MainActivity : AppCompatActivity(),
                     visibility = View.GONE
                 }
             })
+    }
+
+    private fun NavigationRailView.hide() {
+        isVisible = false
     }
 
     private fun BottomNavigationView.show() {
@@ -166,6 +177,10 @@ class MainActivity : AppCompatActivity(),
                     constraintSet.applyTo(constraint)
                 }
             })
+    }
+
+    private fun NavigationRailView.show() {
+        isVisible = true
     }
 
     private fun checkPermission(): List<String> {
