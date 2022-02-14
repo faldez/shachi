@@ -206,6 +206,16 @@ class BrowseFragment : Fragment() {
             GridLayoutManager(requireContext(), gridCount)
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.state.collectLatest { state ->
+                    state.server?.title?.let {
+                        searchPostTopAppBar.title = SpannableStringBuilder(it)
+                    }
+                }
+            }
+        }
+
         bindList(
             postsAdapter = postAdapter,
             uiState = uiState,
