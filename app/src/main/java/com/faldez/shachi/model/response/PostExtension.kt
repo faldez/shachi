@@ -1,6 +1,5 @@
 package com.faldez.shachi.model.response
 
-import android.util.Log
 import androidx.core.os.LocaleListCompat
 import com.faldez.shachi.model.Post
 import java.time.format.DateTimeFormatter
@@ -42,8 +41,9 @@ fun List<GelbooruPost>.mapToPost(serverId: Int): List<Post> {
 
 @JvmName("danbooruMapToPost")
 fun List<DanbooruPost>.mapToPost(serverId: Int): List<Post> {
-    return this.map { post ->
-        Post(
+    return this.mapNotNull { post ->
+        if (post.id == null) null
+        else Post(
             height = post.imageHeight,
             width = post.imageWidth,
             score = post.score,
