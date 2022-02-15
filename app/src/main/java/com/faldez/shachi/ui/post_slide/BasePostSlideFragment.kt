@@ -31,12 +31,10 @@ import kotlinx.coroutines.launch
 abstract class BasePostSlideFragment : Fragment() {
     protected lateinit var postSlideAdapter: PostSlideAdapter
     protected lateinit var binding: PostSlideFragmentBinding
-    private var isAppBarHide = false
 
     private val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

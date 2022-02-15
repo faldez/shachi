@@ -33,7 +33,7 @@
     </fragment>
     <fragment
         android:id="@+id/savedPostSlideFragment"
-        android:name="com.faldez.shachi.ui.post_slide.PostSlideFragment"
+        android:name="com.faldez.shachi.ui.post_slide.SavedPostSlideFragment"
         android:label="post_slide_fragment"
         tools:layout="@layout/post_slide_fragment" />
 </navigation>

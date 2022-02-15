@@ -8,12 +8,12 @@ import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.mapToTags
 import com.faldez.shachi.ui.browse.BrowseViewModel
 
-class PostSlideFragment : BasePostSlideFragment() {
+class SavedPostSlideFragment : BasePostSlideFragment() {
     companion object {
         const val TAG = "PostSlideFragment"
     }
 
-    private val viewModel: BrowseViewModel by navGraphViewModels(R.id.browse)
+    private val viewModel: BrowseViewModel by navGraphViewModels(R.id.saved)
 
     override suspend fun collectPagingData() {
         viewModel.pagingDataFlow.collect {
