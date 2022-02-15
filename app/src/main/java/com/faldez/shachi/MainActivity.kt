@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity(),
     lateinit var navController: NavController
     lateinit var sharedPreferences: SharedPreferences
     lateinit var binding: ActivityMainBinding
+    var isShowNavigation: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,23 +119,25 @@ class MainActivity : AppCompatActivity(),
         return false
     }
 
-    fun showNavigation() {
-        binding.bottomNavigationView?.show()
+    fun showNavigation(callback: (() -> Unit)? = null) {
+        binding.bottomNavigationView?.show(callback)
 //        binding.sideNavigationRail?.show()
     }
 
-    fun hideNavigation() {
-        binding.bottomNavigationView?.hide()
+    fun hideNavigation(callback: (() -> Unit)? = null) {
+        binding.bottomNavigationView?.hide(callback)
 //        binding.sideNavigationRail?.hide()
     }
 
-    private fun BottomNavigationView.hide() {
-        if (!isVisible) return
+    private fun BottomNavigationView.hide(callback: (() -> Unit)? = null) {
+        if (!isShowNavigation) return
+        isShowNavigation = false
         animate()
             .translationY(height.toFloat())
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator?) {
                     super.onAnimationStart(animation)
+                    if (callback != null) callback()
                     val constraint = binding.mainLayout
                     val constraintSet = ConstraintSet()
                     constraintSet.clone(binding.mainLayout)
@@ -156,8 +159,9 @@ class MainActivity : AppCompatActivity(),
         isVisible = false
     }
 
-    private fun BottomNavigationView.show() {
-        if (isVisible) return
+    private fun BottomNavigationView.show(callback: (() -> Unit)? = null) {
+        if (isShowNavigation) return
+        isShowNavigation = true
         animate().translationY(0f)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator?) {
@@ -175,6 +179,7 @@ class MainActivity : AppCompatActivity(),
                         R.id.bottomNavigationView,
                         ConstraintSet.TOP)
                     constraintSet.applyTo(constraint)
+                    if (callback != null) callback()
                 }
             })
     }

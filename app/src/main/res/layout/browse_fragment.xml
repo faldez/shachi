@@ -36,6 +36,16 @@
             tools:listitem="@layout/post_card_item" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/searchFloatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/search"
+        app:icon="@drawable/ic_baseline_search_24"
+        android:text="@string/search" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/retryButton"
         style="@style/Widget.Material3.Button.TonalButton"

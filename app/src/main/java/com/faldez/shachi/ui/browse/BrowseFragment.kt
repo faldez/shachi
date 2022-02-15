@@ -67,8 +67,6 @@ class BrowseFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = BrowseFragmentBinding.inflate(inflater, container, false)
 
-        prepareAppBar()
-
         val server = arguments?.get("server") as ServerView?
         val tags = arguments?.get("tags") as String? ?: ""
 
@@ -106,16 +104,25 @@ class BrowseFragment : Fragment() {
                     viewModel.accept(UiAction.Search(tags))
                 }
             }
+        binding.searchFloatingButton.setOnClickListener {
+            val bundle = bundleOf("server" to viewModel.state.value.server,
+                "tags" to viewModel.state.value.tags)
+            findNavController().navigate(R.id.action_global_to_search, bundle)
+        }
+        prepareAppBar()
+    }
+
+    private fun prepareAppBar() {
+        val savedSearchTitle = arguments?.getString("title")
+
+        binding.appBarLayout.statusBarForeground =
+            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+
+
         binding.searchPostTopAppBar.menu.clear()
         binding.searchPostTopAppBar.inflateMenu(R.menu.browse_menu)
         binding.searchPostTopAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.search_button -> {
-                    val bundle = bundleOf("server" to viewModel.state.value.server,
-                        "tags" to viewModel.state.value.tags)
-                    findNavController().navigate(R.id.action_global_to_search, bundle)
-                    true
-                }
                 R.id.save_search_button -> {
                     if (viewModel.state.value.tags.isEmpty()) {
                         Toast.makeText(requireContext(),
@@ -153,15 +160,7 @@ class BrowseFragment : Fragment() {
                 }
                 else -> super.onOptionsItemSelected(item)
             }
-
         }
-    }
-
-    private fun prepareAppBar() {
-        val savedSearchTitle = arguments?.getString("title")
-
-        binding.appBarLayout.statusBarForeground =
-            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
 
         if (savedSearchTitle != null) {
             binding.searchPostTopAppBar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
@@ -179,7 +178,6 @@ class BrowseFragment : Fragment() {
                     }
                 }
             }
-
         }
     }
 
@@ -241,6 +239,11 @@ class BrowseFragment : Fragment() {
                 if (dy != 0) {
                     onScrollChanged(UiAction.Scroll(uiState.value.server?.url,
                         currentTags = uiState.value.tags))
+                }
+                if (dy < 0) {
+                    (activity as MainActivity).showNavigation(callback = { binding.searchFloatingButton.show() })
+                } else if (dy > 0) {
+                    (activity as MainActivity).hideNavigation(callback = { binding.searchFloatingButton.hide() })
                 }
             }
         })

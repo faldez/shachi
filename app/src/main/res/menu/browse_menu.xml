@@ -2,12 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/search_button"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_search_24"
-        android:title="@string/search"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/save_search_button"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_save_24"
