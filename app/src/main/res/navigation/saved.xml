@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/browseSavedFragment"
-        android:name="com.faldez.shachi.ui.browse.BrowseFragment"
+        android:name="com.faldez.shachi.ui.browse.SavedBrowseFragment"
         android:label="browse_fragment"
         tools:layout="@layout/browse_fragment">
         <action

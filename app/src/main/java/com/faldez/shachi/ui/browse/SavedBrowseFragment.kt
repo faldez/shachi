@@ -6,8 +6,8 @@ import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.repository.*
 import com.faldez.shachi.service.BooruService
 
-class BrowseFragment : BaseBrowseFragment() {
-    override val viewModel: BrowseViewModel by navGraphViewModels(R.id.browse) {
+class SavedBrowseFragment : BaseBrowseFragment() {
+    override val viewModel: BrowseViewModel by navGraphViewModels(R.id.saved) {
         val db = AppDatabase.build(requireContext())
         val favoriteRepository = FavoriteRepository(db)
         BrowseViewModelFactory(
