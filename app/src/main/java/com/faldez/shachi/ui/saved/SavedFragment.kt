@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SavedFragmentBinding
+import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.repository.PostRepository
 import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.service.BooruService
@@ -28,9 +29,10 @@ import kotlinx.coroutines.launch
 
 class SavedFragment : Fragment() {
     private val viewModel: SavedViewModel by viewModels {
-        SavedViewModelFactory(SavedSearchRepository(AppDatabase.build(requireContext())),
-            PostRepository(
-                BooruService()))
+        val db = AppDatabase.build(requireContext())
+        val service = BooruService()
+        SavedViewModelFactory(SavedSearchRepository(db),
+            PostRepository(service), FavoriteRepository(db))
     }
     private lateinit var binding: SavedFragmentBinding
     private lateinit var adapter: SavedSearchAdapter

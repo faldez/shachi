@@ -9,6 +9,7 @@ import androidx.paging.map
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.SavedSearch
 import com.faldez.shachi.model.SavedSearchServer
+import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.repository.PostRepository
 import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.service.Action
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 class SavedViewModel(
     private val savedSearchRepository: SavedSearchRepository,
     private val postRepository: PostRepository,
+    private val favoriteRepository: FavoriteRepository,
 ) : ViewModel() {
     val state: Flow<PagingData<SavedSearchPost>>
     val accept: (UiAction) -> Unit
@@ -36,8 +38,12 @@ class SavedViewModel(
                     val posts =
                         postRepository.getSearchPostsResultStream(Action.SearchPost(server = savedSearch.server,
                             tags = savedSearch.savedSearch.tags)).map { pagingData ->
-                            pagingData.map {
-                                SavedSearchPost(post = it)
+                            pagingData.map { post ->
+                                val postId =
+                                    favoriteRepository.queryByServerUrlAndPostId(post.serverId,
+                                        post.postId)
+                                post.favorite = postId != null
+                                SavedSearchPost(post = post)
                             }
                         }.cachedIn(viewModelScope)
                     SavedSearchPost(savedSearch = savedSearch, posts = posts)

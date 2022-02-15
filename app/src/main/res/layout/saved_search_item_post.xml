@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Widget.Material3.CardView.Filled"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
+    android:checkable="true"
+    android:clickable="true"
+    app:checkedIcon="@drawable/ic_baseline_favorite_24"
+    app:checkedIconGravity="BOTTOM_END"
     android:layout_marginEnd="8dp">
 
     <ImageView

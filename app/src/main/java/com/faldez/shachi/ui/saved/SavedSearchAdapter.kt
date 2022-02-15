@@ -3,6 +3,7 @@ package com.faldez.shachi.ui.saved
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.text.SpannableStringBuilder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -147,6 +148,7 @@ class SavedSearchItemViewHolder(
 class SavedSearchItemPostViewHolder(val binding: SavedSearchItemPostBinding) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(item: Post) {
+        Log.d("SavedSearchItemPostViewHolder/bind", "${item.postId} ${item.favorite}")
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val imageView = binding.previewImage
         val previewWidth = item.previewWidth ?: 250
@@ -159,6 +161,7 @@ class SavedSearchItemPostViewHolder(val binding: SavedSearchItemPostBinding) :
                     previewHeight,
                     Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
             .into(imageView)
+        binding.root.isChecked = item.favorite
     }
 }
 
