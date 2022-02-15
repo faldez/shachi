@@ -17,7 +17,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.preference.PreferenceManager
@@ -26,12 +25,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerView
-import com.faldez.shachi.repository.*
-import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.*
@@ -179,10 +175,14 @@ abstract class BaseBrowseFragment : Fragment() {
         val gridCount = preferences.getString("grid_column", null)?.toInt() ?: 3
         val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
         val quality = preferences.getString("preview_quality", null) ?: "preview"
+        val hideQuestionable = preferences.getBoolean("hide_questionable_content", false)
+        val hideExplicit = preferences.getBoolean("hide_explicit_content", false)
 
         val postAdapter = BrowseAdapter(
             gridMode = gridMode,
             quality = quality,
+            hideQuestionable = hideQuestionable,
+            hideExplicit = hideExplicit,
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 val id = when (findNavController().currentDestination?.id) {

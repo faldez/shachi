@@ -9,6 +9,7 @@ import com.faldez.shachi.model.TagDetail
 import com.faldez.shachi.model.response.mapToTagDetail
 import com.faldez.shachi.model.response.mapToTagDetails
 import com.faldez.shachi.model.response.mapToTags
+import com.faldez.shachi.model.response.parseTag
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
 import kotlinx.coroutines.delay
@@ -168,7 +169,7 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
                             summary.trim().split("`").let { split ->
                                 val type = split[0].toInt()
                                 split.subList(1, split.size).mapNotNull { tag ->
-                                    if (tag.isNotEmpty()) Tag(name = tag, type = type)
+                                    if (tag.isNotEmpty()) Tag(name = tag, type = parseTag(type))
                                     else null
                                 }
                             }

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.SearchSuggestionTagListItemBinding
+import com.faldez.shachi.model.Category
 import com.faldez.shachi.model.TagDetail
 
 class SearchSuggestionAdapter(
@@ -34,12 +35,11 @@ class SearchSuggestionAdapter(
     override fun onBindViewHolder(holder: SearchSugestionViewHolder, position: Int) {
         suggestions[position].let { tag ->
             val textColor  = when (tag.type) {
-                0 -> R.color.tag_general
-                1 -> R.color.tag_artist
-                3 -> R.color.tag_copyright
-                4 -> R.color.tag_character
-                5 -> R.color.tag_metadata
-                else -> null
+                Category.General -> R.color.tag_general
+                Category.Artist -> R.color.tag_artist
+                Category.Copyright -> R.color.tag_copyright
+                Category.Character -> R.color.tag_character
+                Category.Metadata -> R.color.tag_metadata
             }
             textColor?.let {
                 holder.binding.sugestionTagTextView.setTextColor(setTextColor(it))

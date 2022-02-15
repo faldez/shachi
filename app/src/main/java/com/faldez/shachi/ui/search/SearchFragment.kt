@@ -31,6 +31,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SearchFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
+import com.faldez.shachi.model.Category
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.TagDetail
 import com.faldez.shachi.repository.TagRepository
@@ -117,27 +118,26 @@ class SearchFragment : Fragment() {
                         var group = tagDetailsBinding.otherTagsChipGroup
                         var header = tagDetailsBinding.otherTagsHeader
                         when (type) {
-                            0 -> {
+                            Category.General -> {
                                 group = tagDetailsBinding.generalTagsChipGroup
                                 header = tagDetailsBinding.generalTagsHeader
                             }
-                            1 -> {
+                            Category.Artist -> {
                                 group = tagDetailsBinding.artistTagsChipGroup
                                 header = tagDetailsBinding.artistTagsHeader
                             }
-                            3 -> {
+                            Category.Copyright -> {
                                 group = tagDetailsBinding.copyrightTagsChipGroup
                                 header = tagDetailsBinding.copyrightTagsHeader
                             }
-                            4 -> {
+                            Category.Character -> {
                                 group = tagDetailsBinding.characterTagsChipGroup
                                 header = tagDetailsBinding.characterTagsHeader
                             }
-                            5 -> {
+                            Category.Metadata -> {
                                 group = tagDetailsBinding.metadataTagsChipGroup
                                 header = tagDetailsBinding.metadataTagsHeader
                             }
-                            else -> tagDetailsBinding.otherTagsChipGroup
                         }
                         group.removeAllViews()
                         header.isVisible = tags.isNotEmpty()
@@ -363,23 +363,23 @@ class SearchFragment : Fragment() {
         var textColor: Int? = null
         var group = tagDetailsBinding.otherTagsChipGroup
         when (tag.type) {
-            0 -> {
+            Category.General -> {
                 textColor = R.color.tag_general
                 group = tagDetailsBinding.generalTagsChipGroup
             }
-            1 -> {
+            Category.Artist -> {
                 textColor = R.color.tag_artist
                 group = tagDetailsBinding.artistTagsChipGroup
             }
-            3 -> {
+            Category.Copyright -> {
                 textColor = R.color.tag_copyright
                 group = tagDetailsBinding.copyrightTagsChipGroup
             }
-            4 -> {
+            Category.Character -> {
                 textColor = R.color.tag_character
                 group = tagDetailsBinding.characterTagsChipGroup
             }
-            5 -> {
+            Category.Metadata -> {
                 textColor = R.color.tag_metadata
                 group = tagDetailsBinding.metadataTagsChipGroup
             }

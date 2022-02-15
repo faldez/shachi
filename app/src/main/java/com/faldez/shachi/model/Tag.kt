@@ -6,10 +6,18 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
+enum class Category {
+    General,
+    Artist,
+    Copyright,
+    Character,
+    Metadata,
+}
+
 @Entity(tableName = "tag")
 data class Tag(
     @PrimaryKey val name: String,
-    @NonNull val type: Int,
+    @NonNull val type: Category,
 )
 
 /*
@@ -19,7 +27,7 @@ Tag with post count and excluded status, only to be used in search
 data class TagDetail(
     val name: String,
     val count: Int? = null,
-    val type: Int,
+    val type: Category,
     val excluded: Boolean = false,
 ) : Parcelable {
     override fun toString(): String {
@@ -34,7 +42,7 @@ data class TagDetail(
         fun fromName(name: String): TagDetail {
             val name = name.removePrefix("-")
             val exclude = name.startsWith('-')
-            return TagDetail(name = name, type = 0, excluded = exclude)
+            return TagDetail(name = name, type = Category.General, excluded = exclude)
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.faldez.shachi.ui.saved
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.faldez.shachi.R
@@ -34,6 +36,9 @@ class SavedFragment : Fragment() {
         SavedViewModelFactory(SavedSearchRepository(db),
             PostRepository(service), FavoriteRepository(db))
     }
+    private val preferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+    }
     private lateinit var binding: SavedFragmentBinding
     private lateinit var adapter: SavedSearchAdapter
 
@@ -43,6 +48,10 @@ class SavedFragment : Fragment() {
     ): View {
         Log.d("SavedFragment", "onCreateView")
         binding = SavedFragmentBinding.inflate(inflater, container, false)
+
+        val quality = preferences.getString("preview_quality", null) ?: "preview"
+        val hideQuestionable = preferences.getBoolean("hide_questionable_content", false)
+        val hideExplicit = preferences.getBoolean("hide_explicit_content", false)
 
         adapter = SavedSearchAdapter(
             onBrowse = {
@@ -59,7 +68,10 @@ class SavedFragment : Fragment() {
                     .setPositiveButton("Yes"
                     ) { _, _ -> viewModel.delete(savedSearch.savedSearch) }
                     .setNegativeButton("No", null).show()
-            }
+            },
+            quality = quality,
+            hideQuestionable = hideQuestionable,
+            hideExplicit = hideExplicit,
         )
 
         binding.savedSearchRecyclerView.adapter = adapter

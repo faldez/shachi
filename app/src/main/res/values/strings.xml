@@ -81,4 +81,7 @@
     <string name="search_history">Search history</string>
     <string name="advanced_search">Advanced search</string>
     <string name="simple_search">Simple search</string>
+    <string name="filters">Filters</string>
+    <string name="hide_questionable_content">Hide questionable content</string>
+    <string name="hide_explicit_content">Hide explicit content</string>
 </resources>

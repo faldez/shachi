@@ -15,6 +15,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.PostDetailBottomSheetFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
+import com.faldez.shachi.model.Category
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.Tag
@@ -96,12 +97,11 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
                 binding.currentSearchTagsChipGroup.isVisible = !splitTags[true].isNullOrEmpty()
                 splitTags[true]?.sortedBy { it.type }?.forEach { tag ->
                     val textColor = when (tag.type) {
-                        0 -> R.color.tag_general
-                        1 -> R.color.tag_artist
-                        3 -> R.color.tag_copyright
-                        4 -> R.color.tag_character
-                        5 -> R.color.tag_metadata
-                        else -> null
+                        Category.General -> R.color.tag_general
+                        Category.Artist -> R.color.tag_artist
+                        Category.Copyright -> R.color.tag_copyright
+                        Category.Character -> R.color.tag_character
+                        Category.Metadata -> R.color.tag_metadata
                     }
 
                     val chip = Chip(requireContext())
@@ -113,34 +113,30 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
                     lateinit var header: TextView
                     var textColor: Int? = null
                     when (type) {
-                        0 -> {
+                        Category.General -> {
                             group = tagDetailsBinding.generalTagsChipGroup
                             header = tagDetailsBinding.generalTagsHeader
                             textColor = R.color.tag_general
                         }
-                        1 -> {
+                        Category.Artist -> {
                             group = tagDetailsBinding.artistTagsChipGroup
                             header = tagDetailsBinding.artistTagsHeader
                             textColor = R.color.tag_artist
                         }
-                        3 -> {
+                        Category.Copyright -> {
                             group = tagDetailsBinding.copyrightTagsChipGroup
                             header = tagDetailsBinding.copyrightTagsHeader
                             textColor = R.color.tag_copyright
                         }
-                        4 -> {
+                        Category.Character -> {
                             group = tagDetailsBinding.characterTagsChipGroup
                             header = tagDetailsBinding.characterTagsHeader
                             textColor = R.color.tag_character
                         }
-                        5 -> {
+                        Category.Metadata -> {
                             group = tagDetailsBinding.metadataTagsChipGroup
                             header = tagDetailsBinding.metadataTagsHeader
                             textColor = R.color.tag_metadata
-                        }
-                        else -> {
-                            group = tagDetailsBinding.otherTagsChipGroup
-                            header = tagDetailsBinding.otherTagsHeader
                         }
                     }
                     header.isVisible = tags.isNotEmpty()

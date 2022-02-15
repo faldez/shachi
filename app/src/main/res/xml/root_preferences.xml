@@ -46,6 +46,17 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/filters">
+        <SwitchPreference
+            app:defaultValue="false"
+            app:key="hide_questionable_content"
+            app:title="@string/hide_questionable_content" />
+        <SwitchPreference
+            app:defaultValue="false"
+            app:key="hide_explicit_content"
+            app:title="@string/hide_explicit_content" />
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/general">
 
         <Preference

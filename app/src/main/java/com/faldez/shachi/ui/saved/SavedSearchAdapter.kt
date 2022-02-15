@@ -3,9 +3,10 @@ package com.faldez.shachi.ui.saved
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.text.SpannableStringBuilder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -13,9 +14,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
+import com.faldez.shachi.R
 import com.faldez.shachi.databinding.SavedSearchItemBinding
 import com.faldez.shachi.databinding.SavedSearchItemPostBinding
 import com.faldez.shachi.model.Post
+import com.faldez.shachi.model.Rating
 import com.faldez.shachi.model.SavedSearchServer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +28,9 @@ import kotlinx.coroutines.launch
 class SavedSearchAdapter(
     private val onBrowse: (SavedSearchServer) -> Unit,
     private val onDelete: (SavedSearchServer) -> Unit,
+    private val quality: String,
+    private val hideQuestionable: Boolean,
+    private val hideExplicit: Boolean,
 ) : PagingDataAdapter<SavedSearchPost, RecyclerView.ViewHolder>(COMPARATOR) {
     private val viewPool = RecyclerView.RecycledViewPool()
 
@@ -33,11 +39,21 @@ class SavedSearchAdapter(
         return when (viewType) {
             viewTypeSavedSearch -> {
                 val binding = SavedSearchItemBinding.inflate(inflater, parent, false)
-                SavedSearchItemViewHolder(binding, onBrowse, onDelete)
+                SavedSearchItemViewHolder(
+                    binding, onBrowse, onDelete,
+                    quality,
+                    hideQuestionable,
+                    hideExplicit,
+                )
             }
             viewTypePost -> {
                 val binding = SavedSearchItemPostBinding.inflate(inflater, parent, false)
-                SavedSearchItemPostViewHolder(binding)
+                SavedSearchItemPostViewHolder(
+                    binding,
+                    quality,
+                    hideQuestionable,
+                    hideExplicit,
+                )
             }
             else -> {
                 throw IllegalAccessException()
@@ -110,6 +126,9 @@ class SavedSearchItemViewHolder(
     private val binding: SavedSearchItemBinding,
     private val onBrowse: (SavedSearchServer) -> Unit,
     private val onDelete: (SavedSearchServer) -> Unit,
+    private val quality: String,
+    private val hideQuestionable: Boolean,
+    private val hideExplicit: Boolean,
 ) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(viewPool: RecyclerView.RecycledViewPool, item: SavedSearchPost) {
@@ -120,7 +139,12 @@ class SavedSearchItemViewHolder(
         val layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
 
-        val adapter = SavedSearchAdapter(onBrowse, onDelete)
+        val adapter = SavedSearchAdapter(
+            onBrowse, onDelete,
+            quality,
+            hideQuestionable,
+            hideExplicit,
+        )
         binding.savedSearchItemRecyclerView.apply {
             setLayoutManager(layoutManager)
             setAdapter(adapter)
@@ -145,7 +169,12 @@ class SavedSearchItemViewHolder(
     }
 }
 
-class SavedSearchItemPostViewHolder(val binding: SavedSearchItemPostBinding) :
+class SavedSearchItemPostViewHolder(
+    val binding: SavedSearchItemPostBinding,
+    private val quality: String,
+    private val hideQuestionable: Boolean,
+    private val hideExplicit: Boolean,
+) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(item: Post) {
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
@@ -153,13 +182,31 @@ class SavedSearchItemPostViewHolder(val binding: SavedSearchItemPostBinding) :
         val previewWidth = item.previewWidth ?: 250
         val previewHeight = item.previewHeight
             ?: (previewWidth * (item.height.toFloat() / item.width.toFloat())).toInt()
-        Glide.with(imageView.context).load(item.previewUrl)
-            .transition(DrawableTransitionOptions.withCrossFade(factory))
-            .placeholder(BitmapDrawable(imageView.resources,
-                Bitmap.createBitmap(previewWidth,
-                    previewHeight,
-                    Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
-            .into(imageView)
+
+        if (hideQuestionable && item.rating == Rating.Questionable || hideExplicit && item.rating == Rating.Explicit) {
+            val drawable = ResourcesCompat.getDrawable(binding.root.resources,
+                R.drawable.nsfw_placeholder,
+                null)
+                ?.toBitmap(previewWidth, previewHeight)
+
+            Glide.with(imageView.context).load(drawable)
+                .override(previewWidth, previewHeight)
+                .into(imageView)
+        } else {
+            val url = when (quality) {
+                "sample" -> item.sampleUrl ?: item.previewUrl
+                "original" -> item.fileUrl
+                else -> item.previewUrl ?: item.sampleUrl
+            } ?: item.fileUrl
+
+            Glide.with(imageView.context).load(url)
+                .transition(DrawableTransitionOptions.withCrossFade(factory))
+                .placeholder(BitmapDrawable(imageView.resources,
+                    Bitmap.createBitmap(previewWidth,
+                        previewHeight,
+                        Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
+                .into(imageView)
+        }
         binding.root.isChecked = item.favorite
     }
 }

@@ -1,5 +1,6 @@
 package com.faldez.shachi.model.response
 
+import com.faldez.shachi.model.Category
 import com.faldez.shachi.model.Tag
 import com.faldez.shachi.model.TagDetail
 
@@ -9,7 +10,7 @@ fun GelbooruTagResponse.mapToTagDetails() =
         TagDetail(
             name = it.name,
             count = it.count,
-            type = it.type
+            type = parseTag(it.type)
         )
     }
 
@@ -17,7 +18,7 @@ fun GelbooruTagResponse.mapToTags() =
     this.tags?.tag?.map {
         Tag(
             name = it.name,
-            type = it.type
+            type = parseTag(it.type)
         )
     }
 
@@ -26,7 +27,7 @@ fun GelbooruTagResponse.mapToTagDetail() =
         TagDetail(
             name = it.name,
             count = it.count,
-            type = it.type
+            type = parseTag(it.type)
         )
     }
 
@@ -34,7 +35,7 @@ fun GelbooruTagResponse.mapToTag() =
     this.tags?.tag?.first()?.let {
         Tag(
             name = it.name,
-            type = it.type
+            type = parseTag(it.type)
         )
     }
 
@@ -44,7 +45,7 @@ fun List<DanbooruTag>.mapToTagDetails() =
         TagDetail(
             name = it.name,
             count = it.postCount,
-            type = it.category
+            type = parseTag(it.category)
         )
     }
 
@@ -53,7 +54,7 @@ fun List<DanbooruTag>.mapToTags() =
     this.map {
         Tag(
             name = it.name,
-            type = it.category
+            type = parseTag(it.category)
         )
     }
 
@@ -63,7 +64,7 @@ fun List<DanbooruTag>.mapToTagDetail() =
         TagDetail(
             name = it.name,
             count = it.postCount,
-            type = it.category
+            type = parseTag(it.category)
         )
     }
 
@@ -72,7 +73,7 @@ fun List<DanbooruTag>.mapToTag() =
     this.first().let {
         Tag(
             name = it.name,
-            type = it.category
+            type = parseTag(it.category)
         )
     }
 
@@ -82,7 +83,7 @@ fun List<MoebooruTag>.mapToTagDetails() =
         TagDetail(
             name = it.name,
             count = it.count,
-            type = it.type
+            type = parseTag(it.type)
         )
     }
 
@@ -91,7 +92,7 @@ fun List<MoebooruTag>.mapToTags() =
     this.map {
         Tag(
             name = it.name,
-            type = it.type
+            type = parseTag(it.type)
         )
     }
 
@@ -101,7 +102,7 @@ fun List<MoebooruTag>.mapToTagDetail() =
         TagDetail(
             name = it.name,
             count = it.count,
-            type = it.type
+            type = parseTag(it.type)
         )
     }
 
@@ -110,6 +111,15 @@ fun List<MoebooruTag>.mapToTag() =
     this.first().let {
         Tag(
             name = it.name,
-            type = it.type
+            type = parseTag(it.type)
         )
     }
+
+fun parseTag(type: Int) = when (type) {
+    0 -> Category.General
+    1 -> Category.Artist
+    3 -> Category.Copyright
+    4 -> Category.Character
+    5 -> Category.Metadata
+    else -> throw IllegalAccessException()
+}

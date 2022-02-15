@@ -4,19 +4,25 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
+import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
+import com.faldez.shachi.model.Rating
 
 
 class BrowseAdapter(
     private val gridMode: String,
     private val quality: String,
+    private val hideQuestionable: Boolean,
+    private val hideExplicit: Boolean,
     private val onClick: (Int) -> Unit,
 ) :
     PagingDataAdapter<Post, BrowseItemViewHolder>(POST_COMPARATOR) {
@@ -28,6 +34,8 @@ class BrowseAdapter(
             BrowseItemViewHolder(PostCardItemBinding.inflate(inflater, parent, false),
                 gridMode,
                 quality,
+                hideQuestionable,
+                hideExplicit,
                 onClick)
         return binding
     }
@@ -58,7 +66,9 @@ class BrowseAdapter(
 class BrowseItemViewHolder(
     val binding: PostCardItemBinding,
     private val gridMode: String,
-    val quality: String,
+    private val quality: String,
+    private val hideQuestionable: Boolean,
+    private val hideExplicit: Boolean,
     val onClick: (Int) -> Unit,
 ) :
     RecyclerView.ViewHolder(binding.root) {
@@ -73,20 +83,30 @@ class BrowseItemViewHolder(
         } else {
             previewWidth
         }
+        if (hideQuestionable && post.rating == Rating.Questionable || hideExplicit && post.rating == Rating.Explicit) {
+            val drawable = ResourcesCompat.getDrawable(binding.root.resources,
+                R.drawable.nsfw_placeholder,
+                null)
+                ?.toBitmap(previewWidth, previewHeight)
 
-        val url = when (quality) {
-            "sample" -> post.sampleUrl ?: post.previewUrl
-            "original" -> post.fileUrl
-            else -> post.previewUrl ?: post.sampleUrl
-        } ?: post.fileUrl
+            Glide.with(imageView.context).load(drawable)
+                .override(previewWidth, previewHeight)
+                .into(imageView)
+        } else {
+            val url = when (quality) {
+                "sample" -> post.sampleUrl ?: post.previewUrl
+                "original" -> post.fileUrl
+                else -> post.previewUrl ?: post.sampleUrl
+            } ?: post.fileUrl
 
-        Glide.with(imageView.context).load(url)
-            .transition(withCrossFade(factory))
-            .placeholder(BitmapDrawable(imageView.resources,
-                Bitmap.createBitmap(previewWidth,
-                    previewHeight,
-                    Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
-            .into(imageView)
+            Glide.with(imageView.context).load(url)
+                .transition(withCrossFade(factory))
+                .placeholder(BitmapDrawable(imageView.resources,
+                    Bitmap.createBitmap(previewWidth,
+                        previewHeight,
+                        Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
+                .into(imageView)
+        }
 
         binding.root.isChecked = post.favorite
 

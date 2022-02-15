@@ -16,7 +16,7 @@ import com.faldez.shachi.model.*
     PostTag::class, Tag::class,
     SearchHistory::class],
     views = [ServerView::class],
-    version = 4)
+    version = 5)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun serverDao(): ServerDao
     abstract fun favoriteDao(): FavoriteDao
@@ -30,7 +30,8 @@ abstract class AppDatabase : RoomDatabase() {
         fun build(context: Context): AppDatabase =
             db ?: synchronized(this) {
                 val newDb =
-                    db ?: Room.databaseBuilder(context, AppDatabase::class.java, "shachi").build()
+                    db ?: Room.databaseBuilder(context, AppDatabase::class.java, "shachi")
+                        .fallbackToDestructiveMigration().build()
                         .also { db = it }
                 newDb
             }

@@ -3,6 +3,7 @@ package com.faldez.shachi.ui.search
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faldez.shachi.model.Category
 import com.faldez.shachi.model.Server
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.TagDetail
@@ -49,7 +50,7 @@ class SearchSimpleViewModel(
                         val resultMap = result.associateBy { tag -> tag.name }
 
                         tags.map {
-                            it.copy(type = resultMap[it.name]?.type ?: 0)
+                            it.copy(type = resultMap[it.name]?.type ?: Category.General)
                         }
                     } ?: listOf()
                 } else {
@@ -119,7 +120,7 @@ class SearchSimpleViewModel(
                 val tags = currentState.selectedTags.let {
                     if (it is SelectedTags.Simple) {
                         val list = it.tags.toMutableList()
-                        list.add(list.size, TagDetail(name = name, type = tag?.type ?: 0))
+                        list.add(list.size, TagDetail(name = name, type = tag?.type ?: Category.General))
                         SelectedTags.Simple(list)
                     } else {
                         it
