@@ -64,6 +64,7 @@ abstract class BasePostSlideFragment : Fragment() {
         prepareAppBar()
 
         val position = requireArguments().getInt("position")
+        Log.d("BasePostSlideFragment/onViewCreated", "position $position")
         binding.postViewPager.bind(position)
     }
 

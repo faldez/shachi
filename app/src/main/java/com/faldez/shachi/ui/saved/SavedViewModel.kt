@@ -22,6 +22,9 @@ class SavedViewModel(
     private val favoriteRepository: FavoriteRepository,
 ) : ViewModel() {
     val state: Flow<PagingData<SavedSearchPost>>
+    private val stateMap: MutableStateFlow<MutableMap<Int, Flow<PagingData<SavedSearchPost>>>> =
+        MutableStateFlow(
+            mutableMapOf())
     val accept: (UiAction) -> Unit
 
     init {
@@ -31,21 +34,14 @@ class SavedViewModel(
             .onStart { emit(UiAction.GetSavedSearch) }
         val savedSearchFlow = savedSearchRepository.getAll().distinctUntilChanged()
 
-        state = combine(getSavedSearchFlow, savedSearchFlow, ::Pair)
-            .map { (_, data) ->
+        state = combine(getSavedSearchFlow, savedSearchFlow, stateMap, ::Triple)
+            .map { (_, data, map) ->
                 Log.d("SavedViewModel", "collect savedSearches")
                 val list = data.map { savedSearch ->
                     val posts =
-                        postRepository.getSearchPostsResultStream(Action.SearchPost(server = savedSearch.server,
-                            tags = savedSearch.savedSearch.tags)).map { pagingData ->
-                            pagingData.map { post ->
-                                val postId =
-                                    favoriteRepository.queryByServerUrlAndPostId(post.serverId,
-                                        post.postId)
-                                post.favorite = postId != null
-                                SavedSearchPost(post = post)
-                            }
-                        }.cachedIn(viewModelScope)
+                        map[savedSearch.savedSearch.savedSearchId]
+                            ?: getSearchPosts(savedSearch).cachedIn(viewModelScope)
+                    map[savedSearch.savedSearch.savedSearchId] = posts
                     SavedSearchPost(savedSearch = savedSearch, posts = posts)
                 }
                 PagingData.from(list)
@@ -57,6 +53,22 @@ class SavedViewModel(
             }
         }
     }
+
+    private fun getSearchPosts(savedSearch: SavedSearchServer): Flow<PagingData<SavedSearchPost>> {
+        return postRepository.getSearchPostsResultStream(Action.SearchPost(server = savedSearch.server,
+            tags = savedSearch.savedSearch.tags)).map { pagingData ->
+            pagingData.map { post ->
+                val postId =
+                    favoriteRepository.queryByServerUrlAndPostId(post.serverId,
+                        post.postId)
+                post.favorite = postId != null
+                SavedSearchPost(post = post)
+            }
+        }
+    }
+
+    fun posts(savedSearchId: Int): Flow<PagingData<Post>?> =
+        stateMap.value[savedSearchId]!!.map { it.map { item -> item.post!! } }
 
     fun delete(savedSearch: SavedSearch) = viewModelScope.launch {
         savedSearchRepository.delete(savedSearch)

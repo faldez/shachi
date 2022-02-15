@@ -8,11 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 
 
 class SavedFragment : Fragment() {
-    private val viewModel: SavedViewModel by viewModels {
+    private val viewModel: SavedViewModel by navGraphViewModels(R.id.saved) {
         val db = AppDatabase.build(requireContext())
         val service = BooruService()
         SavedViewModelFactory(SavedSearchRepository(db),
@@ -60,6 +60,16 @@ class SavedFragment : Fragment() {
                     "tags" to it.savedSearch.tags)
                 findNavController()
                     .navigate(R.id.action_saved_to_browse,
+                        bundle)
+            },
+            onClick = { savedSearchServer, position ->
+                val bundle =
+                    bundleOf("saved_search_id" to savedSearchServer.savedSearch.savedSearchId,
+                        "position" to position,
+                        "server" to savedSearchServer.server,
+                        "tags" to savedSearchServer.savedSearch.tags)
+                findNavController()
+                    .navigate(R.id.action_saved_to_postslide,
                         bundle)
             },
             onDelete = { savedSearch ->

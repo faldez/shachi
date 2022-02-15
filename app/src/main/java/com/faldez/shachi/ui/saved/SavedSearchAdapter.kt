@@ -3,6 +3,7 @@ package com.faldez.shachi.ui.saved
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.text.SpannableStringBuilder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -27,7 +28,9 @@ import kotlinx.coroutines.launch
 
 class SavedSearchAdapter(
     private val onBrowse: (SavedSearchServer) -> Unit,
+    private val onClick: (SavedSearchServer, Int) -> Unit,
     private val onDelete: (SavedSearchServer) -> Unit,
+    private val savedSearchServer: SavedSearchServer? = null,
     private val quality: String,
     private val hideQuestionable: Boolean,
     private val hideExplicit: Boolean,
@@ -40,7 +43,8 @@ class SavedSearchAdapter(
             viewTypeSavedSearch -> {
                 val binding = SavedSearchItemBinding.inflate(inflater, parent, false)
                 SavedSearchItemViewHolder(
-                    binding, onBrowse, onDelete,
+                    binding, onBrowse,
+                    onClick, onDelete,
                     quality,
                     hideQuestionable,
                     hideExplicit,
@@ -50,6 +54,8 @@ class SavedSearchAdapter(
                 val binding = SavedSearchItemPostBinding.inflate(inflater, parent, false)
                 SavedSearchItemPostViewHolder(
                     binding,
+                    savedSearchServer!!,
+                    onClick,
                     quality,
                     hideQuestionable,
                     hideExplicit,
@@ -66,6 +72,8 @@ class SavedSearchAdapter(
         when (holder) {
             is SavedSearchItemViewHolder -> {
                 if (item != null) {
+                    val layoutManager =
+                        StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
                     holder.bind(viewPool, item)
                 }
             }
@@ -125,13 +133,19 @@ class SavedSearchAdapter(
 class SavedSearchItemViewHolder(
     private val binding: SavedSearchItemBinding,
     private val onBrowse: (SavedSearchServer) -> Unit,
+    private val onClick: (SavedSearchServer, Int) -> Unit,
     private val onDelete: (SavedSearchServer) -> Unit,
     private val quality: String,
     private val hideQuestionable: Boolean,
     private val hideExplicit: Boolean,
 ) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(viewPool: RecyclerView.RecycledViewPool, item: SavedSearchPost) {
+
+
+    fun bind(
+        viewPool: RecyclerView.RecycledViewPool,
+        item: SavedSearchPost,
+    ) {
         binding.savedSearchTagsTextView.text = item.savedSearch?.savedSearch?.savedSearchTitle
         binding.savedSearchServerTextView.text = item.savedSearch?.server?.title
         binding.tagsTextView.text = SpannableStringBuilder(item.savedSearch?.savedSearch?.tags)
@@ -140,11 +154,13 @@ class SavedSearchItemViewHolder(
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
 
         val adapter = SavedSearchAdapter(
-            onBrowse, onDelete,
+            onBrowse, onClick, onDelete,
+            item.savedSearch,
             quality,
             hideQuestionable,
             hideExplicit,
         )
+
         binding.savedSearchItemRecyclerView.apply {
             setLayoutManager(layoutManager)
             setAdapter(adapter)
@@ -171,6 +187,8 @@ class SavedSearchItemViewHolder(
 
 class SavedSearchItemPostViewHolder(
     val binding: SavedSearchItemPostBinding,
+    private val savedSearchServer: SavedSearchServer,
+    private val onClick: (SavedSearchServer, Int) -> Unit,
     private val quality: String,
     private val hideQuestionable: Boolean,
     private val hideExplicit: Boolean,
@@ -208,6 +226,10 @@ class SavedSearchItemPostViewHolder(
                 .into(imageView)
         }
         binding.root.isChecked = item.favorite
+        binding.root.setOnClickListener {
+            Log.d("SavedSearchItemPostViewHolder/bind", "position $bindingAdapterPosition")
+            onClick(savedSearchServer, bindingAdapterPosition)
+        }
     }
 }
 

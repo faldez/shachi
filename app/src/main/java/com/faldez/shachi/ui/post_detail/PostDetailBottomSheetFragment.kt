@@ -102,6 +102,7 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
                         Category.Copyright -> R.color.tag_copyright
                         Category.Character -> R.color.tag_character
                         Category.Metadata -> R.color.tag_metadata
+                        else -> null
                     }
 
                     val chip = Chip(requireContext())
@@ -137,6 +138,10 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
                             group = tagDetailsBinding.metadataTagsChipGroup
                             header = tagDetailsBinding.metadataTagsHeader
                             textColor = R.color.tag_metadata
+                        }
+                        else -> {
+                            group = tagDetailsBinding.otherTagsChipGroup
+                            header = tagDetailsBinding.otherTagsHeader
                         }
                     }
                     header.isVisible = tags.isNotEmpty()
