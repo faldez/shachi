@@ -121,5 +121,6 @@ fun parseTag(type: Int) = when (type) {
     3 -> Category.Copyright
     4 -> Category.Character
     5 -> Category.Metadata
-    else -> throw IllegalAccessException()
+    6 -> Category.Deprecated
+    else -> throw IllegalAccessException("$type is not exist")
 }

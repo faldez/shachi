@@ -40,6 +40,7 @@ class SearchSuggestionAdapter(
                 Category.Copyright -> R.color.tag_copyright
                 Category.Character -> R.color.tag_character
                 Category.Metadata -> R.color.tag_metadata
+                else -> null
             }
             textColor?.let {
                 holder.binding.sugestionTagTextView.setTextColor(setTextColor(it))

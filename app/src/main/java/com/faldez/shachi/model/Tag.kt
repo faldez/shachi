@@ -12,6 +12,7 @@ enum class Category {
     Copyright,
     Character,
     Metadata,
+    Deprecated
 }
 
 @Entity(tableName = "tag")
@@ -40,9 +41,9 @@ data class TagDetail(
 
     companion object {
         fun fromName(name: String): TagDetail {
-            val name = name.removePrefix("-")
+            val tag = name.removePrefix("-")
             val exclude = name.startsWith('-')
-            return TagDetail(name = name, type = Category.General, excluded = exclude)
+            return TagDetail(name = tag, type = Category.General, excluded = exclude)
         }
     }
 }
