@@ -2,7 +2,6 @@ package com.faldez.shachi.service
 
 import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.model.Server
-import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.repository.PostRepository.Companion.NETWORK_PAGE_SIZE
 import okhttp3.HttpUrl
@@ -23,7 +22,10 @@ sealed class Action {
                     .addQueryParameter("q", "index").addQueryParameter("s", "post")
                     .addQueryParameter("pid", page.toString())
                     .addQueryParameter("limit", limit.toString())
-                    .addQueryParameter("tags", tags).build()
+                    .addQueryParameter("tags", tags)
+                    .addQueryParameter("api_key", it.password)
+                    .addQueryParameter("user_id", it.username).build()
+
             }
         }
 
@@ -32,7 +34,9 @@ sealed class Action {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("post.json")
                     .addQueryParameter("page", page.toString())
                     .addQueryParameter("limit", limit.toString())
-                    .addQueryParameter("tags", tags).build()
+                    .addQueryParameter("tags", tags)
+                    .addQueryParameter("password_hash", it.password)
+                    .addQueryParameter("login", it.username).build()
             }
         }
 
@@ -41,7 +45,9 @@ sealed class Action {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("posts.json")
                     .addQueryParameter("page", page.toString())
                     .addQueryParameter("limit", limit.toString())
-                    .addQueryParameter("tags", tags).build()
+                    .addQueryParameter("tags", tags)
+                    .addQueryParameter("api_key", it.password)
+                    .addQueryParameter("login", it.username).build()
             }
         }
     }

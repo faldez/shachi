@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
@@ -28,7 +28,14 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.launch
 
 class ServerEditFragment : Fragment() {
-    private lateinit var viewModel: ServerEditViewModel
+    private val viewModel: ServerEditViewModel by viewModels {
+        val server = arguments?.getParcelable<Server>("server")
+        val db = AppDatabase.build(requireContext())
+        val service = BooruService()
+        ServerEditViewModelFactory(server, PostRepository(service),
+            ServerRepository(db), TagRepository(service, db),
+            this)
+    }
     private lateinit var binding: ServerEditFragmentBinding
 
     private fun prepareAppBar() {
@@ -43,14 +50,11 @@ class ServerEditFragment : Fragment() {
                 R.id.save_server_edit_button -> {
                     Log.d("ServerEditFragment", "Save")
                     val error = viewModel.validate()
-                    if (error != null) {
-                        true
-                    }
-
-                    binding.testProgressBar.isVisible = true
-
-                    viewModel.server.value?.let {
-                        viewModel.test(it)
+                    if (error == null) {
+                        viewModel.server.value?.let {
+                            binding.testProgressBar.isVisible = true
+                            viewModel.test(it)
+                        }
                     }
                     true
                 }
@@ -65,23 +69,6 @@ class ServerEditFragment : Fragment() {
     ): View {
         binding = ServerEditFragmentBinding.inflate(inflater, container, false)
 
-        val server = arguments?.getParcelable<Server>("server")
-
-        val db = AppDatabase.build(requireContext())
-        val service = BooruService()
-        viewModel = ViewModelProvider(this,
-            ServerEditViewModelFactory(server, PostRepository(service),
-                ServerRepository(db), TagRepository(service, db),
-                this)).get(ServerEditViewModel::class.java)
-
-        server?.let {
-            binding.serverNewTopappbar.title = "Edit server"
-            binding.serverNameInput.text = SpannableStringBuilder(it.title)
-            binding.serverUrlInput.text = SpannableStringBuilder(it.url)
-            val position = ServerType.values().indexOf(it.type)
-            binding.serverTypeSpinner.setSelection(position)
-        }
-
         ArrayAdapter(requireContext(),
             R.layout.support_simple_spinner_dropdown_item,
             ServerType.values()).also { adapter ->
@@ -95,6 +82,14 @@ class ServerEditFragment : Fragment() {
 
         binding.serverUrlInput.doOnTextChanged { text, _, _, _ ->
             viewModel.setUrl(text.toString())
+        }
+
+        binding.usernameInput.doOnTextChanged { text, _, _, _ ->
+            viewModel.setUsername(text.toString())
+        }
+
+        binding.passwordInput.doOnTextChanged { text, _, _, _ ->
+            viewModel.setPassword(text.toString())
         }
 
         binding.serverTypeSpinner.onItemSelectedListener =
@@ -121,6 +116,20 @@ class ServerEditFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prepareAppBar()
+
+        viewModel.server.value?.let { server ->
+            binding.serverNewTopappbar.title = "Edit server"
+            binding.serverNameInput.text = SpannableStringBuilder(server.title)
+            binding.serverUrlInput.text = SpannableStringBuilder(server.url)
+            val position = ServerType.values().indexOf(server.type)
+            binding.serverTypeSpinner.setSelection(position)
+            server.username?.let {
+                binding.usernameInput.text = SpannableStringBuilder(it)
+            }
+            server.password?.let {
+                binding.passwordInput.text = SpannableStringBuilder(it)
+            }
+        }
 
         lifecycleScope.launch {
             viewModel.state.collect {

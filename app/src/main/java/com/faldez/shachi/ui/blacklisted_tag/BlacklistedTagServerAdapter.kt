@@ -20,7 +20,9 @@ class BlacklistedTagServerAdapter(
                 serverId = it.serverId,
                 type = it.type,
                 title = it.title,
-                url = it.url
+                url = it.url,
+                username = it.username,
+                password = it.password
             )
         }
     }

@@ -18,13 +18,17 @@ data class Server(
     val type: ServerType,
     val title: String,
     val url: String,
+    val username: String?,
+    val password: String?,
 ) : Parcelable {
     fun toServerView(): ServerView {
         return  ServerView(
             serverId = serverId,
             type = type,
             title = title,
-            url = url
+            url = url,
+            username = username,
+            password = password
         )
     }
 }
@@ -58,6 +62,8 @@ data class ServerView(
     val type: ServerType,
     val title: String,
     val url: String,
+    val username: String?,
+    val password: String?,
     @ColumnInfo(name = "blacklisted_tags") val blacklistedTags: String? = null,
     var selected: Boolean = false,
 ) : Parcelable {
@@ -66,7 +72,9 @@ data class ServerView(
             serverId = serverId,
             type = type,
             title = title,
-            url = url
+            url = url,
+            username = username,
+            password = password
         )
     }
 }

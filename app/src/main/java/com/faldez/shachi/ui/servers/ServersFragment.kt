@@ -53,7 +53,9 @@ class ServersFragment : Fragment() {
                     serverId = serverWithSelected.serverId,
                     type = serverWithSelected.type,
                     title = serverWithSelected.title,
-                    url = serverWithSelected.url
+                    url = serverWithSelected.url,
+                    username = serverWithSelected.username,
+                    password = serverWithSelected.password
                 )
                 val bundle = bundleOf("server" to server)
                 findNavController().navigate(R.id.action_servers_to_serveredit, bundle)

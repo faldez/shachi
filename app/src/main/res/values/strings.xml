@@ -84,4 +84,7 @@
     <string name="filters">Filters</string>
     <string name="hide_questionable_content">Hide questionable content</string>
     <string name="hide_explicit_content">Hide explicit content</string>
+    <string name="api_key">API key</string>
+    <string name="username">Username</string>
+    <string name="login_optional">Login (Optional)</string>
 </resources>

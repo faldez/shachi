@@ -26,7 +26,9 @@ class ServerEditViewModel(
     fun setTitle(title: String) {
         val value = server.value
         server.value = value?.copy(title = title)
-            ?: Server(serverId = 0, title = title, type = ServerType.Gelbooru, url = "")
+            ?: Server(serverId = 0, title = title, type = ServerType.Gelbooru, url = "",
+                username = null,
+                password = null)
     }
 
     fun setUrl(url: String) {
@@ -34,13 +36,39 @@ class ServerEditViewModel(
         server.value = value?.copy(url = url) ?: Server(serverId = 0,
             title = "",
             type = ServerType.Gelbooru,
-            url = url)
+            url = url,
+            username = null,
+            password = null)
     }
 
     fun setType(type: ServerType) {
         val value = server.value
         server.value =
-            value?.copy(type = type) ?: Server(serverId = 0, title = "", type = type, url = "")
+            value?.copy(type = type) ?: Server(serverId = 0, title = "", type = type, url = "",
+                username = null,
+                password = null)
+    }
+
+    fun setUsername(username: String) {
+        val value = server.value
+        server.value =
+            value?.copy(username = username) ?: Server(serverId = 0,
+                title = "",
+                type = ServerType.Gelbooru,
+                url = "",
+                username = username,
+                password = null)
+    }
+
+    fun setPassword(password: String) {
+        val value = server.value
+        server.value =
+            value?.copy(password = password) ?: Server(serverId = 0,
+                title = "",
+                type = ServerType.Gelbooru,
+                url = "",
+                username = null,
+                password = password)
     }
 
     fun validate(): Error? {
@@ -74,8 +102,6 @@ class ServerEditViewModel(
                 state.value = State.Failed("$e")
             }
         }
-
-
     }
 }
 
