@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -89,7 +88,7 @@ class BrowseItemViewHolder(
                     Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
             .into(imageView)
 
-        binding.favoriteIcon.isVisible = post.favorite
+        binding.root.isChecked = post.favorite
 
         binding.root.setOnClickListener { _ ->
             onClick(bindingAdapterPosition)
