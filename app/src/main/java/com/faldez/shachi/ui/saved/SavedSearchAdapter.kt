@@ -72,8 +72,6 @@ class SavedSearchAdapter(
         when (holder) {
             is SavedSearchItemViewHolder -> {
                 if (item != null) {
-                    val layoutManager =
-                        StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
                     holder.bind(viewPool, item)
                 }
             }
