@@ -2,6 +2,7 @@ package com.faldez.shachi.model.response
 
 import androidx.core.os.LocaleListCompat
 import com.faldez.shachi.model.Post
+import com.faldez.shachi.model.Rating
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -21,7 +22,7 @@ fun List<GelbooruPost>.mapToPost(serverId: Int): List<Post> {
             previewUrl = post.previewUrl,
             previewWidth = post.previewWidth,
             previewHeight = post.previewHeight,
-            rating = post.rating,
+            rating = parseRating(post.rating),
             tags = post.tags,
             postId = post.id,
             serverId = serverId,
@@ -55,7 +56,7 @@ fun List<DanbooruPost>.mapToPost(serverId: Int): List<Post> {
             previewUrl = post.previewFileUrl,
             previewWidth = null,
             previewHeight = null,
-            rating = post.rating,
+            rating = parseRating(post.rating),
             tags = post.tagString,
             postId = post.id ?: 0,
             serverId = serverId,
@@ -88,7 +89,7 @@ fun List<MoebooruPost>.mapToPost(serverId: Int): List<Post> {
             previewUrl = post.previewUrl,
             previewWidth = null,
             previewHeight = null,
-            rating = post.rating,
+            rating = parseRating(post.rating),
             tags = post.tags,
             postId = post.id,
             serverId = serverId,
@@ -120,7 +121,7 @@ fun GelbooruPostResponse.mapToPost(serverId: Int): List<Post>? {
             previewUrl = post.previewUrl,
             previewWidth = post.previewWidth,
             previewHeight = post.previewHeight,
-            rating = post.rating,
+            rating = parseRating(post.rating),
             tags = post.tags,
             postId = post.id,
             serverId = serverId,
@@ -136,3 +137,14 @@ fun GelbooruPostResponse.mapToPost(serverId: Int): List<Post>? {
         )
     }
 }
+
+fun parseRating(rating: String): Rating =
+    when (rating.lowercase()) {
+        "s" -> Rating.Safe
+        "safe" -> Rating.Safe
+        "e" -> Rating.Explicit
+        "explicit" -> Rating.Explicit
+        "q" -> Rating.Questionable
+        "questionable" -> Rating.Questionable
+        else -> throw IllegalAccessException()
+    }

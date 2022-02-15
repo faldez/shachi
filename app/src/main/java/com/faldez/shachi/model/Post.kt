@@ -4,6 +4,12 @@ import android.os.Parcelable
 import androidx.room.*
 import kotlinx.parcelize.Parcelize
 
+enum class Rating {
+    Safe,
+    Questionable,
+    Explicit
+}
+
 @Entity(tableName = "favorite",
     primaryKeys = ["server_id", "post_id"],
     foreignKeys = [ForeignKey(parentColumns = ["server_id"],
@@ -22,7 +28,7 @@ data class Post(
     @ColumnInfo(name = "preview_url") val previewUrl: String?,
     @ColumnInfo(name = "preview_width") val previewWidth: Int?,
     @ColumnInfo(name = "preview_height") val previewHeight: Int?,
-    val rating: String,
+    val rating: Rating,
     val tags: String,
     @ColumnInfo(name = "post_id") val postId: Int,
     @ColumnInfo(name = "server_id") val serverId: Int,

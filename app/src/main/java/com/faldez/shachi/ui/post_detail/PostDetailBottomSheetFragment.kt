@@ -76,7 +76,7 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
         post?.let { p ->
             sizeTextview.text = "${p.width}x${p.height}"
             sourceUrl.text = p.source
-            ratingTextview.text = p.rating
+            ratingTextview.text = p.rating.toString()
             scoreTextview.text = "${p.score ?: 0}"
             postedTextview.text = p.createdAt
         }
