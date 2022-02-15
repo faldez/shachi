@@ -148,7 +148,6 @@ class SavedSearchItemViewHolder(
 class SavedSearchItemPostViewHolder(val binding: SavedSearchItemPostBinding) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(item: Post) {
-        Log.d("SavedSearchItemPostViewHolder/bind", "${item.postId} ${item.favorite}")
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val imageView = binding.previewImage
         val previewWidth = item.previewWidth ?: 250
