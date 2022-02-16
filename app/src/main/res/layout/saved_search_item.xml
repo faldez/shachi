@@ -34,15 +34,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?attr/textAppearanceHeadline5" />
 
-
-                <TextView
-                    android:id="@+id/tags_text_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="?android:attr/textColorSecondary" />
-
             </androidx.appcompat.widget.LinearLayoutCompat>
-
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/saved_search_item_recycler_view"
@@ -52,6 +44,11 @@
                 android:layout_marginBottom="8dp"
                 tools:listitem="@layout/saved_search_item_post" />
 
+            <TextView
+                android:id="@+id/tags_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?android:attr/textColorSecondary" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
