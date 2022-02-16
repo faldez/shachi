@@ -3,11 +3,12 @@ package com.faldez.shachi.ui.post_slide
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.paging.filter
 import androidx.paging.map
 import com.faldez.shachi.R
 import com.faldez.shachi.model.Post
+import com.faldez.shachi.model.Rating
 import com.faldez.shachi.ui.favorite.FavoriteViewModel
-import kotlinx.coroutines.flow.collect
 
 class FavoritePostSlideFragment : BasePostSlideFragment() {
     companion object {
@@ -16,9 +17,15 @@ class FavoritePostSlideFragment : BasePostSlideFragment() {
 
     private val viewModel: FavoriteViewModel by navGraphViewModels(R.id.nav_graph)
 
-    override suspend fun collectPagingData() {
+    override suspend fun collectPagingData(showQuestionable: Boolean, showExplicit: Boolean) {
         viewModel.pagingDataFlow.collect {
-            val data = it.map { post ->
+            val data = it.filter { post ->
+                when (post.rating) {
+                    Rating.Questionable -> showQuestionable
+                    Rating.Explicit -> showExplicit
+                    Rating.Safe -> true
+                }
+            }.map { post ->
                 post.favorite = true
                 post
             }

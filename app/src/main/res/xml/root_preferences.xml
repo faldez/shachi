@@ -47,14 +47,20 @@
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/filters">
-        <SwitchPreference
-            app:defaultValue="false"
-            app:key="hide_questionable_content"
-            app:title="@string/hide_questionable_content" />
-        <SwitchPreference
-            app:defaultValue="false"
-            app:key="hide_explicit_content"
-            app:title="@string/hide_explicit_content" />
+        <ListPreference
+            app:defaultValue="disable"
+            app:entries="@array/filter_entries"
+            app:entryValues="@array/filter_values"
+            app:key="filter_questionable_content"
+            app:title="@string/questionable"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            app:defaultValue="disable"
+            app:entries="@array/filter_entries"
+            app:entryValues="@array/filter_values"
+            app:key="filter_explicit_content"
+            app:title="@string/explicit"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/general">

@@ -11,7 +11,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
@@ -69,9 +68,16 @@ abstract class BasePostSlideFragment : Fragment() {
     }
 
     private fun ViewPager2.bind(position: Int) {
+        val questionableFilter =
+            preferences.getString("filter_questionable_content", null) ?: "disable"
+        val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
+
         adapter = postSlideAdapter
         lifecycleScope.launch {
-            collectPagingData()
+            collectPagingData(
+                showQuestionable = questionableFilter != "mute",
+                showExplicit = explicitFilter != "mute"
+            )
         }
         setCurrentItem(position, false)
         registerOnPageChangeCallback(object : OnPageChangeCallback() {
@@ -91,7 +97,7 @@ abstract class BasePostSlideFragment : Fragment() {
         }
     }
 
-    abstract suspend fun collectPagingData()
+    abstract suspend fun collectPagingData(showQuestionable: Boolean, showExplicit: Boolean)
 
     private fun setFavoriteButton(post: Post) {
         val (favoriteIcon, favoriteTitle) = if (post.favorite) {

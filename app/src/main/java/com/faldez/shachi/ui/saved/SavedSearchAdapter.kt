@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.paging.PagingDataAdapter
+import androidx.paging.filter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -32,8 +33,8 @@ class SavedSearchAdapter(
     private val onDelete: (SavedSearchServer) -> Unit,
     private val savedSearchServer: SavedSearchServer? = null,
     private val quality: String,
-    private val hideQuestionable: Boolean,
-    private val hideExplicit: Boolean,
+    private val questionableFilter: String,
+    private val explicitFilter: String,
 ) : PagingDataAdapter<SavedSearchPost, RecyclerView.ViewHolder>(COMPARATOR) {
     private val viewPool = RecyclerView.RecycledViewPool()
 
@@ -46,8 +47,8 @@ class SavedSearchAdapter(
                     binding, onBrowse,
                     onClick, onDelete,
                     quality,
-                    hideQuestionable,
-                    hideExplicit,
+                    questionableFilter,
+                    explicitFilter,
                 )
             }
             viewTypePost -> {
@@ -56,8 +57,8 @@ class SavedSearchAdapter(
                     binding,
                     onClick,
                     quality,
-                    hideQuestionable,
-                    hideExplicit,
+                    hideQuestionable = questionableFilter == "hide",
+                    hideExplicit = explicitFilter == "hide",
                 )
             }
             else -> {
@@ -133,8 +134,8 @@ class SavedSearchItemViewHolder(
     private val onClick: (SavedSearchServer, Int) -> Unit,
     private val onDelete: (SavedSearchServer) -> Unit,
     private val quality: String,
-    private val hideQuestionable: Boolean,
-    private val hideExplicit: Boolean,
+    private val questionableFilter: String,
+    private val explicitFilter: String,
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
@@ -154,8 +155,8 @@ class SavedSearchItemViewHolder(
             onBrowse, onClick, onDelete,
             item.savedSearch,
             quality,
-            hideQuestionable,
-            hideExplicit,
+            questionableFilter,
+            explicitFilter,
         )
 
         binding.savedSearchItemRecyclerView.apply {
@@ -167,7 +168,14 @@ class SavedSearchItemViewHolder(
         CoroutineScope(Dispatchers.IO).launch {
             item.posts.collectLatest {
                 if (it != null) {
-                    adapter.submitData(it)
+                    adapter.submitData(it.filter { item ->
+                        when (item.post?.rating) {
+                            Rating.Questionable -> questionableFilter != "mute"
+                            Rating.Explicit -> explicitFilter != "mute"
+                            Rating.Safe -> true
+                            else -> true
+                        }
+                    })
                 }
             }
         }

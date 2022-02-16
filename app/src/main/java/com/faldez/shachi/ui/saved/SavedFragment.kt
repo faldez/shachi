@@ -50,8 +50,9 @@ class SavedFragment : Fragment() {
         binding = SavedFragmentBinding.inflate(inflater, container, false)
 
         val quality = preferences.getString("preview_quality", null) ?: "preview"
-        val hideQuestionable = preferences.getBoolean("hide_questionable_content", false)
-        val hideExplicit = preferences.getBoolean("hide_explicit_content", false)
+        val questionableFilter =
+            preferences.getString("filter_questionable_content", null) ?: "disable"
+        val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
 
         adapter = SavedSearchAdapter(
             onBrowse = {
@@ -80,8 +81,8 @@ class SavedFragment : Fragment() {
                     .setNegativeButton("No", null).show()
             },
             quality = quality,
-            hideQuestionable = hideQuestionable,
-            hideExplicit = hideExplicit,
+            questionableFilter = questionableFilter,
+            explicitFilter = explicitFilter,
         )
 
         binding.savedSearchRecyclerView.adapter = adapter

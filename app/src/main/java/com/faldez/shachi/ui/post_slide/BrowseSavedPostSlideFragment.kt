@@ -3,9 +3,10 @@ package com.faldez.shachi.ui.post_slide
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.paging.filter
 import com.faldez.shachi.R
 import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.mapToTags
+import com.faldez.shachi.model.Rating
 import com.faldez.shachi.ui.browse.BrowseViewModel
 
 class BrowseSavedPostSlideFragment : BasePostSlideFragment() {
@@ -15,9 +16,15 @@ class BrowseSavedPostSlideFragment : BasePostSlideFragment() {
 
     private val viewModel: BrowseViewModel by navGraphViewModels(R.id.saved)
 
-    override suspend fun collectPagingData() {
+    override suspend fun collectPagingData(showQuestionable: Boolean, showExplicit: Boolean) {
         viewModel.pagingDataFlow.collect {
-            postSlideAdapter.submitData(it)
+            postSlideAdapter.submitData(it.filter { post ->
+                when (post.rating) {
+                    Rating.Questionable -> showQuestionable
+                    Rating.Explicit -> showExplicit
+                    Rating.Safe -> true
+                }
+            })
         }
     }
 

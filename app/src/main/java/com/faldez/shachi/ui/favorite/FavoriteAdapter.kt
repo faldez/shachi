@@ -4,15 +4,23 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
+import com.faldez.shachi.model.Rating
 
 class FavoriteAdapter(
-    private val gridMode: String, private val quality: String, private val onClick: (Int) -> Unit,
+    private val gridMode: String,
+    private val quality: String,
+    private val hideQuestionable: Boolean,
+    private val hideExplicit: Boolean,
+    private val onClick: (Int) -> Unit,
 ) :
     PagingDataAdapter<Post, BrowseItemViewHolder>(POST_COMPARATOR) {
     private lateinit var binding: BrowseItemViewHolder
@@ -40,19 +48,29 @@ class FavoriteAdapter(
             } else {
                 previewWidth
             }
+            if (hideQuestionable && post.rating == Rating.Questionable || hideExplicit && post.rating == Rating.Explicit) {
+                val drawable = ResourcesCompat.getDrawable(holder.binding.root.resources,
+                    R.drawable.nsfw_placeholder,
+                    null)
+                    ?.toBitmap(previewWidth, previewHeight)
 
-            val url = when (quality) {
-                "sample" -> it.sampleUrl ?: it.previewUrl
-                "original" -> it.fileUrl
-                else -> it.previewUrl ?: it.sampleUrl
-            } ?: it.fileUrl
+                Glide.with(imageView.context).load(drawable)
+                    .override(previewWidth, previewHeight)
+                    .into(imageView)
+            } else {
+                val url = when (quality) {
+                    "sample" -> it.sampleUrl ?: it.previewUrl
+                    "original" -> it.fileUrl
+                    else -> it.previewUrl ?: it.sampleUrl
+                } ?: it.fileUrl
 
-            Glide.with(imageView.context).load(url)
-                .placeholder(BitmapDrawable(imageView.resources,
-                    Bitmap.createBitmap(previewWidth,
-                        previewHeight,
-                        Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
-                .into(imageView)
+                Glide.with(imageView.context).load(url)
+                    .placeholder(BitmapDrawable(imageView.resources,
+                        Bitmap.createBitmap(previewWidth,
+                            previewHeight,
+                            Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
+                    .into(imageView)
+            }
 
             holder.binding.root.setOnClickListener { _ ->
                 onClick(position)

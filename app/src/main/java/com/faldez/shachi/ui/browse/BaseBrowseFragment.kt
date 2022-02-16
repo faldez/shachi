@@ -19,6 +19,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import androidx.paging.filter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +28,7 @@ import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
+import com.faldez.shachi.model.Rating
 import com.faldez.shachi.model.ServerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -175,14 +177,15 @@ abstract class BaseBrowseFragment : Fragment() {
         val gridCount = preferences.getString("grid_column", null)?.toInt() ?: 3
         val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
         val quality = preferences.getString("preview_quality", null) ?: "preview"
-        val hideQuestionable = preferences.getBoolean("hide_questionable_content", false)
-        val hideExplicit = preferences.getBoolean("hide_explicit_content", false)
+        val questionableFilter =
+            preferences.getString("filter_questionable_content", null) ?: "disable"
+        val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
 
         val postAdapter = BrowseAdapter(
             gridMode = gridMode,
             quality = quality,
-            hideQuestionable = hideQuestionable,
-            hideExplicit = hideExplicit,
+            hideQuestionable = questionableFilter == "hide",
+            hideExplicit = explicitFilter == "hide",
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 val id = when (findNavController().currentDestination?.id) {
@@ -214,6 +217,8 @@ abstract class BaseBrowseFragment : Fragment() {
             uiState = uiState,
             pagingData = pagingData,
             onScrollChanged = uiActions,
+            showQuestionable = questionableFilter != "mute",
+            showExplicit = explicitFilter != "mute"
         )
     }
 
@@ -222,6 +227,8 @@ abstract class BaseBrowseFragment : Fragment() {
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (UiAction.Scroll) -> Unit,
+        showQuestionable: Boolean,
+        showExplicit: Boolean,
     ) {
         retryButton.setOnClickListener { postsAdapter.retry() }
         postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -247,7 +254,15 @@ abstract class BaseBrowseFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                pagingData.collect(postsAdapter::submitData)
+                pagingData.collect {
+                    postsAdapter.submitData(it.filter { post ->
+                        when (post.rating) {
+                            Rating.Questionable -> showQuestionable
+                            Rating.Explicit -> showExplicit
+                            Rating.Safe -> true
+                        }
+                    })
+                }
             }
         }
 

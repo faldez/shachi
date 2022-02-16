@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.paging.filter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
+import com.faldez.shachi.model.Rating
 import com.faldez.shachi.repository.FavoriteRepository
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.launch
@@ -64,10 +66,15 @@ class FavoriteFragment : Fragment() {
         val gridCount = preferences.getString("grid_column", null)?.toInt() ?: 3
         val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
         val quality = preferences.getString("preview_quality", null) ?: "preview"
+        val questionableFilter =
+            preferences.getString("filter_questionable_content", null) ?: "disable"
+        val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
 
         val favoriteAdapter = FavoriteAdapter(
             gridMode,
             quality,
+            hideQuestionable = questionableFilter == "hide",
+            hideExplicit = explicitFilter == "hide",
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 findNavController().navigate(R.id.action_favorite_to_favoritepostslide, bundle)
@@ -100,7 +107,13 @@ class FavoriteFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.pagingDataFlow.collect {
-                    favoriteAdapter.submitData(it)
+                    favoriteAdapter.submitData(it.filter { post ->
+                        when (post.rating) {
+                            Rating.Questionable -> questionableFilter != "mute"
+                            Rating.Explicit -> explicitFilter != "mute"
+                            Rating.Safe -> true
+                        }
+                    })
                 }
             }
         }
