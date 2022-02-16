@@ -50,7 +50,7 @@ abstract class BasePostSlideFragment : Fragment() {
             quality,
             onTap = {
                 getCurrentPost()?.let {
-                    navigateToPostSlide(it)
+                    navigateToPostDetail(it)
                 }
             }
         )
@@ -140,7 +140,7 @@ abstract class BasePostSlideFragment : Fragment() {
                 }
                 R.id.detail_button -> {
                     getCurrentPost()?.let {
-                        navigateToPostSlide(it)
+                        navigateToPostDetail(it)
                     }
                     true
                 }
@@ -189,7 +189,7 @@ abstract class BasePostSlideFragment : Fragment() {
         }
     }
 
-    abstract fun navigateToPostSlide(post: Post?)
+    abstract fun navigateToPostDetail(post: Post?)
 
     private fun onFavoriteButton() {
         val currentItem = binding.postViewPager.currentItem

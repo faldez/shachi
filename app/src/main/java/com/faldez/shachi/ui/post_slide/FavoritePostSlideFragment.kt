@@ -33,8 +33,9 @@ class FavoritePostSlideFragment : BasePostSlideFragment() {
         }
     }
 
-    override fun navigateToPostSlide(post: Post?) {
-        val bundle = bundleOf("post" to post)
+    override fun navigateToPostDetail(post: Post?) {
+        val bundle = bundleOf("post" to post,
+            "tags" to viewModel.state.value.tags)
         findNavController().navigate(R.id.action_postslide_to_postdetail, bundle)
     }
 

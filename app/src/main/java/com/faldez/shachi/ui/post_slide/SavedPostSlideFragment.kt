@@ -31,7 +31,7 @@ class SavedPostSlideFragment : BasePostSlideFragment() {
         }
     }
 
-    override fun navigateToPostSlide(post: Post?) {
+    override fun navigateToPostDetail(post: Post?) {
         val server = requireArguments().get("server")
         val tags = requireArguments().get("tags")
         val bundle = bundleOf("post" to post,

@@ -6,12 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerView
+import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.repository.TagRepository
 
 class PostDetailBottomSheetViewModelFactory constructor(
-    private val server: ServerView,
     private val currentTags: String?,
     private val post: Post,
+    private val serverRepository: ServerRepository,
     private val tagRepository: TagRepository,
     owner: SavedStateRegistryOwner,
 ) : AbstractSavedStateViewModelFactory(owner, null) {
@@ -22,9 +23,9 @@ class PostDetailBottomSheetViewModelFactory constructor(
     ): T {
         return if (modelClass.isAssignableFrom(PostDetailBottomSheetViewModel::class.java)) {
             PostDetailBottomSheetViewModel(
-                server,
                 currentTags,
                 this.post,
+                this.serverRepository,
                 this.tagRepository) as T
         } else {
             throw  IllegalArgumentException("ViewModel Not Found")

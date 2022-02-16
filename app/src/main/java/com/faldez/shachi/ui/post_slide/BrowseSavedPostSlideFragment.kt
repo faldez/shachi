@@ -28,7 +28,7 @@ class BrowseSavedPostSlideFragment : BasePostSlideFragment() {
         }
     }
 
-    override fun navigateToPostSlide(post: Post?) {
+    override fun navigateToPostDetail(post: Post?) {
         val bundle = bundleOf("post" to post,
             "server" to viewModel.state.value.server,
             "tags" to viewModel.state.value.tags)
