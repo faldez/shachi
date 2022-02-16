@@ -89,9 +89,9 @@ sealed class Action {
     /*
     Search tag with pattern
      */
-    data class SearchTag(val server: Server, val tag: String, val limit: Int = 10) : Action() {
+    data class SearchTag(val server: Server?, val tag: String, val limit: Int = 10) : Action() {
         fun buildGelbooruUrl(): HttpUrl? {
-            return server.let {
+            return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
                     .addQueryParameter("page", "dapi")
                     .addQueryParameter("q", "index").addQueryParameter("s", "tag")
@@ -104,7 +104,7 @@ sealed class Action {
         }
 
         fun buildMoebooruUrl(): HttpUrl? {
-            return server.let {
+            return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("tag.json")
                     .addQueryParameter("name", tag)
                     .addQueryParameter("order", "count")
@@ -114,7 +114,7 @@ sealed class Action {
         }
 
         fun buildDanbooruUrl(): HttpUrl? {
-            return server.let {
+            return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json")
                     .addQueryParameter("search[name_like]", "$tag*").build()
 
@@ -125,9 +125,9 @@ sealed class Action {
     /*
     Get single exact tag details
      */
-    data class GetTag(val server: Server, val tag: String) : Action() {
+    data class GetTag(val server: Server?, val tag: String) : Action() {
         fun buildGelbooruUrl(): HttpUrl? {
-            return server.let {
+            return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
                     .addQueryParameter("page", "dapi")
                     .addQueryParameter("q", "index").addQueryParameter("s", "tag")
@@ -137,7 +137,7 @@ sealed class Action {
         }
 
         fun buildMoebooruUrl(): HttpUrl? {
-            return server.let {
+            return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("tag.json")
                     .addQueryParameter("name", "$tag*")
                     .addQueryParameter("limit", "1")
@@ -146,7 +146,7 @@ sealed class Action {
         }
 
         fun buildDanbooruUrl(): HttpUrl? {
-            return server.let {
+            return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json")
                     .addQueryParameter("search[name]", tag)
                     .build()
@@ -157,9 +157,9 @@ sealed class Action {
     /*
     Get multiple tags details
      */
-    data class GetTags(val server: Server, val tags: String) : Action() {
+    data class GetTags(val server: Server?, val tags: String) : Action() {
         fun buildGelbooruUrl(): HttpUrl? {
-            return server.let {
+            return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
                     .addQueryParameter("page", "dapi")
                     .addQueryParameter("q", "index").addQueryParameter("s", "tag")
@@ -171,7 +171,7 @@ sealed class Action {
         fun buildMoebooruUrl(): HttpUrl? = null
 
         fun buildDanbooruUrl(): HttpUrl? {
-            return server.let {
+            return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json").apply {
                     tags.split(" ").forEach { tag ->
                         addQueryParameter("search[name_array][]", tag)

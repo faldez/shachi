@@ -48,7 +48,7 @@ data class Post(
     var favorite: Boolean = false
 }
 
-@Fts4
+@Fts4(tokenizer = FtsOptions.TOKENIZER_UNICODE61, tokenizerArgs = ["tokenchars='"])
 @Entity(tableName = "post_tag")
 data class PostTag(
     @ColumnInfo(name = "post_id") val postId: Int,

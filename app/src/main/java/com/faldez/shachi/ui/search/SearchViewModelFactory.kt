@@ -8,7 +8,7 @@ import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.repository.TagRepository
 
 class SearchViewModelFactory constructor(
-    private val server: ServerView,
+    private val server: ServerView?,
     private val tagRepository: TagRepository,
     owner: SavedStateRegistryOwner,
 ) : AbstractSavedStateViewModelFactory(owner, null) {

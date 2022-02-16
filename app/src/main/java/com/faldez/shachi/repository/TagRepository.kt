@@ -6,6 +6,7 @@ import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.Tag
 import com.faldez.shachi.model.TagDetail
+import com.faldez.shachi.model.mapToTagDetails
 import com.faldez.shachi.model.response.mapToTagDetail
 import com.faldez.shachi.model.response.mapToTagDetails
 import com.faldez.shachi.model.response.mapToTags
@@ -36,7 +37,7 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
                 }
             }
             null -> {
-                null
+                db.tagDao().searchTag("${action.tag}%")?.mapToTagDetails()
             }
         }
     }
@@ -66,7 +67,7 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
         }?.let {
             Tag(name = it.name, type = it.type)
         }?.also {
-            db.tagDao().insertTag(it)
+            if (action.server != null) db.tagDao().insertTag(it)
         }
 
         return tag
@@ -136,7 +137,7 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
             }
         }
 
-        if (bulkQueriedTags?.isNotEmpty() == true) {
+        if (action.server != null && bulkQueriedTags?.isNotEmpty() == true) {
             db.tagDao().insertTags(bulkQueriedTags)
         }
 

@@ -15,6 +15,9 @@ interface TagDao {
     @Query("SELECT * FROM tag WHERE name = :name")
     suspend fun getTag(name: String): Tag?
 
+    @Query("SELECT * FROM tag WHERE name LIKE :name LIMIT :limit")
+    suspend fun searchTag(name: String, limit: Int = 10): List<Tag>?
+
     @RawQuery
     suspend fun getTags(query: SupportSQLiteQuery): List<Tag>?
 }

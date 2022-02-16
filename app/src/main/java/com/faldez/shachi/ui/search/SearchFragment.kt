@@ -48,8 +48,8 @@ class SearchFragment : Fragment() {
     private lateinit var tagDetailsBinding: TagsDetailsBinding
 
     private val viewModel: SearchSimpleViewModel by viewModels {
-        val server: ServerView =
-            requireArguments().getParcelable<ServerView>("server") as ServerView
+        val server: ServerView? =
+            requireArguments().getParcelable<ServerView>("server") as ServerView?
         SearchViewModelFactory(server, TagRepository(BooruService(),
             AppDatabase.build(requireContext())), this)
     }

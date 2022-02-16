@@ -1,12 +1,13 @@
 package com.faldez.shachi.ui.favorite
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.model.Post
+import com.faldez.shachi.repository.FavoriteRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -34,21 +35,22 @@ class FavoriteViewModel(
 
         val searches = actionStateFlow.filterIsInstance<UiAction.SearchFavorite>()
 
-        pagingDataFlow = searches.onStart { emit(UiAction.SearchFavorite(initialTags)) }
-            .flatMapLatest { favoriteRepository.query(it.tags) }
-            .cachedIn(viewModelScope)
-
         state =
             combine(searches, tagsScrolled, ::Pair).map { (search, scroll) ->
+                Log.d("FavoriteViewModel/combine", "tags ${search.tags}")
                 UiState(
                     tags = search.tags,
                     lastTagsScrolled = scroll.currentTags,
                     hasNotScrolledForCurrentTag = search.tags != scroll.currentTags
                 )
             }.stateIn(scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                started = SharingStarted.Eagerly,
                 initialValue = UiState()
             )
+
+        pagingDataFlow = searches.onStart { emit(UiAction.SearchFavorite(initialTags)) }
+            .flatMapLatest { favoriteRepository.query(it.tags) }
+            .cachedIn(viewModelScope)
 
         accept = {
             viewModelScope.launch {

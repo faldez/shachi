@@ -1,5 +1,6 @@
 package com.faldez.shachi.repository
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -19,7 +20,9 @@ class FavoriteRepository(private val db: AppDatabase) {
     }
 
     fun query(tags: String): Flow<PagingData<Post>> {
-        val query = tags.map { "tags:$it" }.joinToString(separator = " ")
+        val query = tags.split(" ").mapNotNull { if (it.isNullOrEmpty()) null else it }
+            .joinToString(separator = " ") { "tags:$it" }
+        Log.d("FavoriteRepository/query", query)
         return Pager(
             config = PagingConfig(
                 pageSize = 100,
