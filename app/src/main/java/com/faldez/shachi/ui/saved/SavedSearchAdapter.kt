@@ -54,7 +54,6 @@ class SavedSearchAdapter(
                 val binding = SavedSearchItemPostBinding.inflate(inflater, parent, false)
                 SavedSearchItemPostViewHolder(
                     binding,
-                    savedSearchServer!!,
                     onClick,
                     quality,
                     hideQuestionable,
@@ -76,7 +75,7 @@ class SavedSearchAdapter(
                 }
             }
             is SavedSearchItemPostViewHolder -> {
-                item?.post?.let { holder.bind(it) }
+                item?.post?.let { holder.bind(it, savedSearchServer!!) }
             }
         }
     }
@@ -185,14 +184,13 @@ class SavedSearchItemViewHolder(
 
 class SavedSearchItemPostViewHolder(
     val binding: SavedSearchItemPostBinding,
-    private val savedSearchServer: SavedSearchServer,
     private val onClick: (SavedSearchServer, Int) -> Unit,
     private val quality: String,
     private val hideQuestionable: Boolean,
     private val hideExplicit: Boolean,
 ) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(item: Post) {
+    fun bind(item: Post, savedSearchServer: SavedSearchServer) {
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val imageView = binding.previewImage
         val previewWidth = item.previewWidth ?: 250
@@ -225,7 +223,8 @@ class SavedSearchItemPostViewHolder(
         }
         binding.root.isChecked = item.favorite
         binding.root.setOnClickListener {
-            Log.d("SavedSearchItemPostViewHolder/bind", "position $bindingAdapterPosition")
+            Log.d("SavedSearchItemPostViewHolder/bind",
+                "${savedSearchServer.savedSearch.savedSearchId} position ${item.postId}")
             onClick(savedSearchServer, bindingAdapterPosition)
         }
     }
