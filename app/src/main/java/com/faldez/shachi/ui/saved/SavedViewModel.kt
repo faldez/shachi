@@ -32,17 +32,19 @@ class SavedViewModel(
         val actionStateFlow = MutableSharedFlow<UiAction>()
 
         val getSavedSearchFlow = actionStateFlow.filterIsInstance<UiAction.GetSavedSearch>()
-            .onStart { emit(UiAction.GetSavedSearch) }
+            .onStart { emit(UiAction.GetSavedSearch()) }
         val savedSearchFlow = savedSearchRepository.getAll().distinctUntilChanged()
 
         state = combine(getSavedSearchFlow, savedSearchFlow, stateMap, ::Triple)
-            .map { (_, data, map) ->
+            .map { (action, data, map) ->
                 Log.d("SavedViewModel", "collect savedSearches")
                 val list = data.map { savedSearch ->
-                    val posts =
-                        map[savedSearch.savedSearch.savedSearchId]
-                            ?: getSearchPosts(savedSearch).cachedIn(viewModelScope)
-                    map[savedSearch.savedSearch.savedSearchId] = posts
+                    var posts =
+                        if (!action.clearAll) map[savedSearch.savedSearch.savedSearchId] else null
+                    if (posts == null) {
+                        posts = getSearchPosts(savedSearch).cachedIn(viewModelScope)
+                        map[savedSearch.savedSearch.savedSearchId] = posts
+                    }
                     SavedSearchPost(savedSearch = savedSearch, posts = posts)
                 }
                 PagingData.from(list)
@@ -100,7 +102,7 @@ data class UiState(
 )
 
 sealed class UiAction {
-    object GetSavedSearch : UiAction()
+    data class GetSavedSearch(val clearAll: Boolean = false) : UiAction()
     object GetSavedSearchFlow: UiAction()
     data class GetSavedSearchPost(val savedSearch: SavedSearch) : UiAction()
 }

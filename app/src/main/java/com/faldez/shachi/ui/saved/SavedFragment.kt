@@ -96,7 +96,7 @@ class SavedFragment : Fragment() {
         binding.savedSearchRecyclerView.addItemDecoration(divider)
 
         binding.savedSwipeRefreshLayout.setOnRefreshListener {
-            viewModel.accept(UiAction.GetSavedSearch)
+            viewModel.accept(UiAction.GetSavedSearch(clearAll = true))
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
