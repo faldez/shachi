@@ -33,10 +33,10 @@ class SavedPostSlideFragment : BasePostSlideFragment() {
     }
 
     override fun deleteFavoritePost(post: Post) {
-//        viewModel.deleteFavoritePost(post)
+        viewModel.deleteFavoritePost(post)
     }
 
     override fun favoritePost(post: Post) {
-//        viewModel.favoritePost(post)
+        viewModel.favoritePost(post)
     }
 }

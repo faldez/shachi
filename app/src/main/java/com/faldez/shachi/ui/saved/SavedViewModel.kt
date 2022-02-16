@@ -15,6 +15,7 @@ import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
 
 class SavedViewModel(
     private val savedSearchRepository: SavedSearchRepository,
@@ -64,6 +65,19 @@ class SavedViewModel(
                 post.favorite = postId != null
                 SavedSearchPost(post = post)
             }
+        }
+    }
+
+    fun favoritePost(favorite: Post) {
+        viewModelScope.launch {
+            favoriteRepository.insert(favorite.copy(dateAdded = ZonedDateTime.now().toInstant()
+                .toEpochMilli()))
+        }
+    }
+
+    fun deleteFavoritePost(favorite: Post) {
+        viewModelScope.launch {
+            favoriteRepository.delete(favorite)
         }
     }
 
