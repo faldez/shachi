@@ -118,9 +118,6 @@ abstract class BasePostSlideFragment : Fragment() {
     }
 
     private fun prepareAppBar() {
-        binding.postSlideAppbarLayout.statusBarForeground =
-            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-
         binding.postSlideTopappbar.menu.clear()
         binding.postSlideTopappbar.inflateMenu(R.menu.post_slide_menu)
         binding.postSlideTopappbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)

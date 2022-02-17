@@ -63,4 +63,6 @@
     <color name="loadingCardBackgroundColor">#4D1C1B1F</color>
     <color name="loadingCardColor">#F3F3F3</color>
     <color name="nsfwPlaceholderColor">#B50000</color>
+    <color name="postSlideToolbarBackgroundColorLight">#80FFFBFE</color>
+    <color name="postSlideToolbarBackgroundColorDark">#801C1B1F</color>
 </resources>
