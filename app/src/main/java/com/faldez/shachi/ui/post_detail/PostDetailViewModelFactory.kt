@@ -9,7 +9,7 @@ import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.repository.TagRepository
 
-class PostDetailBottomSheetViewModelFactory constructor(
+class PostDetailViewModelFactory constructor(
     private val currentTags: String?,
     private val post: Post,
     private val serverRepository: ServerRepository,

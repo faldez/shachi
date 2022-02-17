@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
-import com.faldez.shachi.databinding.PostDetailBottomSheetFragmentBinding
+import com.faldez.shachi.databinding.PostDetailFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.model.Category
 import com.faldez.shachi.model.Post
@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
-    private lateinit var binding: PostDetailBottomSheetFragmentBinding
+    private lateinit var binding: PostDetailFragmentBinding
     private lateinit var tagDetailsBinding: TagsDetailsBinding
     private lateinit var viewModel: PostDetailBottomSheetViewModel
 
@@ -37,7 +37,7 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        binding = PostDetailBottomSheetFragmentBinding.inflate(inflater, container, false)
+        binding = PostDetailFragmentBinding.inflate(inflater, container, false)
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
         val post = requireArguments().get("post") as Post
@@ -47,7 +47,7 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
 
         val db = AppDatabase.build(requireContext())
         val factory =
-            PostDetailBottomSheetViewModelFactory(currentSearchTags, post, ServerRepository(db),
+            PostDetailViewModelFactory(currentSearchTags, post, ServerRepository(db),
                 TagRepository(BooruService(), db),
                 this)
         viewModel = ViewModelProvider(this, factory).get(PostDetailBottomSheetViewModel::class.java)
@@ -67,7 +67,7 @@ class PostDetailBottomSheetFragment : BottomSheetDialogFragment() {
         otherTagsHeader.isVisible = false
     }
 
-    private fun PostDetailBottomSheetFragmentBinding.bind(
+    private fun PostDetailFragmentBinding.bind(
         post: Post?,
         currentSearchTags: String?,
     ) {
