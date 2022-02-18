@@ -39,7 +39,7 @@ class FavoriteAdapter(
         post?.let {
             val imageView = holder.binding.imageView
 
-            val previewWidth = 150
+            val previewWidth = post.previewWidth ?: 150
             val previewHeight = if (gridMode == "staggered") {
                 (previewWidth * (it.height.toFloat() / it.width.toFloat())).toInt()
             } else {
@@ -61,7 +61,9 @@ class FavoriteAdapter(
                 } ?: it.fileUrl
 
                 Glide.with(imageView.context).load(url)
-                    .placeholder(android.R.color.transparent).override(previewWidth, previewHeight)
+                    .placeholder(android.R.color.transparent)
+                    .override(previewWidth, previewHeight)
+                    .dontAnimate()
                     .into(imageView)
             }
 

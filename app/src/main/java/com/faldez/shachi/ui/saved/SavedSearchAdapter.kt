@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.SavedSearchItemBinding
@@ -229,9 +228,8 @@ class SavedSearchItemPostViewHolder(
 ) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(item: Post, savedSearchServer: SavedSearchServer) {
-        val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val imageView = binding.previewImage
-        val previewWidth = 150
+        val previewWidth = item.previewWidth ?: 150
         val previewHeight = (previewWidth * (item.height.toFloat() / item.width.toFloat())).toInt()
 
         if (hideQuestionable && item.rating == Rating.Questionable || hideExplicit && item.rating == Rating.Explicit) {
@@ -248,10 +246,10 @@ class SavedSearchItemPostViewHolder(
                 "original" -> item.fileUrl
                 else -> item.previewUrl ?: item.sampleUrl
             } ?: item.fileUrl
-
             Glide.with(imageView.context).load(url)
-                .transition(DrawableTransitionOptions.withCrossFade(factory))
-                .placeholder(android.R.color.transparent).override(previewWidth, previewHeight)
+                .placeholder(android.R.color.transparent)
+                .override(previewWidth, previewHeight)
+                .dontAnimate()
                 .into(imageView)
         }
         binding.root.isChecked = item.favorite

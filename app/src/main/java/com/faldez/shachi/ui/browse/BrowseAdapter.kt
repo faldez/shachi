@@ -74,7 +74,7 @@ class BrowseItemViewHolder(
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val imageView = binding.imageView
 
-        val previewWidth = 150
+        val previewWidth = post.previewWidth ?: 150
         val previewHeight = if (gridMode == "staggered") {
             (previewWidth * (post.height.toFloat() / post.width.toFloat())).toInt()
         } else {
@@ -97,7 +97,9 @@ class BrowseItemViewHolder(
 
             Glide.with(imageView.context).load(url)
                 .transition(withCrossFade(factory))
-                .placeholder(android.R.color.transparent).override(previewWidth, previewHeight)
+                .placeholder(android.R.color.transparent)
+                .override(previewWidth, previewHeight)
+                .dontAnimate()
                 .into(imageView)
         }
 
