@@ -257,6 +257,7 @@ class SavedSearchItemPostViewHolder(
                     Bitmap.createBitmap(previewWidth,
                         previewHeight,
                         Bitmap.Config.ARGB_8888)))
+                .override(previewWidth, previewHeight)
                 .into(imageView)
         }
         binding.root.isChecked = item.favorite
