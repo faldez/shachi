@@ -98,6 +98,12 @@ class SavedViewModel(
             it
         }
     }
+
+    fun saveSearch(savedSearch: SavedSearch) {
+        viewModelScope.launch {
+            savedSearchRepository.insert(savedSearch)
+        }
+    }
 }
 
 data class SavedSearchPost(

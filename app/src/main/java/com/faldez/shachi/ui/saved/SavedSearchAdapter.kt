@@ -29,9 +29,10 @@ import kotlinx.coroutines.launch
 
 class SavedSearchAdapter(
     private val scrollPositions: SparseIntArray? = null,
-    private val onBrowse: (SavedSearchServer) -> Unit,
+    private val onBrowse: ((SavedSearchServer) -> Unit)? = null,
     private val onClick: (SavedSearchServer, Int) -> Unit,
-    private val onDelete: (SavedSearchServer) -> Unit,
+    private val onDelete: ((SavedSearchServer) -> Unit)? = null,
+    private val onEdit: ((SavedSearchServer) -> Unit)? = null,
     private val onScroll: ((Int?, Int?) -> Unit)? = null,
     private val savedSearchServer: SavedSearchServer? = null,
     private val quality: String,
@@ -58,7 +59,7 @@ class SavedSearchAdapter(
                 SavedSearchItemViewHolder(
                     binding, onBrowse,
                     onClick, onDelete,
-                    onScroll,
+                    onEdit, onScroll,
                     quality,
                     questionableFilter,
                     explicitFilter,
@@ -147,9 +148,10 @@ class SavedSearchAdapter(
 
 class SavedSearchItemViewHolder(
     private val binding: SavedSearchItemBinding,
-    private val onBrowse: (SavedSearchServer) -> Unit,
+    private val onBrowse: ((SavedSearchServer) -> Unit)? = null,
     private val onClick: (SavedSearchServer, Int) -> Unit,
-    private val onDelete: (SavedSearchServer) -> Unit,
+    private val onDelete: ((SavedSearchServer) -> Unit)? = null,
+    private val onEdit: ((SavedSearchServer) -> Unit)? = null,
     private val onScroll: ((Int?, Int?) -> Unit)? = null,
     private val quality: String,
     private val questionableFilter: String,
@@ -172,7 +174,7 @@ class SavedSearchItemViewHolder(
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
 
         val adapter = SavedSearchAdapter(
-            onBrowse = onBrowse, onClick = onClick, onDelete = onDelete,
+            onClick = onClick,
             onScroll = { _, _ ->
                 val scroll =
                     (binding.savedSearchItemRecyclerView.layoutManager as StaggeredGridLayoutManager).findLastCompletelyVisibleItemPositions(
@@ -211,16 +213,16 @@ class SavedSearchItemViewHolder(
         }
 
         binding.root.setOnClickListener {
-            item.savedSearch?.let { it1 -> onBrowse(it1) }
+            onBrowse?.let { onBrowse -> onBrowse(item.savedSearch) }
         }
         binding.refreshSavedSearchButton.setOnClickListener {
             adapter.refresh()
         }
         binding.editSavedSearchButton.setOnClickListener {
-
+            onEdit?.let { onEdit -> onEdit(item.savedSearch) }
         }
         binding.deleteSavedSearchButton.setOnClickListener {
-            item.savedSearch?.let { it1 -> onDelete(it1) }
+            onDelete?.let { onDelete -> onDelete(item.savedSearch) }
         }
     }
 }

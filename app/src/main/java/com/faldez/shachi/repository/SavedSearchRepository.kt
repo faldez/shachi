@@ -1,8 +1,5 @@
 package com.faldez.shachi.repository
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.model.SavedSearch
 import com.faldez.shachi.model.SavedSearchServer

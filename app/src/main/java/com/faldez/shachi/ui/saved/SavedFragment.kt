@@ -1,11 +1,15 @@
 package com.faldez.shachi.ui.saved
 
+import android.app.Dialog
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -25,6 +29,7 @@ import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.service.BooruService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -79,6 +84,23 @@ class SavedFragment : Fragment() {
                     .setPositiveButton("Yes"
                     ) { _, _ -> viewModel.delete(savedSearch.savedSearch) }
                     .setNegativeButton("No", null).show()
+            },
+            onEdit = { savedSearch ->
+                val dialog =
+                    MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
+                        .setTitle(resources.getString(R.string.update_title))
+                        .setMessage(resources.getString(R.string.saved_search_update_description_title_text))
+                        .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
+                            (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTitleInput).text?.toString()
+                                ?.let { title ->
+                                    viewModel.saveSearch(savedSearch.savedSearch.copy(
+                                        savedSearchTitle = title))
+                                    Toast.makeText(requireContext(), "Saved", Toast.LENGTH_LONG)
+                                        .show()
+                                }
+                        }.show()
+                dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
+                    SpannableStringBuilder(savedSearch.savedSearch.savedSearchTitle)
             },
             onScroll = { position, scroll ->
                 if (position != null && scroll != null) {

@@ -32,6 +32,7 @@ import com.faldez.shachi.model.Rating
 import com.faldez.shachi.model.ServerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -123,7 +124,7 @@ abstract class BaseBrowseFragment : Fragment() {
                                 .setMessage(resources.getString(R.string.saved_search_description_title_text))
                                 .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
                                     val title =
-                                        (dialog as Dialog).findViewById<EditText>(R.id.savedSearchTitleInput).text?.toString()
+                                        (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTitleInput).text?.toString()
 
                                     if (viewModel.state.value.tags.isNotEmpty()) {
                                         viewModel.saveSearch(title)

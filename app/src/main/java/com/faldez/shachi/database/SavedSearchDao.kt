@@ -1,9 +1,6 @@
 package com.faldez.shachi.database
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.faldez.shachi.model.SavedSearch
 import com.faldez.shachi.model.SavedSearchServer
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +10,7 @@ interface SavedSearchDao {
     @Query("SELECT * FROM saved_search")
     fun getAll(): Flow<List<SavedSearchServer>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(savedSearch: SavedSearch)
 
     @Delete
