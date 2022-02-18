@@ -119,6 +119,7 @@ abstract class BasePostSlideFragment : Fragment() {
             }
         })
         setAppBar(position)
+        onPageChange(position)
     }
 
     open fun onPageChange(position: Int) {
