@@ -57,7 +57,7 @@ abstract class BaseBrowseFragment : Fragment() {
         binding = BrowseFragmentBinding.inflate(inflater, container, false)
 
         val server = arguments?.get("server") as ServerView?
-        val tags = arguments?.get("tags") as String? ?: "*"
+        val tags = arguments?.get("tags") as String? ?: ""
 
         Log.d("BrowseFragment/onCreateView", "server: $server tags: $tags")
 
