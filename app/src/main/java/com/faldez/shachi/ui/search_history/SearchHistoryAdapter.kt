@@ -3,14 +3,14 @@ package com.faldez.shachi.ui.search_history
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.databinding.SearchHistoryListItemBinding
 import com.faldez.shachi.model.SearchHistoryServer
 
 class SearchHistoryAdapter(val onClick: (SearchHistoryServer) -> Unit) :
-    ListAdapter<SearchHistoryServer, SearchHistoryViewHolder>(POST_COMPARATOR) {
+    PagingDataAdapter<SearchHistoryServer, SearchHistoryViewHolder>(POST_COMPARATOR) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchHistoryViewHolder {
         val binding =
             SearchHistoryListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -19,8 +19,9 @@ class SearchHistoryAdapter(val onClick: (SearchHistoryServer) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: SearchHistoryViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
+        getItem(position)?.let {
+            holder.bind(it)
+        }
     }
 
     companion object {

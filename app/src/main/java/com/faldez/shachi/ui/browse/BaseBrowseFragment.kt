@@ -130,9 +130,7 @@ abstract class BaseBrowseFragment : Fragment() {
                     true
                 }
                 R.id.search_history_button -> {
-                    val searchHistories = viewModel.searchHistoryFlow.value
-                    val bundle = bundleOf("search_histories" to searchHistories)
-                    findNavController().navigate(R.id.action_browse_to_searchhistory, bundle)
+                    findNavController().navigate(R.id.action_browse_to_searchhistory)
                     true
                 }
                 else -> super.onOptionsItemSelected(item)

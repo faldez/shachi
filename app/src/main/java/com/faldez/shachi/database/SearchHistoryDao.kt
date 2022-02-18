@@ -1,9 +1,9 @@
 package com.faldez.shachi.database
 
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.faldez.shachi.model.SearchHistory
 import com.faldez.shachi.model.SearchHistoryServer
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SearchHistoryDao {
@@ -14,5 +14,5 @@ interface SearchHistoryDao {
     suspend fun delete(searchHistory: SearchHistory)
 
     @Query("SELECT * FROM search_history ORDER BY created_at DESC")
-    fun getAll(): Flow<List<SearchHistoryServer>?>
+    fun getAll(): PagingSource<Int, SearchHistoryServer>
 }

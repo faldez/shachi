@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.search_history.SearchHistoryBottomSheetDialogFragment">
+    tools:context=".ui.search_history.SearchHistoryFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchHistoryRecyclerView"

@@ -27,7 +27,6 @@ class BrowseViewModel constructor(
 ) : ViewModel() {
     val state: StateFlow<UiState>
     val pagingDataFlow: Flow<PagingData<Post>>
-    val searchHistoryFlow: StateFlow<List<SearchHistoryServer>?>
     val accept: (UiAction) -> Unit
 
     init {
@@ -80,15 +79,6 @@ class BrowseViewModel constructor(
                         }
                     }
                 }.cachedIn(viewModelScope)
-
-        searchHistoryFlow =
-            actionStateFlow.filterIsInstance<UiAction.GetSearchHistory>().distinctUntilChanged()
-                .onStart { emit(UiAction.GetSearchHistory) }
-                .flatMapLatest { searchHistoryRepository.getAll() }
-                .stateIn(scope = viewModelScope,
-                    started = SharingStarted.Eagerly,
-                    initialValue = null
-                )
 
         accept = { action ->
             viewModelScope.launch { actionStateFlow.emit(action) }

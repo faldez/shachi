@@ -34,7 +34,7 @@
         tools:layout="@layout/post_slide_fragment" />
     <dialog
         android:id="@+id/search_history_bottom_sheet_fragment"
-        android:name="com.faldez.shachi.ui.search_history.SearchHistoryBottomSheetDialogFragment"
+        android:name="com.faldez.shachi.ui.search_history.SearchHistoryFragment"
         android:label="search_history"
         tools:layout="@layout/search_history_bottom_sheet_dialog_fragment">
         <action
