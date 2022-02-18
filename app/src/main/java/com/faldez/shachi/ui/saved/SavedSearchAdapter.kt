@@ -1,7 +1,5 @@
 package com.faldez.shachi.ui.saved
 
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.util.SparseIntArray
@@ -233,9 +231,8 @@ class SavedSearchItemPostViewHolder(
     fun bind(item: Post, savedSearchServer: SavedSearchServer) {
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val imageView = binding.previewImage
-        val previewWidth = item.previewWidth ?: 250
-        val previewHeight = item.previewHeight
-            ?: (previewWidth * (item.height.toFloat() / item.width.toFloat())).toInt()
+        val previewWidth = 150
+        val previewHeight = (previewWidth * (item.height.toFloat() / item.width.toFloat())).toInt()
 
         if (hideQuestionable && item.rating == Rating.Questionable || hideExplicit && item.rating == Rating.Explicit) {
             val drawable = ResourcesCompat.getDrawable(binding.root.resources,
@@ -244,7 +241,6 @@ class SavedSearchItemPostViewHolder(
                 ?.toBitmap(previewWidth, previewHeight)
 
             Glide.with(imageView.context).load(drawable)
-                .override(previewWidth, previewHeight)
                 .into(imageView)
         } else {
             val url = when (quality) {
@@ -255,10 +251,7 @@ class SavedSearchItemPostViewHolder(
 
             Glide.with(imageView.context).load(url)
                 .transition(DrawableTransitionOptions.withCrossFade(factory))
-                .placeholder(BitmapDrawable(imageView.resources,
-                    Bitmap.createBitmap(previewWidth,
-                        previewHeight,
-                        Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
+                .placeholder(android.R.color.transparent).override(previewWidth, previewHeight)
                 .into(imageView)
         }
         binding.root.isChecked = item.favorite

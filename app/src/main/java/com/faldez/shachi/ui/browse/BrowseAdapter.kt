@@ -1,7 +1,5 @@
 package com.faldez.shachi.ui.browse
 
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -76,10 +74,9 @@ class BrowseItemViewHolder(
         val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val imageView = binding.imageView
 
-        val previewWidth = post.previewWidth ?: 250
+        val previewWidth = 150
         val previewHeight = if (gridMode == "staggered") {
-            post.previewHeight
-                ?: (previewWidth * (post.height.toFloat() / post.width.toFloat())).toInt()
+            (previewWidth * (post.height.toFloat() / post.width.toFloat())).toInt()
         } else {
             previewWidth
         }
@@ -90,7 +87,6 @@ class BrowseItemViewHolder(
                 ?.toBitmap(previewWidth, previewHeight)
 
             Glide.with(imageView.context).load(drawable)
-                .override(previewWidth, previewHeight)
                 .into(imageView)
         } else {
             val url = when (quality) {
@@ -101,10 +97,7 @@ class BrowseItemViewHolder(
 
             Glide.with(imageView.context).load(url)
                 .transition(withCrossFade(factory))
-                .placeholder(BitmapDrawable(imageView.resources,
-                    Bitmap.createBitmap(previewWidth,
-                        previewHeight,
-                        Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
+                .placeholder(android.R.color.transparent).override(previewWidth, previewHeight)
                 .into(imageView)
         }
 

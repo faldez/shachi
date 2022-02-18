@@ -1,7 +1,5 @@
 package com.faldez.shachi.ui.favorite
 
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -41,10 +39,9 @@ class FavoriteAdapter(
         post?.let {
             val imageView = holder.binding.imageView
 
-            val previewWidth = it.previewWidth ?: 150
+            val previewWidth = 150
             val previewHeight = if (gridMode == "staggered") {
-                it.previewHeight
-                    ?: (previewWidth * (it.height.toFloat() / it.width.toFloat())).toInt()
+                (previewWidth * (it.height.toFloat() / it.width.toFloat())).toInt()
             } else {
                 previewWidth
             }
@@ -55,7 +52,6 @@ class FavoriteAdapter(
                     ?.toBitmap(previewWidth, previewHeight)
 
                 Glide.with(imageView.context).load(drawable)
-                    .override(previewWidth, previewHeight)
                     .into(imageView)
             } else {
                 val url = when (quality) {
@@ -65,10 +61,7 @@ class FavoriteAdapter(
                 } ?: it.fileUrl
 
                 Glide.with(imageView.context).load(url)
-                    .placeholder(BitmapDrawable(imageView.resources,
-                        Bitmap.createBitmap(previewWidth,
-                            previewHeight,
-                            Bitmap.Config.ARGB_8888))).override(previewWidth, previewHeight)
+                    .placeholder(android.R.color.transparent).override(previewWidth, previewHeight)
                     .into(imageView)
             }
 

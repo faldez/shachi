@@ -99,15 +99,10 @@ class SavedFragment : Fragment() {
             layoutManager.orientation)
         binding.savedSearchRecyclerView.addItemDecoration(divider)
 
-        binding.savedSwipeRefreshLayout.setOnRefreshListener {
-            viewModel.accept(UiAction.GetSavedSearch(clearAll = true))
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.state.collectLatest { state ->
                     adapter.submitData(state)
-                    binding.savedSwipeRefreshLayout.isRefreshing = false
                 }
             }
         }
