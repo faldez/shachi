@@ -90,4 +90,6 @@
     <string name="disable">Disable</string>
     <string name="hide">Hide</string>
     <string name="mute">Mute</string>
+    <string name="notes">Notes</string>
+    <string name="comments">Comments</string>
 </resources>

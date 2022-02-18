@@ -2,27 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/favorite_button"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_favorite_border_24"
-        android:title="@string/favorite"
+        android:id="@+id/notes_button"
+        android:enabled="false"
+        android:icon="@drawable/ic_baseline_notes_24"
+        android:title="@string/notes"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/detail_button"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_info_24"
-        android:title="@string/detail"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/share_button"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_share_24"
-        android:title="@string/share"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/download_button"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_download_24"
-        android:title="@string/download"
+        android:id="@+id/comment_button"
+        android:enabled="false"
+        android:icon="@drawable/ic_baseline_comment_24"
+        android:title="@string/comments"
         app:showAsAction="ifRoom" />
 </menu>

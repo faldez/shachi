@@ -28,4 +28,62 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/bottomToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="?attr/postSlideToolbarBackground">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center">
+
+
+            <ImageButton
+                android:id="@+id/favorite_button"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="TODO"
+                app:srcCompat="@drawable/favorite" />
+
+
+            <ImageButton
+                android:id="@+id/detail_button"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="TODO"
+                app:srcCompat="@drawable/ic_baseline_info_24" />
+
+            <ImageButton
+                android:id="@+id/share_button"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="TODO"
+                app:srcCompat="@drawable/ic_baseline_share_24" />
+
+            <ImageButton
+                android:id="@+id/download_button"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="TODO"
+                app:srcCompat="@drawable/ic_baseline_download_24" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.Toolbar>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

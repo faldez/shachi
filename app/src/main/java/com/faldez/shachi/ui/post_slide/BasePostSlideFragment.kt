@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
+import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -20,7 +20,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.service.DownloadService
-import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 abstract class BasePostSlideFragment : Fragment() {
     protected lateinit var postSlideAdapter: PostSlideAdapter
     protected lateinit var binding: PostSlideFragmentBinding
+    private var isToolbarHide: Boolean = false
 
     private val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -49,11 +50,41 @@ abstract class BasePostSlideFragment : Fragment() {
         postSlideAdapter = PostSlideAdapter(
             quality,
             onTap = {
-                getCurrentPost()?.let {
-                    navigateToPostDetail(it)
+                if (isToolbarHide) {
+                    showAppBar()
+                    isToolbarHide = false
+                } else {
+                    hideAppBar()
+                    isToolbarHide = true
                 }
             }
         )
+
+        binding.favoriteButton.setOnClickListener {
+            onFavoriteButton()
+        }
+        binding.detailButton.setOnClickListener {
+            getCurrentPost()?.let {
+                navigateToPostDetail(it)
+            }
+        }
+        binding.shareButton.setOnClickListener {
+            getCurrentPost()?.let { post ->
+                val bundle = bundleOf("post" to post)
+                findNavController().navigate(R.id.action_global_to_sharedialog, bundle)
+            }
+        }
+        binding.downloadButton.setOnClickListener {
+            getCurrentPost()?.let { post ->
+                val downloadDir = getDownloadDir()
+                if (downloadDir != null) {
+                    showSnackbar(R.string.downloading)
+                    downloadFile(downloadDir, post)
+                } else {
+                    showSnackbar(R.string.download_path_not_set)
+                }
+            }
+        }
 
         return binding.root
     }
@@ -100,21 +131,7 @@ abstract class BasePostSlideFragment : Fragment() {
     abstract suspend fun collectPagingData(showQuestionable: Boolean, showExplicit: Boolean)
 
     private fun setFavoriteButton(post: Post) {
-        val (favoriteIcon, favoriteTitle) = if (post.favorite) {
-            Pair(R.drawable.ic_baseline_favorite_24, R.string.unfavorite)
-        } else {
-            Pair(R.drawable.ic_baseline_favorite_border_24, R.string.favorite)
-        }
-
-        binding.postSlideTopappbar.menu.findItem(R.id.favorite_button)?.apply {
-            icon =
-                ResourcesCompat.getDrawable(resources,
-                    favoriteIcon,
-                    requireActivity().theme)
-            title = getText(favoriteTitle)
-        }
-
-
+        binding.favoriteButton.isSelected = post.favorite
     }
 
     private fun prepareAppBar() {
@@ -129,35 +146,6 @@ abstract class BasePostSlideFragment : Fragment() {
             when (item.itemId) {
                 android.R.id.home -> {
                     (activity as MainActivity).onBackPressed()
-                    true
-                }
-                R.id.favorite_button -> {
-                    onFavoriteButton()
-                    true
-                }
-                R.id.detail_button -> {
-                    getCurrentPost()?.let {
-                        navigateToPostDetail(it)
-                    }
-                    true
-                }
-                R.id.share_button -> {
-                    getCurrentPost()?.let { post ->
-                        val bundle = bundleOf("post" to post)
-                        findNavController().navigate(R.id.action_global_to_sharedialog, bundle)
-                    }
-                    true
-                }
-                R.id.download_button -> {
-                    getCurrentPost()?.let { post ->
-                        val downloadDir = getDownloadDir()
-                        if (downloadDir != null) {
-                            showSnackbar(R.string.downloading)
-                            downloadFile(downloadDir, post)
-                        } else {
-                            showSnackbar(R.string.download_path_not_set)
-                        }
-                    }
                     true
                 }
                 else -> false
@@ -200,6 +188,32 @@ abstract class BasePostSlideFragment : Fragment() {
             postSlideAdapter.setFavorite(currentItem, !post.favorite)
             setFavoriteButton(post)
         }
+    }
+
+    private fun hideAppBar() {
+        binding.postSlideAppbarLayout.hide()
+        binding.bottomToolbar.hide()
+    }
+
+    private fun showAppBar() {
+        binding.postSlideAppbarLayout.show()
+        binding.bottomToolbar.show()
+    }
+
+    private fun AppBarLayout.hide() {
+        if (!isToolbarHide) animate().translationY(-height.toFloat())
+    }
+
+    private fun Toolbar.hide() {
+        if (!isToolbarHide) animate().translationY(height.toFloat())
+    }
+
+    private fun AppBarLayout.show() {
+        if (isToolbarHide) animate().translationY(0f)
+    }
+
+    private fun Toolbar.show() {
+        if (isToolbarHide) animate().translationY(0f)
     }
 
     abstract fun deleteFavoritePost(post: Post)
