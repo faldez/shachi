@@ -283,8 +283,8 @@ abstract class BaseBrowseFragment : Fragment() {
                 shouldScrollToTop.collect { shouldScroll ->
                     val isNotEmpty = postsAdapter.itemCount != 0
                     Log.d(TAG,
-                        "shouldScroll=$shouldScroll postsAdapter.itemCount=${postsAdapter.itemCount}")
-                    if (shouldScroll && isNotEmpty) postsRecyclerView.scrollToPosition(0)
+                        "shouldScroll=$shouldScroll postsAdapter.itemCount=$isNotEmpty")
+                    if (shouldScroll) postsRecyclerView.scrollToPosition(0)
                 }
             }
         }
