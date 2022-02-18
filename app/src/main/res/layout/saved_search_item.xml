@@ -32,7 +32,7 @@
                     android:id="@+id/saved_search_tags_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceHeadline5" />
+                    android:textAppearance="?attr/textAppearanceSubtitle1" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -48,7 +48,7 @@
                 android:id="@+id/tags_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary" />
+                android:textAppearance="?attr/textAppearanceCaption" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:textColor="?android:attr/textColorSecondary"
+            android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/titlePostsLayout" />
