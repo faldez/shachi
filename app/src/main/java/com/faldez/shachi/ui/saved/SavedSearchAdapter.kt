@@ -213,7 +213,12 @@ class SavedSearchItemViewHolder(
         binding.root.setOnClickListener {
             item.savedSearch?.let { it1 -> onBrowse(it1) }
         }
+        binding.refreshSavedSearchButton.setOnClickListener {
+            adapter.refresh()
+        }
+        binding.editSavedSearchButton.setOnClickListener {
 
+        }
         binding.deleteSavedSearchButton.setOnClickListener {
             item.savedSearch?.let { it1 -> onDelete(it1) }
         }

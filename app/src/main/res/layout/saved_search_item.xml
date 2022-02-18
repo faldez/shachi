@@ -64,15 +64,34 @@
             app:layout_constraintTop_toBottomOf="@id/titlePostsLayout" />
 
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/deleteSavedSearchButton"
-            style="@style/Widget.Material3.Button.IconButton"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:icon="@drawable/ic_baseline_delete_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titlePostsLayout" />
+            app:layout_constraintTop_toBottomOf="@id/titlePostsLayout">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/refreshSavedSearchButton"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_baseline_refresh_24" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editSavedSearchButton"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_baseline_edit_24" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/deleteSavedSearchButton"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_baseline_delete_24" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

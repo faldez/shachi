@@ -81,7 +81,9 @@ class SavedFragment : Fragment() {
                     .setNegativeButton("No", null).show()
             },
             onScroll = { position, scroll ->
-                viewModel.putScroll(position!!, scroll!!)
+                if (position != null && scroll != null) {
+                    viewModel.putScroll(position, scroll)
+                }
             },
             quality = quality,
             questionableFilter = questionableFilter,
