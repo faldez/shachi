@@ -22,7 +22,6 @@ import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
 import com.faldez.shachi.model.Rating
-import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.repository.FavoriteRepository
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.launch
@@ -45,6 +44,11 @@ class FavoriteFragment : Fragment() {
     ): View? {
         binding = FavoriteFragmentBinding.inflate(inflater, container, false)
 
+        val tags = arguments?.get("tags") as String? ?: ""
+        if (tags != viewModel.state.value.tags) {
+            viewModel.accept(UiAction.SearchFavorite(tags))
+        }
+
         binding.bind()
 
         return binding.root
@@ -52,20 +56,10 @@ class FavoriteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<ServerView?, String>>(
-            "tags")
-            ?.observe(viewLifecycleOwner) { result ->
-                Log.d("FavoriteFragment/onViewCreated", "$result")
-                val tags = result.second
-
-                if (tags != viewModel.state.value.tags) {
-                    viewModel.accept(UiAction.SearchFavorite(tags))
-                }
-            }
         binding.searchFloatingButton.setOnClickListener {
             val bundle = bundleOf("tags" to viewModel.state.value.tags)
             Log.d("FavoriteFragment/onViewCreated", "tags ${viewModel.state.value.tags}")
-            findNavController().navigate(R.id.action_global_to_search, bundle)
+            findNavController().navigate(R.id.action_browse_to_search, bundle)
         }
         prepareAppBar()
     }

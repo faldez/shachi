@@ -57,14 +57,13 @@ abstract class BaseBrowseFragment : Fragment() {
         binding = BrowseFragmentBinding.inflate(inflater, container, false)
 
         val server = arguments?.get("server") as ServerView?
-        val tags = arguments?.get("tags") as String? ?: ""
+        val tags = arguments?.get("tags") as String? ?: "*"
 
-        Log.d("BrowseFragment/onCreate", "server: $server tags: $tags")
+        Log.d("BrowseFragment/onCreateView", "server: $server tags: $tags")
 
         if (server != null) {
             viewModel.selectServer(server)
         }
-        viewModel.accept(UiAction.GetSelectedServer)
         viewModel.accept(UiAction.Search(tags))
 
         binding.bindState(
@@ -78,25 +77,10 @@ abstract class BaseBrowseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Pair<ServerView?, String>>(
-            "tags")
-            ?.observe(viewLifecycleOwner) { result ->
-                Log.d("BrowseFragment/onViewCreated", "$result")
-                val server = result.first ?: viewModel.state.value.server
-                val tags = result.second
-                if (server != viewModel.state.value.server) {
-                    server?.let {
-                        viewModel.selectServer(it)
-                    }
-                }
-                if (tags != viewModel.state.value.tags) {
-                    viewModel.accept(UiAction.Search(tags))
-                }
-            }
         binding.searchFloatingButton.setOnClickListener {
             val bundle = bundleOf("server" to viewModel.state.value.server,
                 "tags" to viewModel.state.value.tags)
-            findNavController().navigate(R.id.action_global_to_search, bundle)
+            findNavController().navigate(R.id.action_browse_to_search, bundle)
         }
         prepareAppBar()
     }
@@ -107,9 +91,13 @@ abstract class BaseBrowseFragment : Fragment() {
         binding.appBarLayout.statusBarForeground =
             MaterialShapeDrawable.createWithElevationOverlay(requireContext())
 
-
         binding.searchPostTopAppBar.menu.clear()
         binding.searchPostTopAppBar.inflateMenu(R.menu.browse_menu)
+
+        if (findNavController().currentDestination?.id != R.id.browseFragment) {
+            binding.searchPostTopAppBar.menu.removeItem(R.id.search_history_button)
+        }
+
         binding.searchPostTopAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.save_search_button -> {
@@ -144,7 +132,7 @@ abstract class BaseBrowseFragment : Fragment() {
                 R.id.search_history_button -> {
                     val searchHistories = viewModel.searchHistoryFlow.value
                     val bundle = bundleOf("search_histories" to searchHistories)
-                    findNavController().navigate(R.id.action_global_to_searchhistory, bundle)
+                    findNavController().navigate(R.id.action_browse_to_searchhistory, bundle)
                     true
                 }
                 else -> super.onOptionsItemSelected(item)
@@ -293,10 +281,8 @@ abstract class BaseBrowseFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 postsAdapter.loadStateFlow.collectLatest { loadState ->
                     val server = viewModel.state.value.server
-                    Log.d("BrowseFragment/postsAdapter.loadStateFlow.collectLatest", "$loadState")
                     val isListEmpty =
                         loadState.refresh is LoadState.NotLoading && postsAdapter.itemCount == 0
-                    Log.d("BrowseFragment", "isListEmpty $isListEmpty")
                     postsRecyclerView.isVisible = !isListEmpty
                     swipeRefreshLayout.isRefreshing = loadState.source.refresh is LoadState.Loading
                     retryButton.isVisible =

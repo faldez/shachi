@@ -5,16 +5,6 @@
     android:id="@+id/nav_graph"
     app:startDestination="@+id/saved">
     <action
-        android:id="@+id/action_global_to_search"
-        app:destination="@id/search_simple_fragment"
-        app:enterAnim="@anim/slide_in_up"
-        app:exitAnim="@anim/fade_out"
-        app:popEnterAnim="@anim/fade_in"
-        app:popExitAnim="@anim/slide_out_down" />
-    <action
-        android:id="@+id/action_global_to_searchhistory"
-        app:destination="@id/search_history_bottom_sheet_fragment" />
-    <action
         android:id="@+id/action_global_to_servers"
         app:destination="@id/serversFragment"
         app:enterAnim="@anim/slide_in"
@@ -57,11 +47,6 @@
         android:name="com.faldez.shachi.ui.share_dialog.ShareDialogFragment"
         android:label="share_dialog"
         tools:layout="@layout/share_dialog_fragment" />
-    <dialog
-        android:id="@+id/search_history_bottom_sheet_fragment"
-        android:name="com.faldez.shachi.ui.search_history.SearchHistoryBottomSheetDialogFragment"
-        android:label="search_history"
-        tools:layout="@layout/search_history_bottom_sheet_dialog_fragment" />
     <fragment
         android:id="@+id/serversFragment"
         android:name="com.faldez.shachi.ui.servers.ServersFragment"
@@ -80,11 +65,6 @@
         android:name="com.faldez.shachi.ui.server_edit.ServerEditFragment"
         android:label="server_edit_fragment"
         tools:layout="@layout/server_edit_fragment" />
-    <fragment
-        android:id="@+id/search_simple_fragment"
-        android:name="com.faldez.shachi.ui.search.SearchFragment"
-        android:label="search_dialog"
-        tools:layout="@layout/search_fragment" />
     <fragment
         android:id="@+id/blacklisted_tags_fragment"
         android:name="com.faldez.shachi.ui.blacklisted_tag.BlacklistedTagFragment"

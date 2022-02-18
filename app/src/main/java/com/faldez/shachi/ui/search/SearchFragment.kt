@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ScrollView
 import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
@@ -26,7 +27,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SearchFragmentBinding
@@ -247,8 +247,9 @@ class SearchFragment : Fragment() {
                 ""
             }
         }
-        findNavController().previousBackStackEntry?.savedStateHandle?.set("tags", Pair(null, value))
-        (activity as MainActivity).onBackPressed()
+        val bundle = bundleOf("server" to viewModel.state.value.server,
+            "tags" to value)
+        findNavController().navigate(R.id.action_search_to_browse, bundle)
     }
 
     private fun getSearchMode(): Boolean = sharedPreferences.getBoolean("search_mode", false)

@@ -10,16 +10,47 @@
         android:label="browse_fragment"
         tools:layout="@layout/browse_fragment">
         <action
+            android:id="@+id/action_browse_to_search"
+            app:destination="@id/search_fragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_down" />
+        <action
             android:id="@+id/action_browse_to_postslide"
             app:destination="@id/browsePostSlideFragment"
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_out" />
+        <action
+            android:id="@+id/action_browse_to_searchhistory"
+            app:destination="@id/search_history_bottom_sheet_fragment" />
     </fragment>
     <fragment
         android:id="@+id/browsePostSlideFragment"
         android:name="com.faldez.shachi.ui.post_slide.PostSlideFragment"
         android:label="post_slide_fragment"
         tools:layout="@layout/post_slide_fragment" />
+    <dialog
+        android:id="@+id/search_history_bottom_sheet_fragment"
+        android:name="com.faldez.shachi.ui.search_history.SearchHistoryBottomSheetDialogFragment"
+        android:label="search_history"
+        tools:layout="@layout/search_history_bottom_sheet_dialog_fragment">
+        <action
+            android:id="@+id/action_searchhistory_to_browse"
+            app:destination="@id/browseFragment"
+            app:popUpTo="@id/browseFragment" />
+    </dialog>
+    <fragment
+        android:id="@+id/search_fragment"
+        android:name="com.faldez.shachi.ui.search.SearchFragment"
+        android:label="search_dialog"
+        tools:layout="@layout/search_fragment">
+        <action
+            android:id="@+id/action_search_to_browse"
+            app:destination="@id/browseFragment"
+            app:popUpTo="@id/browseFragment" />
+    </fragment>
+
 </navigation>

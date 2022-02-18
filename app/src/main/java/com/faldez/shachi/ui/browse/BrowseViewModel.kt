@@ -49,23 +49,18 @@ class BrowseViewModel constructor(
                     started = SharingStarted.Eagerly,
                     replay = 1)
 
-        val getServer =
-            actionStateFlow.filterIsInstance<UiAction.GetSelectedServer>()
-                .flatMapLatest {
-                    Log.d("BrowseViewModel", "getServer")
-                    getSelectedServer()
-                }
+        val getServer = getSelectedServer()
 
         state =
-            combine(getServer, searches, tagsScrolled, ::Triple).distinctUntilChanged().map { (server, search, scroll) ->
+            combine(getServer, searches, tagsScrolled, ::Triple).map { (server, search, scroll) ->
                 Log.d("BrowseViewModel",
-                    "$server ${search.tags} != ${scroll.currentTags}) || (${server?.url ?: scroll.currentServerUrl} != ${scroll.currentServerUrl})")
+                    "serverId=${server?.serverId} ${search.tags} != ${scroll.currentTags}) || (${server?.url} != ${scroll.currentServerUrl})")
 
                 UiState(
                     server = server,
                     tags = search.tags,
                     lastTagsScrolled = scroll.currentTags,
-                    hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (server?.url ?: scroll.currentServerUrl != scroll.currentServerUrl)
+                    hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (server?.url != scroll.currentServerUrl)
                 )
             }.stateIn(scope = viewModelScope,
                 started = SharingStarted.Eagerly,
@@ -75,7 +70,6 @@ class BrowseViewModel constructor(
         pagingDataFlow =
             state.filter { it.server != null }
                 .flatMapLatest {
-                    Log.d("BrowseViewModel", "pagingDataFlow")
                     searchPosts(it.server!!, tags = it.tags).map {
                         it.map { post ->
                             val postId =

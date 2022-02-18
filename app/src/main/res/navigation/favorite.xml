@@ -11,6 +11,13 @@
         tools:layout="@layout/favorite_fragment">
 
         <action
+            android:id="@+id/action_browse_to_search"
+            app:destination="@id/search_fragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_down" />
+        <action
             android:id="@+id/action_favorite_to_favoritepostslide"
             app:destination="@id/favoritePostSlideFragment"
             app:enterAnim="@anim/slide_in_up"
@@ -18,10 +25,19 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_out_down" />
     </fragment>
-
     <fragment
         android:id="@+id/favoritePostSlideFragment"
         android:name="com.faldez.shachi.ui.post_slide.FavoritePostSlideFragment"
         android:label="post_slide_fragment"
         tools:layout="@layout/post_slide_fragment" />
+    <fragment
+        android:id="@+id/search_fragment"
+        android:name="com.faldez.shachi.ui.search.SearchFragment"
+        android:label="search_dialog"
+        tools:layout="@layout/search_fragment">
+        <action
+            android:id="@+id/action_search_to_browse"
+            app:destination="@id/favoriteFragment"
+            app:popUpTo="@id/favoriteFragment" />
+    </fragment>
 </navigation>
