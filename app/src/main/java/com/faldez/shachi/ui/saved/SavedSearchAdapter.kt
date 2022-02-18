@@ -4,10 +4,12 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.text.SpannableStringBuilder
 import android.util.Log
+import android.util.SparseIntArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.util.forEach
 import androidx.paging.PagingDataAdapter
 import androidx.paging.filter
 import androidx.recyclerview.widget.DiffUtil
@@ -28,15 +30,27 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class SavedSearchAdapter(
+    private val scrollPositions: SparseIntArray? = null,
     private val onBrowse: (SavedSearchServer) -> Unit,
     private val onClick: (SavedSearchServer, Int) -> Unit,
     private val onDelete: (SavedSearchServer) -> Unit,
+    private val onScroll: ((Int?, Int?) -> Unit)? = null,
     private val savedSearchServer: SavedSearchServer? = null,
     private val quality: String,
     private val questionableFilter: String,
     private val explicitFilter: String,
 ) : PagingDataAdapter<SavedSearchPost, RecyclerView.ViewHolder>(COMPARATOR) {
     private val viewPool = RecyclerView.RecycledViewPool()
+
+    fun setScrollPositions(newScrollPositions: SparseIntArray) {
+        newScrollPositions.forEach { key, value ->
+            val oldValue = scrollPositions?.get(key)
+            scrollPositions?.put(key, newScrollPositions[key])
+            if (oldValue != value) {
+                notifyItemChanged(key)
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -46,6 +60,7 @@ class SavedSearchAdapter(
                 SavedSearchItemViewHolder(
                     binding, onBrowse,
                     onClick, onDelete,
+                    onScroll,
                     quality,
                     questionableFilter,
                     explicitFilter,
@@ -72,7 +87,7 @@ class SavedSearchAdapter(
         when (holder) {
             is SavedSearchItemViewHolder -> {
                 if (item != null) {
-                    holder.bind(viewPool, item)
+                    holder.bind(viewPool, scrollPositions!!, item)
                 }
             }
             is SavedSearchItemPostViewHolder -> {
@@ -96,6 +111,11 @@ class SavedSearchAdapter(
         }
     }
 
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        onScroll?.let { it(null, null) }
+    }
+
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<SavedSearchPost>() {
             override fun areItemsTheSame(
@@ -110,7 +130,6 @@ class SavedSearchAdapter(
                     throw IllegalAccessException()
                 }
             }
-
 
             override fun areContentsTheSame(
                 oldItem: SavedSearchPost,
@@ -133,17 +152,20 @@ class SavedSearchItemViewHolder(
     private val onBrowse: (SavedSearchServer) -> Unit,
     private val onClick: (SavedSearchServer, Int) -> Unit,
     private val onDelete: (SavedSearchServer) -> Unit,
+    private val onScroll: ((Int?, Int?) -> Unit)? = null,
     private val quality: String,
     private val questionableFilter: String,
     private val explicitFilter: String,
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
-
     fun bind(
         viewPool: RecyclerView.RecycledViewPool,
+        scrollPositions: SparseIntArray,
         item: SavedSearchPost,
     ) {
+        Log.d("SavedSearchItemViewHolder/bind",
+            "${item.savedSearch!!.savedSearch.savedSearchId} should scroll to ${scrollPositions[bindingAdapterPosition]}")
         binding.savedSearchTagsTextView.text = item.savedSearch?.savedSearch?.savedSearchTitle
         binding.savedSearchServerTextView.text = item.savedSearch?.server?.title
         binding.tagsTextView.text = SpannableStringBuilder(item.savedSearch?.savedSearch?.tags)
@@ -152,17 +174,27 @@ class SavedSearchItemViewHolder(
         layoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
 
         val adapter = SavedSearchAdapter(
-            onBrowse, onClick, onDelete,
-            item.savedSearch,
-            quality,
-            questionableFilter,
-            explicitFilter,
+            onBrowse = onBrowse, onClick = onClick, onDelete = onDelete,
+            onScroll = { _, _ ->
+                val scroll =
+                    (binding.savedSearchItemRecyclerView.layoutManager as StaggeredGridLayoutManager).findLastCompletelyVisibleItemPositions(
+                        IntArray(1))[0]
+                onScroll?.let { it(item.savedSearch!!.savedSearch.savedSearchId, scroll) }
+            },
+            savedSearchServer = item.savedSearch,
+            quality = quality,
+            questionableFilter = questionableFilter,
+            explicitFilter = explicitFilter,
         )
 
         binding.savedSearchItemRecyclerView.apply {
             setLayoutManager(layoutManager)
             setAdapter(adapter)
             setRecycledViewPool(viewPool)
+        }
+
+        binding.savedSearchItemRecyclerView.post {
+            layoutManager.scrollToPosition(scrollPositions[item.savedSearch!!.savedSearch.savedSearchId])
         }
 
         CoroutineScope(Dispatchers.IO).launch {

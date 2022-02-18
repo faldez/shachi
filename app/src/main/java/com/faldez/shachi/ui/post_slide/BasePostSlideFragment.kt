@@ -115,9 +115,14 @@ abstract class BasePostSlideFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 setAppBar(position)
+                onPageChange(position)
             }
         })
         setAppBar(position)
+    }
+
+    open fun onPageChange(position: Int) {
+
     }
 
     private fun setAppBar(position: Int) {

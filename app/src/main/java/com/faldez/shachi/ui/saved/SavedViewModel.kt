@@ -1,6 +1,7 @@
 package com.faldez.shachi.ui.saved
 
 import android.util.Log
+import android.util.SparseIntArray
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -26,6 +27,7 @@ class SavedViewModel(
     private val stateMap: MutableStateFlow<MutableMap<Int, Flow<PagingData<SavedSearchPost>>>> =
         MutableStateFlow(
             mutableMapOf())
+    val scrollState: MutableStateFlow<SparseIntArray> = MutableStateFlow(SparseIntArray())
     val accept: (UiAction) -> Unit
 
     init {
@@ -89,11 +91,19 @@ class SavedViewModel(
     fun delete(savedSearch: SavedSearch) = viewModelScope.launch {
         savedSearchRepository.delete(savedSearch)
     }
+
+    fun putScroll(position: Int, scroll: Int) {
+        scrollState.getAndUpdate {
+            it.put(position, scroll)
+            it
+        }
+    }
 }
 
 data class SavedSearchPost(
     val savedSearch: SavedSearchServer? = null,
     val post: Post? = null,
+    val scroll: Int? = null,
     val posts: Flow<PagingData<SavedSearchPost>?> = flowOf(null),
 )
 
@@ -103,6 +113,4 @@ data class UiState(
 
 sealed class UiAction {
     data class GetSavedSearch(val clearAll: Boolean = false) : UiAction()
-    object GetSavedSearchFlow: UiAction()
-    data class GetSavedSearchPost(val savedSearch: SavedSearch) : UiAction()
 }

@@ -15,9 +15,9 @@ class SavedPostSlideFragment : BasePostSlideFragment() {
     }
 
     private val viewModel: SavedViewModel by navGraphViewModels(R.id.saved)
+    private val savedSearchId by lazy { requireArguments().getInt("saved_search_id") }
 
     override suspend fun collectPagingData(showQuestionable: Boolean, showExplicit: Boolean) {
-        val savedSearchId = requireArguments().getInt("saved_search_id")
         viewModel.posts(savedSearchId).collect {
             if (it != null) {
                 postSlideAdapter.submitData(it.filter { post ->
@@ -29,6 +29,10 @@ class SavedPostSlideFragment : BasePostSlideFragment() {
                 })
             }
         }
+    }
+
+    override fun onPageChange(position: Int) {
+        viewModel.putScroll(savedSearchId, position)
     }
 
     override fun navigateToPostDetail(post: Post?) {

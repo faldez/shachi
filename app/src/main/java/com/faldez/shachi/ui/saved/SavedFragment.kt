@@ -80,9 +80,13 @@ class SavedFragment : Fragment() {
                     ) { _, _ -> viewModel.delete(savedSearch.savedSearch) }
                     .setNegativeButton("No", null).show()
             },
+            onScroll = { position, scroll ->
+                viewModel.putScroll(position!!, scroll!!)
+            },
             quality = quality,
             questionableFilter = questionableFilter,
             explicitFilter = explicitFilter,
+            scrollPositions = viewModel.scrollState.value
         )
 
         binding.savedSearchRecyclerView.adapter = adapter
@@ -104,6 +108,14 @@ class SavedFragment : Fragment() {
                 viewModel.state.collectLatest { state ->
                     adapter.submitData(state)
                     binding.savedSwipeRefreshLayout.isRefreshing = false
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.scrollState.collectLatest {
+                    adapter.setScrollPositions(it)
                 }
             }
         }
