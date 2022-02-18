@@ -1,5 +1,7 @@
 package com.faldez.shachi.ui.saved
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.util.SparseIntArray
@@ -14,7 +16,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.SavedSearchItemBinding
 import com.faldez.shachi.databinding.SavedSearchItemPostBinding
@@ -247,9 +248,10 @@ class SavedSearchItemPostViewHolder(
                 else -> item.previewUrl ?: item.sampleUrl
             } ?: item.fileUrl
             Glide.with(imageView.context).load(url)
-                .placeholder(android.R.color.transparent)
-                .override(previewWidth, previewHeight)
-                .dontAnimate()
+                .placeholder(BitmapDrawable(imageView.resources,
+                    Bitmap.createBitmap(previewWidth,
+                        previewHeight,
+                        Bitmap.Config.ARGB_8888)))
                 .into(imageView)
         }
         binding.root.isChecked = item.favorite

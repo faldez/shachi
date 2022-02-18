@@ -1,5 +1,7 @@
 package com.faldez.shachi.ui.favorite
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -61,9 +63,10 @@ class FavoriteAdapter(
                 } ?: it.fileUrl
 
                 Glide.with(imageView.context).load(url)
-                    .placeholder(android.R.color.transparent)
-                    .override(previewWidth, previewHeight)
-                    .dontAnimate()
+                    .placeholder(BitmapDrawable(imageView.resources,
+                        Bitmap.createBitmap(previewWidth,
+                            previewHeight,
+                            Bitmap.Config.ARGB_8888)))
                     .into(imageView)
             }
 

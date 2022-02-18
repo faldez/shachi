@@ -1,5 +1,7 @@
 package com.faldez.shachi.ui.browse
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -8,8 +10,6 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
-import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
@@ -71,7 +71,6 @@ class BrowseItemViewHolder(
 ) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post) {
-        val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
         val imageView = binding.imageView
 
         val previewWidth = post.previewWidth ?: 150
@@ -96,10 +95,10 @@ class BrowseItemViewHolder(
             } ?: post.fileUrl
 
             Glide.with(imageView.context).load(url)
-                .transition(withCrossFade(factory))
-                .placeholder(android.R.color.transparent)
-                .override(previewWidth, previewHeight)
-                .dontAnimate()
+                .placeholder(BitmapDrawable(imageView.resources,
+                    Bitmap.createBitmap(previewWidth,
+                        previewHeight,
+                        Bitmap.Config.ARGB_8888)))
                 .into(imageView)
         }
 
