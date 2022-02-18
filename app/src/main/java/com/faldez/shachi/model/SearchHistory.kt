@@ -23,5 +23,5 @@ data class SearchHistoryServer(
         parentColumn = "server_id",
         entityColumn = "server_id"
     )
-    val server: Server,
+    val server: ServerView,
 )
