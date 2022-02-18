@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.util.forEach
+import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.paging.filter
 import androidx.recyclerview.widget.DiffUtil
@@ -262,7 +263,7 @@ class SavedSearchItemPostViewHolder(
                 .override(previewWidth, previewHeight)
                 .into(imageView)
         }
-        binding.root.isChecked = item.favorite
+        binding.favoriteIcon.isVisible = item.favorite
         binding.root.setOnClickListener {
             Log.d("SavedSearchItemPostViewHolder/bind",
                 "${savedSearchServer.savedSearch.savedSearchId} position ${item.postId}")

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -103,7 +104,7 @@ class BrowseItemViewHolder(
                 .into(imageView)
         }
 
-        binding.root.isChecked = post.favorite
+        binding.favoriteIcon.isVisible = post.favorite
 
         binding.root.setOnClickListener { _ ->
             onClick(bindingAdapterPosition)
