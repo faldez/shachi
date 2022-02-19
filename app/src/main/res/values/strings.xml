@@ -85,6 +85,7 @@
     <string name="filters">Filters</string>
     <string name="questionable">Questionable</string>
     <string name="explicit">Explicit</string>
+    <string name="blacklist">Blacklist</string>
     <string name="api_key">API key</string>
     <string name="username">Username</string>
     <string name="login_optional">Login (Optional)</string>

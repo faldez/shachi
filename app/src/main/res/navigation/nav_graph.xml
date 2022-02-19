@@ -34,7 +34,7 @@
 
     <dialog
         android:id="@+id/post_detail_bottom_sheet_fragment"
-        android:name="com.faldez.shachi.ui.post_detail.PostDetailBottomSheetFragment"
+        android:name="com.faldez.shachi.ui.post_detail.PostDetailFragment"
         android:label="post_detail"
         tools:layout="@layout/post_detail_fragment" />
     <dialog

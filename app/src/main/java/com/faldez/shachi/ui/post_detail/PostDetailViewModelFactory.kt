@@ -5,12 +5,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.repository.TagRepository
 
 class PostDetailViewModelFactory constructor(
-    private val currentTags: String?,
     private val post: Post,
     private val serverRepository: ServerRepository,
     private val tagRepository: TagRepository,
@@ -21,10 +19,9 @@ class PostDetailViewModelFactory constructor(
         modelClass: Class<T>,
         handle: SavedStateHandle,
     ): T {
-        return if (modelClass.isAssignableFrom(PostDetailBottomSheetViewModel::class.java)) {
-            PostDetailBottomSheetViewModel(
-                currentTags,
-                this.post,
+        return if (modelClass.isAssignableFrom(PostDetailViewModel::class.java)) {
+            PostDetailViewModel(
+                post,
                 this.serverRepository,
                 this.tagRepository) as T
         } else {
