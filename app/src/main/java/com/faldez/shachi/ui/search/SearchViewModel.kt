@@ -3,10 +3,7 @@ package com.faldez.shachi.ui.search
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faldez.shachi.model.Category
-import com.faldez.shachi.model.Server
-import com.faldez.shachi.model.ServerView
-import com.faldez.shachi.model.TagDetail
+import com.faldez.shachi.model.*
 import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.CoroutineScope
@@ -86,7 +83,12 @@ class SearchSimpleViewModel(
                 if (it is SelectedTags.Simple) {
                     SelectedTags.Simple(it.tags.map { tag ->
                         if (tag.name == name) {
-                            tag.copy(excluded = !tag.excluded)
+                            val modifier = if (tag.modifier == null) {
+                                Modifier.Minus
+                            } else {
+                                null
+                            }
+                            tag.copy(modifier = modifier)
                         } else {
                             tag
                         }

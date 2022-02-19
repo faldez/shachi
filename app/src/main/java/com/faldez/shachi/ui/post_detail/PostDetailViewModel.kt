@@ -3,6 +3,7 @@ package com.faldez.shachi.ui.post_detail
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.faldez.shachi.model.Modifier
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.TagDetail
 import com.faldez.shachi.repository.ServerRepository
@@ -62,7 +63,7 @@ class PostDetailViewModel(
                             blacklistedTags = blacklistedTags.map {
                                 TagDetail(name = it.name,
                                     type = it.type,
-                                    excluded = true)
+                                    modifier = Modifier.Minus)
                             }
                         ))
                     }

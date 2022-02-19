@@ -387,11 +387,7 @@ class SearchFragment : Fragment() {
         }
 
         this.apply {
-            text = if(tag.excluded) {
-                "-${tag.name}"
-            } else {
-                tag.name
-            }
+            text = tag.toString()
             isCloseIconVisible = true
             textColor?.let {
                 setTextColor(ColorStateList.valueOf(ResourcesCompat.getColor(resources,

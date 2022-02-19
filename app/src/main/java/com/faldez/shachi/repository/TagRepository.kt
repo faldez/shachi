@@ -78,6 +78,7 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
         /*
         Try to query from database first before make request
          */
+        val modifierPrefixRegex = Regex("^[-~*]")
         val tagsToQuery = action.tags.trim().split(" ")
         val cachedTags = tagsToQuery.let {
             val where = it.joinToString(" OR ") {
@@ -87,16 +88,22 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
         }.let { (tags, where) ->
             val queryStr = "SELECT * FROM tag WHERE $where"
             Log.d("TagRepository/getTags", "queryStr $queryStr")
-            val sqlQuery = SimpleSQLiteQuery(queryStr, tags.toTypedArray()
+            val sqlQuery = SimpleSQLiteQuery(queryStr,
+                tags.map { it.replaceFirst(modifierPrefixRegex, "") }.toTypedArray()
             )
             val result = db.tagDao().getTags(sqlQuery)
-            if (result.isNullOrEmpty()) null else result
+            tagsToQuery.mapNotNull {
+                result?.find { res -> res.equals(it) }?.copy(name = it)
+            }
         }
         Log.d("TagRepository/getTags", "cachedTags $cachedTags")
 
         // filter tags from tagsToQuery that is not on database to query to server
-        val cachedTagsSet = cachedTags?.map { it.name }?.toSet()
-        val uncachedTags = tagsToQuery.filter { cachedTagsSet?.contains(it) != true }
+        val cachedTagsSet = cachedTags.map { it.name }.toSet()
+        val uncachedTags = tagsToQuery.filter {
+            !cachedTagsSet.contains(it.replaceFirst(modifierPrefixRegex,
+                ""))
+        }
         Log.d("TagRepository/getTags", "uncachedTags $uncachedTags")
 
         if (uncachedTags.isNullOrEmpty())
@@ -152,7 +159,7 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
             }
 
         val result =
-            (listOf(cachedTags ?: listOf(), bulkQueriedTags ?: listOf(),
+            (listOf(cachedTags, bulkQueriedTags ?: listOf(),
                 eachQueriedTags).flatten() as List<*>).filterIsInstance<Tag>()
 
         Log.d("TagRepository/getTags", "result $result")
