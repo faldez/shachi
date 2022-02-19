@@ -23,7 +23,7 @@ fun GelbooruTagResponse.mapToTags() =
     }
 
 fun GelbooruTagResponse.mapToTagDetail() =
-    this.tags?.tag?.first()?.let {
+    this.tags?.tag?.firstOrNull()?.let {
         TagDetail(
             name = it.name,
             count = it.count,
@@ -32,7 +32,7 @@ fun GelbooruTagResponse.mapToTagDetail() =
     }
 
 fun GelbooruTagResponse.mapToTag() =
-    this.tags?.tag?.first()?.let {
+    this.tags?.tag?.firstOrNull()?.let {
         Tag(
             name = it.name,
             type = parseTag(it.type)
@@ -60,7 +60,7 @@ fun List<DanbooruTag>.mapToTags() =
 
 @JvmName("danbooruMapToTagDetail")
 fun List<DanbooruTag>.mapToTagDetail() =
-    this.first().let {
+    this.firstOrNull()?.let {
         TagDetail(
             name = it.name,
             count = it.postCount,
@@ -70,7 +70,7 @@ fun List<DanbooruTag>.mapToTagDetail() =
 
 @JvmName("danbooruMapToTag")
 fun List<DanbooruTag>.mapToTag() =
-    this.first().let {
+    this.firstOrNull()?.let {
         Tag(
             name = it.name,
             type = parseTag(it.category)
@@ -98,7 +98,7 @@ fun List<MoebooruTag>.mapToTags() =
 
 @JvmName("moebooruMapToTagDetail")
 fun List<MoebooruTag>.mapToTagDetail() =
-    this.first().let {
+    this.firstOrNull()?.let {
         TagDetail(
             name = it.name,
             count = it.count,
@@ -108,7 +108,7 @@ fun List<MoebooruTag>.mapToTagDetail() =
 
 @JvmName("moebooruMapToTag")
 fun List<MoebooruTag>.mapToTag() =
-    this.first().let {
+    this.firstOrNull()?.let {
         Tag(
             name = it.name,
             type = parseTag(it.type)
