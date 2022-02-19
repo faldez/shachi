@@ -54,6 +54,7 @@ class SavedFragment : Fragment() {
         Log.d("SavedFragment", "onCreateView")
         binding = SavedFragmentBinding.inflate(inflater, container, false)
 
+        val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
         val quality = preferences.getString("preview_quality", null) ?: "preview"
         val questionableFilter =
             preferences.getString("filter_questionable_content", null) ?: "disable"
@@ -107,6 +108,7 @@ class SavedFragment : Fragment() {
                     viewModel.putScroll(position, scroll)
                 }
             },
+            gridMode = gridMode,
             quality = quality,
             questionableFilter = questionableFilter,
             explicitFilter = explicitFilter,
