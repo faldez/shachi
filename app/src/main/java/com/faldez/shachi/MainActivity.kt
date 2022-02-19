@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity(),
             }
             if (isShow) {
                 showNavigation()
-
             } else {
                 hideNavigation()
             }

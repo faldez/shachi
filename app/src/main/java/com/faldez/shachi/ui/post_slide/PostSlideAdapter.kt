@@ -48,8 +48,10 @@ class PostSlideAdapter(
     }
 
     override fun onBindViewHolder(holder: PostSlideViewHolder, position: Int) {
-        getItem(position)?.let {
-//            holder.bind(it)
+        if (holder is PostSlideImageViewHolder) {
+            getItem(position)?.let {
+                holder.bind(it)
+            }
         }
     }
 
@@ -125,16 +127,16 @@ class PostSlideImageViewHolder(
     private val onTap: () -> Unit,
 ) :
     PostSlideViewHolder(binding.root) {
-    override fun bind(it: Post) {
+    override fun bind(item: Post) {
         val postImageView = binding.postImageView
         postImageView.setOnViewTapListener { view, x, y -> onTap() }
         binding.postLoadingIndicator.isIndeterminate = true
 
         val url = when (quality) {
-            "sample" -> it.sampleUrl ?: it.previewUrl
-            "original" -> it.fileUrl
-            else -> it.previewUrl ?: it.sampleUrl
-        } ?: it.fileUrl
+            "sample" -> item.sampleUrl ?: item.previewUrl
+            "original" -> item.fileUrl
+            else -> item.previewUrl ?: item.sampleUrl
+        } ?: item.fileUrl
 
         GlideModule.setOnProgress(url,
             onProgress = { bytesRead, totalContentLength, done ->
@@ -142,8 +144,8 @@ class PostSlideImageViewHolder(
                 binding.postLoadingIndicator.progress = bytesRead.toInt()
                 binding.postLoadingIndicator.isIndeterminate = false
             })
-        GlideApp.with(postImageView.context).load(it.fileUrl)
-            .thumbnail(GlideApp.with(postImageView.context).load(it.previewUrl))
+        GlideApp.with(postImageView.context).load(item.fileUrl)
+            .thumbnail(GlideApp.with(postImageView.context).load(item.previewUrl))
             .timeout(3000)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
