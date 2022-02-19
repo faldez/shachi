@@ -20,6 +20,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.service.DownloadService
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -50,12 +51,12 @@ abstract class BasePostSlideFragment : Fragment() {
         postSlideAdapter = PostSlideAdapter(
             quality,
             onTap = {
-                if (isToolbarHide) {
+                isToolbarHide = if (isToolbarHide) {
                     showAppBar()
-                    isToolbarHide = false
+                    false
                 } else {
                     hideAppBar()
-                    isToolbarHide = true
+                    true
                 }
             }
         )
@@ -122,9 +123,7 @@ abstract class BasePostSlideFragment : Fragment() {
         onPageChange(position)
     }
 
-    open fun onPageChange(position: Int) {
-
-    }
+    open fun onPageChange(position: Int) {}
 
     private fun setAppBar(position: Int) {
         postSlideAdapter.getPostItem(position)?.let {
@@ -225,4 +224,9 @@ abstract class BasePostSlideFragment : Fragment() {
     abstract fun deleteFavoritePost(post: Post)
 
     abstract fun favoritePost(post: Post)
+
+    override fun onDestroyView() {
+        binding.postViewPager.adapter = null
+        super.onDestroyView()
+    }
 }

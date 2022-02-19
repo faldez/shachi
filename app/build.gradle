@@ -69,6 +69,9 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
 
+    // exoplayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.16.1'
+
     // room
     implementation("androidx.room:room-runtime:2.4.1")
     annotationProcessor("androidx.room:room-compiler:2.4.1")
