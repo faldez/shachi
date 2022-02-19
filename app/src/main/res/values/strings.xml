@@ -95,4 +95,7 @@
     <string name="notes">Notes</string>
     <string name="comments">Comments</string>
     <string name="update_title">Update Title</string>
+    <string name="share_file">Share file</string>
+    <string name="share_link">Share link</string>
+    <string name="share_source_link">Share source link</string>
 </resources>

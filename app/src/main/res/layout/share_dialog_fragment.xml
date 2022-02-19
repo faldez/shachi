@@ -16,7 +16,7 @@
         android:drawablePadding="16dp"
         android:gravity="center_vertical"
         android:padding="16dp"
-        android:text="Share image"
+        android:text="@string/share_file"
         app:drawableLeftCompat="@drawable/ic_baseline_image_24"
         app:drawableStartCompat="@drawable/ic_baseline_image_24" />
 
@@ -29,7 +29,7 @@
         android:drawablePadding="16dp"
         android:gravity="center_vertical"
         android:padding="16dp"
-        android:text="Share link"
+        android:text="@string/share_link"
         app:drawableLeftCompat="@drawable/ic_baseline_link_24"
         app:drawableStartCompat="@drawable/ic_baseline_link_24" />
 
@@ -42,7 +42,7 @@
         android:drawablePadding="16dp"
         android:gravity="center_vertical"
         android:padding="16dp"
-        android:text="Share source link"
+        android:text="@string/share_source_link"
         app:drawableLeftCompat="@drawable/ic_baseline_source_24"
         app:drawableStartCompat="@drawable/ic_baseline_source_24" />
 
