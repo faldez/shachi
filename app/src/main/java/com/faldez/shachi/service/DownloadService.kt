@@ -11,6 +11,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
 import com.faldez.shachi.R
 import com.faldez.shachi.model.Post
+import com.faldez.shachi.util.MimeUtil
 import java.net.URL
 
 class DownloadService : Service() {
@@ -24,9 +25,10 @@ class DownloadService : Service() {
             val fileUri = Uri.parse(fileUrl)
 
             val downloadDir = msg.data.getString("download_dir")
+            val mime = MimeUtil.getMimeTypeFromUrl(fileUrl)
             val file = downloadDir?.let {
                 DocumentFile.fromTreeUri(applicationContext, Uri.parse(it))
-                    ?.createFile("image/*", fileUri.lastPathSegment!!)
+                    ?.createFile(mime ?: "image/*", fileUri.lastPathSegment!!)
             }
 
             URL(fileUrl).openStream().use { input ->
@@ -38,20 +40,20 @@ class DownloadService : Service() {
 
             contentResolver.openInputStream(file!!.uri)?.use { input ->
                 val bitmap = BitmapFactory.decodeStream(input)
-                if (bitmap != null) {
-                    showNotification(R.string.download_finished, bitmap)
-                }
+                showNotification(R.string.download_finished, bitmap)
             }
 
             stopSelf(msg.arg1)
         }
 
-        private fun showNotification(text: Int, bitmap: Bitmap) {
-            val builder = NotificationCompat.Builder(applicationContext, "DOWNLOAD")
+        private fun showNotification(text: Int, preview: Bitmap? = null) {
+            var builder = NotificationCompat.Builder(applicationContext, "DOWNLOAD")
                 .setSmallIcon(R.drawable.ic_baseline_download_24)
                 .setContentTitle(resources.getText(text))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setStyle(NotificationCompat.BigPictureStyle().bigPicture(bitmap))
+            if (preview != null) {
+                builder = builder.setStyle(NotificationCompat.BigPictureStyle().bigPicture(preview))
+            }
             with(NotificationManagerCompat.from(applicationContext)) {
                 notify(0, builder.build())
             }
