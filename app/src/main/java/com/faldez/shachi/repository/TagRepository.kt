@@ -1,12 +1,8 @@
 package com.faldez.shachi.repository
 
 import android.util.Log
-import androidx.sqlite.db.SimpleSQLiteQuery
 import com.faldez.shachi.database.AppDatabase
-import com.faldez.shachi.model.ServerType
-import com.faldez.shachi.model.Tag
-import com.faldez.shachi.model.TagDetail
-import com.faldez.shachi.model.mapToTagDetails
+import com.faldez.shachi.model.*
 import com.faldez.shachi.model.response.mapToTagDetail
 import com.faldez.shachi.model.response.mapToTagDetails
 import com.faldez.shachi.model.response.mapToTags
@@ -78,24 +74,17 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
         /*
         Try to query from database first before make request
          */
-        val modifierPrefixRegex = Regex("^[-~*]")
+        val modifierPrefixRegex = Regex(modifierRegex)
         val tagsToQuery = action.tags.trim().split(" ")
-        val cachedTags = tagsToQuery.let {
-            val where = it.joinToString(" OR ") {
-                "name = ?"
-            }
-            Pair(it, where)
-        }.let { (tags, where) ->
-            val queryStr = "SELECT * FROM tag WHERE $where"
-            Log.d("TagRepository/getTags", "queryStr $queryStr")
-            val sqlQuery = SimpleSQLiteQuery(queryStr,
-                tags.map { it.replaceFirst(modifierPrefixRegex, "") }.toTypedArray()
-            )
-            val result = db.tagDao().getTags(sqlQuery)
-            tagsToQuery.mapNotNull {
-                result?.find { res -> res.equals(it) }?.copy(name = it)
+        val cachedTags = tagsToQuery.let { tags ->
+            val cleanedTagsToQuery = tagsToQuery.map { it.replaceFirst(modifierPrefixRegex, "") }
+            val result = db.tagDao().getTags(cleanedTagsToQuery)
+                ?.associateBy { it.name }
+            cleanedTagsToQuery.mapIndexedNotNull { index, tag ->
+                result?.get(tag)?.copy(name = tagsToQuery[index])
             }
         }
+
         Log.d("TagRepository/getTags", "cachedTags $cachedTags")
 
         // filter tags from tagsToQuery that is not on database to query to server

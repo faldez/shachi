@@ -31,7 +31,16 @@
         android:id="@+id/browsePostSlideFragment"
         android:name="com.faldez.shachi.ui.post_slide.PostSlideFragment"
         android:label="post_slide_fragment"
-        tools:layout="@layout/post_slide_fragment" />
+        tools:layout="@layout/post_slide_fragment">
+
+        <action
+            android:id="@+id/action_postslide_to_postdetail"
+            app:destination="@id/post_detail_fragment"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out_down" />
+    </fragment>
     <dialog
         android:id="@+id/search_history_bottom_sheet_fragment"
         android:name="com.faldez.shachi.ui.search_history.SearchHistoryFragment"
@@ -49,6 +58,17 @@
         tools:layout="@layout/search_fragment">
         <action
             android:id="@+id/action_search_to_browse"
+            app:destination="@id/browseFragment"
+            app:popUpTo="@id/browseFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/post_detail_fragment"
+        android:name="com.faldez.shachi.ui.post_detail.PostDetailFragment"
+        android:label="post_detail"
+        tools:layout="@layout/post_detail_fragment">
+
+        <action
+            android:id="@+id/action_postdetail_to_browse"
             app:destination="@id/browseFragment"
             app:popUpTo="@id/browseFragment" />
     </fragment>

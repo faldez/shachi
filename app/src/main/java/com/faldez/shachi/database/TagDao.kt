@@ -1,7 +1,9 @@
 package com.faldez.shachi.database
 
-import androidx.room.*
-import androidx.sqlite.db.SupportSQLiteQuery
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.faldez.shachi.model.Tag
 
 @Dao
@@ -18,6 +20,6 @@ interface TagDao {
     @Query("SELECT * FROM tag WHERE name LIKE :name LIMIT :limit")
     suspend fun searchTag(name: String, limit: Int = 10): List<Tag>?
 
-    @RawQuery
-    suspend fun getTags(query: SupportSQLiteQuery): List<Tag>?
+    @Query("SELECT * FROM tag WHERE name IN (:names)")
+    suspend fun getTags(names: List<String>): List<Tag>?
 }

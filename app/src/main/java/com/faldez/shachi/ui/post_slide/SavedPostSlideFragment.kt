@@ -41,7 +41,7 @@ class SavedPostSlideFragment : BasePostSlideFragment() {
         val bundle = bundleOf("post" to post,
             "server" to server,
             "tags" to tags)
-        findNavController().navigate(R.id.action_postslide_to_postdetail, bundle)
+        findNavController().navigate(R.id.action_savedpostslide_to_postdetail, bundle)
     }
 
     override fun deleteFavoritePost(post: Post) {

@@ -6,7 +6,6 @@ import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
-import java.util.*
 
 enum class Category {
     General,
@@ -24,6 +23,8 @@ enum class Modifier(val prefix: String) {
     Wildcard("*")
 }
 
+const val modifierRegex = "^[-~*\\{]|\\}\$"
+
 @Entity(tableName = "tag")
 data class Tag(
     @PrimaryKey val name: String,
@@ -32,14 +33,14 @@ data class Tag(
     override operator fun equals(other: Any?): Boolean {
         return when (other) {
             is Tag -> {
-                val regex = Regex("^[-\\~]")
+                val regex = Regex(modifierRegex)
                 val thisName = this.name.replaceFirst(regex, "")
                 val otherName = other.name.replaceFirst(regex, "")
                 Log.d("Tag/equals", "Tag $thisName == $otherName")
                 thisName == otherName && this.type == other.type
             }
             is String -> {
-                val regex = Regex("^[-\\~]")
+                val regex = Regex(modifierRegex)
                 val thisName = this.name.replaceFirst(regex, "")
                 val otherName = other.replaceFirst(regex, "")
                 Log.d("Tag/equals", "String $thisName == $otherName")
@@ -53,7 +54,8 @@ data class Tag(
 
     override fun hashCode(): Int {
         Log.d("Tag/hashCode", "hashCode")
-        return Objects.hashCode(this.copy(name = name.replaceFirst(Regex("^[-\\~]"), "")))
+        val newName = name.replaceFirst(Regex(modifierRegex), "")
+        return newName.hashCode()
     }
 }
 
@@ -85,6 +87,18 @@ data class TagDetail(
                 else -> null
             }
             return TagDetail(name = tag, modifier = modifier)
+        }
+
+        fun fromTag(tag: Tag): TagDetail {
+            val name = tag.name.replaceFirst(Regex("^[-~*]"), "")
+            val modifier = when (tag.name.firstOrNull()) {
+                '~' -> Modifier.Tilde
+                '-' -> Modifier.Minus
+                '*' -> Modifier.Wildcard
+                null -> throw IllegalAccessException()
+                else -> null
+            }
+            return TagDetail(name = name, type = tag.type, modifier = modifier)
         }
     }
 }

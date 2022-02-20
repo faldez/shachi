@@ -8,18 +8,19 @@
 
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/post_slide_appbar_layout"
+        android:id="@+id/post_detail_appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/postSlideToolbarBackground"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/post_slide_topappbar"
+            android:id="@+id/post_detail_topappbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
             app:navigationIcon="@drawable/ic_baseline_close_24"
+            app:menu="@menu/post_detail_menu"
             app:title="@string/details" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -27,6 +28,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
@@ -111,29 +113,13 @@
                 android:layout_marginBottom="8dp"
                 android:text="@string/tags" />
 
-            <TextView
+            <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:id="@+id/loadingLabel"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:text="loading tags..." />
-
-            <TextView
-                android:id="@+id/currentSearchTagsHeader"
-                style="@style/TextAppearance.Material3.LabelMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@string/current_tags"
-                android:visibility="gone" />
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/currentSearchTagsChipGroup"
-                android:layout_width="match_parent"
-                android:layout_marginBottom="8dp"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:layout_gravity="center_horizontal"
+                android:indeterminate="true" />
 
             <include layout="@layout/tags_details" />
         </LinearLayout>

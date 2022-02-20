@@ -10,6 +10,7 @@ import com.faldez.shachi.repository.TagRepository
 
 class PostDetailViewModelFactory constructor(
     private val post: Post,
+    private val initialSearchTags: String,
     private val serverRepository: ServerRepository,
     private val tagRepository: TagRepository,
     owner: SavedStateRegistryOwner,
@@ -22,8 +23,9 @@ class PostDetailViewModelFactory constructor(
         return if (modelClass.isAssignableFrom(PostDetailViewModel::class.java)) {
             PostDetailViewModel(
                 post,
-                this.serverRepository,
-                this.tagRepository) as T
+                initialSearchTags,
+                serverRepository,
+                tagRepository) as T
         } else {
             throw  IllegalArgumentException("ViewModel Not Found")
         }

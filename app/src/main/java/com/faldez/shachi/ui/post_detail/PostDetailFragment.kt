@@ -8,24 +8,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.PostDetailFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.model.Category
+import com.faldez.shachi.model.Modifier
 import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.TagDetail
 import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.service.BooruService
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -35,8 +37,9 @@ class PostDetailFragment : Fragment() {
     private lateinit var tagDetailsBinding: TagsDetailsBinding
     private val viewModel: PostDetailViewModel by viewModels {
         val post = requireArguments().get("post") as Post
+        val currentSearchTags = requireArguments().getString("tags", null) ?: ""
         val db = AppDatabase.build(requireContext())
-        PostDetailViewModelFactory(post, ServerRepository(db),
+        PostDetailViewModelFactory(post, currentSearchTags, ServerRepository(db),
             TagRepository(BooruService(), db),
             this)
     }
@@ -54,8 +57,41 @@ class PostDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val currentSearchTags = requireArguments().getString("tags", null) ?: ""
-        viewModel.accept(UiAction.SetSelectedTags(currentSearchTags))
+        prepareAppbar()
+    }
+
+    private fun prepareAppbar() {
+        binding.postDetailTopappbar.menu.clear()
+        binding.postDetailTopappbar.inflateMenu(R.menu.post_detail_menu)
+        binding.postDetailTopappbar.setNavigationIcon(R.drawable.ic_baseline_close_24)
+        binding.postDetailTopappbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
+        binding.postDetailTopappbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.search_button -> {
+                    applySearch()
+                    true
+                }
+                else -> false
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.appendedTagsState.collectLatest {
+                binding.postDetailTopappbar.menu.findItem(R.id.search_button).isVisible =
+                    it.isNotEmpty()
+            }
+        }
+    }
+
+    private fun applySearch() {
+        val tags =
+            viewModel.state.value.initialSearchTags + " " + viewModel.appendedTagsState.value.joinToString(
+                " ") { it.tag.toString() }
+        Log.d("PostDetailFragment", "applySearch $tags")
+        val bundle = bundleOf("server" to viewModel.state.value.server,
+            "tags" to tags)
+        findNavController().navigate(R.id.action_postdetail_to_browse, bundle)
     }
 
     private fun TagsDetailsBinding.hideAll() {
@@ -65,6 +101,17 @@ class PostDetailFragment : Fragment() {
         characterTagsHeader.isVisible = false
         metadataTagsHeader.isVisible = false
         otherTagsHeader.isVisible = false
+        blacklistTagsHeader.isVisible = false
+    }
+
+    private fun TagsDetailsBinding.clearAllGroup() {
+        generalTagsChipGroup.removeAllViews()
+        artistTagsChipGroup.removeAllViews()
+        copyrightTagsChipGroup.removeAllViews()
+        characterTagsChipGroup.removeAllViews()
+        metadataTagsChipGroup.removeAllViews()
+        otherTagsChipGroup.removeAllViews()
+        blacklistTagsChipGroup.removeAllViews()
     }
 
     private fun PostDetailFragmentBinding.bind() {
@@ -82,45 +129,10 @@ class PostDetailFragment : Fragment() {
                     Log.d("PostDetailFragment", "state $state")
 
                     loadingLabel.isVisible = state.tags == null
-                    currentSearchTagsHeader.isVisible = false
                     tagDetailsBinding.hideAll()
+                    tagDetailsBinding.clearAllGroup()
 
-                    currentSearchTagsHeader.isVisible = !state.includedTags.isNullOrEmpty()
-                    currentSearchTagsChipGroup.isVisible =
-                        currentSearchTagsHeader.isVisible
-                    state.includedTags?.forEach { tag ->
-                        val textColor = when (tag.type) {
-                            Category.General -> R.color.tag_general
-                            Category.Artist -> R.color.tag_artist
-                            Category.Copyright -> R.color.tag_copyright
-                            Category.Character -> R.color.tag_character
-                            Category.Metadata -> R.color.tag_metadata
-                            else -> null
-                        }
-
-                        val chip = Chip(requireContext())
-                        chip.bind(currentSearchTagsChipGroup, textColor, tag)
-                    }
-
-                    tagDetailsBinding.blacklistTagsHeader.isVisible =
-                        !state.blacklistedTags.isNullOrEmpty()
-                    tagDetailsBinding.blacklistTagsChipGroup.isVisible =
-                        tagDetailsBinding.blacklistTagsHeader.isVisible
-                    state.blacklistedTags?.forEach { tag ->
-                        val textColor = when (tag.type) {
-                            Category.General -> R.color.tag_general
-                            Category.Artist -> R.color.tag_artist
-                            Category.Copyright -> R.color.tag_copyright
-                            Category.Character -> R.color.tag_character
-                            Category.Metadata -> R.color.tag_metadata
-                            else -> null
-                        }
-
-                        val chip = Chip(requireContext())
-                        chip.bind(tagDetailsBinding.blacklistTagsChipGroup, textColor, tag)
-                    }
-
-                    state.tags?.groupBy { it.type }?.forEach { (type, tags) ->
+                    state.tags?.groupBy { it.tag.type }?.forEach { (type, tags) ->
                         lateinit var group: ChipGroup
                         lateinit var header: TextView
                         var textColor: Int? = null
@@ -168,17 +180,38 @@ class PostDetailFragment : Fragment() {
         }
     }
 
-    private fun Chip.bind(group: ChipGroup, textColor: Int?, tag: TagDetail) {
+    private fun Chip.bind(group: ChipGroup, textColor: Int?, tag: TagDetailState) {
         Log.d("PostDetailFragment", "$tag")
 
-        this.apply {
-            text = tag.toString()
-            textColor?.let {
-                setTextColor(ColorStateList.valueOf(ResourcesCompat.getColor(resources,
-                    textColor,
-                    requireActivity().theme)))
+        setChipDrawable(ChipDrawable.createFromResource(requireContext(), R.xml.filter_chip))
+        text = tag.tag.toString()
+        textColor?.let {
+            setTextColor(ColorStateList.valueOf(ResourcesCompat.getColor(resources,
+                textColor,
+                requireActivity().theme)))
+        }
+        isChecked = tag.checked
+        setEnsureMinTouchTargetSize(false)
+        isCloseIconVisible = !tag.checked && tag.tag.modifier != Modifier.Minus
+        setOnCloseIconClickListener {
+            Log.d("PostDetailFragment", "${tag.tag.name} closed")
+            viewModel.addTag(tag.copy(checked = true,
+                tag = tag.tag.copy(modifier = Modifier.Minus)))
+        }
+        setOnCheckedChangeListener { chip, isChecked ->
+            isCloseIconVisible = !isChecked && tag.tag.modifier != Modifier.Minus
+            if (isChecked && tag.mutable) {
+                viewModel.addTag(tag.copy(checked = isChecked))
+            } else {
+                viewModel.removeTag(tag)
             }
-            setEnsureMinTouchTargetSize(false)
+        }
+        isCheckable = tag.mutable
+        if (tag.tag.modifier == Modifier.Minus) {
+            tagDetailsBinding.blacklistTagsHeader.isVisible = true
+            tagDetailsBinding.blacklistTagsChipGroup.isVisible = true
+            tagDetailsBinding.blacklistTagsChipGroup.addView(this)
+        } else {
             group.addView(this)
         }
     }
