@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="false"
     tools:context=".ui.saved.SavedFragment">
-
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/saved_appbar_layout"
@@ -23,18 +23,12 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
-        android:id="@+id/savedSwipeRefreshLayout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/saved_search_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/saved_search_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:listitem="@layout/saved_search_item" />
-    </ScrollView>
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        tools:listitem="@layout/saved_search_item" />
 
     <TextView
         android:id="@+id/saved_search_help_text"

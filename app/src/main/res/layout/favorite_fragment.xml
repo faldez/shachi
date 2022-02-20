@@ -15,6 +15,7 @@
             android:id="@+id/favorite_topappbar"
             app:menu="@menu/post_slide_menu"
             android:layout_width="match_parent"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
             app:title="Favorite" />

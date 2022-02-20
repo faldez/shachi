@@ -224,13 +224,21 @@ abstract class BaseBrowseFragment : Fragment() {
                     onScrollChanged(UiAction.Scroll(uiState.value.server?.url,
                         currentTags = uiState.value.tags))
                 }
-                if (dy < 0) {
-                    (activity as MainActivity).showNavigation(callback = { binding.searchFloatingButton.show() })
-                } else if (dy > 0) {
-                    (activity as MainActivity).hideNavigation(callback = { binding.searchFloatingButton.hide() })
-                }
             }
         })
+
+        val hideBottomBarOnScroll = preferences.getBoolean("hide_bottom_bar_on_scroll", true)
+        if (hideBottomBarOnScroll) {
+            postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy < 0) {
+                        (activity as MainActivity).showNavigation(callback = { binding.searchFloatingButton.show() })
+                    } else if (dy > 0) {
+                        (activity as MainActivity).hideNavigation(callback = { binding.searchFloatingButton.hide() })
+                    }
+                }
+            })
+        }
 
         retryButton.isVisible = false
         serverHelpText.isVisible = viewModel.state.value.server == null

@@ -18,6 +18,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
@@ -112,6 +113,19 @@ class FavoriteFragment : Fragment() {
                 }
             }
         })
+
+        val hideBottomBarOnScroll = preferences.getBoolean("hide_bottom_bar_on_scroll", true)
+        if (hideBottomBarOnScroll) {
+            favoriteRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy < 0) {
+                        (activity as MainActivity).showNavigation(callback = { binding.searchFloatingButton.show() })
+                    } else if (dy > 0) {
+                        (activity as MainActivity).hideNavigation(callback = { binding.searchFloatingButton.hide() })
+                    }
+                }
+            })
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

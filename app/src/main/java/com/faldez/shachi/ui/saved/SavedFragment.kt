@@ -20,6 +20,8 @@ import androidx.navigation.navGraphViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SavedFragmentBinding
@@ -124,6 +126,20 @@ class SavedFragment : Fragment() {
         val divider = DividerItemDecoration(binding.savedSearchRecyclerView.context,
             layoutManager.orientation)
         binding.savedSearchRecyclerView.addItemDecoration(divider)
+
+        val hideBottomBarOnScroll = preferences.getBoolean("hide_bottom_bar_on_scroll", true)
+        if (hideBottomBarOnScroll) {
+            binding.savedSearchRecyclerView.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy < 0) {
+                        (activity as MainActivity).showNavigation()
+                    } else if (dy > 0) {
+                        (activity as MainActivity).hideNavigation()
+                    }
+                }
+            })
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
