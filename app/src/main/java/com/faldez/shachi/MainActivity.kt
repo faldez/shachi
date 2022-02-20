@@ -69,6 +69,14 @@ class MainActivity : AppCompatActivity(),
         createNotificationChannel()
     }
 
+    fun getBottomNavigationViewHight(callback: (height: Int) -> Unit?) {
+        binding.bottomNavigationView.post {
+            val bottomNavigationHeight = binding.bottomNavigationView.height
+            Log.d("MainActivity", "bottomNavigationHeight=$bottomNavigationHeight")
+            callback(bottomNavigationHeight)
+        }
+    }
+
     private fun setupNavController() {
         val navFragment =
             supportFragmentManager.findFragmentById(R.id.navFragment) as NavHostFragment

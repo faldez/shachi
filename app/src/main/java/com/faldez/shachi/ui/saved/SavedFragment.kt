@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -18,7 +20,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.MainActivity
@@ -29,6 +30,7 @@ import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.repository.PostRepository
 import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.widget.CustomDividerItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.TextInputEditText
@@ -123,9 +125,6 @@ class SavedFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.savedSearchRecyclerView.layoutManager = layoutManager
 
-        val divider = DividerItemDecoration(binding.savedSearchRecyclerView.context,
-            layoutManager.orientation)
-        binding.savedSearchRecyclerView.addItemDecoration(divider)
 
         val hideBottomBarOnScroll = preferences.getBoolean("hide_bottom_bar_on_scroll", true)
         if (hideBottomBarOnScroll) {
@@ -139,6 +138,15 @@ class SavedFragment : Fragment() {
                     }
                 }
             })
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.savedSearchRecyclerView.addItemDecoration(CustomDividerItemDecoration(
+                requireContext(),
+                layoutManager.orientation,
+                if (hideBottomBarOnScroll) systemBars.bottom else 0))
+            insets
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

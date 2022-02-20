@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +26,7 @@ import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
 import com.faldez.shachi.model.Rating
 import com.faldez.shachi.repository.FavoriteRepository
+import com.faldez.shachi.widget.EmptyFooterDecoration
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.launch
 
@@ -125,6 +128,14 @@ class FavoriteFragment : Fragment() {
                     }
                 }
             })
+
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                val footer =
+                    EmptyFooterDecoration(systemBars.bottom)
+                favoriteRecyclerView.addItemDecoration(footer)
+                insets
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
