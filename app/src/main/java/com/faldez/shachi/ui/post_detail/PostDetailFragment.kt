@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -29,7 +30,7 @@ import com.google.android.material.chip.ChipGroup
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class PostDetailFragment : BottomSheetDialogFragment() {
+class PostDetailFragment : Fragment() {
     private lateinit var binding: PostDetailFragmentBinding
     private lateinit var tagDetailsBinding: TagsDetailsBinding
     private val viewModel: PostDetailViewModel by viewModels {

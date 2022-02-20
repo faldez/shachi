@@ -20,7 +20,11 @@
         app:popExitAnim="@anim/slide_out" />
     <action
         android:id="@+id/action_postslide_to_postdetail"
-        app:destination="@id/post_detail_bottom_sheet_fragment" />
+        app:destination="@id/post_detail_fragment"
+        app:enterAnim="@anim/slide_in_up"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/slide_out_down" />
     <action
         android:id="@+id/action_global_to_serverdialog"
         app:destination="@id/server_dialog_fragment" />
@@ -32,8 +36,8 @@
     <include app:graph="@navigation/favorite" />
     <include app:graph="@navigation/more" />
 
-    <dialog
-        android:id="@+id/post_detail_bottom_sheet_fragment"
+    <fragment
+        android:id="@+id/post_detail_fragment"
         android:name="com.faldez.shachi.ui.post_detail.PostDetailFragment"
         android:label="post_detail"
         tools:layout="@layout/post_detail_fragment" />
