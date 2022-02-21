@@ -2,12 +2,14 @@ package com.faldez.shachi.ui.post_slide
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -20,7 +22,6 @@ import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.service.DownloadService
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -61,30 +62,17 @@ abstract class BasePostSlideFragment : Fragment() {
             }
         )
 
-        binding.favoriteButton.setOnClickListener {
+        binding.favoriteButton?.setOnClickListener {
             onFavoriteButton()
         }
-        binding.detailButton.setOnClickListener {
-            getCurrentPost()?.let {
-                navigateToPostDetail(it)
-            }
+        binding.detailButton?.setOnClickListener {
+            onDetailButton()
         }
-        binding.shareButton.setOnClickListener {
-            getCurrentPost()?.let { post ->
-                val bundle = bundleOf("post" to post)
-                findNavController().navigate(R.id.action_global_to_sharedialog, bundle)
-            }
+        binding.shareButton?.setOnClickListener {
+            onShareButton()
         }
-        binding.downloadButton.setOnClickListener {
-            getCurrentPost()?.let { post ->
-                val downloadDir = getDownloadDir()
-                if (downloadDir != null) {
-                    showSnackbar(R.string.downloading)
-                    downloadFile(downloadDir, post)
-                } else {
-                    showSnackbar(R.string.download_path_not_set)
-                }
-            }
+        binding.downloadButton?.setOnClickListener {
+            onDownloadButton()
         }
 
         return binding.root
@@ -136,12 +124,30 @@ abstract class BasePostSlideFragment : Fragment() {
     abstract suspend fun collectPagingData(showQuestionable: Boolean, showExplicit: Boolean)
 
     private fun setFavoriteButton(post: Post) {
-        binding.favoriteButton.isSelected = post.favorite
+        binding.favoriteButton?.isSelected = post.favorite
+        binding.postSlideTopappbar.menu.findItem(R.id.favorite_action_button)?.apply {
+            if (post.favorite) {
+                icon = ResourcesCompat.getDrawable(resources,
+                    R.drawable.ic_baseline_favorite_24,
+                    requireActivity().theme)
+                title = resources.getText(R.string.unfavorite)
+            } else {
+                icon = ResourcesCompat.getDrawable(resources,
+                    R.drawable.ic_baseline_favorite_border_24,
+                    requireActivity().theme)
+                title = resources.getText(R.string.favorite)
+            }
+        }
     }
 
     private fun prepareAppBar() {
         binding.postSlideTopappbar.menu.clear()
-        binding.postSlideTopappbar.inflateMenu(R.menu.post_slide_menu)
+        val menu = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            R.menu.post_slide_land_menu
+        } else {
+            R.menu.post_slide_menu
+        }
+        binding.postSlideTopappbar.inflateMenu(menu)
         binding.postSlideTopappbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
         binding.postSlideTopappbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()
@@ -153,7 +159,48 @@ abstract class BasePostSlideFragment : Fragment() {
                     (activity as MainActivity).onBackPressed()
                     true
                 }
+                R.id.favorite_action_button -> {
+                    onFavoriteButton()
+                    true
+                }
+                R.id.detail_action_button -> {
+                    onDetailButton()
+                    true
+                }
+                R.id.share_action_button -> {
+                    onShareButton()
+                    true
+                }
+                R.id.download_action_button -> {
+                    onDownloadButton()
+                    true
+                }
                 else -> false
+            }
+        }
+    }
+
+    private fun onDetailButton() {
+        getCurrentPost()?.let {
+            navigateToPostDetail(it)
+        }
+    }
+
+    private fun onShareButton() {
+        getCurrentPost()?.let { post ->
+            val bundle = bundleOf("post" to post)
+            findNavController().navigate(R.id.action_global_to_sharedialog, bundle)
+        }
+    }
+
+    private fun onDownloadButton() {
+        getCurrentPost()?.let { post ->
+            val downloadDir = getDownloadDir()
+            if (downloadDir != null) {
+                showSnackbar(R.string.downloading)
+                downloadFile(downloadDir, post)
+            } else {
+                showSnackbar(R.string.download_path_not_set)
             }
         }
     }
@@ -197,12 +244,12 @@ abstract class BasePostSlideFragment : Fragment() {
 
     private fun hideAppBar() {
         binding.postSlideAppbarLayout.hide()
-        binding.bottomToolbar.hide()
+        binding.bottomToolbar?.hide()
     }
 
     private fun showAppBar() {
         binding.postSlideAppbarLayout.show()
-        binding.bottomToolbar.show()
+        binding.bottomToolbar?.show()
     }
 
     private fun AppBarLayout.hide() {
