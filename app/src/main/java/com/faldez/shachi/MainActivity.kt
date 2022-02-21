@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(),
     lateinit var navController: NavController
     lateinit var sharedPreferences: SharedPreferences
     lateinit var binding: ActivityMainBinding
-    var isShowNavigation: Boolean = true
+    var isShowNavigation: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity(),
             } else {
                 hideNavigation()
             }
+            Log.d("MainActivity", "addOnDestinationChangedListener $isShow")
         }
         setTheme()
 
@@ -67,14 +68,6 @@ class MainActivity : AppCompatActivity(),
         }
 
         createNotificationChannel()
-    }
-
-    fun getBottomNavigationViewHight(callback: (height: Int) -> Unit?) {
-        binding.bottomNavigationView.post {
-            val bottomNavigationHeight = binding.bottomNavigationView.height
-            Log.d("MainActivity", "bottomNavigationHeight=$bottomNavigationHeight")
-            callback(bottomNavigationHeight)
-        }
     }
 
     private fun setupNavController() {
