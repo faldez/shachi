@@ -90,7 +90,6 @@ class ServerEditViewModel(
             Log.d("ServerEditViewModel", "Insert")
             try {
                 postRepository.testSearchPost(Action.SearchPost(server.toServerView(), ""))
-                tagRepository.getTagsSummary(Action.GetTagsSummary(server))
                 if (isNew) {
                     serverRepository.insert(server)
                 } else {

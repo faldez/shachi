@@ -6,7 +6,6 @@ import com.faldez.shachi.model.*
 import com.faldez.shachi.model.response.mapToTagDetail
 import com.faldez.shachi.model.response.mapToTagDetails
 import com.faldez.shachi.model.response.mapToTags
-import com.faldez.shachi.model.response.parseTag
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
 import kotlinx.coroutines.delay
@@ -79,9 +78,11 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
         val cachedTags = tagsToQuery.let { tags ->
             val cleanedTagsToQuery = tagsToQuery.map { it.replaceFirst(modifierPrefixRegex, "") }
             val result = db.tagDao().getTags(cleanedTagsToQuery)
-                ?.associateBy { it.name }
+                ?.associate { it.name to it.type }
             cleanedTagsToQuery.mapIndexedNotNull { index, tag ->
-                result?.get(tag)?.copy(name = tagsToQuery[index])
+                result?.get(tag)?.let {
+                    Tag(name = tagsToQuery[index], type = it)
+                }
             }
         }
 
@@ -155,30 +156,5 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
 
         return result
 
-    }
-
-    suspend fun getTagsSummary(action: Action.GetTagsSummary) {
-        when (action.server?.type) {
-            ServerType.Moebooru -> {
-                action.buildMoebooruUrl()?.toString()?.let {
-                    service.moebooru.getTagsSummary(it).data.split(" ").mapNotNull { summary ->
-                        try {
-                            summary.trim().split("`").let { split ->
-                                val type = split[0].toInt()
-                                split.subList(1, split.size).mapNotNull { tag ->
-                                    if (tag.isNotEmpty()) Tag(name = tag, type = parseTag(type))
-                                    else null
-                                }
-                            }
-                        } catch (exception: Exception) {
-                            null
-                        }
-                    }.flatten()
-                }
-            }
-            else -> null
-        }.also {
-            if (it != null) db.tagDao().insertTags(it)
-        }
     }
 }

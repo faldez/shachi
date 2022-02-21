@@ -15,7 +15,9 @@ class SearchSimpleViewModel(
     private val server: ServerView?,
     private val tagRepository: TagRepository,
 ) : ViewModel() {
-    val state: MutableStateFlow<UiState> = MutableStateFlow(UiState(server = server))
+    private val _state: MutableStateFlow<UiState> = MutableStateFlow(UiState(server = server))
+    val state: StateFlow<UiState> = _state.asStateFlow()
+
     val suggestionTags: Flow<List<TagDetail>?>
     val accept: (UiAction) -> Unit
 
@@ -40,16 +42,17 @@ class SearchSimpleViewModel(
 
     private fun setInitialTagsSimple(tags: List<TagDetail>) =
         CoroutineScope(Dispatchers.IO).launch {
-            state.getAndUpdate { currentState ->
+            _state.update { currentState ->
                 Log.d("SearchSimpleViewModel/setInitialTagsSimple", "$tags")
                 val list = if (tags.isNotEmpty()) {
-                    tagRepository.getTags(Action.GetTags(server?.toServer(),
-                        tags.joinToString(" ") { it.name }))?.let { result ->
-                        val resultMap = result.associateBy { tag -> tag.name }
-                        tags.map {
-                            it.copy(type = resultMap[it.name]?.type ?: Category.General)
-                        }
-                    } ?: listOf()
+                    val tagsString = tags.joinToString(" ") { it.name }
+                    tagRepository.getTags(Action.GetTags(server?.toServer(), tagsString))
+                        ?.let { result ->
+                            val resultMap = result.associateBy { tag -> tag.name }
+                            tags.map {
+                                it.copy(type = resultMap[it.name]?.type ?: Category.Unknown)
+                            }
+                        } ?: listOf()
                 } else {
                     listOf()
                 }
@@ -58,7 +61,8 @@ class SearchSimpleViewModel(
         }
 
     private fun setInitialTagsAdvance(tags: String) {
-        state.value = state.value.copy(selectedTags = SelectedTags.Advance(tags), isAdvancedMode = true)
+        _state.value =
+            state.value.copy(selectedTags = SelectedTags.Advance(tags), isAdvancedMode = true)
     }
 
     fun setInitialTags(tags: String, isAdvancedMode: Boolean) {
@@ -73,83 +77,67 @@ class SearchSimpleViewModel(
 
     private fun searchTag(server: Server?, tag: String): Flow<List<TagDetail>?> = flow {
         val res = tagRepository.queryTags(Action.SearchTag(server, tag))
-        Log.d("SearchSimpleViewModel", "res $res")
         emit(res)
     }
 
     fun toggleTag(name: String) {
-        state.getAndUpdate { currentState ->
-            val tags = currentState.selectedTags.let {
-                if (it is SelectedTags.Simple) {
-                    SelectedTags.Simple(it.tags.map { tag ->
-                        if (tag.name == name) {
-                            val modifier = if (tag.modifier == null) {
-                                Modifier.Minus
-                            } else {
-                                null
-                            }
-                            tag.copy(modifier = modifier)
-                        } else {
-                            tag
-                        }
-                    })
+        val selectedTags = state.value.selectedTags
+        if (selectedTags is SelectedTags.Simple) {
+            val list = selectedTags.tags.toMutableList()
+            list.replaceAll {
+                if (it.name == name) {
+                    it.copy(modifier = if (it.modifier == Modifier.Minus) null else Modifier.Minus)
                 } else {
                     it
                 }
             }
-            currentState.copy(selectedTags = tags)
+            Log.d("SearchSimpleViewModel/toggleTag", "$list")
+            _state.update {
+                it.copy(selectedTags = SelectedTags.Simple(list))
+            }
         }
     }
 
     fun insertTag(tagDetail: TagDetail) {
-        state.getAndUpdate { currentState ->
-            val tags = currentState.selectedTags.let {
-                if (it is SelectedTags.Simple) {
-                    val list = it.tags.toMutableList()
-                    list.add(list.size, tagDetail)
-                    SelectedTags.Simple(list)
-                } else {
-                    it
-                }
+        val selectedTags = state.value.selectedTags
+        if (selectedTags is SelectedTags.Simple) {
+            val list = selectedTags.tags.toMutableList()
+            list.add(list.size, tagDetail)
+            _state.update {
+                it.copy(selectedTags = SelectedTags.Simple(list))
             }
-            currentState.copy(selectedTags = tags)
         }
     }
 
     fun insertTagByName(name: String) = CoroutineScope(Dispatchers.IO).launch {
-        tagRepository.getTag(Action.GetTag(server?.toServer(), name)).let { tag ->
-            state.getAndUpdate { currentState ->
-                val tags = currentState.selectedTags.let {
-                    if (it is SelectedTags.Simple) {
-                        val list = it.tags.toMutableList()
-                        list.add(list.size, TagDetail(name = name, type = tag?.type ?: Category.General))
-                        SelectedTags.Simple(list)
-                    } else {
-                        it
-                    }
-                }
-                currentState.copy(selectedTags = tags)
+        val selectedTags = state.value.selectedTags
+        if (selectedTags is SelectedTags.Simple) {
+            val list = selectedTags.tags.toMutableList()
+            val tag = tagRepository.getTag(Action.GetTag(server?.toServer(), name))
+            list.add(list.size, TagDetail(name = name, type = tag?.type ?: Category.Unknown))
+            _state.update {
+                it.copy(selectedTags = SelectedTags.Simple(list))
+            }
+        } else if (selectedTags is SelectedTags.Advance) {
+            _state.update {
+                it.copy(selectedTags = SelectedTags.Advance(name))
             }
         }
     }
 
     fun removeTag(tagDetail: TagDetail) {
-        state.getAndUpdate { currentState ->
-            val tags = currentState.selectedTags.let {
-                if (it is SelectedTags.Simple) {
-                    val list = it.tags.toMutableList()
-                    list.remove(tagDetail)
-                    SelectedTags.Simple(list)
-                } else {
-                    it
-                }
+        val selectedTags = state.value.selectedTags
+        if (selectedTags is SelectedTags.Simple) {
+            val list = selectedTags.tags.toMutableList()
+            list.remove(tagDetail)
+            _state.update {
+                it.copy(selectedTags = SelectedTags.Simple(list))
             }
-            currentState.copy(selectedTags = tags)
         }
     }
 
     fun setMode(mode: Boolean) {
-        state.value = state.value.copy(isAdvancedMode = mode)
+        _state.value = state.value.copy(isAdvancedMode = mode)
     }
 }
 

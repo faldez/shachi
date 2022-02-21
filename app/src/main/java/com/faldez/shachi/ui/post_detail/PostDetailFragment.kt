@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -20,12 +19,14 @@ import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.PostDetailFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
-import com.faldez.shachi.model.Category
 import com.faldez.shachi.model.Modifier
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.util.clearAllGroup
+import com.faldez.shachi.util.getGroupHeaderTextColor
+import com.faldez.shachi.util.hideAll
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
@@ -94,26 +95,6 @@ class PostDetailFragment : Fragment() {
         findNavController().navigate(R.id.action_postdetail_to_browse, bundle)
     }
 
-    private fun TagsDetailsBinding.hideAll() {
-        generalTagsHeader.isVisible = false
-        artistTagsHeader.isVisible = false
-        copyrightTagsHeader.isVisible = false
-        characterTagsHeader.isVisible = false
-        metadataTagsHeader.isVisible = false
-        otherTagsHeader.isVisible = false
-        blacklistTagsHeader.isVisible = false
-    }
-
-    private fun TagsDetailsBinding.clearAllGroup() {
-        generalTagsChipGroup.removeAllViews()
-        artistTagsChipGroup.removeAllViews()
-        copyrightTagsChipGroup.removeAllViews()
-        characterTagsChipGroup.removeAllViews()
-        metadataTagsChipGroup.removeAllViews()
-        otherTagsChipGroup.removeAllViews()
-        blacklistTagsChipGroup.removeAllViews()
-    }
-
     private fun PostDetailFragmentBinding.bind() {
         viewModel.post.let { p ->
             sizeTextview.text = "${p.width}x${p.height}"
@@ -133,41 +114,9 @@ class PostDetailFragment : Fragment() {
                     tagDetailsBinding.clearAllGroup()
 
                     state.tags?.groupBy { it.tag.type }?.forEach { (type, tags) ->
-                        lateinit var group: ChipGroup
-                        lateinit var header: TextView
-                        var textColor: Int? = null
-                        when (type) {
-                            Category.General -> {
-                                group = tagDetailsBinding.generalTagsChipGroup
-                                header = tagDetailsBinding.generalTagsHeader
-                                textColor = R.color.tag_general
-                            }
-                            Category.Artist -> {
-                                group = tagDetailsBinding.artistTagsChipGroup
-                                header = tagDetailsBinding.artistTagsHeader
-                                textColor = R.color.tag_artist
-                            }
-                            Category.Copyright -> {
-                                group = tagDetailsBinding.copyrightTagsChipGroup
-                                header = tagDetailsBinding.copyrightTagsHeader
-                                textColor = R.color.tag_copyright
-                            }
-                            Category.Character -> {
-                                group = tagDetailsBinding.characterTagsChipGroup
-                                header = tagDetailsBinding.characterTagsHeader
-                                textColor = R.color.tag_character
-                            }
-                            Category.Metadata -> {
-                                group = tagDetailsBinding.metadataTagsChipGroup
-                                header = tagDetailsBinding.metadataTagsHeader
-                                textColor = R.color.tag_metadata
-                            }
-                            else -> {
-                                group = tagDetailsBinding.otherTagsChipGroup
-                                header = tagDetailsBinding.otherTagsHeader
-                            }
-                        }
-                        header.isVisible = tags.isNotEmpty()
+                        val (group, header, textColor) = tagDetailsBinding.getGroupHeaderTextColor(
+                            type)
+                        header.isVisible = tags.any { it.tag.modifier != Modifier.Minus }
                         group.isVisible = tags.isNotEmpty()
 
                         tags.forEach { tag ->

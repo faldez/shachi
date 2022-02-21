@@ -31,15 +31,20 @@ import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SearchFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
-import com.faldez.shachi.model.Category
+import com.faldez.shachi.model.Modifier
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.TagDetail
 import com.faldez.shachi.repository.TagRepository
 import com.faldez.shachi.service.BooruService
 import com.faldez.shachi.util.StringUtil
+import com.faldez.shachi.util.clearAllGroup
+import com.faldez.shachi.util.getGroupHeaderTextColor
+import com.faldez.shachi.util.hideAll
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -101,51 +106,24 @@ class SearchFragment : Fragment() {
         binding.loadingIndicator.isVisible = initialTags.isNotEmpty()
 
         lifecycleScope.launch {
-            viewModel.state.collect { state ->
+            viewModel.state.collectLatest { state ->
                 val tags = state.selectedTags
                 if (tags is SelectedTags.Simple) {
-                    val groupedTags = tags.tags.groupBy { it.type }
-                    Log.d("SearchSimpleFragment", "collect $groupedTags")
-                    binding.selectedTagsHeader.isVisible = groupedTags.isNotEmpty()
-                    tagDetailsBinding.generalTagsHeader.isVisible = false
-                    tagDetailsBinding.artistTagsHeader.isVisible = false
-                    tagDetailsBinding.copyrightTagsHeader.isVisible = false
-                    tagDetailsBinding.characterTagsHeader.isVisible = false
-                    tagDetailsBinding.metadataTagsHeader.isVisible = false
-                    tagDetailsBinding.otherTagsHeader.isVisible = false
+                    binding.selectedTagsHeader.isVisible = tags.isNotEmpty()
+                    tagDetailsBinding.hideAll()
+                    tagDetailsBinding.clearAllGroup()
 
-                    groupedTags.forEach { (type, tags) ->
-                        var group = tagDetailsBinding.otherTagsChipGroup
-                        var header = tagDetailsBinding.otherTagsHeader
-                        when (type) {
-                            Category.General -> {
-                                group = tagDetailsBinding.generalTagsChipGroup
-                                header = tagDetailsBinding.generalTagsHeader
-                            }
-                            Category.Artist -> {
-                                group = tagDetailsBinding.artistTagsChipGroup
-                                header = tagDetailsBinding.artistTagsHeader
-                            }
-                            Category.Copyright -> {
-                                group = tagDetailsBinding.copyrightTagsChipGroup
-                                header = tagDetailsBinding.copyrightTagsHeader
-                            }
-                            Category.Character -> {
-                                group = tagDetailsBinding.characterTagsChipGroup
-                                header = tagDetailsBinding.characterTagsHeader
-                            }
-                            Category.Metadata -> {
-                                group = tagDetailsBinding.metadataTagsChipGroup
-                                header = tagDetailsBinding.metadataTagsHeader
-                            }
-                        }
-                        group.removeAllViews()
-                        header.isVisible = tags.isNotEmpty()
+                    tags.tags.groupBy { it.type }.forEach { (type, tags) ->
+                        val (group, header, textColor) = tagDetailsBinding.getGroupHeaderTextColor(
+                            type)
+
+                        header.isVisible =
+                            tags.any { it.modifier != Modifier.Minus }
                         group.isVisible = tags.isNotEmpty()
 
                         tags.forEach { tag ->
                             val chip = Chip(requireContext())
-                            chip.bind(tag)
+                            chip.bind(group, textColor, tag)
                         }
                     }
                     binding.loadingIndicator.isVisible = false
@@ -286,44 +264,40 @@ class SearchFragment : Fragment() {
             doAfterTextChanged { s ->
                 if (viewModel.state.value.isAdvancedMode) {
                     s?.toString()?.let {
-                        viewModel.state.value =
-                            viewModel.state.value.copy(selectedTags = SelectedTags.Advance(it))
+                        viewModel.insertTagByName(it)
                     }
                 }
             }
-            doOnTextChanged { text, start, before, count ->
+            doOnTextChanged { text, start, _, _ ->
                 if (viewModel.state.value.isAdvancedMode) {
-                    Log.d("SearchFragment", "text=$text start=$start before=$before count=$count")
                     text?.toString()?.trim()?.let {
-                        Log.d("SearchFragment", "text.isNotEmpty=${it.isNotEmpty()}")
                         if (it.isNotEmpty()) {
                             val tag = StringUtil.getCurrentToken(it, start)
                             viewModel.accept(UiAction.SearchTag(tag))
                         }
                     }
                 } else {
-                    if (text.isNullOrEmpty()) {
+                    val isVisible = if (text.isNullOrEmpty()) {
                         searchSuggestionAdapter.clear()
                         binding.selectedTagsLayout.show()
                         binding.suggestionTagLayout.hide()
-                        binding.loadingIndicator.isVisible = false
-                        binding.searchSimpleTopAppBar.menu.findItem(R.id.clear_button).isVisible =
-                            false
+                        false
                     } else {
                         viewModel.accept(UiAction.SearchTag(text.toString()))
                         binding.selectedTagsLayout.hide()
                         binding.suggestionTagLayout.show()
-                        binding.loadingIndicator.isVisible = true
-                        binding.searchSimpleTopAppBar.menu.findItem(R.id.clear_button).isVisible =
-                            true
+                        true
                     }
+                    binding.loadingIndicator.isVisible = isVisible
+                    binding.searchSimpleTopAppBar.menu.findItem(R.id.clear_button).isVisible =
+                        isVisible
                 }
             }
             setOnEditorActionListener { textView, i, _ ->
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     /*
                     If advanced search is active, action done will apply search
-                    instead insert tag into selected tags or apply search if empty
+                    instead of insert tag into selected tags or apply search if empty
                     on simple mode
                      */
                     if (viewModel.state.value.isAdvancedMode) {
@@ -346,63 +320,36 @@ class SearchFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.suggestionTags.collect {
-                if (it.isNullOrEmpty()) {
-                    binding.suggestionTagsHeader.visibility = View.GONE
-                } else {
-                    binding.suggestionTagsHeader.visibility = View.VISIBLE
-                }
+                binding.suggestionTagsHeader.isVisible = !it.isNullOrEmpty()
+                binding.loadingIndicator.isVisible = false
                 it?.let { tags ->
                     searchSuggestionAdapter.setSuggestion(tags)
                 }
-
-                binding.loadingIndicator.isVisible = false
             }
         }
     }
 
-    private fun Chip.bind(tag: TagDetail) {
-        var textColor: Int? = null
-        var group = tagDetailsBinding.otherTagsChipGroup
-        when (tag.type) {
-            Category.General -> {
-                textColor = R.color.tag_general
-                group = tagDetailsBinding.generalTagsChipGroup
-            }
-            Category.Artist -> {
-                textColor = R.color.tag_artist
-                group = tagDetailsBinding.artistTagsChipGroup
-            }
-            Category.Copyright -> {
-                textColor = R.color.tag_copyright
-                group = tagDetailsBinding.copyrightTagsChipGroup
-            }
-            Category.Character -> {
-                textColor = R.color.tag_character
-                group = tagDetailsBinding.characterTagsChipGroup
-            }
-            Category.Metadata -> {
-                textColor = R.color.tag_metadata
-                group = tagDetailsBinding.metadataTagsChipGroup
-            }
+    private fun Chip.bind(group: ChipGroup, textColor: Int?, tag: TagDetail) {
+        text = tag.toString()
+        isCloseIconVisible = true
+        textColor?.let {
+            setTextColor(ColorStateList.valueOf(ResourcesCompat.getColor(resources,
+                textColor,
+                requireActivity().theme)))
+        }
+        setOnCloseIconClickListener {
+            Log.d("SearchSimpleViewModel", "onClose")
+            viewModel.removeTag(tag)
+        }
+        setOnClickListener {
+            viewModel.toggleTag(tag.name)
         }
 
-        this.apply {
-            text = tag.toString()
-            isCloseIconVisible = true
-            textColor?.let {
-                setTextColor(ColorStateList.valueOf(ResourcesCompat.getColor(resources,
-                    textColor,
-                    requireActivity().theme)))
-            }
-            setOnCloseIconClickListener {
-                Log.d("SearchSimpleViewModel", "onClose")
-                viewModel.removeTag(tag)
-                group.removeView(it)
-            }
-            setOnClickListener {
-                viewModel.toggleTag(tag.name)
-            }
-
+        if (tag.modifier == Modifier.Minus) {
+            tagDetailsBinding.blacklistTagsHeader.isVisible = true
+            tagDetailsBinding.blacklistTagsChipGroup.isVisible = true
+            tagDetailsBinding.blacklistTagsChipGroup.addView(this)
+        } else {
             group.addView(this)
         }
     }
