@@ -2,7 +2,6 @@ package com.faldez.shachi.ui.search
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.SpannableStringBuilder
@@ -13,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ScrollView
-import androidx.core.content.edit
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -23,7 +21,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,10 +54,6 @@ class SearchFragment : Fragment() {
             requireArguments().getParcelable<ServerView>("server") as ServerView?
         SearchViewModelFactory(server, TagRepository(BooruService(),
             AppDatabase.build(requireContext())), this)
-    }
-
-    private val sharedPreferences: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(requireContext())
     }
 
     private lateinit var searchSuggestionAdapter: SearchSuggestionAdapter
@@ -130,8 +123,8 @@ class SearchFragment : Fragment() {
                 }
             }
         }
-        viewModel.setInitialTags(initialTags, getSearchMode())
-        if (getSearchMode()) {
+        viewModel.setInitialTags(initialTags)
+        if (viewModel.state.value.isAdvancedMode) {
             binding.searchSimpleTagsInputText.text = SpannableStringBuilder(initialTags)
         }
     }
@@ -198,7 +191,7 @@ class SearchFragment : Fragment() {
                     true
                 }
                 R.id.search_mode_button -> {
-                    viewModel.setMode(!viewModel.state.value.isAdvancedMode)
+                    viewModel.toggleMode()
                     true
                 }
                 else -> false
@@ -208,7 +201,6 @@ class SearchFragment : Fragment() {
             viewModel.state.collect { state ->
                 binding.searchSimpleTopAppBar.menu.findItem(R.id.search_mode_button).isChecked =
                     state.isAdvancedMode
-                saveSearchMode(mode = state.isAdvancedMode)
             }
         }
     }
@@ -228,12 +220,6 @@ class SearchFragment : Fragment() {
         val bundle = bundleOf("server" to viewModel.state.value.server,
             "tags" to value)
         findNavController().navigate(R.id.action_search_to_browse, bundle)
-    }
-
-    private fun getSearchMode(): Boolean = sharedPreferences.getBoolean("search_mode", false)
-    private fun saveSearchMode(mode: Boolean) = sharedPreferences.edit {
-        putBoolean("search_mode", mode)
-        commit()
     }
 
     private fun ScrollView.show() {

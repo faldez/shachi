@@ -65,8 +65,8 @@ class SearchSimpleViewModel(
             state.value.copy(selectedTags = SelectedTags.Advance(tags), isAdvancedMode = true)
     }
 
-    fun setInitialTags(tags: String, isAdvancedMode: Boolean) {
-        if (isAdvancedMode) {
+    fun setInitialTags(tags: String) {
+        if (tags.contains(Regex("[{}~]"))) {
             setInitialTagsAdvance(tags)
         } else {
             val value = tags.split(" ")
@@ -136,8 +136,17 @@ class SearchSimpleViewModel(
         }
     }
 
-    fun setMode(mode: Boolean) {
-        _state.value = state.value.copy(isAdvancedMode = mode)
+    fun toggleMode() {
+        when (val selectedTags = state.value.selectedTags) {
+            is SelectedTags.Simple -> {
+                _state.value = state.value.copy(isAdvancedMode = true, selectedTags = null)
+            }
+            is SelectedTags.Advance -> {
+                if (!selectedTags.tags.contains(Regex("[{}~]"))) {
+                    _state.value = state.value.copy(isAdvancedMode = false, selectedTags = null)
+                }
+            }
+        }
     }
 }
 
