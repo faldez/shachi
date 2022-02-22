@@ -56,7 +56,7 @@
 
         <action
             android:id="@+id/action_postdetail_to_browse"
-            app:destination="@id/favoriteFragment"
+            app:destination="@id/browse"
             app:popUpTo="@id/favoriteFragment" />
     </fragment>
 </navigation>
