@@ -37,12 +37,8 @@ class BlacklistedTagAdapter(
         holder.binding.blacklistedTagsTextview.text =
             item.blacklistedTag.tags
 
-        holder.binding.blacklistedTagsServerChipgroup.removeAllViews()
-        item.servers.forEach {
-            val chip = Chip(holder.binding.root.context)
-            chip.text = it.title
-            holder.binding.blacklistedTagsServerChipgroup.addView(chip)
-        }
+        holder.binding.blacklistedTagsServerTextview.text =
+            item.servers.joinToString(", ") { it.title }
     }
 
     override fun getItemCount(): Int = blacklistedTagList.size
