@@ -1,5 +1,6 @@
 package com.faldez.shachi.service
 
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.graphics.Bitmap
@@ -26,31 +27,39 @@ class DownloadService : Service() {
 
             val downloadDir = msg.data.getString("download_dir")
             val mime = MimeUtil.getMimeTypeFromUrl(fileUrl)
-            val file = downloadDir?.let {
+            downloadDir?.let {
                 DocumentFile.fromTreeUri(applicationContext, Uri.parse(it))
                     ?.createFile(mime ?: "image/*", fileUri.lastPathSegment!!)
-            }
+            }?.let { file ->
+                URL(fileUrl).openStream().use { input ->
+                    contentResolver.openOutputStream(file.uri)
+                        ?.use { output ->
+                            input.copyTo(output)
+                        }
+                }
 
-            URL(fileUrl).openStream().use { input ->
-                contentResolver.openOutputStream(file!!.uri)
-                    ?.use { output ->
-                        input.copyTo(output)
-                    }
-            }
-
-            contentResolver.openInputStream(file!!.uri)?.use { input ->
-                val bitmap = BitmapFactory.decodeStream(input)
-                showNotification(R.string.download_finished, bitmap)
+                contentResolver.openInputStream(file.uri)?.use { input ->
+                    val bitmap = BitmapFactory.decodeStream(input)
+                    showNotification(R.string.download_finished, file.uri, bitmap)
+                }
             }
 
             stopSelf(msg.arg1)
         }
 
-        private fun showNotification(text: Int, preview: Bitmap? = null) {
+        private fun showNotification(text: Int, imageUri: Uri, preview: Bitmap? = null) {
+            val intent = Intent(Intent.ACTION_VIEW, imageUri).apply {
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            }
+            val contentIntent = PendingIntent.getActivity(applicationContext,
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE)
             var builder = NotificationCompat.Builder(applicationContext, "DOWNLOAD")
-                .setSmallIcon(R.drawable.ic_baseline_download_24)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(resources.getText(text))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setContentIntent(contentIntent)
             if (preview != null) {
                 builder = builder.setStyle(NotificationCompat.BigPictureStyle().bigPicture(preview))
             }
