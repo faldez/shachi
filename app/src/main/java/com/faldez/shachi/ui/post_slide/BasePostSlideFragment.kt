@@ -2,7 +2,6 @@ package com.faldez.shachi.ui.post_slide
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,11 +35,6 @@ abstract class BasePostSlideFragment : Fragment() {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -61,19 +55,6 @@ abstract class BasePostSlideFragment : Fragment() {
                 }
             }
         )
-
-        binding.favoriteButton?.setOnClickListener {
-            onFavoriteButton()
-        }
-        binding.detailButton?.setOnClickListener {
-            onDetailButton()
-        }
-        binding.shareButton?.setOnClickListener {
-            onShareButton()
-        }
-        binding.downloadButton?.setOnClickListener {
-            onDownloadButton()
-        }
 
         return binding.root
     }
@@ -124,7 +105,6 @@ abstract class BasePostSlideFragment : Fragment() {
     abstract suspend fun collectPagingData(showQuestionable: Boolean, showExplicit: Boolean)
 
     private fun setFavoriteButton(post: Post) {
-        binding.favoriteButton?.isSelected = post.favorite
         binding.postSlideTopappbar.menu.findItem(R.id.favorite_action_button)?.apply {
             if (post.favorite) {
                 icon = ResourcesCompat.getDrawable(resources,
@@ -142,12 +122,7 @@ abstract class BasePostSlideFragment : Fragment() {
 
     private fun prepareAppBar() {
         binding.postSlideTopappbar.menu.clear()
-        val menu = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            R.menu.post_slide_land_menu
-        } else {
-            R.menu.post_slide_menu
-        }
-        binding.postSlideTopappbar.inflateMenu(menu)
+        binding.postSlideTopappbar.inflateMenu(R.menu.post_slide_menu)
         binding.postSlideTopappbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
         binding.postSlideTopappbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()
@@ -244,12 +219,10 @@ abstract class BasePostSlideFragment : Fragment() {
 
     private fun hideAppBar() {
         binding.postSlideAppbarLayout.hide()
-        binding.bottomToolbar?.hide()
     }
 
     private fun showAppBar() {
         binding.postSlideAppbarLayout.show()
-        binding.bottomToolbar?.show()
     }
 
     private fun AppBarLayout.hide() {
