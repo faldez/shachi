@@ -46,6 +46,7 @@ class SavedSearchAdapter(
     private val explicitFilter: String,
 ) : PagingDataAdapter<SavedSearchPost, RecyclerView.ViewHolder>(COMPARATOR) {
     private val viewPool = RecyclerView.RecycledViewPool()
+    private val adapters: MutableMap<Int, SavedSearchAdapter> = mutableMapOf()
 
     fun setScrollPositions(newScrollPositions: SparseIntArray) {
         newScrollPositions.forEach { key, value ->
@@ -62,12 +63,27 @@ class SavedSearchAdapter(
         return when (viewType) {
             viewTypeSavedSearch -> {
                 val binding = SavedSearchItemBinding.inflate(inflater, parent, false)
+
+                binding.savedSearchItemRecyclerView.layoutManager = if (gridMode == "staggered") {
+                    StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL).apply {
+                        gapStrategy =
+                            StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+                    }
+                } else {
+                    LinearLayoutManager(binding.root.context,
+                        LinearLayoutManager.HORIZONTAL,
+                        false).apply {
+                        recycleChildrenOnDetach = true
+                    }
+                }
+                binding.savedSearchItemRecyclerView.setRecycledViewPool(viewPool)
+
                 SavedSearchItemViewHolder(
-                    binding, onBrowse,
-                    onClick, onDelete,
-                    onEdit, onScroll,
-                    gridMode,
-                    quality,
+                    binding,
+                    onBrowse,
+                    onDelete,
+                    onEdit,
+                    onScroll,
                     questionableFilter,
                     explicitFilter,
                 )
@@ -92,13 +108,31 @@ class SavedSearchAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
-            is SavedSearchItemViewHolder -> {
-                if (item != null) {
-                    holder.bind(viewPool, scrollPositions!!, item)
-                }
-            }
             is SavedSearchItemPostViewHolder -> {
                 item?.post?.let { holder.bind(it, savedSearchServer!!) }
+            }
+            is SavedSearchItemViewHolder -> {
+                if (item != null) {
+                    var adapter = adapters[item.savedSearch!!.savedSearch.savedSearchId]
+                    if (adapter == null) {
+                        adapter = SavedSearchAdapter(
+                            onClick = onClick,
+                            onScroll = null,
+                            savedSearchServer = item.savedSearch,
+                            gridMode = gridMode,
+                            quality = quality,
+                            questionableFilter = questionableFilter,
+                            explicitFilter = explicitFilter,
+                        ).apply {
+                            stateRestorationPolicy =
+                                StateRestorationPolicy.PREVENT_WHEN_EMPTY
+                        }
+
+                        adapters[item.savedSearch!!.savedSearch.savedSearchId] = adapter
+                    }
+
+                    holder.bind(adapter, scrollPositions!!, item)
+                }
             }
         }
     }
@@ -116,11 +150,6 @@ class SavedSearchAdapter(
                 throw IllegalAccessException()
             }
         }
-    }
-
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        super.onViewRecycled(holder)
-        onScroll?.let { it(null, null) }
     }
 
     companion object {
@@ -157,19 +186,17 @@ class SavedSearchAdapter(
 class SavedSearchItemViewHolder(
     private val binding: SavedSearchItemBinding,
     private val onBrowse: ((SavedSearchServer) -> Unit)? = null,
-    private val onClick: (SavedSearchServer, Int) -> Unit,
     private val onDelete: ((SavedSearchServer) -> Unit)? = null,
     private val onEdit: ((SavedSearchServer) -> Unit)? = null,
     private val onScroll: ((Int?, Int?) -> Unit)? = null,
-    private val gridMode: String,
-    private val quality: String,
     private val questionableFilter: String,
     private val explicitFilter: String,
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
+
     fun bind(
-        viewPool: RecyclerView.RecycledViewPool,
+        adapter: SavedSearchAdapter,
         scrollPositions: SparseIntArray,
         item: SavedSearchPost,
     ) {
@@ -179,45 +206,32 @@ class SavedSearchItemViewHolder(
         binding.savedSearchServerTextView.text = item.savedSearch.server.title
         binding.tagsTextView.text = SpannableStringBuilder(item.savedSearch.savedSearch.tags)
 
-
-        val adapter = SavedSearchAdapter(
-            onClick = onClick,
-            onScroll = { _, _ ->
-                val scroll = when (val layoutManager = binding.savedSearchItemRecyclerView.layoutManager) {
-                    is StaggeredGridLayoutManager -> layoutManager.findLastCompletelyVisibleItemPositions(
-                        IntArray(1)).getOrNull(0)
-                    is LinearLayoutManager -> layoutManager.findFirstVisibleItemPosition()
-                    else -> null
-                }
-                onScroll?.let { it(item.savedSearch.savedSearch.savedSearchId, scroll) }
-            },
-            savedSearchServer = item.savedSearch,
-            gridMode = gridMode,
-            quality = quality,
-            questionableFilter = questionableFilter,
-            explicitFilter = explicitFilter,
-        )
-
-        val layoutManager = if (gridMode == "staggered") {
-            StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL).apply {
-                gapStrategy =
-                    StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
-            }
-        } else {
-            LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
-        }
-
         binding.savedSearchItemRecyclerView.apply {
-            setLayoutManager(layoutManager)
             setAdapter(adapter)
-            setRecycledViewPool(viewPool)
         }
 
-        binding.savedSearchItemRecyclerView.post {
-            layoutManager.scrollToPosition(scrollPositions[item.savedSearch.savedSearch.savedSearchId])
+        binding.savedSearchItemRecyclerView.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val scroll =
+                    when (val layoutManager = binding.savedSearchItemRecyclerView.layoutManager) {
+                        is StaggeredGridLayoutManager -> layoutManager.findFirstVisibleItemPositions(
+                            IntArray(1)).getOrNull(0)
+                        is LinearLayoutManager -> layoutManager.findFirstVisibleItemPosition()
+                        else -> null
+                    }
+                onScroll?.let { it(item.savedSearch.savedSearch.savedSearchId, scroll) }
+            }
+        })
+
+        val scroll = scrollPositions[item.savedSearch.savedSearch.savedSearchId]
+        if (scroll > 0) {
+            binding.savedSearchItemRecyclerView.post {
+                binding.savedSearchItemRecyclerView.layoutManager?.scrollToPosition(scroll)
+            }
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             item.posts.collectLatest {
                 if (it != null) {
                     adapter.submitData(it.filter { item ->
