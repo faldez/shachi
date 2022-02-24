@@ -278,9 +278,11 @@ class SavedSearchItemPostViewHolder(
                 "original" -> item.fileUrl
                 else -> item.previewUrl ?: item.sampleUrl
             } ?: item.fileUrl
-
             Glide.with(imageView.context).load(url)
-                .placeholder(R.drawable.placeholder)
+                .placeholder(BitmapDrawable(imageView.resources,
+                    Bitmap.createBitmap(previewWidth,
+                        previewHeight,
+                        Bitmap.Config.ARGB_8888)))
                 .override(previewWidth, previewHeight)
                 .into(imageView)
         }

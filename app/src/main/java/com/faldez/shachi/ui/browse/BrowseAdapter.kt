@@ -1,5 +1,7 @@
 package com.faldez.shachi.ui.browse
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -94,7 +96,10 @@ class BrowseItemViewHolder(
             } ?: post.fileUrl
 
             Glide.with(imageView.context).load(url)
-                .placeholder(R.drawable.placeholder)
+                .placeholder(BitmapDrawable(imageView.resources,
+                    Bitmap.createBitmap(previewWidth,
+                        previewHeight,
+                        Bitmap.Config.ARGB_8888)))
                 .override(previewWidth, previewHeight)
                 .into(imageView)
         }
