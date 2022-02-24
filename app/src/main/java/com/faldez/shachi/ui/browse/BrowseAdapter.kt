@@ -2,6 +2,7 @@ package com.faldez.shachi.ui.browse
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -11,6 +12,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.Downsampler
+import com.bumptech.glide.request.RequestOptions
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
@@ -95,13 +98,16 @@ class BrowseItemViewHolder(
                 else -> post.previewUrl ?: post.sampleUrl
             } ?: post.fileUrl
 
-            Glide.with(imageView.context).load(url)
+            var glide = Glide.with(imageView.context).load(url)
                 .placeholder(BitmapDrawable(imageView.resources,
                     Bitmap.createBitmap(previewWidth,
                         previewHeight,
                         Bitmap.Config.ARGB_8888)))
                 .override(previewWidth, previewHeight)
-                .into(imageView)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                glide = glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG, true))
+            }
+            glide.into(imageView)
         }
 
         binding.favoriteIcon.isVisible = post.favorite

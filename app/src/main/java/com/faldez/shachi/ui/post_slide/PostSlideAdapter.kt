@@ -1,6 +1,7 @@
 package com.faldez.shachi.ui.post_slide
 
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +13,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.Downsampler
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideItemBinding
@@ -144,7 +147,8 @@ class PostSlideImageViewHolder(
                 binding.postLoadingIndicator.progress = bytesRead.toInt()
                 binding.postLoadingIndicator.isIndeterminate = false
             })
-        GlideApp.with(postImageView.context).load(item.fileUrl)
+
+        var glide = GlideApp.with(postImageView.context).load(item.fileUrl)
             .thumbnail(GlideApp.with(postImageView.context).load(item.previewUrl))
             .timeout(3000)
             .listener(object : RequestListener<Drawable> {
@@ -171,7 +175,10 @@ class PostSlideImageViewHolder(
                     return false
                 }
             })
-            .into(postImageView)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            glide = glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG, true))
+        }
+        glide.into(postImageView)
     }
 }
 

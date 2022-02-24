@@ -2,6 +2,7 @@ package com.faldez.shachi.ui.saved
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.util.SparseIntArray
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.Downsampler
+import com.bumptech.glide.request.RequestOptions
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.SavedSearchItemBinding
 import com.faldez.shachi.databinding.SavedSearchItemPostBinding
@@ -196,11 +199,10 @@ class SavedSearchItemViewHolder(
         )
 
         val layoutManager = if (gridMode == "staggered") {
-            val layoutManager =
-                StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
-            layoutManager.gapStrategy =
-                StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
-            layoutManager
+            StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL).apply {
+                gapStrategy =
+                    StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+            }
         } else {
             LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
         }
@@ -278,13 +280,16 @@ class SavedSearchItemPostViewHolder(
                 "original" -> item.fileUrl
                 else -> item.previewUrl ?: item.sampleUrl
             } ?: item.fileUrl
-            Glide.with(imageView.context).load(url)
+            var glide = Glide.with(imageView.context).load(url)
                 .placeholder(BitmapDrawable(imageView.resources,
                     Bitmap.createBitmap(previewWidth,
                         previewHeight,
                         Bitmap.Config.ARGB_8888)))
                 .override(previewWidth, previewHeight)
-                .into(imageView)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                glide = glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG, true))
+            }
+            glide.into(imageView)
         }
         binding.favoriteIcon.isVisible = item.favorite
         binding.root.setOnClickListener {
