@@ -70,7 +70,6 @@ class PostSlideAdapter(
         val item = getItem(position)
         item?.let {
             it.favorite = favorite
-            notifyItemChanged(position)
         }
     }
 
