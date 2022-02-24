@@ -63,10 +63,7 @@ class FavoriteAdapter(
                 } ?: it.fileUrl
 
                 Glide.with(imageView.context).load(url)
-                    .placeholder(BitmapDrawable(imageView.resources,
-                        Bitmap.createBitmap(previewWidth,
-                            previewHeight,
-                            Bitmap.Config.ARGB_8888)))
+                    .placeholder(R.drawable.placeholder)
                     .override(previewWidth, previewHeight)
                     .into(imageView)
             }
