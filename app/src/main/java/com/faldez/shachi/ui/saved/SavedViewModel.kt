@@ -23,12 +23,10 @@ class SavedViewModel(
     private val postRepository: PostRepository,
     private val favoriteRepository: FavoriteRepository,
 ) : ViewModel() {
-    val state: Flow<PagingData<SavedSearchPost>>
-    private val stateMap: MutableStateFlow<MutableMap<Int, Flow<PagingData<SavedSearchPost>>>> =
-        MutableStateFlow(
-            mutableMapOf())
+    val state: StateFlow<List<SavedSearchPost>>
+    private val postsMap: MutableMap<Int, Flow<PagingData<Post>>> =
+        mutableMapOf()
     val scrollState: MutableStateFlow<SparseIntArray> = MutableStateFlow(SparseIntArray())
-    val accept: (UiAction) -> Unit
 
     init {
         val actionStateFlow = MutableSharedFlow<UiAction>()
@@ -37,37 +35,34 @@ class SavedViewModel(
             .onStart { emit(UiAction.GetSavedSearch()) }
         val savedSearchFlow = savedSearchRepository.getAllFlow().distinctUntilChanged()
 
-        state = combine(getSavedSearchFlow, savedSearchFlow, stateMap, ::Triple)
-            .map { (action, data, map) ->
+        state = combine(getSavedSearchFlow, savedSearchFlow, ::Pair)
+            .map { (action, data) ->
                 Log.d("SavedViewModel", "collect savedSearches")
-                val list = data.map { savedSearch ->
+                data.map { savedSearch ->
                     var posts =
-                        if (!action.clearAll) map[savedSearch.savedSearch.savedSearchId] else null
+                        if (!action.clearAll) postsMap[savedSearch.savedSearch.savedSearchId] else null
                     if (posts == null) {
                         posts = getSearchPosts(savedSearch).cachedIn(viewModelScope)
-                        map[savedSearch.savedSearch.savedSearchId] = posts
+                        postsMap[savedSearch.savedSearch.savedSearchId] = posts
                     }
                     SavedSearchPost(savedSearch = savedSearch, posts = posts)
                 }
-                PagingData.from(list)
-            }.cachedIn(viewModelScope)
-
-        accept = {
-            viewModelScope.launch {
-                actionStateFlow.emit(it)
-            }
-        }
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = listOf()
+            )
     }
 
-    private fun getSearchPosts(savedSearch: SavedSearchServer): Flow<PagingData<SavedSearchPost>> {
+    private fun getSearchPosts(savedSearch: SavedSearchServer): Flow<PagingData<Post>> {
         return postRepository.getSearchPostsResultStream(Action.SearchPost(server = savedSearch.server,
-            tags = savedSearch.savedSearch.tags)).map { pagingData ->
+            tags = savedSearch.savedSearch.tags, limit = 10)).map { pagingData ->
             pagingData.map { post ->
                 val postId =
                     favoriteRepository.queryByServerUrlAndPostId(post.serverId,
                         post.postId)
                 post.favorite = postId != null
-                SavedSearchPost(post = post)
+                post
             }
         }
     }
@@ -85,8 +80,7 @@ class SavedViewModel(
         }
     }
 
-    fun posts(savedSearchId: Int): Flow<PagingData<Post>?> =
-        stateMap.value[savedSearchId]!!.map { it.map { item -> item.post!! } }
+    fun posts(savedSearchId: Int): Flow<PagingData<Post>?> = postsMap[savedSearchId]!!
 
     fun delete(savedSearch: SavedSearch) = viewModelScope.launch {
         savedSearchRepository.delete(savedSearch)
@@ -107,14 +101,8 @@ class SavedViewModel(
 }
 
 data class SavedSearchPost(
-    val savedSearch: SavedSearchServer? = null,
-    val post: Post? = null,
-    val scroll: Int? = null,
-    val posts: Flow<PagingData<SavedSearchPost>?> = flowOf(null),
-)
-
-data class UiState(
-    val posts: Map<SavedSearch, List<Post>?>? = null,
+    val savedSearch: SavedSearchServer,
+    val posts: Flow<PagingData<Post>?>,
 )
 
 sealed class UiAction {

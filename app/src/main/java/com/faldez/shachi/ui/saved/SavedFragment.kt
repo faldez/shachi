@@ -26,6 +26,7 @@ import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SavedFragmentBinding
+import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.repository.PostRepository
 import com.faldez.shachi.repository.SavedSearchRepository
@@ -51,11 +52,65 @@ class SavedFragment : Fragment() {
     private lateinit var binding: SavedFragmentBinding
     private lateinit var adapter: SavedSearchAdapter
 
+    private val adapterListener = object : SavedSearchAdapterListener {
+        override fun onBrowse(it: SavedSearchServer) {
+            val bundle = bundleOf("title" to it.savedSearch.savedSearchTitle,
+                "server" to it.server,
+                "tags" to it.savedSearch.tags)
+            findNavController()
+                .navigate(R.id.action_saved_to_browse,
+                    bundle)
+        }
+
+        override fun onClick(savedSearchServer: SavedSearchServer, position: Int) {
+            val bundle =
+                bundleOf("saved_search_id" to savedSearchServer.savedSearch.savedSearchId,
+                    "position" to position,
+                    "server" to savedSearchServer.server,
+                    "tags" to savedSearchServer.savedSearch.tags)
+            findNavController()
+                .navigate(R.id.action_saved_to_postslide,
+                    bundle)
+        }
+
+        override fun onDelete(savedSearch: SavedSearchServer) {
+            MaterialAlertDialogBuilder(requireContext()).setTitle("Delete " + savedSearch.savedSearch.savedSearchTitle)
+                .setMessage("Are you Sure?")
+                .setPositiveButton("Yes"
+                ) { _, _ -> viewModel.delete(savedSearch.savedSearch) }
+                .setNegativeButton("No", null).show()
+        }
+
+        override fun onEdit(savedSearch: SavedSearchServer) {
+            val dialog =
+                MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
+                    .setTitle(resources.getString(R.string.update_title))
+                    .setMessage(resources.getString(R.string.saved_search_update_description_title_text))
+                    .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
+                        (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTitleInput).text?.toString()
+                            ?.let { title ->
+                                viewModel.saveSearch(savedSearch.savedSearch.copy(
+                                    savedSearchTitle = title))
+                                Toast.makeText(requireContext(), "Saved", Toast.LENGTH_LONG)
+                                    .show()
+                            }
+                    }.show()
+            dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
+                SpannableStringBuilder(savedSearch.savedSearch.savedSearchTitle)
+        }
+
+        override fun onScroll(position: Int, scroll: Int) {
+            Log.d("SavedFragment", "position=$position scroll=$scroll")
+            viewModel.putScroll(position, scroll)
+
+        }
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        Log.d("SavedFragment", "onCreateView")
         binding = SavedFragmentBinding.inflate(inflater, container, false)
 
         val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
@@ -65,53 +120,7 @@ class SavedFragment : Fragment() {
         val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
 
         adapter = SavedSearchAdapter(
-            onBrowse = {
-                val bundle = bundleOf("title" to it.savedSearch.savedSearchTitle,
-                    "server" to it.server,
-                    "tags" to it.savedSearch.tags)
-                findNavController()
-                    .navigate(R.id.action_saved_to_browse,
-                        bundle)
-            },
-            onClick = { savedSearchServer, position ->
-                val bundle =
-                    bundleOf("saved_search_id" to savedSearchServer.savedSearch.savedSearchId,
-                        "position" to position,
-                        "server" to savedSearchServer.server,
-                        "tags" to savedSearchServer.savedSearch.tags)
-                findNavController()
-                    .navigate(R.id.action_saved_to_postslide,
-                        bundle)
-            },
-            onDelete = { savedSearch ->
-                MaterialAlertDialogBuilder(requireContext()).setTitle("Delete " + savedSearch.savedSearch.savedSearchTitle)
-                    .setMessage("Are you Sure?")
-                    .setPositiveButton("Yes"
-                    ) { _, _ -> viewModel.delete(savedSearch.savedSearch) }
-                    .setNegativeButton("No", null).show()
-            },
-            onEdit = { savedSearch ->
-                val dialog =
-                    MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
-                        .setTitle(resources.getString(R.string.update_title))
-                        .setMessage(resources.getString(R.string.saved_search_update_description_title_text))
-                        .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
-                            (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTitleInput).text?.toString()
-                                ?.let { title ->
-                                    viewModel.saveSearch(savedSearch.savedSearch.copy(
-                                        savedSearchTitle = title))
-                                    Toast.makeText(requireContext(), "Saved", Toast.LENGTH_LONG)
-                                        .show()
-                                }
-                        }.show()
-                dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
-                    SpannableStringBuilder(savedSearch.savedSearch.savedSearchTitle)
-            },
-            onScroll = { position, scroll ->
-                if (position != null && scroll != null) {
-                    viewModel.putScroll(position, scroll)
-                }
-            },
+            listener = adapterListener,
             gridMode = gridMode,
             quality = quality,
             questionableFilter = questionableFilter,
@@ -152,7 +161,7 @@ class SavedFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.state.collectLatest { state ->
-                    adapter.submitData(state)
+                    adapter.submitList(state)
                 }
             }
         }

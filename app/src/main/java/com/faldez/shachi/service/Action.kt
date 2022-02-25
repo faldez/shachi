@@ -13,9 +13,10 @@ sealed class Action {
     data class SearchPost(
         val server: ServerView,
         val tags: String = "*",
+        val limit: Int = NETWORK_PAGE_SIZE
     ) :
         Action() {
-        fun buildGelbooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
+        fun buildGelbooruUrl(page: Int): HttpUrl? {
             return server.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
                     .addQueryParameter("page", "dapi")
@@ -29,7 +30,7 @@ sealed class Action {
             }
         }
 
-        fun buildMoebooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
+        fun buildMoebooruUrl(page: Int): HttpUrl? {
             return server.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("post.json")
                     .addQueryParameter("page", page.toString())
@@ -40,7 +41,7 @@ sealed class Action {
             }
         }
 
-        fun buildDanbooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
+        fun buildDanbooruUrl(page: Int): HttpUrl? {
             return server.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("posts.json")
                     .addQueryParameter("page", page.toString())
