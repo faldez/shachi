@@ -134,7 +134,7 @@ class SavedSearchAdapter(
             }
 
             binding.savedSearchItemRecyclerView.apply {
-                swapAdapter(adapter, false)
+                swapAdapter(adapter, true)
             }
 
             val scroll = scrollPositions[item.savedSearch.savedSearch.savedSearchId]
