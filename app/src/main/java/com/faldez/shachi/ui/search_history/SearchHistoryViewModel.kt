@@ -15,7 +15,7 @@ class SearchHistoryViewModel(
     val state: Flow<PagingData<SearchHistoryServer>>
 
     init {
-        state = searchHistoryRepository.getAll()
+        state = searchHistoryRepository.getAllFlow()
             .shareIn(scope = viewModelScope, started = SharingStarted.Eagerly, replay = 1)
     }
 }

@@ -15,7 +15,7 @@ class ServerDialogViewModel(private val repository: ServerRepository) : ViewMode
         val actionStateFlow = MutableSharedFlow<UiAction>()
         serverList = actionStateFlow.filterIsInstance<UiAction.LoadAll>()
             .onStart { emit(UiAction.LoadAll) }.flatMapLatest {
-                repository.getAllServers()
+                repository.getAllServersFlow()
             }
     }
 

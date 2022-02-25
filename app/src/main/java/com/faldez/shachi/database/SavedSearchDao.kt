@@ -8,7 +8,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SavedSearchDao {
     @Query("SELECT * FROM saved_search")
-    fun getAll(): Flow<List<SavedSearchServer>>
+    fun getAllFlow(): Flow<List<SavedSearchServer>>
+
+    @Query("SELECT * FROM saved_search")
+    suspend fun getAll(): List<SavedSearch>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(savedSearch: SavedSearch)

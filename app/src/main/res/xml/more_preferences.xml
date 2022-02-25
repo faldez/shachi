@@ -16,18 +16,29 @@
 
     </PreferenceCategory>
 
-   <PreferenceCategory app:title="@string/settings">
-       <Preference
-           app:fragment="com.faldez.shachi.ui.settings.SettingsFragment"
-           app:key="settings"
-           app:title="@string/settings"
-           app:icon="@drawable/ic_baseline_settings_24"/>
-   </PreferenceCategory>
+    <PreferenceCategory app:title="@string/settings">
+        <Preference
+            app:fragment="com.faldez.shachi.ui.settings.SettingsFragment"
+            app:icon="@drawable/ic_baseline_settings_24"
+            app:key="settings"
+            app:title="@string/settings" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/backup_and_restore">
+        <Preference
+            android:title="@string/backup"
+            app:key="backup"
+            app:summary="@string/restore_summary" />
+        <Preference
+            android:title="@string/restore"
+            app:key="restore"
+            app:summary="@string/restore_summary" />
+    </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/other">
         <Preference
             app:fragment="com.faldez.shachi.ui.oss.OssFragment"
             app:key="oss_notices"
-            app:title="@string/open_source_notices"/>
+            app:title="@string/open_source_notices" />
     </PreferenceCategory>
 </PreferenceScreen>

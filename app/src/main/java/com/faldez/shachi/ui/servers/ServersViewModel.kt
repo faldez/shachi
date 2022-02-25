@@ -15,7 +15,7 @@ class ServersViewModel(private val repository: ServerRepository) : ViewModel() {
     init {
         val actionStateFlow = MutableSharedFlow<UiAction>()
         serverList = actionStateFlow.filterIsInstance<UiAction.LoadAll>()
-            .onStart { emit(UiAction.LoadAll) }.flatMapLatest { repository.getAllServers() }
+            .onStart { emit(UiAction.LoadAll) }.flatMapLatest { repository.getAllServersFlow() }
     }
 
     fun insert(serverId: Int) =

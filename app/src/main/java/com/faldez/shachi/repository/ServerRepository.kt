@@ -7,7 +7,11 @@ import com.faldez.shachi.model.ServerView
 import kotlinx.coroutines.flow.Flow
 
 class ServerRepository(private val db: AppDatabase) {
-    fun getAllServers(): Flow<List<ServerView>?> {
+    fun getAllServersFlow(): Flow<List<ServerView>?> {
+        return db.serverDao().getAllFlow()
+    }
+
+    suspend fun getAllServers(): List<Server>? {
         return db.serverDao().getAll()
     }
 

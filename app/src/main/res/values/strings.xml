@@ -100,4 +100,9 @@
     <string name="share_link">Share link</string>
     <string name="share_source_link">Share source link</string>
     <string name="hide_bottom_bar_on_scroll">Hide bottom bar on scroll</string>
+    <string name="backup_and_restore">Backup and restore</string>
+    <string name="backup">Backup</string>
+    <string name="backup_summary">Backup data</string>
+    <string name="restore">Restore</string>
+    <string name="restore_summary">Restore data</string>
 </resources>

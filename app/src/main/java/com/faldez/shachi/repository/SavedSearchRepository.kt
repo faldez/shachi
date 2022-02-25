@@ -6,7 +6,11 @@ import com.faldez.shachi.model.SavedSearchServer
 import kotlinx.coroutines.flow.Flow
 
 class SavedSearchRepository(private val db: AppDatabase) {
-    fun getAll(): Flow<List<SavedSearchServer>> {
+    fun getAllFlow(): Flow<List<SavedSearchServer>> {
+        return db.savedSearchDao().getAllFlow()
+    }
+
+    suspend fun getAll(): List<SavedSearch> {
         return db.savedSearchDao().getAll()
     }
 

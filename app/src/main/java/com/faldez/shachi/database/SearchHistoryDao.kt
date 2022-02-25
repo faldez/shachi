@@ -14,5 +14,8 @@ interface SearchHistoryDao {
     suspend fun delete(searchHistory: SearchHistory)
 
     @Query("SELECT * FROM search_history ORDER BY created_at DESC")
-    fun getAll(): PagingSource<Int, SearchHistoryServer>
+    fun getAllPagingData(): PagingSource<Int, SearchHistoryServer>
+
+    @Query("SELECT * FROM search_history ORDER BY created_at DESC")
+    suspend fun getAll(): List<SearchHistory>?
 }

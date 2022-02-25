@@ -11,7 +11,7 @@ interface FavoriteDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPost(favorite: Post)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPostTag(postTag: PostTag)
 
     @Transaction
@@ -51,4 +51,7 @@ interface FavoriteDao {
 
     @Query("SELECT post_id FROM favorite WHERE server_id = :serverId AND post_id = :postId")
     suspend fun queryByServerUrlAndPostId(serverId: Int, postId: Int): Int?
+
+    @Query("SELECT * FROM favorite ORDER BY date_added DESC")
+    suspend fun getAll(): List<Post>
 }

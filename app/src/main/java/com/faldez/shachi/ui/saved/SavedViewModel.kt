@@ -35,7 +35,7 @@ class SavedViewModel(
 
         val getSavedSearchFlow = actionStateFlow.filterIsInstance<UiAction.GetSavedSearch>()
             .onStart { emit(UiAction.GetSavedSearch()) }
-        val savedSearchFlow = savedSearchRepository.getAll().distinctUntilChanged()
+        val savedSearchFlow = savedSearchRepository.getAllFlow().distinctUntilChanged()
 
         state = combine(getSavedSearchFlow, savedSearchFlow, stateMap, ::Triple)
             .map { (action, data, map) ->

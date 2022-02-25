@@ -13,15 +13,19 @@ class SearchHistoryRepository(private val db: AppDatabase) {
 
     suspend fun delete(searchHistory: SearchHistory) = db.searchHistoryDao().delete(searchHistory)
 
-    fun getAll(): Flow<PagingData<SearchHistoryServer>> {
+    fun getAllFlow(): Flow<PagingData<SearchHistoryServer>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 5,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                db.searchHistoryDao().getAll()
+                db.searchHistoryDao().getAllPagingData()
             }
         ).flow
+    }
+
+    suspend fun getAll(): List<SearchHistory>? {
+        return db.searchHistoryDao().getAll()
     }
 }

@@ -45,4 +45,8 @@ class FavoriteRepository(private val db: AppDatabase) {
     suspend fun queryByServerUrlAndPostId(serverId: Int, postId: Int): Int? {
         return db.favoriteDao().queryByServerUrlAndPostId(serverId, postId)
     }
+
+    suspend fun getAll(): List<Post> {
+        return db.favoriteDao().getAll()
+    }
 }

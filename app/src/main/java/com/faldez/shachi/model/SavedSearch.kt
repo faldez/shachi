@@ -21,14 +21,3 @@ data class SavedSearchServer(
     )
     val server: ServerView,
 )
-
-@Entity(tableName = "saved_search_server_cross_ref",
-    primaryKeys = ["saved_search_id", "server_id"],
-    foreignKeys = [ForeignKey(childColumns = ["blacklisted_tag_id"],
-        onDelete = ForeignKey.CASCADE,
-        parentColumns = ["blacklisted_tag_id"],
-        entity = BlacklistedTag::class)])
-data class SavedSearchServerCrossRef(
-    @ColumnInfo(name = "saved_search_id") val savedSearchId: Int,
-    @ColumnInfo(name = "server_id") val serverId: Int,
-)

@@ -7,7 +7,11 @@ import com.faldez.shachi.model.ServerBlacklistedTagCrossRef
 import kotlinx.coroutines.flow.Flow
 
 class BlacklistTagRepository(private val db: AppDatabase) {
-    suspend fun getAll(): Flow<List<BlacklistedTagWithServer>?> {
+    fun getAllFlow(): Flow<List<BlacklistedTagWithServer>?> {
+        return db.blacklistedTagDao().getAllFlow()
+    }
+
+    suspend fun getAll(): List<BlacklistedTagWithServer>? {
         return db.blacklistedTagDao().getAll()
     }
 
