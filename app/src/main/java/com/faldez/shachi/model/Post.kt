@@ -46,6 +46,8 @@ data class Post(
 ) : Parcelable {
     @Ignore
     var favorite: Boolean = false
+    @Ignore
+    var quality: String? = null
 }
 
 @Fts4(tokenizer = FtsOptions.TOKENIZER_UNICODE61, tokenizerArgs = ["tokenchars='"])

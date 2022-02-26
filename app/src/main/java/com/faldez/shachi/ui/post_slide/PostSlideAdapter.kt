@@ -29,10 +29,18 @@ import com.google.android.exoplayer2.MediaItem
 
 
 class PostSlideAdapter(
-    private val quality: String,
+    val quality: String,
     private val onTap: () -> Unit,
 ) :
     PagingDataAdapter<Post, PostSlideViewHolder>(POST_COMPARATOR) {
+
+    fun setPostQuality(position: Int, quality: String) {
+        val item = getItem(position)
+        if (item != null) {
+            item.quality = quality
+            notifyItemChanged(position)
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostSlideViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -134,11 +142,13 @@ class PostSlideImageViewHolder(
         postImageView.setOnViewTapListener { view, x, y -> onTap() }
         binding.postLoadingIndicator.isIndeterminate = true
 
-        val url = when (quality) {
+        val url = when (item.quality ?: quality) {
             "sample" -> item.sampleUrl ?: item.previewUrl
             "original" -> item.fileUrl
             else -> item.previewUrl ?: item.sampleUrl
         } ?: item.fileUrl
+
+        Log.d("PostSlideImageViewHolder", "bind ${item.quality} $url")
 
         GlideModule.setOnProgress(url,
             onProgress = { bytesRead, totalContentLength, done ->
@@ -147,7 +157,7 @@ class PostSlideImageViewHolder(
                 binding.postLoadingIndicator.isIndeterminate = false
             })
 
-        var glide = GlideApp.with(postImageView.context).load(item.fileUrl)
+        var glide = GlideApp.with(postImageView.context).load(url)
             .thumbnail(GlideApp.with(postImageView.context).load(item.previewUrl))
             .timeout(3000)
             .listener(object : RequestListener<Drawable> {

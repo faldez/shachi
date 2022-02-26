@@ -22,6 +22,7 @@ import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.service.DownloadService
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
@@ -149,6 +150,10 @@ abstract class BasePostSlideFragment : Fragment() {
                     onDownloadButton()
                     true
                 }
+                R.id.select_image_button -> {
+                    onSelectImage()
+                    true
+                }
                 else -> false
             }
         }
@@ -176,6 +181,42 @@ abstract class BasePostSlideFragment : Fragment() {
             } else {
                 showSnackbar(R.string.download_path_not_set)
             }
+        }
+    }
+
+    private fun onSelectImage() {
+        getCurrentPost()?.let { post ->
+            val items = ArrayList<String>()
+            if (post.previewUrl != null) {
+                if (post.previewWidth != null && post.previewHeight != null) {
+                    items.add("Preview: ${post.previewWidth}x${post.previewHeight}")
+                } else {
+                    items.add("Preview")
+                }
+            }
+
+            if (post.sampleUrl != null) {
+                if (post.sampleWidth != null && post.sampleHeight != null) {
+                    items.add("Sample: ${post.sampleWidth}x${post.sampleHeight}")
+                } else {
+                    items.add("Sample")
+                }
+            }
+
+            items.add("Original: ${post.width}x${post.height}")
+
+            val checked = items.indexOfFirst {
+                it.substringBefore(":").lowercase() == post.quality ?: postSlideAdapter.quality
+            }
+
+            Log.d("BasePostSlideFragment/onSelectImage", "$post $items")
+
+            MaterialAlertDialogBuilder(requireContext()).setTitle("Select Image")
+                .setSingleChoiceItems(items.toTypedArray(), checked) { dialog, choice ->
+                    postSlideAdapter.setPostQuality(binding.postViewPager.currentItem,
+                        items[choice].substringBefore(":").lowercase())
+                    dialog.dismiss()
+                }.show()
         }
     }
 
