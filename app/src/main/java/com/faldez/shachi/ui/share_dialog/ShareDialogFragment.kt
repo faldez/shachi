@@ -15,8 +15,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.ShareDialogFragmentBinding
 import com.faldez.shachi.model.Post
+import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.glide.GlideApp
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -42,6 +44,10 @@ class ShareDialogFragment : BottomSheetDialogFragment() {
         binding = ShareDialogFragmentBinding.inflate(inflater, container, false)
         binding.bind()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun shareImage(mime: String, post: Post) {
@@ -100,6 +106,10 @@ class ShareDialogFragment : BottomSheetDialogFragment() {
 
     private fun ShareDialogFragmentBinding.bind() {
         val post = requireArguments().get("post") as Post
+
+        viewModel = ShareDialogViewModel(ServerRepository(AppDatabase.build(requireContext())),
+            post.serverId)
+
         shareAsImageButton.setOnClickListener {
             val mime = MimeUtil.getMimeTypeFromUrl(post.fileUrl)
             if (mime?.startsWith("video") == true) {
@@ -112,7 +122,8 @@ class ShareDialogFragment : BottomSheetDialogFragment() {
         shareAsLinkButton.setOnClickListener {
             val intent = Intent().apply {
                 action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, post.fileUrl)
+                putExtra(Intent.EXTRA_TEXT,
+                    viewModel.server.value?.toServer()?.getPostUrl(post.postId))
                 type = "text/plain"
             }
             val shareIntent = Intent.createChooser(intent, null)
@@ -129,11 +140,4 @@ class ShareDialogFragment : BottomSheetDialogFragment() {
             startActivity(shareIntent)
         }
     }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ShareDialogViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
-
 }

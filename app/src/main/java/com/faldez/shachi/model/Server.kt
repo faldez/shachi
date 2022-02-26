@@ -22,7 +22,7 @@ data class Server(
     val password: String?,
 ) : Parcelable {
     fun toServerView(): ServerView {
-        return  ServerView(
+        return ServerView(
             serverId = serverId,
             type = type,
             title = title,
@@ -30,6 +30,12 @@ data class Server(
             username = username,
             password = password
         )
+    }
+
+    fun getPostUrl(postId: Int): String = when (type) {
+        ServerType.Gelbooru -> "${url.trim()}/index.php?page=post&s=view&id=$postId"
+        ServerType.Danbooru -> "${url.trim()}/posts/$postId"
+        ServerType.Moebooru -> "${url.trim()}/post/show/$postId"
     }
 }
 
