@@ -53,10 +53,10 @@ class SavedFragment : Fragment() {
     private lateinit var adapter: SavedSearchAdapter
 
     private val adapterListener = object : SavedSearchAdapterListener {
-        override fun onBrowse(it: SavedSearchServer) {
-            val bundle = bundleOf("title" to it.savedSearch.savedSearchTitle,
-                "server" to it.server,
-                "tags" to it.savedSearch.tags)
+        override fun onBrowse(savedSearchServer: SavedSearchServer) {
+            val bundle = bundleOf("title" to savedSearchServer.savedSearch.savedSearchTitle,
+                "server" to savedSearchServer.server,
+                "tags" to savedSearchServer.savedSearch.tags)
             findNavController()
                 .navigate(R.id.action_saved_to_browse,
                     bundle)
@@ -73,15 +73,15 @@ class SavedFragment : Fragment() {
                     bundle)
         }
 
-        override fun onDelete(savedSearch: SavedSearchServer) {
-            MaterialAlertDialogBuilder(requireContext()).setTitle("Delete " + savedSearch.savedSearch.savedSearchTitle)
+        override fun onDelete(savedSearchServer: SavedSearchServer) {
+            MaterialAlertDialogBuilder(requireContext()).setTitle("Delete " + savedSearchServer.savedSearch.savedSearchTitle)
                 .setMessage("Are you Sure?")
                 .setPositiveButton("Yes"
-                ) { _, _ -> viewModel.delete(savedSearch.savedSearch) }
+                ) { _, _ -> viewModel.delete(savedSearchServer.savedSearch) }
                 .setNegativeButton("No", null).show()
         }
 
-        override fun onEdit(savedSearch: SavedSearchServer) {
+        override fun onEdit(savedSearchServer: SavedSearchServer) {
             val dialog =
                 MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
                     .setTitle(resources.getString(R.string.update_title))
@@ -89,14 +89,14 @@ class SavedFragment : Fragment() {
                     .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
                         (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTitleInput).text?.toString()
                             ?.let { title ->
-                                viewModel.saveSearch(savedSearch.savedSearch.copy(
+                                viewModel.saveSearch(savedSearchServer.savedSearch.copy(
                                     savedSearchTitle = title))
                                 Toast.makeText(requireContext(), "Saved", Toast.LENGTH_LONG)
                                     .show()
                             }
                     }.show()
             dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
-                SpannableStringBuilder(savedSearch.savedSearch.savedSearchTitle)
+                SpannableStringBuilder(savedSearchServer.savedSearch.savedSearchTitle)
         }
 
         override fun onScroll(position: Int, scroll: Int) {
@@ -118,8 +118,6 @@ class SavedFragment : Fragment() {
         val questionableFilter =
             preferences.getString("filter_questionable_content", null) ?: "disable"
         val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
-
-        viewModel.accept(UiAction.SetConfig(Config(questionableFilter, explicitFilter)))
 
         adapter = SavedSearchAdapter(
             listener = adapterListener,

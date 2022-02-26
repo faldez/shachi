@@ -7,10 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.filter
 import androidx.paging.map
 import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.Rating
 import com.faldez.shachi.model.SavedSearch
 import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.repository.FavoriteRepository
@@ -33,22 +31,15 @@ class SavedViewModel(
         mutableMapOf()
     val scrollState: MutableStateFlow<SparseArray<Int>> =
         savedStateHandle[LAST_SCROLL_POSITIONS] ?: MutableStateFlow(SparseArray<Int>())
-    val accept: (UiAction) -> Unit
 
     init {
-        val actionSharedFlow = MutableSharedFlow<UiAction>()
-        val configFlow =
-            actionSharedFlow.filterIsInstance<UiAction.SetConfig>().distinctUntilChanged()
-                .map { it.config }
-
-        val savedSearch = savedSearchRepository.getAllFlow().distinctUntilChanged()
-        savedSearchFlow = combine(configFlow, savedSearch, ::Pair)
-            .map { (config, data) ->
+        savedSearchFlow = savedSearchRepository.getAllFlow().distinctUntilChanged()
+            .map { data ->
                 Log.d("SavedViewModel", "collect savedSearches")
                 data.map { savedSearch ->
                     var posts = postsMap[savedSearch.savedSearch.savedSearchId]
                     if (posts == null) {
-                        posts = getSearchPosts(savedSearch, config).cachedIn(viewModelScope)
+                        posts = getSearchPosts(savedSearch).cachedIn(viewModelScope)
                         postsMap[savedSearch.savedSearch.savedSearchId] = posts
                     }
                     SavedSearchPost(savedSearch = savedSearch, posts = posts)
@@ -58,27 +49,14 @@ class SavedViewModel(
                 started = SharingStarted.Eagerly,
                 replay = 1
             )
-
-        accept = { action ->
-            viewModelScope.launch {
-                actionSharedFlow.emit(action)
-            }
-        }
     }
 
     private fun getSearchPosts(
         savedSearch: SavedSearchServer,
-        config: Config,
     ): Flow<PagingData<Post>> {
         return postRepository.getSearchPostsResultStream(Action.SearchPost(server = savedSearch.server,
             tags = savedSearch.savedSearch.tags, limit = 10)).map { pagingData ->
-            pagingData.filter { item ->
-                when (item.rating) {
-                    Rating.Questionable -> config.questionableFilter != "mute"
-                    Rating.Explicit -> config.explicitFilter != "mute"
-                    Rating.Safe -> true
-                }
-            }.map { post ->
+            pagingData.map { post ->
                 val postId =
                     favoriteRepository.queryByServerUrlAndPostId(post.serverId,
                         post.postId)
@@ -129,14 +107,5 @@ data class SavedSearchPost(
     val savedSearch: SavedSearchServer,
     val posts: Flow<PagingData<Post>?>,
 )
-
-data class Config(
-    val questionableFilter: String = "disable",
-    val explicitFilter: String = "disable",
-)
-
-sealed class UiAction {
-    data class SetConfig(val config: Config) : UiAction()
-}
 
 private const val LAST_SCROLL_POSITIONS: String = "last_scroll_positions"

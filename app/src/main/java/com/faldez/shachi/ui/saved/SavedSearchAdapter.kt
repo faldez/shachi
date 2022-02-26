@@ -13,6 +13,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.util.forEach
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
+import androidx.paging.filter
 import androidx.recyclerview.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.Downsampler
@@ -159,7 +160,13 @@ class SavedSearchAdapter(
             CoroutineScope(Dispatchers.Main).launch {
                 item.posts.collectLatest {
                     if (it != null) {
-                        adapter.submitData(it)
+                        adapter.submitData(it.filter { item ->
+                            when (item.rating) {
+                                Rating.Questionable -> questionableFilter != "mute"
+                                Rating.Explicit -> explicitFilter != "mute"
+                                Rating.Safe -> true
+                            }
+                        })
                     }
                 }
             }
