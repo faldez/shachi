@@ -119,6 +119,8 @@ class SavedFragment : Fragment() {
             preferences.getString("filter_questionable_content", null) ?: "disable"
         val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
 
+        viewModel.accept(UiAction.SetConfig(Config(questionableFilter, explicitFilter)))
+
         adapter = SavedSearchAdapter(
             listener = adapterListener,
             gridMode = gridMode,
@@ -133,7 +135,6 @@ class SavedFragment : Fragment() {
         val layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.savedSearchRecyclerView.layoutManager = layoutManager
-
 
         val hideBottomBarOnScroll = preferences.getBoolean("hide_bottom_bar_on_scroll", true)
         if (hideBottomBarOnScroll) {
