@@ -39,9 +39,7 @@ class BrowseViewModel constructor(
         val lastTagsScrolled: String = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: ""
         val actionStateFlow = MutableSharedFlow<UiAction>()
         val searches =
-            actionStateFlow.filterIsInstance<UiAction.Search>().distinctUntilChanged().onStart {
-                emit(UiAction.Search(initialTags))
-            }
+            actionStateFlow.filterIsInstance<UiAction.Search>().distinctUntilChanged()
         val tagsScrolled =
             actionStateFlow.filterIsInstance<UiAction.Scroll>().distinctUntilChanged()
                 .onStart {
@@ -148,6 +146,7 @@ class BrowseViewModel constructor(
         }
 
     override fun onCleared() {
+        savedStateHandle.set(LAST_SEARCH_SERVER, state.value.server)
         savedStateHandle.set(LAST_SEARCH_TAGS, state.value.tags)
         savedStateHandle.set(LAST_TAGS_SCROLLED, state.value.lastTagsScrolled)
         super.onCleared()
@@ -178,5 +177,6 @@ data class UiState(
     val hasNotScrolledForCurrentTag: Boolean = false,
 )
 
+private const val LAST_SEARCH_SERVER: String = "last_search_server"
 private const val LAST_SEARCH_TAGS: String = "last_search_tags"
 private const val LAST_TAGS_SCROLLED: String = "last_tags_scrolled"
