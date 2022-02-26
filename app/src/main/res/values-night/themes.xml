@@ -31,8 +31,8 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
         <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="q">true</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="q">true</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="q">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="q">false</item>
         <item name="postSlideToolbarBackground">@color/postSlideToolbarBackgroundColorDark</item>
     </style>
 </resources>
