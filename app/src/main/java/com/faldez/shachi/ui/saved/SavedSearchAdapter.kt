@@ -18,11 +18,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.Downsampler
 import com.bumptech.glide.request.RequestOptions
 import com.faldez.shachi.R
+import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.databinding.SavedSearchItemBinding
-import com.faldez.shachi.databinding.SavedSearchItemPostBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
 import com.faldez.shachi.model.SavedSearchServer
+import com.faldez.shachi.util.MimeUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -177,7 +178,7 @@ class SavedSearchPostAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedSearchPostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = SavedSearchItemPostBinding.inflate(inflater, parent, false)
+        val binding = PostCardItemBinding.inflate(inflater, parent, false)
         return SavedSearchPostViewHolder(
             binding,
             listener,
@@ -208,7 +209,7 @@ class SavedSearchPostAdapter(
     }
 
     class SavedSearchPostViewHolder(
-        val binding: SavedSearchItemPostBinding,
+        val binding: PostCardItemBinding,
         private val listener: SavedSearchAdapterListener,
         private val gridMode: String,
         private val quality: String,
@@ -217,7 +218,21 @@ class SavedSearchPostAdapter(
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Post?, savedSearchServer: SavedSearchServer) {
-            val imageView = binding.previewImage
+            val rootLayoutParams = binding.root.layoutParams
+            rootLayoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            rootLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+            binding.root.layoutParams = rootLayoutParams
+
+            val coordinatorLayoutParams = binding.coordinatorLayout.layoutParams
+            coordinatorLayoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            coordinatorLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+            binding.coordinatorLayout.layoutParams = coordinatorLayoutParams
+
+            val imageView = binding.imageView
+            val imageLayoutParams = imageView.layoutParams
+            imageLayoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            imageLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+            imageView.layoutParams = imageLayoutParams
 
             if (item != null) {
                 val previewWidth = item.previewWidth ?: 150
@@ -255,9 +270,9 @@ class SavedSearchPostAdapter(
                     glide.into(imageView)
                 }
                 binding.favoriteIcon.isVisible = item.favorite
+                binding.movieTypeIcon.isVisible =
+                    MimeUtil.getMimeTypeFromUrl(item.fileUrl)?.startsWith("video") ?: false
                 binding.root.setOnClickListener {
-                    Log.d("SavedSearchItemPostViewHolder/bind",
-                        "${savedSearchServer.savedSearch.savedSearchId} position ${item.postId}")
                     listener.onClick(savedSearchServer, bindingAdapterPosition)
                 }
             } else {
