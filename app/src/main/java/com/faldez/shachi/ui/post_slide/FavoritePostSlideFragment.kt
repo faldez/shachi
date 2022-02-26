@@ -6,16 +6,23 @@ import androidx.navigation.navGraphViewModels
 import androidx.paging.filter
 import androidx.paging.map
 import com.faldez.shachi.R
+import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
+import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.ui.favorite.FavoriteViewModel
+import com.faldez.shachi.ui.favorite.FavoriteViewModelFactory
 
 class FavoritePostSlideFragment : BasePostSlideFragment() {
     companion object {
         const val TAG = "FavoritePostSlideFragment"
     }
 
-    private val viewModel: FavoriteViewModel by navGraphViewModels(R.id.nav_graph)
+    private val viewModel: FavoriteViewModel by navGraphViewModels(R.id.favorite) {
+        val db = AppDatabase.build(requireContext())
+        val favoriteRepository = FavoriteRepository(db)
+        FavoriteViewModelFactory(favoriteRepository, this)
+    }
 
     override suspend fun collectPagingData(showQuestionable: Boolean, showExplicit: Boolean) {
         viewModel.pagingDataFlow.collect {

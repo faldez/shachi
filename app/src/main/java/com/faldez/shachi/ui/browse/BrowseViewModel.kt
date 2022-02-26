@@ -38,7 +38,10 @@ class BrowseViewModel constructor(
                 ?: ""
         val lastTagsScrolled: String = savedStateHandle.get(LAST_TAGS_SCROLLED) ?: ""
         val actionStateFlow = MutableSharedFlow<UiAction>()
-        val searches = actionStateFlow.filterIsInstance<UiAction.Search>().distinctUntilChanged()
+        val searches =
+            actionStateFlow.filterIsInstance<UiAction.Search>().distinctUntilChanged().onStart {
+                emit(UiAction.Search(initialTags))
+            }
         val tagsScrolled =
             actionStateFlow.filterIsInstance<UiAction.Scroll>().distinctUntilChanged()
                 .onStart {

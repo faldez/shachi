@@ -5,7 +5,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.text.SpannableStringBuilder
 import android.util.Log
-import android.util.SparseIntArray
+import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class SavedSearchAdapter(
-    private val scrollPositions: SparseIntArray? = null,
+    private val scrollPositions: SparseArray<Int>,
     private val listener: SavedSearchAdapterListener,
     private val gridMode: String,
     private val quality: String,
@@ -39,10 +39,10 @@ class SavedSearchAdapter(
 ) : ListAdapter<SavedSearchPost, SavedSearchAdapter.SavedSearchViewHolder>(COMPARATOR) {
     private val viewPool = RecyclerView.RecycledViewPool()
 
-    fun setScrollPositions(newScrollPositions: SparseIntArray) {
+    fun setScrollPositions(newScrollPositions: SparseArray<Int>) {
         newScrollPositions.forEach { key, value ->
-            val oldValue = scrollPositions?.get(key)
-            scrollPositions?.put(key, newScrollPositions[key])
+            val oldValue = scrollPositions.get(key)
+            scrollPositions.put(key, newScrollPositions[key])
             if (oldValue != value) {
                 notifyItemChanged(key)
             }
@@ -112,7 +112,7 @@ class SavedSearchAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            scrollPositions: SparseIntArray,
+            scrollPositions: SparseArray<Int>,
             item: SavedSearchPost,
         ) {
             Log.d("SavedSearchItemViewHolder/bind",
@@ -137,10 +137,11 @@ class SavedSearchAdapter(
                 swapAdapter(adapter, true)
             }
 
-            val scroll = scrollPositions[item.savedSearch.savedSearch.savedSearchId]
-            if (scroll > 0) {
-                binding.savedSearchItemRecyclerView.post {
-                    binding.savedSearchItemRecyclerView.layoutManager?.scrollToPosition(scroll)
+            scrollPositions[item.savedSearch.savedSearch.savedSearchId]?.let { scroll ->
+                if (scroll > 0) {
+                    binding.savedSearchItemRecyclerView.post {
+                        binding.savedSearchItemRecyclerView.layoutManager?.scrollToPosition(scroll)
+                    }
                 }
             }
 

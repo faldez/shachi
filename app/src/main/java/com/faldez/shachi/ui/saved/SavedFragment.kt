@@ -44,7 +44,7 @@ class SavedFragment : Fragment() {
         val db = AppDatabase.build(requireContext())
         val service = BooruService()
         SavedViewModelFactory(SavedSearchRepository(db),
-            PostRepository(service), FavoriteRepository(db))
+            PostRepository(service), FavoriteRepository(db), this)
     }
     private val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -160,7 +160,7 @@ class SavedFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.state.collectLatest { state ->
+                viewModel.savedSearchFlow.collectLatest { state ->
                     adapter.submitList(state)
                 }
             }

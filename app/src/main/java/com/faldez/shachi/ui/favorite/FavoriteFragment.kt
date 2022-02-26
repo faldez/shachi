@@ -36,7 +36,7 @@ class FavoriteFragment : Fragment() {
     }
 
     private lateinit var binding: FavoriteFragmentBinding
-    private val viewModel: FavoriteViewModel by navGraphViewModels(R.id.nav_graph) {
+    private val viewModel: FavoriteViewModel by navGraphViewModels(R.id.favorite) {
         val db = AppDatabase.build(requireContext())
         val favoriteRepository = FavoriteRepository(db)
         FavoriteViewModelFactory(favoriteRepository, this)

@@ -72,7 +72,6 @@ abstract class BasePostSlideFragment : Fragment() {
         val questionableFilter =
             preferences.getString("filter_questionable_content", null) ?: "disable"
         val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
-
         adapter = postSlideAdapter
         lifecycleScope.launch {
             collectPagingData(

@@ -1,9 +1,8 @@
 package com.faldez.shachi.ui.saved
 
 import android.util.Log
-import android.util.SparseIntArray
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.util.SparseArray
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
@@ -22,35 +21,30 @@ class SavedViewModel(
     private val savedSearchRepository: SavedSearchRepository,
     private val postRepository: PostRepository,
     private val favoriteRepository: FavoriteRepository,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    val state: StateFlow<List<SavedSearchPost>>
+    val savedSearchFlow: Flow<List<SavedSearchPost>>
     private val postsMap: MutableMap<Int, Flow<PagingData<Post>>> =
         mutableMapOf()
-    val scrollState: MutableStateFlow<SparseIntArray> = MutableStateFlow(SparseIntArray())
+    val scrollState: MutableStateFlow<SparseArray<Int>> =
+        savedStateHandle[LAST_SCROLL_POSITIONS] ?: MutableStateFlow(SparseArray<Int>())
 
     init {
-        val actionStateFlow = MutableSharedFlow<UiAction>()
-
-        val getSavedSearchFlow = actionStateFlow.filterIsInstance<UiAction.GetSavedSearch>()
-            .onStart { emit(UiAction.GetSavedSearch()) }
-        val savedSearchFlow = savedSearchRepository.getAllFlow().distinctUntilChanged()
-
-        state = combine(getSavedSearchFlow, savedSearchFlow, ::Pair)
-            .map { (action, data) ->
+        savedSearchFlow = savedSearchRepository.getAllFlow().distinctUntilChanged()
+            .map { data ->
                 Log.d("SavedViewModel", "collect savedSearches")
                 data.map { savedSearch ->
-                    var posts =
-                        if (!action.clearAll) postsMap[savedSearch.savedSearch.savedSearchId] else null
+                    var posts = postsMap[savedSearch.savedSearch.savedSearchId]
                     if (posts == null) {
                         posts = getSearchPosts(savedSearch).cachedIn(viewModelScope)
                         postsMap[savedSearch.savedSearch.savedSearchId] = posts
                     }
                     SavedSearchPost(savedSearch = savedSearch, posts = posts)
                 }
-            }.stateIn(
+            }.shareIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = listOf()
+                started = SharingStarted.Eagerly,
+                replay = 1
             )
     }
 
@@ -80,23 +74,27 @@ class SavedViewModel(
         }
     }
 
-    fun posts(savedSearchId: Int): Flow<PagingData<Post>?> = postsMap[savedSearchId]!!
+    fun posts(savedSearchId: Int): Flow<PagingData<Post>?> = savedSearchFlow.flatMapLatest { list ->
+        list.find { it.savedSearch.savedSearch.savedSearchId == savedSearchId }?.posts!!
+    }
 
     fun delete(savedSearch: SavedSearch) = viewModelScope.launch {
         savedSearchRepository.delete(savedSearch)
     }
 
     fun putScroll(position: Int, scroll: Int) {
-        scrollState.getAndUpdate {
-            it.put(position, scroll)
-            it
-        }
+        scrollState.value.put(position, scroll)
     }
 
     fun saveSearch(savedSearch: SavedSearch) {
         viewModelScope.launch {
             savedSearchRepository.insert(savedSearch)
         }
+    }
+
+    override fun onCleared() {
+        savedStateHandle[LAST_SCROLL_POSITIONS] = scrollState.value
+        super.onCleared()
     }
 }
 
@@ -108,3 +106,5 @@ data class SavedSearchPost(
 sealed class UiAction {
     data class GetSavedSearch(val clearAll: Boolean = false) : UiAction()
 }
+
+private const val LAST_SCROLL_POSITIONS: String = "last_scroll_positions"

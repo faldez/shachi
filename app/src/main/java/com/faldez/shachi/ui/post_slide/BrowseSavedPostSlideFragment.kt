@@ -5,16 +5,30 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.paging.filter
 import com.faldez.shachi.R
+import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
+import com.faldez.shachi.repository.*
+import com.faldez.shachi.service.BooruService
 import com.faldez.shachi.ui.browse.BrowseViewModel
+import com.faldez.shachi.ui.browse.BrowseViewModelFactory
 
 class BrowseSavedPostSlideFragment : BasePostSlideFragment() {
     companion object {
         const val TAG = "PostSlideFragment"
     }
 
-    private val viewModel: BrowseViewModel by navGraphViewModels(R.id.saved)
+    private val viewModel: BrowseViewModel by navGraphViewModels(R.id.saved) {
+        val db = AppDatabase.build(requireContext())
+        val favoriteRepository = FavoriteRepository(db)
+        BrowseViewModelFactory(
+            PostRepository(BooruService()),
+            ServerRepository(db),
+            favoriteRepository,
+            SavedSearchRepository(db),
+            SearchHistoryRepository(db),
+            this)
+    }
 
     override suspend fun collectPagingData(showQuestionable: Boolean, showExplicit: Boolean) {
         viewModel.pagingDataFlow.collect {
