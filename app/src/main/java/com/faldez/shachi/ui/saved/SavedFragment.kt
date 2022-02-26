@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -161,6 +162,7 @@ class SavedFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.savedSearchFlow.collectLatest { state ->
                     adapter.submitList(state)
+                    binding.savedSearchHelpText.isVisible = state.isEmpty()
                 }
             }
         }

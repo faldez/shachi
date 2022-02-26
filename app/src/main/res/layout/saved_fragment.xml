@@ -32,10 +32,11 @@
 
     <TextView
         android:id="@+id/saved_search_help_text"
+        android:layout_margin="16dp"
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/saved_searches" />
+        android:text="@string/empty_home_help_text" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

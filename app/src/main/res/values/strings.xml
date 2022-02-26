@@ -74,7 +74,8 @@
     <string name="not_set_message">Not set</string>
     <string name="saved_search_description_title_text">Title of the saved search, default to first tag if empty</string>
     <string name="saved_search_update_description_title_text">Title of the saved search, cannot be empty</string>
-    <string name="empty_server_help_text">There is no server setup. To setup your server click ⋮ > Manage Server > + > fill title, host url and select server type > save</string>
+    <string name="empty_server_help_text">There is no server setup/selected. To setup your server go to More > Servers > + > fill title, host url and select server type > save > select server to use</string>
+    <string name="empty_home_help_text">There is no saved searches. Browse and save to have search shows here</string>
     <string name="preview_quality">Preview Quality</string>
     <string name="detail_quality">Detail Quality</string>
     <string name="preview">Preview</string>
