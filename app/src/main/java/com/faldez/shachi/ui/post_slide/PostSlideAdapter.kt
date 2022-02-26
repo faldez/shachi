@@ -1,5 +1,7 @@
 package com.faldez.shachi.ui.post_slide
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.Log
@@ -60,9 +62,7 @@ class PostSlideAdapter(
 
     override fun onBindViewHolder(holder: PostSlideViewHolder, position: Int) {
         if (holder is PostSlideImageViewHolder) {
-            getItem(position)?.let {
-                holder.bind(it)
-            }
+            holder.bind(getItem(position))
         }
     }
 
@@ -109,11 +109,6 @@ class PostSlideAdapter(
         }
     }
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-
-    }
-
     companion object {
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
@@ -128,7 +123,7 @@ class PostSlideAdapter(
 }
 
 abstract class PostSlideViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    abstract fun bind(item: Post)
+    abstract fun bind(item: Post?)
 }
 
 class PostSlideImageViewHolder(
@@ -137,57 +132,64 @@ class PostSlideImageViewHolder(
     private val onTap: () -> Unit,
 ) :
     PostSlideViewHolder(binding.root) {
-    override fun bind(item: Post) {
+    override fun bind(item: Post?) {
         val postImageView = binding.postImageView
         postImageView.setOnViewTapListener { view, x, y -> onTap() }
         binding.postLoadingIndicator.isIndeterminate = true
 
-        val url = when (item.quality ?: quality) {
-            "sample" -> item.sampleUrl ?: item.previewUrl
-            "original" -> item.fileUrl
-            else -> item.previewUrl ?: item.sampleUrl
-        } ?: item.fileUrl
+        if (item != null) {
+            val url = when (item.quality ?: quality) {
+                "sample" -> item.sampleUrl ?: item.previewUrl
+                "original" -> item.fileUrl
+                else -> item.previewUrl ?: item.sampleUrl
+            } ?: item.fileUrl
 
-        Log.d("PostSlideImageViewHolder", "bind ${item.quality} $url")
+            Log.d("PostSlideImageViewHolder", "bind ${item.quality} $url")
 
-        GlideModule.setOnProgress(url,
-            onProgress = { bytesRead, totalContentLength, done ->
-                binding.postLoadingIndicator.max = totalContentLength.toInt()
-                binding.postLoadingIndicator.progress = bytesRead.toInt()
-                binding.postLoadingIndicator.isIndeterminate = false
-            })
+            GlideModule.setOnProgress(url,
+                onProgress = { bytesRead, totalContentLength, done ->
+                    binding.postLoadingIndicator.max = totalContentLength.toInt()
+                    binding.postLoadingIndicator.progress = bytesRead.toInt()
+                    binding.postLoadingIndicator.isIndeterminate = false
+                })
 
-        var glide = GlideApp.with(postImageView.context).load(url)
-            .thumbnail(GlideApp.with(postImageView.context).load(item.previewUrl))
-            .timeout(3000)
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean,
-                ): Boolean {
-                    binding.postLoadingIndicator.isVisible = false
-                    binding.loadingCard.isVisible = false
-                    return false
-                }
+            var glide = GlideApp.with(postImageView.context).load(url)
+                .thumbnail(GlideApp.with(postImageView.context).load(item.previewUrl))
+                .timeout(3000)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean,
+                    ): Boolean {
+                        binding.postLoadingIndicator.isVisible = false
+                        binding.loadingCard.isVisible = false
+                        return false
+                    }
 
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean,
-                ): Boolean {
-                    binding.postLoadingIndicator.isVisible = false
-                    binding.loadingCard.isVisible = false
-                    return false
-                }
-            })
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            glide = glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG, true))
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean,
+                    ): Boolean {
+                        binding.postLoadingIndicator.isVisible = false
+                        binding.loadingCard.isVisible = false
+                        return false
+                    }
+                })
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                glide = glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG, true))
+            }
+            glide.into(postImageView)
+        } else {
+            GlideApp.with(postImageView.context).load(BitmapDrawable(postImageView.resources,
+                Bitmap.createBitmap(150,
+                    150,
+                    Bitmap.Config.ARGB_8888))).into(postImageView)
         }
-        glide.into(postImageView)
     }
 }
 
@@ -199,7 +201,7 @@ class PostSlideVideoViewHolder(
     PostSlideViewHolder(binding.root) {
     private lateinit var player: ExoPlayer
 
-    override fun bind(item: Post) {
+    override fun bind(item: Post?) {
         player = ExoPlayer.Builder(binding.root.context).build()
         binding.videoPlayerView.player = player
         binding.videoPlayerView.setOnClickListener {
@@ -215,8 +217,10 @@ class PostSlideVideoViewHolder(
             }
             volumeToggle.isSelected = player.volume == 1f
         }
-        val mediaItem = MediaItem.fromUri(item.fileUrl)
-        player.setMediaItem(mediaItem)
+        item?.fileUrl?.let {
+            val mediaItem = MediaItem.fromUri(it)
+            player.setMediaItem(mediaItem)
+        }
         player.prepare()
         player.volume = 0f
         volumeToggle.isSelected = false

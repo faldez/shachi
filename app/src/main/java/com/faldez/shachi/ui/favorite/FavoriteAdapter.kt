@@ -14,6 +14,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
+import com.faldez.shachi.util.glide.GlideApp
 
 class FavoriteAdapter(
     private val gridMode: String,
@@ -37,13 +38,12 @@ class FavoriteAdapter(
 
     override fun onBindViewHolder(holder: BrowseItemViewHolder, position: Int) {
         val post = getItem(position)
+        val imageView = holder.binding.imageView
 
-        post?.let {
-            val imageView = holder.binding.imageView
-
+        if (post != null) {
             val previewWidth = post.previewWidth ?: 150
             val previewHeight = if (gridMode == "staggered") {
-                (previewWidth * (it.height.toFloat() / it.width.toFloat())).toInt()
+                (previewWidth * (post.height.toFloat() / post.width.toFloat())).toInt()
             } else {
                 previewWidth
             }
@@ -57,10 +57,10 @@ class FavoriteAdapter(
                     .into(imageView)
             } else {
                 val url = when (quality) {
-                    "sample" -> it.sampleUrl ?: it.previewUrl
-                    "original" -> it.fileUrl
-                    else -> it.previewUrl ?: it.sampleUrl
-                } ?: it.fileUrl
+                    "sample" -> post.sampleUrl ?: post.previewUrl
+                    "original" -> post.fileUrl
+                    else -> post.previewUrl ?: post.sampleUrl
+                } ?: post.fileUrl
 
                 Glide.with(imageView.context).load(url)
                     .placeholder(BitmapDrawable(imageView.resources,
@@ -74,6 +74,11 @@ class FavoriteAdapter(
             holder.binding.root.setOnClickListener { _ ->
                 onClick(position)
             }
+        } else {
+            GlideApp.with(imageView.context).load(BitmapDrawable(imageView.resources,
+                Bitmap.createBitmap(150,
+                    150,
+                    Bitmap.Config.ARGB_8888))).into(imageView)
         }
     }
 

@@ -81,9 +81,7 @@ class SavedSearchAdapter(
 
     override fun onBindViewHolder(holder: SavedSearchViewHolder, position: Int) {
         val item = getItem(position)
-        if (item != null) {
-            holder.bind(scrollPositions!!, item)
-        }
+        holder.bind(item,scrollPositions)
     }
 
     companion object {
@@ -112,11 +110,11 @@ class SavedSearchAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            scrollPositions: SparseArray<Int>,
             item: SavedSearchPost,
+            scrollPositions: SparseArray<Int>,
         ) {
             Log.d("SavedSearchItemViewHolder/bind",
-                "${item.savedSearch!!.savedSearch.savedSearchId} should scroll to ${scrollPositions[bindingAdapterPosition]}")
+                "${item.savedSearch.savedSearch.savedSearchId} should scroll to ${scrollPositions[bindingAdapterPosition]}")
             binding.savedSearchTagsTextView.text = item.savedSearch.savedSearch.savedSearchTitle
             binding.savedSearchServerTextView.text = item.savedSearch.server.title
             binding.tagsTextView.text = SpannableStringBuilder(item.savedSearch.savedSearch.tags)
@@ -228,54 +226,54 @@ class SavedSearchPostAdapter(
         fun bind(item: Post?, savedSearchServer: SavedSearchServer) {
             val imageView = binding.previewImage
 
-            if (item == null) {
+            if (item != null) {
+                val previewWidth = item.previewWidth ?: 150
+                val previewHeight = if (gridMode == "staggered") {
+                    (previewWidth * (item.height.toFloat() / item.width.toFloat())).toInt()
+                } else {
+                    previewWidth
+                }
+
+                if (hideQuestionable && item.rating == Rating.Questionable || hideExplicit && item.rating == Rating.Explicit) {
+                    val drawable = ResourcesCompat.getDrawable(binding.root.resources,
+                        R.drawable.nsfw_placeholder,
+                        null)
+                        ?.toBitmap(previewWidth, previewHeight)
+
+                    Glide.with(imageView.context).load(drawable)
+                        .into(imageView)
+                } else {
+                    val url = when (quality) {
+                        "sample" -> item.sampleUrl ?: item.previewUrl
+                        "original" -> item.fileUrl
+                        else -> item.previewUrl ?: item.sampleUrl
+                    } ?: item.fileUrl
+                    var glide = Glide.with(imageView.context).load(url)
+                        .placeholder(BitmapDrawable(imageView.resources,
+                            Bitmap.createBitmap(previewWidth,
+                                previewHeight,
+                                Bitmap.Config.ARGB_8888)))
+                        .override(previewWidth, previewHeight)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        glide =
+                            glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG,
+                                true))
+                    }
+                    glide.into(imageView)
+                }
+                binding.favoriteIcon.isVisible = item.favorite
+                binding.root.setOnClickListener {
+                    Log.d("SavedSearchItemPostViewHolder/bind",
+                        "${savedSearchServer.savedSearch.savedSearchId} position ${item.postId}")
+                    listener.onClick(savedSearchServer, bindingAdapterPosition)
+                }
+            } else {
                 val drawable = Bitmap.createBitmap(150,
                     150,
                     Bitmap.Config.ARGB_8888)
 
                 Glide.with(imageView.context).load(drawable)
                     .into(imageView)
-                return
-            }
-
-            val previewWidth = item.previewWidth ?: 150
-            val previewHeight = if (gridMode == "staggered") {
-                (previewWidth * (item.height.toFloat() / item.width.toFloat())).toInt()
-            } else {
-                previewWidth
-            }
-
-            if (hideQuestionable && item.rating == Rating.Questionable || hideExplicit && item.rating == Rating.Explicit) {
-                val drawable = ResourcesCompat.getDrawable(binding.root.resources,
-                    R.drawable.nsfw_placeholder,
-                    null)
-                    ?.toBitmap(previewWidth, previewHeight)
-
-                Glide.with(imageView.context).load(drawable)
-                    .into(imageView)
-            } else {
-                val url = when (quality) {
-                    "sample" -> item.sampleUrl ?: item.previewUrl
-                    "original" -> item.fileUrl
-                    else -> item.previewUrl ?: item.sampleUrl
-                } ?: item.fileUrl
-                var glide = Glide.with(imageView.context).load(url)
-                    .placeholder(BitmapDrawable(imageView.resources,
-                        Bitmap.createBitmap(previewWidth,
-                            previewHeight,
-                            Bitmap.Config.ARGB_8888)))
-                    .override(previewWidth, previewHeight)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    glide =
-                        glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG, true))
-                }
-                glide.into(imageView)
-            }
-            binding.favoriteIcon.isVisible = item.favorite
-            binding.root.setOnClickListener {
-                Log.d("SavedSearchItemPostViewHolder/bind",
-                    "${savedSearchServer.savedSearch.savedSearchId} position ${item.postId}")
-                listener.onClick(savedSearchServer, bindingAdapterPosition)
             }
         }
     }

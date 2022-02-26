@@ -269,24 +269,11 @@ abstract class BasePostSlideFragment : Fragment() {
         if (!isToolbarHide) animate().translationY(-height.toFloat())
     }
 
-    private fun Toolbar.hide() {
-        if (!isToolbarHide) animate().translationY(height.toFloat())
-    }
-
     private fun AppBarLayout.show() {
-        if (isToolbarHide) animate().translationY(0f)
-    }
-
-    private fun Toolbar.show() {
         if (isToolbarHide) animate().translationY(0f)
     }
 
     abstract fun deleteFavoritePost(post: Post)
 
     abstract fun favoritePost(post: Post)
-
-    override fun onDestroyView() {
-        binding.postViewPager.adapter = null
-        super.onDestroyView()
-    }
 }

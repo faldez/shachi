@@ -18,6 +18,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
+import com.faldez.shachi.util.glide.GlideApp
 
 
 class BrowseAdapter(
@@ -42,14 +43,9 @@ class BrowseAdapter(
         return binding
     }
 
-    fun getPosition(): Int {
-        return binding.bindingAdapterPosition
-    }
-
     override fun onBindViewHolder(holder: BrowseItemViewHolder, position: Int) {
         val post = getItem(position)
-
-        post?.let { holder.bind(post) }
+        holder.bind(post)
     }
 
     companion object {
@@ -74,46 +70,53 @@ class BrowseItemViewHolder(
     val onClick: (Int) -> Unit,
 ) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(post: Post) {
+    fun bind(post: Post?) {
         val imageView = binding.imageView
 
-        val previewWidth = post.previewWidth ?: 150
-        val previewHeight = if (gridMode == "staggered") {
-            (previewWidth * (post.height.toFloat() / post.width.toFloat())).toInt()
-        } else {
-            previewWidth
-        }
-        if (hideQuestionable && post.rating == Rating.Questionable || hideExplicit && post.rating == Rating.Explicit) {
-            val drawable = ResourcesCompat.getDrawable(binding.root.resources,
-                R.drawable.nsfw_placeholder,
-                null)
-                ?.toBitmap(previewWidth, previewHeight)
-
-            Glide.with(imageView.context).load(drawable)
-                .into(imageView)
-        } else {
-            val url = when (quality) {
-                "sample" -> post.sampleUrl ?: post.previewUrl
-                "original" -> post.fileUrl
-                else -> post.previewUrl ?: post.sampleUrl
-            } ?: post.fileUrl
-
-            var glide = Glide.with(imageView.context).load(url)
-                .placeholder(BitmapDrawable(imageView.resources,
-                    Bitmap.createBitmap(previewWidth,
-                        previewHeight,
-                        Bitmap.Config.ARGB_8888)))
-                .override(previewWidth, previewHeight)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                glide = glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG, true))
+        if(post != null) {
+            val previewWidth = post.previewWidth ?: 150
+            val previewHeight = if (gridMode == "staggered") {
+                (previewWidth * (post.height.toFloat() / post.width.toFloat())).toInt()
+            } else {
+                previewWidth
             }
-            glide.into(imageView)
-        }
+            if (hideQuestionable && post.rating == Rating.Questionable || hideExplicit && post.rating == Rating.Explicit) {
+                val drawable = ResourcesCompat.getDrawable(binding.root.resources,
+                    R.drawable.nsfw_placeholder,
+                    null)
+                    ?.toBitmap(previewWidth, previewHeight)
 
-        binding.favoriteIcon.isVisible = post.favorite
+                Glide.with(imageView.context).load(drawable)
+                    .into(imageView)
+            } else {
+                val url = when (quality) {
+                    "sample" -> post.sampleUrl ?: post.previewUrl
+                    "original" -> post.fileUrl
+                    else -> post.previewUrl ?: post.sampleUrl
+                } ?: post.fileUrl
 
-        binding.root.setOnClickListener { _ ->
-            onClick(bindingAdapterPosition)
+                var glide = Glide.with(imageView.context).load(url)
+                    .placeholder(BitmapDrawable(imageView.resources,
+                        Bitmap.createBitmap(previewWidth,
+                            previewHeight,
+                            Bitmap.Config.ARGB_8888)))
+                    .override(previewWidth, previewHeight)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    glide = glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG, true))
+                }
+                glide.into(imageView)
+            }
+
+            binding.favoriteIcon.isVisible = post.favorite
+
+            binding.root.setOnClickListener { _ ->
+                onClick(bindingAdapterPosition)
+            }
+        } else {
+            GlideApp.with(imageView.context).load(BitmapDrawable(imageView.resources,
+                Bitmap.createBitmap(150,
+                    150,
+                    Bitmap.Config.ARGB_8888))).into(imageView)
         }
     }
 }

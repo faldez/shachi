@@ -22,7 +22,7 @@ class PostRepository constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
-                enablePlaceholders = false
+                enablePlaceholders = true
             ),
             pagingSourceFactory = {
                 PostPagingSource(action, service)
