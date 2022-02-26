@@ -40,7 +40,7 @@ class PostRepository constructor(
 
                     val posts =
                         service.gelbooru.getPosts(url).applyBlacklist(action.savedSearch.server.blacklistedTags)
-                            ?.mapToPost(action.savedSearch.server.serverId)
+                            ?.mapToPost(action.savedSearch.server.toServer())
 
                     return Pair(action.savedSearch, posts)
                 }
@@ -51,7 +51,7 @@ class PostRepository constructor(
 
                     val posts =
                         service.danbooru.getPosts(url).applyBlacklist(action.savedSearch.server.blacklistedTags)
-                            .mapToPost(action.savedSearch.server.serverId)
+                            .mapToPost(action.savedSearch.server.toServer())
 
                     return Pair(action.savedSearch, posts)
                 }
@@ -62,7 +62,7 @@ class PostRepository constructor(
 
                     val posts =
                         service.moebooru.getPosts(url).applyBlacklist(action.savedSearch.server.blacklistedTags)
-                            .mapToPost(action.savedSearch.server.serverId)
+                            .mapToPost(action.savedSearch.server.toServer())
 
                     return Pair(action.savedSearch, posts)
                 }
@@ -80,7 +80,7 @@ class PostRepository constructor(
                 ServerType.Gelbooru -> {
                     val url = action.buildGelbooruUrl(0).toString()
                     Log.d("PostPagingSource/Gelbooru", url)
-                    if (service.gelbooru.getPosts(url).mapToPost(action.server.serverId)
+                    if (service.gelbooru.getPosts(url).mapToPost(action.server.toServer())
                             .isNullOrEmpty()
                     ) {
                         throw Error("list empty")
@@ -89,7 +89,7 @@ class PostRepository constructor(
                 ServerType.Danbooru -> {
                     val url = action.buildDanbooruUrl(1).toString()
                     Log.d("PostPagingSource/Danbooru", url)
-                    if (service.danbooru.getPosts(url).mapToPost(action.server.serverId)
+                    if (service.danbooru.getPosts(url).mapToPost(action.server.toServer())
                             .isNullOrEmpty()
                     ) {
                         throw Error("list empty")
@@ -98,14 +98,11 @@ class PostRepository constructor(
                 ServerType.Moebooru -> {
                     val url = action.buildMoebooruUrl(1).toString()
                     Log.d("PostPagingSource/Moebooru", url)
-                    if (service.moebooru.getPosts(url).mapToPost(action.server.serverId)
+                    if (service.moebooru.getPosts(url).mapToPost(action.server.toServer())
                             .isNullOrEmpty()
                     ) {
                         throw Error("list empty")
                     }
-                }
-                null -> {
-                    throw Error("server not found")
                 }
             }
         } catch (exception: Exception) {

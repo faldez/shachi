@@ -21,9 +21,6 @@
     <action
         android:id="@+id/action_global_to_serverdialog"
         app:destination="@id/server_dialog_fragment" />
-    <action
-        android:id="@+id/action_global_to_sharedialog"
-        app:destination="@id/share_dialog_fragment" />
     <include app:graph="@navigation/saved" />
     <include app:graph="@navigation/browse" />
     <include app:graph="@navigation/favorite" />
@@ -33,11 +30,6 @@
         android:name="com.faldez.shachi.ui.server_dialog.ServerDialogFragment"
         android:label="server_dialog"
         tools:layout="@layout/server_dialog_fragment" />
-    <dialog
-        android:id="@+id/share_dialog_fragment"
-        android:name="com.faldez.shachi.ui.share_dialog.ShareDialogFragment"
-        android:label="share_dialog"
-        tools:layout="@layout/share_dialog_fragment" />
     <fragment
         android:id="@+id/serversFragment"
         android:name="com.faldez.shachi.ui.servers.ServersFragment"

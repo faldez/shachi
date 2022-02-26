@@ -3,12 +3,13 @@ package com.faldez.shachi.model.response
 import androidx.core.os.LocaleListCompat
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
+import com.faldez.shachi.model.Server
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 
 @JvmName("gelbooruMapToPost")
-fun List<GelbooruPost>.mapToPost(serverId: Int): List<Post> {
+fun List<GelbooruPost>.mapToPost(server: Server): List<Post> {
     return this.map { post ->
         Post(
             height = post.height,
@@ -25,7 +26,7 @@ fun List<GelbooruPost>.mapToPost(serverId: Int): List<Post> {
             rating = parseRating(post.rating),
             tags = post.tags,
             postId = post.id,
-            serverId = serverId,
+            serverId = server.serverId,
             change = post.change,
             md5 = post.md5,
             creatorId = post.creatorId,
@@ -36,12 +37,13 @@ fun List<GelbooruPost>.mapToPost(serverId: Int): List<Post> {
             source = post.source,
             hasNotes = post.hasNotes,
             hasComments = post.hasComments,
+            postUrl = server.getPostUrl(post.id)
         )
     }
 }
 
 @JvmName("danbooruMapToPost")
-fun List<DanbooruPost>.mapToPost(serverId: Int): List<Post> {
+fun List<DanbooruPost>.mapToPost(server: Server): List<Post> {
     return this.mapNotNull { post ->
         if (post.id == null) null
         else Post(
@@ -58,8 +60,8 @@ fun List<DanbooruPost>.mapToPost(serverId: Int): List<Post> {
             previewHeight = null,
             rating = parseRating(post.rating),
             tags = post.tagString,
-            postId = post.id ?: 0,
-            serverId = serverId,
+            postId = post.id,
+            serverId = server.serverId,
             change = 0,
             md5 = post.md5 ?: "",
             creatorId = null,
@@ -70,12 +72,13 @@ fun List<DanbooruPost>.mapToPost(serverId: Int): List<Post> {
             source = post.source,
             hasNotes = false,
             hasComments = false,
+            postUrl = server.getPostUrl(post.id)
         )
     }
 }
 
 @JvmName("moebooruMapToPost")
-fun List<MoebooruPost>.mapToPost(serverId: Int): List<Post> {
+fun List<MoebooruPost>.mapToPost(server: Server): List<Post> {
     return this.map { post ->
         Post(
             height = post.height,
@@ -92,7 +95,7 @@ fun List<MoebooruPost>.mapToPost(serverId: Int): List<Post> {
             rating = parseRating(post.rating),
             tags = post.tags,
             postId = post.id,
-            serverId = serverId,
+            serverId = server.serverId,
             change = 0,
             md5 = post.md5,
             creatorId = null,
@@ -103,11 +106,12 @@ fun List<MoebooruPost>.mapToPost(serverId: Int): List<Post> {
             source = post.source,
             hasNotes = false,
             hasComments = false,
+            postUrl = server.getPostUrl(post.id)
         )
     }
 }
 
-fun GelbooruPostResponse.mapToPost(serverId: Int): List<Post>? {
+fun GelbooruPostResponse.mapToPost(server: Server): List<Post>? {
     return this.posts?.post?.map { post ->
         Post(
             height = post.height,
@@ -124,7 +128,7 @@ fun GelbooruPostResponse.mapToPost(serverId: Int): List<Post>? {
             rating = parseRating(post.rating),
             tags = post.tags,
             postId = post.id,
-            serverId = serverId,
+            serverId = server.serverId,
             change = post.change,
             md5 = post.md5,
             creatorId = post.creatorId,
@@ -134,6 +138,7 @@ fun GelbooruPostResponse.mapToPost(serverId: Int): List<Post>? {
             source = post.source,
             hasNotes = post.hasNotes,
             hasComments = post.hasComments,
+            postUrl = server.getPostUrl(post.id)
         )
     }
 }

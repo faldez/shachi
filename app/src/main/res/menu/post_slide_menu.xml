@@ -15,7 +15,25 @@
         android:id="@+id/share_action_button"
         android:icon="@drawable/ic_baseline_share_24"
         android:title="@string/share"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/share_image_button"
+                android:icon="@drawable/ic_baseline_image_24"
+                android:title="@string/share_file"
+                app:showAsAction="ifRoom" />
+            <item
+                android:id="@+id/share_link_button"
+                android:icon="@drawable/ic_baseline_link_24"
+                android:title="@string/share_link"
+                app:showAsAction="ifRoom" />
+            <item
+                android:id="@+id/share_source_link_button"
+                android:icon="@drawable/ic_baseline_source_24"
+                android:title="@string/share_source_link"
+                app:showAsAction="ifRoom" />
+        </menu>
+    </item>
     <item
         android:id="@+id/download_action_button"
         android:icon="@drawable/ic_baseline_download_24"

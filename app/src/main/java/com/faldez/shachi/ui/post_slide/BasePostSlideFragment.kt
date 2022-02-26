@@ -2,29 +2,42 @@ package com.faldez.shachi.ui.post_slide
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
+import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.service.DownloadService
+import com.faldez.shachi.util.MimeUtil
+import com.faldez.shachi.util.glide.GlideApp
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.net.URL
 
 
 abstract class BasePostSlideFragment : Fragment() {
@@ -142,16 +155,47 @@ abstract class BasePostSlideFragment : Fragment() {
                     onDetailButton()
                     true
                 }
-                R.id.share_action_button -> {
-                    onShareButton()
-                    true
-                }
                 R.id.download_action_button -> {
                     onDownloadButton()
                     true
                 }
                 R.id.select_image_button -> {
                     onSelectImage()
+                    true
+                }
+                R.id.share_image_button -> {
+                    getCurrentPost()?.let { post ->
+                        val mime = MimeUtil.getMimeTypeFromUrl(post.fileUrl)
+                        if (mime?.startsWith("video") == true) {
+                            shareVideo(mime, post)
+                        } else {
+                            shareImage(mime ?: "image/*", post)
+                        }
+                    }
+                    true
+                }
+                R.id.share_link_button -> {
+                    getCurrentPost()?.let { post ->
+                        val intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, post.postUrl)
+                            type = "text/plain"
+                        }
+                        val shareIntent = Intent.createChooser(intent, null)
+                        startActivity(shareIntent)
+                    }
+                    true
+                }
+                R.id.share_source_link_button -> {
+                    getCurrentPost()?.let { post ->
+                        val intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, post.source)
+                            type = "text/plain"
+                        }
+                        val shareIntent = Intent.createChooser(intent, null)
+                        startActivity(shareIntent)
+                    }
                     true
                 }
                 else -> false
@@ -162,13 +206,6 @@ abstract class BasePostSlideFragment : Fragment() {
     private fun onDetailButton() {
         getCurrentPost()?.let {
             navigateToPostDetail(it)
-        }
-    }
-
-    private fun onShareButton() {
-        getCurrentPost()?.let { post ->
-            val bundle = bundleOf("post" to post)
-            findNavController().navigate(R.id.action_global_to_sharedialog, bundle)
         }
     }
 
@@ -276,4 +313,58 @@ abstract class BasePostSlideFragment : Fragment() {
     abstract fun deleteFavoritePost(post: Post)
 
     abstract fun favoritePost(post: Post)
+
+    private fun shareImage(mime: String, post: Post) {
+        GlideApp.with(requireContext()).asBitmap().load(post.fileUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap>?,
+                ) {
+                    val shareIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_STREAM,
+                            Uri.parse(MediaStore.Images.Media.insertImage(requireContext().contentResolver,
+                                resource,
+                                post.md5,
+                                null)))
+                        type = mime
+                    }
+
+                    startActivity(Intent.createChooser(shareIntent, null))
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {}
+            })
+    }
+
+    private fun shareVideo(mime: String, post: Post) {
+        val fileUrl = post.fileUrl
+        val filename = Uri.parse(fileUrl).lastPathSegment!!
+
+        val videoPath = File(context?.filesDir, "videos")
+        videoPath.mkdirs()
+        val newFile = File(videoPath, filename)
+        newFile.createNewFile()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            URL(fileUrl).openStream().use { input ->
+                context?.contentResolver?.openOutputStream(newFile.toUri())?.use { output ->
+                    input.copyTo(output)
+                }
+                val contentUri: Uri =
+                    FileProvider.getUriForFile(requireContext(),
+                        "com.faldez.shachi.fileprovider",
+                        newFile)
+                val shareIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_STREAM, contentUri)
+                    type = mime
+                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                }
+                startActivity(Intent.createChooser(shareIntent, null))
+            }
+        }
+    }
 }

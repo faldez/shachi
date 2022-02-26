@@ -6,7 +6,7 @@ import androidx.paging.PagingState
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.applyBlacklist
-import com.faldez.shachi.model.response.*
+import com.faldez.shachi.model.response.mapToPost
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
 import com.faldez.shachi.service.DanbooruService
@@ -40,19 +40,19 @@ class PostPagingSource(
                     val url = action.buildGelbooruUrl(position).toString()
                     Log.d("PostPagingSource/Gelbooru", url)
                     service.gelbooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
-                        ?.mapToPost(action.server.serverId) ?: listOf()
+                        ?.mapToPost(action.server.toServer()) ?: listOf()
                 }
                 ServerType.Danbooru -> {
                     val url = action.buildDanbooruUrl(position).toString()
                     Log.d("PostPagingSource/Danbooru", url)
                     service.danbooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
-                        ?.mapToPost(action.server.serverId) ?: listOf()
+                        .mapToPost(action.server.toServer())
                 }
                 ServerType.Moebooru -> {
                     val url = action.buildMoebooruUrl(position).toString()
                     Log.d("PostPagingSource/Moebooru", url)
                     service.moebooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
-                        ?.mapToPost(action.server.serverId) ?: listOf()
+                        .mapToPost(action.server.toServer())
                 }
             }
 

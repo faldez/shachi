@@ -16,7 +16,7 @@ import com.faldez.shachi.model.*
     PostTag::class, Tag::class,
     SearchHistory::class],
     views = [ServerView::class],
-    version = 5)
+    version = 6)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun serverDao(): ServerDao
     abstract fun favoriteDao(): FavoriteDao
