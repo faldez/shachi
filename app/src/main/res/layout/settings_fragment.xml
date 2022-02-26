@@ -4,19 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="false"
     tools:context=".ui.settings.SettingsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:layout_height="wrap_content"
         android:id="@+id/settings_appbar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/settings_topappbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
             app:title="@string/settings" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -25,6 +25,6 @@
         android:id="@+id/settingsFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
