@@ -143,6 +143,19 @@ class SavedSearchAdapter(
                 }
             }
 
+            binding.root.setOnClickListener {
+                listener.onBrowse(item.savedSearch)
+            }
+            binding.refreshSavedSearchButton.setOnClickListener {
+                adapter.refresh()
+            }
+            binding.editSavedSearchButton.setOnClickListener {
+                listener.onEdit(item.savedSearch)
+            }
+            binding.deleteSavedSearchButton.setOnClickListener {
+                listener.onDelete(item.savedSearch)
+            }
+
             CoroutineScope(Dispatchers.Main).launch {
                 item.posts.collectLatest {
                     if (it != null) {
@@ -155,19 +168,6 @@ class SavedSearchAdapter(
                         })
                     }
                 }
-            }
-
-            binding.root.setOnClickListener {
-                listener.onBrowse(item.savedSearch)
-            }
-            binding.refreshSavedSearchButton.setOnClickListener {
-                adapter.refresh()
-            }
-            binding.editSavedSearchButton.setOnClickListener {
-                listener.onEdit(item.savedSearch)
-            }
-            binding.deleteSavedSearchButton.setOnClickListener {
-                listener.onDelete(item.savedSearch)
             }
         }
     }
