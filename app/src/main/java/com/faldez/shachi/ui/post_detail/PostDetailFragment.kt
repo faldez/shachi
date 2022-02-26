@@ -8,7 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -97,11 +100,18 @@ class PostDetailFragment : Fragment() {
 
     private fun PostDetailFragmentBinding.bind() {
         viewModel.post.let { p ->
-            sizeTextview.text = "${p.width}x${p.height}"
             sourceUrl.text = p.source
             ratingTextview.text = p.rating.toString()
             scoreTextview.text = "${p.score ?: 0}"
             postedTextview.text = p.createdAt
+        }
+
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = systemBars.bottom)
+            insets
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

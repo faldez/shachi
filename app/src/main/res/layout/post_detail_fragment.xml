@@ -28,7 +28,6 @@
     <androidx.core.widget.NestedScrollView
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:fitsSystemWindows="true"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <LinearLayout
@@ -37,20 +36,6 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:orientation="vertical">
-
-            <TextView
-                style="@style/TextAppearance.Material3.LabelLarge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@string/size" />
-
-            <TextView
-                android:id="@+id/size_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp" />
-
 
             <TextView
                 style="@style/TextAppearance.Material3.LabelLarge"
