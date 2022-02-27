@@ -67,7 +67,7 @@
         tools:layout="@layout/post_slide_fragment">
 
         <action
-            android:id="@+id/action_savedpostslide_to_postdetail"
+            android:id="@+id/action_postslide_to_postdetail"
             app:destination="@id/saved_post_detail_fragment"
             app:enterAnim="@anim/slide_in_up"
             app:exitAnim="@anim/fade_out"

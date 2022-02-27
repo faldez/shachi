@@ -3,16 +3,18 @@ package com.faldez.shachi.ui.post_detail
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -33,11 +35,13 @@ import com.faldez.shachi.util.hideAll
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class PostDetailFragment : Fragment() {
-    private lateinit var binding: PostDetailFragmentBinding
+
+class PostDetailFragment : DialogFragment() {
+    lateinit var binding: PostDetailFragmentBinding
     private lateinit var tagDetailsBinding: TagsDetailsBinding
     private val viewModel: PostDetailViewModel by viewModels {
         val post = requireArguments().get("post") as Post
@@ -46,6 +50,13 @@ class PostDetailFragment : Fragment() {
         PostDetailViewModelFactory(post, currentSearchTags, ServerRepository(db),
             TagRepository(BooruService(), db),
             this)
+    }
+
+    private var isTablet = false
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): AlertDialog {
+        isTablet = resources.getBoolean(R.bool.isTablet)
+        return MaterialAlertDialogBuilder(requireContext()).create()
     }
 
     override fun onCreateView(
@@ -62,6 +73,9 @@ class PostDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prepareAppbar()
+
+        if (isTablet)
+            (dialog as AlertDialog?)?.setView(view)
     }
 
     private fun prepareAppbar() {
@@ -69,7 +83,11 @@ class PostDetailFragment : Fragment() {
         binding.postDetailTopappbar.inflateMenu(R.menu.post_detail_menu)
         binding.postDetailTopappbar.setNavigationIcon(R.drawable.ic_baseline_close_24)
         binding.postDetailTopappbar.setNavigationOnClickListener {
-            requireActivity().onBackPressed()
+            if (isTablet) {
+                dialog?.dismiss()
+            } else {
+                requireActivity().onBackPressed()
+            }
         }
         binding.postDetailTopappbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
@@ -106,12 +124,19 @@ class PostDetailFragment : Fragment() {
             postedTextview.text = p.createdAt
         }
 
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(bottom = systemBars.bottom)
-            insets
+        if (!isTablet) {
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.updatePadding(bottom = systemBars.bottom)
+                insets
+            }
+        } else {
+            ViewCompat.setOnApplyWindowInsetsListener(binding.scrollView) { v, insets ->
+                val value = TypedValue()
+                requireContext().theme.resolveAttribute(R.attr.dialogPreferredPadding, value, true)
+                v.updatePadding(bottom = value.data)
+                insets
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

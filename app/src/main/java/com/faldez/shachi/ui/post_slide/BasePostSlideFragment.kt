@@ -17,6 +17,7 @@ import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -28,6 +29,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.service.DownloadService
+import com.faldez.shachi.ui.post_detail.PostDetailFragment
 import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.glide.GlideApp
 import com.google.android.material.appbar.AppBarLayout
@@ -205,7 +207,14 @@ abstract class BasePostSlideFragment : Fragment() {
 
     private fun onDetailButton() {
         getCurrentPost()?.let {
-            navigateToPostDetail(it)
+            val bundle = navigateToPostDetailBundle(it)
+            if (!resources.getBoolean(R.bool.isTablet)) {
+                findNavController().navigate(R.id.action_postslide_to_postdetail, bundle)
+            } else {
+                val postDetailDialog = PostDetailFragment()
+                postDetailDialog.arguments = bundle
+                postDetailDialog.show(requireActivity().supportFragmentManager, "dialog")
+            }
         }
     }
 
@@ -278,7 +287,7 @@ abstract class BasePostSlideFragment : Fragment() {
         }
     }
 
-    abstract fun navigateToPostDetail(post: Post?)
+    abstract fun navigateToPostDetailBundle(post: Post?): Bundle
 
     private fun onFavoriteButton() {
         val currentItem = binding.postViewPager.currentItem

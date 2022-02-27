@@ -2,4 +2,5 @@
 <resources>
     <attr name="fullWidthCardBackground" format="reference|color" />
     <attr name="postSlideToolbarBackground" format="reference|color" />
+    <bool name="isTablet">false</bool>
 </resources>

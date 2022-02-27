@@ -1,7 +1,7 @@
 package com.faldez.shachi.ui.post_slide
 
+import android.os.Bundle
 import androidx.core.os.bundleOf
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.paging.filter
 import com.faldez.shachi.R
@@ -46,13 +46,12 @@ class SavedPostSlideFragment : BasePostSlideFragment() {
         viewModel.putScroll(savedSearchId, position)
     }
 
-    override fun navigateToPostDetail(post: Post?) {
+    override fun navigateToPostDetailBundle(post: Post?): Bundle {
         val server = requireArguments().get("server")
         val tags = requireArguments().get("tags")
-        val bundle = bundleOf("post" to post,
+        return bundleOf("post" to post,
             "server" to server,
             "tags" to tags)
-        findNavController().navigate(R.id.action_savedpostslide_to_postdetail, bundle)
     }
 
     override fun deleteFavoritePost(post: Post) {
