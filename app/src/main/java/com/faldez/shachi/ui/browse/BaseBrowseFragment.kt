@@ -32,6 +32,7 @@ import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
 import com.faldez.shachi.model.ServerView
+import com.faldez.shachi.ui.search.SearchFragment
 import com.faldez.shachi.widget.EmptyFooterDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -83,19 +84,26 @@ abstract class BaseBrowseFragment : Fragment() {
 
         if (resources.getBoolean(R.bool.isTablet)) {
             (activity as MainActivity).binding.sideNavigationRail?.headerView?.setOnClickListener {
-                val bundle = bundleOf("server" to viewModel.state.value.server,
-                    "tags" to viewModel.state.value.tags)
-                findNavController().navigate(R.id.action_browse_to_search, bundle)
-
+                navigateToSearch()
             }
         } else {
             binding.searchFloatingButton?.setOnClickListener {
-                val bundle = bundleOf("server" to viewModel.state.value.server,
-                    "tags" to viewModel.state.value.tags)
-                findNavController().navigate(R.id.action_browse_to_search, bundle)
+                navigateToSearch()
             }
         }
         prepareAppBar()
+    }
+
+    private fun navigateToSearch() {
+        val bundle = bundleOf("server" to viewModel.state.value.server,
+            "tags" to viewModel.state.value.tags)
+        if (!resources.getBoolean(R.bool.isTablet)) {
+            findNavController().navigate(R.id.action_browse_to_search, bundle)
+        } else {
+            val searchFragment = SearchFragment()
+            searchFragment.arguments = bundle
+            searchFragment.show(requireActivity().supportFragmentManager, "dialog")
+        }
     }
 
     private fun prepareAppBar() {

@@ -26,8 +26,8 @@ import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
 import com.faldez.shachi.model.Rating
 import com.faldez.shachi.repository.FavoriteRepository
+import com.faldez.shachi.ui.search.SearchFragment
 import com.faldez.shachi.widget.EmptyFooterDecoration
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.launch
 
@@ -63,18 +63,25 @@ class FavoriteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (resources.getBoolean(R.bool.isTablet)) {
             (activity as MainActivity).binding.sideNavigationRail?.headerView?.setOnClickListener {
-                val bundle = bundleOf("tags" to viewModel.state.value.tags)
-                Log.d("FavoriteFragment/onViewCreated", "tags ${viewModel.state.value.tags}")
-                findNavController().navigate(R.id.action_browse_to_search, bundle)
+                navigateToSearch()
             }
         } else {
             binding.searchFloatingButton?.setOnClickListener {
-                val bundle = bundleOf("tags" to viewModel.state.value.tags)
-                Log.d("FavoriteFragment/onViewCreated", "tags ${viewModel.state.value.tags}")
-                findNavController().navigate(R.id.action_browse_to_search, bundle)
+                navigateToSearch()
             }
         }
         prepareAppBar()
+    }
+
+    private fun navigateToSearch() {
+        val bundle = bundleOf("tags" to viewModel.state.value.tags)
+        if (!resources.getBoolean(R.bool.isTablet)) {
+            findNavController().navigate(R.id.action_browse_to_search, bundle)
+        } else {
+            val searchFragment = SearchFragment()
+            searchFragment.arguments = bundle
+            searchFragment.show(requireActivity().supportFragmentManager, "dialog")
+        }
     }
 
     private fun prepareAppBar() {

@@ -51,16 +51,15 @@
             app:destination="@id/browseFragment"
             app:popUpTo="@id/browseFragment" />
     </dialog>
+    <action
+        android:id="@+id/action_search_to_browse"
+        app:destination="@id/browseFragment"
+        app:popUpTo="@id/browseFragment" />
     <fragment
         android:id="@+id/search_fragment"
         android:name="com.faldez.shachi.ui.search.SearchFragment"
         android:label="search_dialog"
-        tools:layout="@layout/search_fragment">
-        <action
-            android:id="@+id/action_search_to_browse"
-            app:destination="@id/browseFragment"
-            app:popUpTo="@id/browseFragment" />
-    </fragment>
+        tools:layout="@layout/search_fragment" />
     <action
         android:id="@+id/action_postdetail_to_browse"
         app:destination="@id/browseFragment"

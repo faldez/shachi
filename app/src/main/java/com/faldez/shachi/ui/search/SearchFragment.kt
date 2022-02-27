@@ -12,12 +12,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ScrollView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -39,13 +40,14 @@ import com.faldez.shachi.util.getGroupHeaderTextColor
 import com.faldez.shachi.util.hideAll
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
-class SearchFragment : Fragment() {
+class SearchFragment : DialogFragment() {
     private lateinit var binding: SearchFragmentBinding
     private lateinit var tagDetailsBinding: TagsDetailsBinding
 
@@ -57,6 +59,13 @@ class SearchFragment : Fragment() {
     }
 
     private lateinit var searchSuggestionAdapter: SearchSuggestionAdapter
+
+    private var isTablet = false
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): AlertDialog {
+        isTablet = resources.getBoolean(R.bool.isTablet)
+        return MaterialAlertDialogBuilder(requireContext()).create()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +102,9 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prepareAppBar()
+
+        if (isTablet)
+            (dialog as AlertDialog?)?.setView(view)
     }
 
     private fun bindSelectedTags(initialTags: String) {
@@ -176,9 +188,17 @@ class SearchFragment : Fragment() {
 
         binding.searchSimpleTopAppBar.menu.clear()
         binding.searchSimpleTopAppBar.inflateMenu(R.menu.search_menu)
-        binding.searchSimpleTopAppBar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+        binding.searchSimpleTopAppBar.setNavigationIcon(if (isTablet) {
+            R.drawable.ic_baseline_close_24
+        } else {
+            R.drawable.ic_baseline_arrow_back_24
+        })
         binding.searchSimpleTopAppBar.setNavigationOnClickListener {
-            requireActivity().onBackPressed()
+            if (isTablet) {
+                dialog?.dismiss()
+            } else {
+                requireActivity().onBackPressed()
+            }
         }
         binding.searchSimpleTopAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
@@ -220,6 +240,7 @@ class SearchFragment : Fragment() {
         val bundle = bundleOf("server" to viewModel.state.value.server,
             "tags" to value)
         findNavController().navigate(R.id.action_search_to_browse, bundle)
+        dialog?.dismiss()
     }
 
     private fun ScrollView.show() {
