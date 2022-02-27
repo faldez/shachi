@@ -114,6 +114,7 @@ class PostDetailFragment : DialogFragment() {
         val bundle = bundleOf("server" to viewModel.state.value.server,
             "tags" to tags)
         findNavController().navigate(R.id.action_postdetail_to_browse, bundle)
+        dialog?.dismiss()
     }
 
     private fun PostDetailFragmentBinding.bind() {
