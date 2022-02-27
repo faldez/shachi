@@ -94,14 +94,13 @@
             app:destination="@id/browseSavedFragment"
             app:popUpTo="@id/browseSavedFragment" />
     </fragment>
+    <action
+        android:id="@+id/action_postdetail_to_browse"
+        app:destination="@id/browseSavedFragment"
+        app:popUpTo="@id/savedFragment" />
     <fragment
         android:id="@+id/saved_post_detail_fragment"
         android:name="com.faldez.shachi.ui.post_detail.PostDetailFragment"
         android:label="post_detail"
-        tools:layout="@layout/post_detail_fragment">
-        <action
-            android:id="@+id/action_postdetail_to_browse"
-            app:destination="@id/browseSavedFragment"
-            app:popUpTo="@id/savedFragment" />
-    </fragment>
+        tools:layout="@layout/post_detail_fragment" />
 </navigation>

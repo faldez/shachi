@@ -61,16 +61,14 @@
             app:destination="@id/browseFragment"
             app:popUpTo="@id/browseFragment" />
     </fragment>
+    <action
+        android:id="@+id/action_postdetail_to_browse"
+        app:destination="@id/browseFragment"
+        app:popUpTo="@id/browseFragment" />
     <fragment
         android:id="@+id/post_detail_fragment"
         android:name="com.faldez.shachi.ui.post_detail.PostDetailFragment"
         android:label="post_detail"
-        tools:layout="@layout/post_detail_fragment">
-
-        <action
-            android:id="@+id/action_postdetail_to_browse"
-            app:destination="@id/browseFragment"
-            app:popUpTo="@id/browseFragment" />
-    </fragment>
+        tools:layout="@layout/post_detail_fragment" />
 
 </navigation>
