@@ -154,7 +154,7 @@ class PostDetailFragment : DialogFragment() {
                         header.isVisible = tags.any { it.tag.modifier != Modifier.Minus }
                         group.isVisible = tags.isNotEmpty()
 
-                        tags.forEach { tag ->
+                        tags.sortedBy { it.tag.name }.forEach { tag ->
                             val chip = Chip(requireContext())
                             chip.bind(group, textColor, tag)
                         }
