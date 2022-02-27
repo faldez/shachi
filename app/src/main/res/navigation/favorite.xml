@@ -50,7 +50,7 @@
     <action
         android:id="@+id/action_postdetail_to_browse"
         app:destination="@id/browse"
-        app:popUpTo="@id/favoriteFragment" />
+        app:popUpTo="@id/favorite" />
     <fragment
         android:id="@+id/post_detail_fragment"
         android:name="com.faldez.shachi.ui.post_detail.PostDetailFragment"
