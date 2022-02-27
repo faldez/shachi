@@ -22,6 +22,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.faldez.shachi.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigationrail.NavigationRailView
 import com.google.modernstorage.permissions.RequestAccess
 import com.google.modernstorage.permissions.StoragePermissions
@@ -54,12 +55,29 @@ class MainActivity : AppCompatActivity(),
             }
             if (isShow) {
                 showNavigation()
+                binding.sideNavigationRail?.show()
             } else {
                 hideNavigation()
+                binding.sideNavigationRail?.hide()
             }
             Log.d("MainActivity", "addOnDestinationChangedListener $isShow")
         }
         setTheme()
+
+        val fab = FloatingActionButton(this).apply {
+            setImageResource(R.drawable.ic_baseline_search_24)
+        }
+        binding.sideNavigationRail?.addHeaderView(fab)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.sideNavigationRail?.headerView?.isVisible = when (destination.id) {
+                R.id.browseFragment -> true
+                R.id.browseSavedFragment -> true
+                R.id.favoriteFragment -> true
+                else -> false
+            }
+        }
+
 
         val permissions = checkPermission()
         Log.d("MainActivity", "permission $permissions")
@@ -75,7 +93,7 @@ class MainActivity : AppCompatActivity(),
             supportFragmentManager.findFragmentById(R.id.navFragment) as NavHostFragment
         navController = navFragment.navController
         binding.bottomNavigationView?.setupWithNavController(navController)
-//        binding.sideNavigationRail?.setupWithNavController(navController)
+        binding.sideNavigationRail?.setupWithNavController(navController)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -121,12 +139,10 @@ class MainActivity : AppCompatActivity(),
 
     fun showNavigation(callback: (() -> Unit)? = null) {
         binding.bottomNavigationView?.show(callback)
-//        binding.sideNavigationRail?.show()
     }
 
     fun hideNavigation(callback: (() -> Unit)? = null) {
         binding.bottomNavigationView?.hide(callback)
-//        binding.sideNavigationRail?.hide()
     }
 
     private fun BottomNavigationView.hide(callback: (() -> Unit)? = null) {

@@ -181,8 +181,9 @@ class SavedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.savedAppbarLayout.statusBarForeground =
-            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-        binding.savedTopappbar.menu.clear()
+        if (!resources.getBoolean(R.bool.isTablet)) {
+            binding.savedAppbarLayout.statusBarForeground =
+                MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+        }
     }
 }
