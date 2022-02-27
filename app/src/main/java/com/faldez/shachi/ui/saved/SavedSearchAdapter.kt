@@ -68,6 +68,7 @@ class SavedSearchAdapter(
                 }
             }
             setRecycledViewPool(viewPool)
+            setHasFixedSize(true)
         }
 
         return SavedSearchViewHolder(
@@ -133,7 +134,7 @@ class SavedSearchAdapter(
             }
 
             binding.savedSearchItemRecyclerView.apply {
-                swapAdapter(adapter, true)
+                swapAdapter(adapter, false)
             }
 
             scrollPositions[item.savedSearch.savedSearch.savedSearchId]?.let { scroll ->
@@ -157,16 +158,18 @@ class SavedSearchAdapter(
                 listener.onDelete(item.savedSearch)
             }
 
-            CoroutineScope(Dispatchers.Main).launch {
-                item.posts.collectLatest {
-                    if (it != null) {
-                        adapter.submitData(it.filter { item ->
-                            when (item.rating) {
-                                Rating.Questionable -> questionableFilter != "mute"
-                                Rating.Explicit -> explicitFilter != "mute"
-                                Rating.Safe -> true
-                            }
-                        })
+            binding.savedSearchItemRecyclerView.post {
+                CoroutineScope(Dispatchers.Main).launch {
+                    item.posts.collectLatest {
+                        if (it != null) {
+                            adapter.submitData(it.filter { item ->
+                                when (item.rating) {
+                                    Rating.Questionable -> questionableFilter != "mute"
+                                    Rating.Explicit -> explicitFilter != "mute"
+                                    Rating.Safe -> true
+                                }
+                            })
+                        }
                     }
                 }
             }

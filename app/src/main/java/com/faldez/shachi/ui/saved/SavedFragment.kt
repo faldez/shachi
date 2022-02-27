@@ -51,7 +51,7 @@ class SavedFragment : Fragment() {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
     }
     private lateinit var binding: SavedFragmentBinding
-    private lateinit var adapter: SavedSearchAdapter
+    private lateinit var savedSearchAdapter: SavedSearchAdapter
 
     private val adapterListener = object : SavedSearchAdapterListener {
         override fun onBrowse(savedSearchServer: SavedSearchServer) {
@@ -114,13 +114,26 @@ class SavedFragment : Fragment() {
     ): View {
         binding = SavedFragmentBinding.inflate(inflater, container, false)
 
+
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if (!resources.getBoolean(R.bool.isTablet)) {
+            binding.savedAppbarLayout.statusBarForeground =
+                MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+        }
+
         val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
         val quality = preferences.getString("preview_quality", null) ?: "preview"
         val questionableFilter =
             preferences.getString("filter_questionable_content", null) ?: "disable"
         val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
 
-        adapter = SavedSearchAdapter(
+        savedSearchAdapter = SavedSearchAdapter(
             listener = adapterListener,
             gridMode = gridMode,
             quality = quality,
@@ -129,11 +142,14 @@ class SavedFragment : Fragment() {
             scrollPositions = viewModel.scrollState.value
         )
 
-        binding.savedSearchRecyclerView.adapter = adapter
 
         val layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        binding.savedSearchRecyclerView.layoutManager = layoutManager
+        binding.savedSearchRecyclerView.apply {
+            swapAdapter(savedSearchAdapter, false)
+            setLayoutManager(layoutManager)
+            setHasFixedSize(true)
+        }
 
         val hideBottomBarOnScroll = preferences.getBoolean("hide_bottom_bar_on_scroll", true)
         if (hideBottomBarOnScroll) {
@@ -161,7 +177,7 @@ class SavedFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.savedSearchFlow.collectLatest { state ->
-                    adapter.submitList(state)
+                    savedSearchAdapter.submitList(state)
                     binding.savedSearchHelpText.isVisible = state.isEmpty()
                 }
             }
@@ -170,20 +186,9 @@ class SavedFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.scrollState.collectLatest {
-                    adapter.setScrollPositions(it)
+                    savedSearchAdapter.setScrollPositions(it)
                 }
             }
-        }
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        if (!resources.getBoolean(R.bool.isTablet)) {
-            binding.savedAppbarLayout.statusBarForeground =
-                MaterialShapeDrawable.createWithElevationOverlay(requireContext())
         }
     }
 }
