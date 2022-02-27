@@ -20,10 +20,8 @@
         <action
             android:id="@+id/action_saved_to_postslide"
             app:destination="@id/savedPostSlideFragment"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out" />
+            app:enterAnim="@anim/slide_in"
+            app:popExitAnim="@anim/slide_out" />
     </fragment>
     <fragment
         android:id="@+id/browseSavedFragment"
