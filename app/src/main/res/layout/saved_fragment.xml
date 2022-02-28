@@ -19,7 +19,7 @@
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             android:layout_gravity="top"
-            app:title="@string/saved_search" />
+            app:title="@string/saved_searches" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

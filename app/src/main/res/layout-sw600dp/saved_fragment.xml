@@ -23,7 +23,7 @@
             app:layout_scrollFlags="scroll|enterAlways|snap"
             android:layout_gravity="top"
             android:background="?attr/colorSurface"
-            app:title="@string/saved_search" />
+            app:title="@string/saved_searches" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
