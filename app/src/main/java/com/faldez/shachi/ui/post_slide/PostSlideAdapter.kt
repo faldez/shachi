@@ -134,15 +134,29 @@ class PostSlideImageViewHolder(
     PostSlideViewHolder(binding.root) {
     override fun bind(item: Post?) {
         val postImageView = binding.postImageView
-        postImageView.setOnViewTapListener { view, x, y -> onTap() }
+        postImageView.setOnViewTapListener { _, _, _ -> onTap() }
         binding.postLoadingIndicator.isIndeterminate = true
 
         if (item != null) {
-            val url = when (item.quality ?: quality) {
-                "sample" -> item.sampleUrl ?: item.previewUrl
-                "original" -> item.fileUrl
-                else -> item.previewUrl ?: item.sampleUrl
-            } ?: item.fileUrl
+            var url = when (item.quality ?: quality) {
+                "sample" -> {
+                    item.quality = "sample"
+                    item.sampleUrl
+                }
+                "original" -> {
+                    item.quality = "original"
+                    item.fileUrl
+                }
+                else -> {
+                    item.quality = "preview"
+                    item.previewUrl
+                }
+            }
+
+            if (url == null) {
+                item.quality = "original"
+                url = item.fileUrl
+            }
 
             Log.d("PostSlideImageViewHolder", "bind ${item.quality} $url")
 
