@@ -20,8 +20,7 @@
             android:layout_gravity="top"
             android:background="?attr/colorSurface"
             app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:menu="@menu/post_slide_menu"
-            app:title="Favorite" />
+            app:title="@string/favorite" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
