@@ -21,7 +21,7 @@ interface MoebooruService {
     suspend fun getTagsSummary(@Url url: String): MoebooruTagSummary
 
     companion object {
-        const val STARTING_PAGE_INDEX = 1
+        const val STARTING_PAGE_INDEX = 0
 
         private val retrofit2Service: MoebooruService by lazy {
             val client =

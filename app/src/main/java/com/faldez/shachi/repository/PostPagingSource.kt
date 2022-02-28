@@ -28,7 +28,7 @@ class PostPagingSource(
         val startingPageIndex = when (action.server.type) {
             ServerType.Gelbooru -> GelbooruService.STARTING_PAGE_INDEX
             ServerType.Danbooru -> DanbooruService.STARTING_PAGE_INDEX
-            else -> 1
+            ServerType.Moebooru -> MoebooruService.STARTING_PAGE_INDEX
         }
         val position = params.key ?: startingPageIndex
         try {
@@ -60,7 +60,7 @@ class PostPagingSource(
             }
 
             return LoadResult.Page(data = posts,
-                prevKey = if (position == startingPageIndex) null else position,
+                prevKey = null,
                 nextKey = nextKey)
         } catch (exception: IOException) {
             return LoadResult.Error(exception)
