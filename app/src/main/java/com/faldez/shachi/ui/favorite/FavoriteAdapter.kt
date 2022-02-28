@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
+import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.glide.GlideApp
 
 class FavoriteAdapter(
@@ -70,7 +72,8 @@ class FavoriteAdapter(
                     .override(previewWidth, previewHeight)
                     .into(imageView)
             }
-
+            holder.binding.movieTypeIcon.isVisible =
+                MimeUtil.getMimeTypeFromUrl(post.fileUrl)?.startsWith("video") ?: false
             holder.binding.root.setOnClickListener { _ ->
                 onClick(position)
             }
@@ -96,6 +99,4 @@ class FavoriteAdapter(
 }
 
 class BrowseItemViewHolder(val binding: PostCardItemBinding) :
-    RecyclerView.ViewHolder(binding.root) {
-
-}
+    RecyclerView.ViewHolder(binding.root)

@@ -18,6 +18,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
+import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.glide.GlideApp
 
 
@@ -52,7 +53,6 @@ class BrowseAdapter(
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
                 oldItem.postId == newItem.postId && oldItem.serverId == newItem.serverId
-
 
             override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean =
                 oldItem == newItem
@@ -108,7 +108,8 @@ class BrowseItemViewHolder(
             }
 
             binding.favoriteIcon.isVisible = post.favorite
-
+            binding.movieTypeIcon.isVisible =
+                MimeUtil.getMimeTypeFromUrl(post.fileUrl)?.startsWith("video") ?: false
             binding.root.setOnClickListener { _ ->
                 onClick(bindingAdapterPosition)
             }
