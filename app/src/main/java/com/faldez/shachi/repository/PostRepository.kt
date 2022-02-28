@@ -21,8 +21,8 @@ class PostRepository constructor(
     fun getSearchPostsResultStream(action: Action.SearchPost): Flow<PagingData<Post>> {
         return Pager(
             config = PagingConfig(
-                pageSize = NETWORK_PAGE_SIZE,
-                enablePlaceholders = true
+                pageSize = action.limit,
+                enablePlaceholders = false
             ),
             pagingSourceFactory = {
                 PostPagingSource(action, service)
