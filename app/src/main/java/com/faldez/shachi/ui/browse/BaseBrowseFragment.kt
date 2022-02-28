@@ -34,6 +34,7 @@ import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.ui.search.SearchFragment
+import com.faldez.shachi.ui.server_dialog.ServerDialogFragment
 import com.faldez.shachi.widget.EmptyFooterDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -149,7 +150,8 @@ abstract class BaseBrowseFragment : Fragment() {
                     true
                 }
                 R.id.select_server_button -> {
-                    findNavController().navigate(R.id.action_global_to_serverdialog)
+                    val selectServerDialog = ServerDialogFragment()
+                    selectServerDialog.show(requireActivity().supportFragmentManager, "dialog")
                     true
                 }
                 R.id.search_history_button -> {
