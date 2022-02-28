@@ -9,13 +9,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.databinding.SearchHistoryListItemBinding
 import com.faldez.shachi.model.SearchHistoryServer
 
-class SearchHistoryAdapter(val onClick: (SearchHistoryServer) -> Unit) :
+class SearchHistoryAdapter(
+    val onClick: (SearchHistoryServer) -> Unit,
+    val onDelete: (SearchHistoryServer) -> Unit,
+) :
     PagingDataAdapter<SearchHistoryServer, SearchHistoryViewHolder>(POST_COMPARATOR) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchHistoryViewHolder {
         val binding =
             SearchHistoryListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-        return SearchHistoryViewHolder(binding, onClick)
+        return SearchHistoryViewHolder(binding, onClick, onDelete)
     }
 
     override fun onBindViewHolder(holder: SearchHistoryViewHolder, position: Int) {
@@ -46,14 +49,18 @@ class SearchHistoryAdapter(val onClick: (SearchHistoryServer) -> Unit) :
 class SearchHistoryViewHolder(
     val binding: SearchHistoryListItemBinding,
     val onClick: (SearchHistoryServer) -> Unit,
+    val onDelete: (SearchHistoryServer) -> Unit,
 ) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(searchHistoryServer: SearchHistoryServer) {
         Log.d("SearchHistoryViewHolder/bind", "item $searchHistoryServer")
         binding.tagsTextview.text = searchHistoryServer.searchHistory.tags
         binding.serverTextview.text = searchHistoryServer.server.title
-        binding.root.setOnClickListener {
+        binding.historyLayout.setOnClickListener {
             onClick(searchHistoryServer)
+        }
+        binding.deleteHistoryButton.setOnClickListener {
+            onDelete(searchHistoryServer)
         }
     }
 }

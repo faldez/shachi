@@ -8,12 +8,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.databinding.SearchHistoryBottomSheetDialogFragmentBinding
-import com.faldez.shachi.model.SearchHistoryServer
 import com.faldez.shachi.repository.SearchHistoryRepository
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -43,8 +44,19 @@ class SearchHistoryFragment : BottomSheetDialogFragment() {
                 val bundle = bundleOf("server" to searchHistoryServer.server,
                     "tags" to searchHistoryServer.searchHistory.tags)
                 findNavController().navigate(R.id.action_searchhistory_to_browse, bundle)
+            },
+            onDelete = { searchHistoryServer ->
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Are you Sure?")
+                    .setPositiveButton("Yes"
+                    ) { _, _ -> viewModel.delete(searchHistoryServer.searchHistory) }
+                    .setNegativeButton("No", null).show()
             }
         )
+        searchHistoryRecyclerView.layoutManager =
+            StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL).apply {
+                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+            }
         searchHistoryRecyclerView.adapter = adapter
 
         lifecycleScope.launch {
