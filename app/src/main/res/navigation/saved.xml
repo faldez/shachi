@@ -72,16 +72,16 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_out_down" />
     </fragment>
+
+    <action
+        android:id="@+id/action_search_to_browse"
+        app:destination="@id/browseSavedFragment"
+        app:popUpTo="@id/browseSavedFragment" />
     <fragment
         android:id="@+id/search_fragment"
         android:name="com.faldez.shachi.ui.search.SearchFragment"
         android:label="search_dialog"
-        tools:layout="@layout/search_fragment">
-        <action
-            android:id="@+id/action_search_to_browse"
-            app:destination="@id/browseSavedFragment"
-            app:popUpTo="@id/browseSavedFragment" />
-    </fragment>
+        tools:layout="@layout/search_fragment" />
     <fragment
         android:id="@+id/post_detail_fragment"
         android:name="com.faldez.shachi.ui.post_detail.PostDetailFragment"
