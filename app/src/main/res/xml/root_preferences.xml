@@ -16,8 +16,16 @@
             app:defaultValue="3"
             app:entries="@array/grid_column_entries"
             app:entryValues="@array/grid_column_values"
-            app:key="grid_column"
-            app:title="@string/grid_column"
+            app:key="grid_column_portrait"
+            app:title="@string/grid_column_portrait"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="5"
+            app:entries="@array/grid_column_entries"
+            app:entryValues="@array/grid_column_values"
+            app:key="grid_column_landscape"
+            app:title="@string/grid_column_landscape"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
@@ -25,7 +33,7 @@
             app:entries="@array/grid_mode_entries"
             app:entryValues="@array/grid_mode_values"
             app:key="grid_mode"
-            app:title="@string/grid_column"
+            app:title="@string/grid_mode"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference

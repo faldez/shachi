@@ -52,7 +52,8 @@
     <string name="follow_system">Follow system</string>
     <string name="staggered">Staggered</string>
     <string name="square">Square</string>
-    <string name="grid_column">Grid column</string>
+    <string name="grid_column_portrait">Grid column (portrait)</string>
+    <string name="grid_column_landscape">Grid column (landscape)</string>
     <string name="grid_mode">Grid mode</string>
     <string name="saved">Saved</string>
     <string name="saved_search">Saved search</string>

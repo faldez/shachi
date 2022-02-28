@@ -1,6 +1,7 @@
 package com.faldez.shachi.ui.favorite
 
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -93,7 +94,10 @@ class FavoriteFragment : Fragment() {
 
     private fun FavoriteFragmentBinding.bind(
     ) {
-        val gridCount = preferences.getString("grid_column", null)?.toInt() ?: 3
+        val gridCount = when (resources.configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> preferences.getString("grid_column_landscape", null)?.toInt() ?: 5
+            else -> preferences.getString("grid_column_portrait", null)?.toInt() ?: 3
+        }
         val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
         val quality = preferences.getString("preview_quality", null) ?: "preview"
         val questionableFilter =
