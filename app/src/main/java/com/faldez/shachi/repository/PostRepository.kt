@@ -10,13 +10,13 @@ import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.applyBlacklist
 import com.faldez.shachi.model.response.mapToPost
 import com.faldez.shachi.service.Action
-import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.service.BooruServiceImpl
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 import java.io.IOException
 
 class PostRepository constructor(
-    private val service: BooruService,
+    private val service: BooruServiceImpl,
 ) {
     fun getSearchPostsResultStream(action: Action.SearchPost): Flow<PagingData<Post>> {
         return Pager(

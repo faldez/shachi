@@ -31,7 +31,7 @@ import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.repository.PostRepository
 import com.faldez.shachi.repository.SavedSearchRepository
-import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.widget.CustomDividerItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 class SavedFragment : Fragment() {
     private val viewModel: SavedViewModel by navGraphViewModels(R.id.saved) {
         val db = AppDatabase.build(requireContext())
-        val service = BooruService()
+        val service = BooruServiceImpl()
         SavedViewModelFactory(SavedSearchRepository(db),
             PostRepository(service), FavoriteRepository(db), this)
     }

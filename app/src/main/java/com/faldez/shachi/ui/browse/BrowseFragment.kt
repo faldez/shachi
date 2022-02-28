@@ -4,14 +4,14 @@ import androidx.navigation.navGraphViewModels
 import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.repository.*
-import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.service.BooruServiceImpl
 
 class BrowseFragment : BaseBrowseFragment() {
     override val viewModel: BrowseViewModel by navGraphViewModels(R.id.browse) {
         val db = AppDatabase.build(requireContext())
         val favoriteRepository = FavoriteRepository(db)
         BrowseViewModelFactory(
-            PostRepository(BooruService()),
+            PostRepository(BooruServiceImpl()),
             ServerRepository(db),
             favoriteRepository,
             SavedSearchRepository(db),

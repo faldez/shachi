@@ -33,7 +33,7 @@ import com.faldez.shachi.model.Modifier
 import com.faldez.shachi.model.ServerView
 import com.faldez.shachi.model.TagDetail
 import com.faldez.shachi.repository.TagRepository
-import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.util.StringUtil
 import com.faldez.shachi.util.clearAllGroup
 import com.faldez.shachi.util.getGroupHeaderTextColor
@@ -54,7 +54,7 @@ class SearchFragment : DialogFragment() {
     private val viewModel: SearchSimpleViewModel by viewModels {
         val server: ServerView? =
             requireArguments().getParcelable<ServerView>("server") as ServerView?
-        SearchViewModelFactory(server, TagRepository(BooruService(),
+        SearchViewModelFactory(server, TagRepository(BooruServiceImpl(),
             AppDatabase.build(requireContext())), this)
     }
 

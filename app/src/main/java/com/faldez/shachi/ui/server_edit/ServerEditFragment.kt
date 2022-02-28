@@ -23,7 +23,7 @@ import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.repository.PostRepository
 import com.faldez.shachi.repository.ServerRepository
 import com.faldez.shachi.repository.TagRepository
-import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.service.BooruServiceImpl
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.launch
 
@@ -31,7 +31,7 @@ class ServerEditFragment : Fragment() {
     private val viewModel: ServerEditViewModel by viewModels {
         val server = arguments?.getParcelable<Server>("server")
         val db = AppDatabase.build(requireContext())
-        val service = BooruService()
+        val service = BooruServiceImpl()
         ServerEditViewModelFactory(server, PostRepository(service),
             ServerRepository(db), TagRepository(service, db),
             this)

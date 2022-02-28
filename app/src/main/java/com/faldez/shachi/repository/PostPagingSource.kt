@@ -7,10 +7,7 @@ import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.ServerType
 import com.faldez.shachi.model.applyBlacklist
 import com.faldez.shachi.model.response.mapToPost
-import com.faldez.shachi.service.Action
-import com.faldez.shachi.service.BooruService
-import com.faldez.shachi.service.DanbooruService
-import com.faldez.shachi.service.GelbooruService
+import com.faldez.shachi.service.*
 import retrofit2.HttpException
 import java.io.IOException
 
