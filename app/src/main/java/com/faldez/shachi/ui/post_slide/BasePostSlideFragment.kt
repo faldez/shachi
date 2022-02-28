@@ -5,12 +5,15 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
@@ -43,13 +46,24 @@ import java.net.URL
 
 
 abstract class BasePostSlideFragment : Fragment() {
-    protected lateinit var postSlideAdapter: PostSlideAdapter
-    protected lateinit var binding: PostSlideFragmentBinding
-    private var isToolbarHide: Boolean = false
 
     private val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
     }
+
+    protected val postSlideAdapter: PostSlideAdapter by lazy {
+        val quality = preferences.getString("detail_quality", null) ?: "sample"
+
+        PostSlideAdapter(
+            quality,
+            onTap = {
+                onPhotoTap()
+            }
+        )
+    }
+
+    protected lateinit var binding: PostSlideFragmentBinding
+    private var isToolbarHide: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,20 +71,6 @@ abstract class BasePostSlideFragment : Fragment() {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = PostSlideFragmentBinding.inflate(inflater, container, false)
-
-        val quality = preferences.getString("detail_quality", null) ?: "sample"
-        postSlideAdapter = PostSlideAdapter(
-            quality,
-            onTap = {
-                isToolbarHide = if (isToolbarHide) {
-                    showAppBar()
-                    false
-                } else {
-                    hideAppBar()
-                    true
-                }
-            }
-        )
 
         return binding.root
     }
@@ -80,7 +80,6 @@ abstract class BasePostSlideFragment : Fragment() {
         prepareAppBar()
 
         val position = requireArguments().getInt("position")
-        Log.d("BasePostSlideFragment/onViewCreated", "position $position")
         binding.postViewPager.bind(position)
     }
 
@@ -114,6 +113,33 @@ abstract class BasePostSlideFragment : Fragment() {
             binding.postSlideTopappbar.title =
                 postSlideAdapter.getPostItem(position)?.postId.toString()
             setFavoriteButton(it)
+        }
+    }
+
+    private fun onPhotoTap() {
+        isToolbarHide = if (isToolbarHide) {
+            showAppBar()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                activity?.window?.insetsController?.show(WindowInsets.Type.systemBars())
+            } else {
+                activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+            }
+
+            val value = TypedValue()
+            context?.theme?.resolveAttribute(R.attr.colorSurface, value, true)
+            binding.postSlideLayout.setBackgroundColor(value.data)
+            false
+        } else {
+            hideAppBar()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                activity?.window?.insetsController?.hide(WindowInsets.Type.systemBars())
+            } else {
+                activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+            }
+
+            binding.postSlideLayout.setBackgroundColor(resources.getColor(android.R.color.black,
+                null))
+            true
         }
     }
 
