@@ -1,30 +1,22 @@
 package com.faldez.shachi.ui.saved
 
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.os.Build
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.util.forEach
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.paging.filter
 import androidx.recyclerview.widget.*
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.Downsampler
-import com.bumptech.glide.request.RequestOptions
-import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.databinding.SavedSearchItemBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
 import com.faldez.shachi.model.SavedSearchServer
 import com.faldez.shachi.util.MimeUtil
+import com.faldez.shachi.util.bindPostImagePreview
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -245,54 +237,15 @@ class SavedSearchPostAdapter(
             imageView.layoutParams = imageLayoutParams
 
             if (item != null) {
-                val previewWidth = item.previewWidth ?: 150
-                val previewHeight = if (gridMode == "staggered") {
-                    (previewWidth * (item.height.toFloat() / item.width.toFloat())).toInt()
-                } else {
-                    previewWidth
-                }
-
-                if (hideQuestionable && item.rating == Rating.Questionable || hideExplicit && item.rating == Rating.Explicit) {
-                    val drawable = ResourcesCompat.getDrawable(binding.root.resources,
-                        R.drawable.nsfw_placeholder,
-                        null)
-                        ?.toBitmap(previewWidth, previewHeight)
-
-                    Glide.with(imageView.context).load(drawable)
-                        .into(imageView)
-                } else {
-                    val url = when (quality) {
-                        "sample" -> item.sampleUrl ?: item.previewUrl
-                        "original" -> item.fileUrl
-                        else -> item.previewUrl ?: item.sampleUrl
-                    } ?: item.fileUrl
-                    var glide = Glide.with(imageView.context).load(url)
-                        .placeholder(BitmapDrawable(imageView.resources,
-                            Bitmap.createBitmap(previewWidth,
-                                previewHeight,
-                                Bitmap.Config.ARGB_8888)))
-                        .override(previewWidth, previewHeight)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        glide =
-                            glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG,
-                                true))
-                    }
-                    glide.into(imageView)
-                }
                 binding.favoriteIcon.isVisible = item.favorite
                 binding.movieTypeIcon.isVisible =
                     MimeUtil.getMimeTypeFromUrl(item.fileUrl)?.startsWith("video") ?: false
                 binding.root.setOnClickListener {
                     listener.onClick(savedSearchServer, bindingAdapterPosition)
                 }
-            } else {
-                val drawable = Bitmap.createBitmap(150,
-                    150,
-                    Bitmap.Config.ARGB_8888)
-
-                Glide.with(imageView.context).load(drawable)
-                    .into(imageView)
             }
+
+            bindPostImagePreview(imageView, item, gridMode, quality, hideQuestionable, hideExplicit)
         }
     }
 }

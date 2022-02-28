@@ -1,25 +1,15 @@
 package com.faldez.shachi.ui.browse
 
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.Downsampler
-import com.bumptech.glide.request.RequestOptions
-import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.Rating
 import com.faldez.shachi.util.MimeUtil
-import com.faldez.shachi.util.glide.GlideApp
+import com.faldez.shachi.util.bindPostImagePreview
 
 
 class BrowseAdapter(
@@ -73,51 +63,15 @@ class BrowseItemViewHolder(
     fun bind(post: Post?) {
         val imageView = binding.imageView
 
-        if(post != null) {
-            val previewWidth = post.previewWidth ?: 150
-            val previewHeight = if (gridMode == "staggered") {
-                (previewWidth * (post.height.toFloat() / post.width.toFloat())).toInt()
-            } else {
-                previewWidth
-            }
-            if (hideQuestionable && post.rating == Rating.Questionable || hideExplicit && post.rating == Rating.Explicit) {
-                val drawable = ResourcesCompat.getDrawable(binding.root.resources,
-                    R.drawable.nsfw_placeholder,
-                    null)
-                    ?.toBitmap(previewWidth, previewHeight)
-
-                Glide.with(imageView.context).load(drawable)
-                    .into(imageView)
-            } else {
-                val url = when (quality) {
-                    "sample" -> post.sampleUrl ?: post.previewUrl
-                    "original" -> post.fileUrl
-                    else -> post.previewUrl ?: post.sampleUrl
-                } ?: post.fileUrl
-
-                var glide = Glide.with(imageView.context).load(url)
-                    .placeholder(BitmapDrawable(imageView.resources,
-                        Bitmap.createBitmap(previewWidth,
-                            previewHeight,
-                            Bitmap.Config.ARGB_8888)))
-                    .override(previewWidth, previewHeight)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    glide = glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG, true))
-                }
-                glide.into(imageView)
-            }
-
+        if (post != null) {
             binding.favoriteIcon.isVisible = post.favorite
             binding.movieTypeIcon.isVisible =
                 MimeUtil.getMimeTypeFromUrl(post.fileUrl)?.startsWith("video") ?: false
             binding.root.setOnClickListener { _ ->
                 onClick(bindingAdapterPosition)
             }
-        } else {
-            GlideApp.with(imageView.context).load(BitmapDrawable(imageView.resources,
-                Bitmap.createBitmap(150,
-                    150,
-                    Bitmap.Config.ARGB_8888))).into(imageView)
         }
+
+        bindPostImagePreview(imageView, post, gridMode, quality, hideQuestionable, hideExplicit)
     }
 }
