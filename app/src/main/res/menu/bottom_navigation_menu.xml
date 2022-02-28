@@ -3,8 +3,8 @@
     <item
         android:id="@+id/saved"
         android:enabled="true"
-        android:icon="@drawable/home"
-        android:title="@string/home" />
+        android:icon="@drawable/ic_baseline_saved_search_24"
+        android:title="@string/saved" />
     <item
         android:id="@+id/browse"
         android:enabled="true"
