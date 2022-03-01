@@ -37,6 +37,11 @@ android {
     }
     testOptions {
         unitTests.returnDefaultValues = true
+        unitTests {
+            all {
+                exclude 'org.json.jsonjava.*'
+            }
+        }
     }
     lintOptions {
         baseline(file("lint-baseline.xml"))
