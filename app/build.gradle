@@ -10,7 +10,6 @@ apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 android {
     compileSdk 31
-
     defaultConfig {
         applicationId "com.faldez.shachi"
         minSdk 26
@@ -20,7 +19,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -37,9 +35,11 @@ android {
     buildFeatures {
         viewBinding = true
     }
-
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+    lintOptions {
+        baseline(file("lint-baseline.xml"))
     }
 }
 
