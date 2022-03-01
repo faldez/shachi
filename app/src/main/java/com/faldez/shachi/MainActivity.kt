@@ -230,7 +230,7 @@ class MainActivity : AppCompatActivity(),
     private fun createNotificationChannel() {
         val name = "download"
         val descriptionText = "Download notification channel"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val importance = NotificationManager.IMPORTANCE_LOW
         val channel = NotificationChannel("DOWNLOAD", name, importance).apply {
             description = descriptionText
         }
