@@ -189,4 +189,28 @@ sealed class Action {
                 .build()
         }
     }
+
+    data class GetComments(val server: Server, val postId: Int) : Action() {
+        fun buildGelbooruUrl(): HttpUrl? {
+            return HttpUrl.get(server.url).newBuilder().addPathSegment("index.php")
+                .addQueryParameter("page", "dapi")
+                .addQueryParameter("q", "index").addQueryParameter("s", "comment")
+                .addQueryParameter("post_id", postId.toString())
+                .build()
+        }
+
+        fun buildMoebooruUrl(): HttpUrl? {
+            return HttpUrl.get(server.url).newBuilder().addPathSegment("comment.json")
+                .addQueryParameter("post_id", postId.toString()).build()
+        }
+
+        fun buildDanbooruUrl(): HttpUrl? {
+            return HttpUrl.get(server.url).newBuilder().addPathSegment("comments.json")
+                .addQueryParameter("group_by", "comment")
+                .addQueryParameter("search[post_id]", postId.toString())
+                .addQueryParameter("only",
+                    "id,post_id,body,score,created_at,updated_at,updater_id,do_not_bump_post,is_deleted,is_sticky,creator[id,name]")
+                .build()
+        }
+    }
 }

@@ -3,6 +3,7 @@ package com.faldez.shachi.util.type_adapter
 import com.google.gson.*
 import java.lang.reflect.Type
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -18,6 +19,27 @@ class ZonedDateTimeAdapter : JsonDeserializer<ZonedDateTime?>,
         context: JsonDeserializationContext?,
     ): ZonedDateTime? {
         return ZonedDateTime.parse(json?.asString, format)
+    }
+
+    override fun serialize(
+        src: ZonedDateTime?,
+        typeOfSrc: Type?,
+        context: JsonSerializationContext?,
+    ): JsonElement {
+        return JsonPrimitive(src?.format(format)!!)
+    }
+}
+
+class DateTimeAdapter : JsonDeserializer<LocalDateTime?>,
+    JsonSerializer<ZonedDateTime?> {
+    private val format: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
+    override fun deserialize(
+        json: JsonElement?,
+        typeOfT: Type?,
+        context: JsonDeserializationContext?,
+    ): LocalDateTime? {
+        return LocalDateTime.parse(json?.asString, format)
     }
 
     override fun serialize(

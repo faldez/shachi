@@ -1,5 +1,6 @@
 package com.faldez.shachi.service
 
+import com.faldez.shachi.model.response.MoebooruComment
 import com.faldez.shachi.model.response.MoebooruPost
 import com.faldez.shachi.model.response.MoebooruTag
 import com.faldez.shachi.model.response.MoebooruTagSummary
@@ -19,6 +20,9 @@ interface MoebooruService {
 
     @GET
     suspend fun getTagsSummary(@Url url: String): MoebooruTagSummary
+
+    @GET
+    suspend fun getComments(@Url url: String): List<MoebooruComment>
 
     companion object {
         const val STARTING_PAGE_INDEX = 1

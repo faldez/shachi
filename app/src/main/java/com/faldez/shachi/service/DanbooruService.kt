@@ -1,5 +1,6 @@
 package com.faldez.shachi.service
 
+import com.faldez.shachi.model.response.DanbooruComment
 import com.faldez.shachi.model.response.DanbooruPost
 import com.faldez.shachi.model.response.DanbooruTag
 import okhttp3.OkHttpClient
@@ -15,6 +16,9 @@ interface DanbooruService {
 
     @GET
     suspend fun getTags(@Url url: String): List<DanbooruTag>
+
+    @GET
+    suspend fun getComments(@Url url: String): List<DanbooruComment>
 
     companion object {
         const val STARTING_PAGE_INDEX = 1

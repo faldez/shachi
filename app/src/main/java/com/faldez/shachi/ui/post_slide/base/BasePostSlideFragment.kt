@@ -32,6 +32,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.service.DownloadService
+import com.faldez.shachi.ui.comment.CommentFragment
 import com.faldez.shachi.ui.post_detail.PostDetailFragment
 import com.faldez.shachi.ui.post_slide.PostSlideAdapter
 import com.faldez.shachi.util.MimeUtil
@@ -224,6 +225,15 @@ abstract class BasePostSlideFragment : Fragment() {
                         }
                         val shareIntent = Intent.createChooser(intent, null)
                         startActivity(shareIntent)
+                    }
+                    true
+                }
+                R.id.comment_button -> {
+                    getCurrentPost()?.let {
+                        val bundle = bundleOf("server_id" to it.serverId, "post_id" to it.postId)
+                        val commentDialog = CommentFragment()
+                        commentDialog.arguments = bundle
+                        commentDialog.show(requireActivity().supportFragmentManager, "dialog")
                     }
                     true
                 }

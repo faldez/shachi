@@ -1,5 +1,6 @@
 package com.faldez.shachi.service
 
+import com.faldez.shachi.model.response.GelbooruCommentResponse
 import com.faldez.shachi.model.response.GelbooruPostResponse
 import com.faldez.shachi.model.response.GelbooruTagResponse
 import com.faldez.shachi.util.interceptor.XmlToJsonInterceptor
@@ -16,6 +17,9 @@ interface GelbooruService {
 
     @GET
     suspend fun getTags(@Url url: String): GelbooruTagResponse
+
+    @GET
+    suspend fun getComments(@Url url: String): GelbooruCommentResponse
 
     companion object {
         const val STARTING_PAGE_INDEX = 0
