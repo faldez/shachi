@@ -12,6 +12,7 @@ import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.repository.PostRepository
 import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.service.BooruServiceImpl
+import com.faldez.shachi.ui.post_slide.base.BasePostSlideFragment
 import com.faldez.shachi.ui.saved.SavedViewModel
 import com.faldez.shachi.ui.saved.SavedViewModelFactory
 

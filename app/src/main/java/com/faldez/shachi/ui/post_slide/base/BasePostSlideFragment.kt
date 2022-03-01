@@ -1,4 +1,4 @@
-package com.faldez.shachi.ui.post_slide
+package com.faldez.shachi.ui.post_slide.base
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -33,6 +33,7 @@ import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.service.DownloadService
 import com.faldez.shachi.ui.post_detail.PostDetailFragment
+import com.faldez.shachi.ui.post_slide.PostSlideAdapter
 import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.glide.GlideApp
 import com.google.android.material.appbar.AppBarLayout

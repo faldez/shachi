@@ -1,4 +1,4 @@
-package com.faldez.shachi.ui.browse
+package com.faldez.shachi.ui.browse.base
 
 import android.app.Dialog
 import android.content.SharedPreferences
@@ -33,6 +33,10 @@ import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.model.Rating
 import com.faldez.shachi.model.ServerView
+import com.faldez.shachi.ui.browse.BrowseAdapter
+import com.faldez.shachi.ui.browse.BrowseViewModel
+import com.faldez.shachi.ui.browse.UiAction
+import com.faldez.shachi.ui.browse.UiState
 import com.faldez.shachi.ui.search.SearchFragment
 import com.faldez.shachi.ui.server_dialog.ServerDialogFragment
 import com.faldez.shachi.widget.EmptyFooterDecoration

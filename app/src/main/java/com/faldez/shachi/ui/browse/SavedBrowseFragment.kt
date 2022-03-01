@@ -5,6 +5,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.database.AppDatabase
 import com.faldez.shachi.repository.*
 import com.faldez.shachi.service.BooruServiceImpl
+import com.faldez.shachi.ui.browse.base.BaseBrowseFragment
 
 class SavedBrowseFragment : BaseBrowseFragment() {
     override val viewModel: BrowseViewModel by navGraphViewModels(R.id.saved) {

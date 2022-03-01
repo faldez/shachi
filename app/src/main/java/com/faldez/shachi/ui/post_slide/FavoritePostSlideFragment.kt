@@ -12,6 +12,7 @@ import com.faldez.shachi.model.Rating
 import com.faldez.shachi.repository.FavoriteRepository
 import com.faldez.shachi.ui.favorite.FavoriteViewModel
 import com.faldez.shachi.ui.favorite.FavoriteViewModelFactory
+import com.faldez.shachi.ui.post_slide.base.BasePostSlideFragment
 
 class FavoritePostSlideFragment : BasePostSlideFragment() {
     companion object {

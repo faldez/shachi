@@ -12,6 +12,7 @@ import com.faldez.shachi.repository.*
 import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.ui.browse.BrowseViewModel
 import com.faldez.shachi.ui.browse.BrowseViewModelFactory
+import com.faldez.shachi.ui.post_slide.base.BasePostSlideFragment
 
 class BrowseSavedPostSlideFragment : BasePostSlideFragment() {
     companion object {
