@@ -37,7 +37,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
-
+    lintOptions {
+        baseline(file("lint-baseline.xml"))
+    }
     testOptions {
         unitTests.returnDefaultValues = true
         unitTests {

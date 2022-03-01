@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="5" by="lint Bumblebee | 2021.1.1 Patch 2">
+
+    <issue
+        id="InconsistentLayout"
+        message="The id &quot;bottomNavigationView&quot; in layout &quot;activity_main&quot; is missing from the following layout configurations: layout-sw600dp (present in layout)">
+        <location
+            file="src\main\res\layout\activity_main.xml"
+            line="23"/>
+    </issue>
+
+    <issue
+        id="MissingPrefix"
+        message="Attribute is missing the Android namespace prefix">
+        <location
+            file="src\main\res\drawable\ic_launcher_background.xml"
+            line="3"/>
+    </issue>
+
+    <issue
+        id="ExtraText"
+        message="Unexpected text found in layout file: &quot;#343434&quot;">
+        <location
+            file="src\main\res\drawable\ic_launcher_background.xml"
+            line="3"/>
+    </issue>
+
+    <issue
+        id="AnnotationProcessorOnCompilePath"
+        message="Add annotation processor to processor path using `annotationProcessor` instead of `implementation`">
+        <location
+            file="build.gradle"/>
+    </issue>
+
+    <issue
+        id="NotifyDataSetChanged"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="src\main\java\com\faldez\shachi\ui\blacklisted_tag\BlacklistedTagAdapter.kt"
+            line="18"/>
+    </issue>
+
+    <issue
+        id="NotifyDataSetChanged"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="src\main\java\com\faldez\shachi\ui\search\SearchSuggestionAdapter.kt"
+            line="26"/>
+    </issue>
+
+    <issue
+        id="NotifyDataSetChanged"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="src\main\java\com\faldez\shachi\ui\servers\ServerListAdapter.kt"
+            line="17"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v26`) is unnecessary; `minSdkVersion` is 26. Merge all the resources in this folder into `mipmap-anydpi`.">
+        <location
+            file="src\main\res\mipmap-anydpi-v26"/>
+    </issue>
+
+    <issue
+        id="VectorPath"
+        message="Very long vector path (904 characters), which is bad for performance. Considering reducing precision, removing minor details or rasterizing vector.">
+        <location
+            file="src\main\res\drawable\ic_baseline_settings_24.xml"
+            line="9"/>
+    </issue>
+
+    <issue
+        id="UseSparseArrays"
+        message="Use `new SparseIntArray(...)` instead for better performance">
+        <location
+            file="src\main\java\com\faldez\shachi\ui\saved\SavedViewModel.kt"
+            line="33"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.array.reply_entries` appears to be unused">
+        <location
+            file="src\main\res\values\arrays.xml"
+            line="5"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.array.reply_values` appears to be unused">
+        <location
+            file="src\main\res\values\arrays.xml"
+            line="10"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.background_pill` appears to be unused">
+        <location
+            file="src\main\res\drawable\background_pill.xml"
+            line="2"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.seed` appears to be unused">
+        <location
+            file="src\main\res\values\colors.xml"
+            line="54"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.error` appears to be unused">
+        <location
+            file="src\main\res\values\colors.xml"
+            line="55"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.exo_player_control_view` appears to be unused">
+        <location
+            file="src\main\res\layout\exo_player_control_view.xml"
+            line="2"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.home` appears to be unused">
+        <location
+            file="src\main\res\drawable\home.xml"
+            line="2"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_baseline_check_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_baseline_check_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_baseline_favorite_stroke_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_baseline_favorite_stroke_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_baseline_home_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_baseline_home_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_baseline_local_offer_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_baseline_local_offer_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_baseline_more_vert_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_baseline_more_vert_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_baseline_notes_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_baseline_notes_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_baseline_pause_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_baseline_pause_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_baseline_play_arrow_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_baseline_play_arrow_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_baseline_push_pin_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_baseline_push_pin_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_baseline_volume_off_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_baseline_volume_off_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_baseline_volume_up_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_baseline_volume_up_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_launcher_background` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_launcher_background.xml"
+            line="2"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_outline_home_24` appears to be unused">
+        <location
+            file="src\main\res\drawable\ic_outline_home_24.xml"
+            line="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.menu.saved_search_menu` appears to be unused">
+        <location
+            file="src\main\res\menu\saved_search_menu.xml"
+            line="2"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.menu.servers_menu` appears to be unused">
+        <location
+            file="src\main\res\menu\servers_menu.xml"
+            line="2"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pinned` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="3"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.posts` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="5"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pin` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pin_tags` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.size` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="20"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.home` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="29"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.apply` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="31"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.current_tags` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="33"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.select` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="41"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.delete` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="46"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.edit` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="47"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.appearance` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="48"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.saved_search` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="59"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.new_search` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="62"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.refresh` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="63"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.cancel` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="65"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.remove_search` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="68"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.simple_search` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="88"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.blacklist` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="92"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.notes` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="99"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.backup_summary` appears to be unused">
+        <location
+            file="src\main\res\values\strings.xml"
+            line="108"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.volume` appears to be unused">
+        <location
+            file="src\main\res\drawable\volume.xml"
+            line="2"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image">
+        <location
+            file="src\main\res\layout\exo_player_control_view.xml"
+            line="22"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image">
+        <location
+            file="src\main\res\layout\exo_player_control_view.xml"
+            line="30"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image">
+        <location
+            file="src\main\res\layout\exo_player_control_view.xml"
+            line="69"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image">
+        <location
+            file="src\main\res\layout\post_card_item.xml"
+            line="18"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="src\main\java\com\faldez\shachi\ui\search\SearchSuggestionAdapter.kt"
+            line="48"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;Name&quot;, should use `@string` resource">
+        <location
+            file="src\main\res\layout\blacklisted_tag_edit_server_item.xml"
+            line="19"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;URL&quot;, should use `@string` resource">
+        <location
+            file="src\main\res\layout\blacklisted_tag_edit_server_item.xml"
+            line="28"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;creator&quot;, should use `@string` resource">
+        <location
+            file="src\main\res\layout\comment_item.xml"
+            line="18"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;2d&quot;, should use `@string` resource">
+        <location
+            file="src\main\res\layout\comment_item.xml"
+            line="28"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        message="Hardcoded string &quot;this is body&quot;, should use `@string` resource">
+        <location
+            file="src\main\res\layout\comment_item.xml"
+            line="39"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Consider replacing `android:layout_marginRight` with `android:layout_marginEnd=&quot;16dp&quot;` to better support right-to-left layouts">
+        <location
+            file="src\main\res\layout\search_fragment.xml"
+            line="84"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Consider replacing `android:layout_marginRight` with `android:layout_marginEnd=&quot;16dp&quot;` to better support right-to-left layouts">
+        <location
+            file="src\main\res\layout\search_fragment.xml"
+            line="84"/>
+    </issue>
+
+</issues>
