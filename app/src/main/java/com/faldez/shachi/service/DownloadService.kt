@@ -3,7 +3,6 @@ package com.faldez.shachi.service
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.*
@@ -14,14 +13,16 @@ import androidx.documentfile.provider.DocumentFile
 import com.faldez.shachi.R
 import com.faldez.shachi.model.Post
 import com.faldez.shachi.util.MimeUtil
-import java.io.InputStream
-import java.io.OutputStream
 import java.net.URL
-import java.net.URLConnection
 
 class DownloadService : Service() {
     private var serviceLooper: Looper? = null
     private var serviceHandler: ServiceHandler? = null
+
+    companion object {
+        const val TAG = "ServiceHandler"
+        const val PROGRESS_MAX = 100
+    }
 
     private inner class ServiceHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message) {
@@ -29,9 +30,8 @@ class DownloadService : Service() {
             val fileUrl = post!!.fileUrl
             val fileUri = Uri.parse(fileUrl)
 
-            val downloadDir = msg.data.getString("download_dir")
-            val mime = MimeUtil.getMimeTypeFromUrl(fileUrl)
-            downloadDir?.let {
+            msg.data.getString("download_dir")?.let {
+                val mime = MimeUtil.getMimeTypeFromUrl(fileUrl)
                 DocumentFile.fromTreeUri(applicationContext, Uri.parse(it))
                     ?.createFile(mime ?: "image/*", fileUri.lastPathSegment!!)
             }?.let { file ->
@@ -41,91 +41,73 @@ class DownloadService : Service() {
                     .setContentText(resources.getText(R.string.downloading))
                     .setPriority(NotificationCompat.PRIORITY_LOW)
 
-                val connection: URLConnection
-                NotificationManagerCompat.from(applicationContext).apply {
-                    var input: InputStream? = null
-                    var output: OutputStream? = null
+                val notificationManager = NotificationManagerCompat.from(applicationContext)
+                try {
+                    val connection = URL(fileUrl).openConnection()
+                    val fileLength = connection.contentLength
+                    connection.getInputStream()?.use { input ->
+                        contentResolver.openOutputStream(file.uri)?.use { output ->
+                            val indeterminate = fileLength <= 0
+                            builder.setProgress(PROGRESS_MAX, 0, indeterminate)
+                            notificationManager.notify(post.postId, builder.build())
 
-                    try {
-                        val url = URL(fileUrl)
-                        connection = url.openConnection()
-                        connection.connect()
+                            var total = 0
+                            val data = ByteArray(4096)
+                            var lastNotify = 0
+                            while (true) {
+                                val count = input.read(data)
+                                if (count == -1) {
+                                    break
+                                }
 
-                        val fileLength = connection.contentLength
-                        input = connection.getInputStream()
-                        output = contentResolver.openOutputStream(file.uri)
-
-                        val determinate = fileLength > 0
-                        builder.setProgress(100, 0, !determinate)
-                        notify(post.postId, builder.build())
-
-                        var total = 0
-                        val data = ByteArray(1024)
-
-                        do {
-                            val count = input.read(data)
-                            if (count > 0) {
                                 total += count
                                 if (fileLength > 0) {
-                                    builder.setProgress(100,
-                                        (total * 100 / fileLength),
-                                        !determinate)
-                                    notify(post.postId, builder.build())
+                                    val progress = (total * 100 / fileLength)
+                                    if (progress - lastNotify >= 10) {
+                                        builder.setProgress(PROGRESS_MAX, progress, indeterminate)
+                                        notificationManager.notify(post.postId, builder.build())
+                                        lastNotify = progress
+
+                                        Log.i(TAG, "notify: $progress")
+                                    }
+                                    Log.i(TAG,
+                                        "downloading ${post.postId}: $progress% from $fileLength")
                                 }
-                                output?.write(data, 0, count)
+                                output.write(data, 0, count)
                             }
-                        } while (count != -1)
-                    } catch (e: Exception) {
-                        Log.e("ServiceHandler", "$e")
-                    } finally {
-                        output?.close()
-                        input?.close()
+                        }
                     }
 
-                    val downloaded = contentResolver.openInputStream(file.uri)
-                    val bitmap = BitmapFactory.decodeStream(downloaded)
-
-                    val intent = Intent(Intent.ACTION_VIEW, file.uri).apply {
+                    val contentIntent = Intent(Intent.ACTION_VIEW, file.uri).apply {
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                    }.let {
+                        PendingIntent.getActivity(applicationContext,
+                            0,
+                            it,
+                            PendingIntent.FLAG_IMMUTABLE)
                     }
-                    val contentIntent = PendingIntent.getActivity(applicationContext,
-                        0,
-                        intent,
-                        PendingIntent.FLAG_IMMUTABLE)
-                    builder.setContentText(resources.getString(R.string.download_finished))
+
+                    contentResolver.openInputStream(file.uri)?.use {
+                        val bitmap = BitmapFactory.decodeStream(it)
+                        Log.i(TAG, "download ${post.postId} finished: ${bitmap != null}")
+
+                        builder.setContentText(resources.getString(R.string.download_finished))
+                            .setProgress(0, 0, false)
+                            .setStyle(NotificationCompat.BigPictureStyle()
+                                .bigPicture(bitmap))
+                            .setContentIntent(contentIntent)
+                            .setPriority(NotificationCompat.PRIORITY_LOW)
+                        notificationManager.notify(post.postId, builder.build())
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "$e")
+                    builder.setContentText("Download error: $e")
                         .setProgress(0, 0, false)
-                        .setStyle(NotificationCompat.BigPictureStyle().bigPicture(bitmap))
-                        .setContentIntent(contentIntent)
-                    notify(post.postId, builder.build())
+                    notificationManager.notify(post.postId, builder.build())
                 }
             }
 
             stopSelf(msg.arg1)
-        }
-
-        private fun publishProgress(progress: Int) {
-
-        }
-
-        private fun showNotification(text: Int, imageUri: Uri, preview: Bitmap? = null) {
-            val intent = Intent(Intent.ACTION_VIEW, imageUri).apply {
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-            }
-            val contentIntent = PendingIntent.getActivity(applicationContext,
-                0,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE)
-            var builder = NotificationCompat.Builder(applicationContext, "DOWNLOAD")
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(resources.getText(text))
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setContentIntent(contentIntent)
-            if (preview != null) {
-                builder = builder.setStyle(NotificationCompat.BigPictureStyle().bigPicture(preview))
-            }
-            with(NotificationManagerCompat.from(applicationContext)) {
-                notify(0, builder.build())
-            }
         }
     }
 
