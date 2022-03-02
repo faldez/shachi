@@ -20,10 +20,10 @@
         <action
             android:id="@+id/action_favorite_to_favoritepostslide"
             app:destination="@id/favoritePostSlideFragment"
-            app:enterAnim="@anim/slide_in_up"
+            app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down" />
+            app:popExitAnim="@anim/slide_out" />
     </fragment>
     <fragment
         android:id="@+id/favoritePostSlideFragment"
