@@ -86,28 +86,18 @@ abstract class BaseBrowseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        if (resources.getBoolean(R.bool.isTablet)) {
-            (activity as MainActivity).binding.sideNavigationRail?.headerView?.setOnClickListener {
-                navigateToSearch()
-            }
-        } else {
-            binding.searchFloatingButton?.setOnClickListener {
-                navigateToSearch()
-            }
-        }
         prepareAppBar()
     }
 
     private fun navigateToSearch() {
         val bundle = bundleOf("server" to viewModel.state.value.server,
             "tags" to viewModel.state.value.tags)
-        if (!resources.getBoolean(R.bool.isTablet)) {
-            findNavController().navigate(R.id.action_browse_to_search, bundle)
-        } else {
+        if (resources.getBoolean(R.bool.isTablet)) {
             val searchFragment = SearchFragment()
             searchFragment.arguments = bundle
             searchFragment.show(requireActivity().supportFragmentManager, "dialog")
+        } else {
+            findNavController().navigate(R.id.action_browse_to_search, bundle)
         }
     }
 
@@ -123,6 +113,10 @@ abstract class BaseBrowseFragment : Fragment() {
 
         binding.searchPostTopAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+                R.id.search_button -> {
+                    navigateToSearch()
+                    true
+                }
                 R.id.save_search_button -> {
                     if (viewModel.state.value.tags.isEmpty()) {
                         Toast.makeText(requireContext(),
@@ -259,9 +253,9 @@ abstract class BaseBrowseFragment : Fragment() {
             postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (dy < 0) {
-                        (activity as MainActivity).showNavigation(callback = { binding.searchFloatingButton?.show() })
+                        (activity as MainActivity).showNavigation()
                     } else if (dy > 0) {
-                        (activity as MainActivity).hideNavigation(callback = { binding.searchFloatingButton?.hide() })
+                        (activity as MainActivity).hideNavigation()
                     }
                 }
             })
