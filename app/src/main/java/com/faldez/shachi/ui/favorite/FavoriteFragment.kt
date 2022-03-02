@@ -71,7 +71,6 @@ class FavoriteFragment : Fragment() {
                 navigateToSearch()
             }
         }
-        prepareAppBar()
     }
 
     private fun navigateToSearch() {
@@ -82,13 +81,6 @@ class FavoriteFragment : Fragment() {
             val searchFragment = SearchFragment()
             searchFragment.arguments = bundle
             searchFragment.show(requireActivity().supportFragmentManager, "dialog")
-        }
-    }
-
-    private fun prepareAppBar() {
-        if (!resources.getBoolean(R.bool.isTablet)) {
-            binding.favoriteAppbarLayout.statusBarForeground =
-                MaterialShapeDrawable.createWithElevationOverlay(requireContext())
         }
     }
 

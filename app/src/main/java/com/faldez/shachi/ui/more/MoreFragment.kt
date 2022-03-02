@@ -23,15 +23,4 @@ class MoreFragment : Fragment() {
             .replace(R.id.moreFrameLayout, MoreSettingsFragment()).commit()
         return binding.root
     }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        prepareAppBar()
-    }
-
-    private fun prepareAppBar() {
-        binding.moreAppbarLayout.statusBarForeground =
-            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-        binding.moreTopappbar.menu.clear()
-    }
 }

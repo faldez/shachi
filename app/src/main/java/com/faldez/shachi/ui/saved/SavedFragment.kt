@@ -103,9 +103,7 @@ class SavedFragment : Fragment() {
         override fun onScroll(position: Int, scroll: Int) {
             Log.d("SavedFragment", "position=$position scroll=$scroll")
             viewModel.putScroll(position, scroll)
-
         }
-
     }
 
     override fun onCreateView(
@@ -122,10 +120,7 @@ class SavedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (!resources.getBoolean(R.bool.isTablet)) {
-            binding.savedAppbarLayout.statusBarForeground =
-                MaterialShapeDrawable.createWithElevationOverlay(requireContext())
-        }
+
 
         val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
         val quality = preferences.getString("preview_quality", null) ?: "preview"
