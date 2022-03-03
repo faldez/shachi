@@ -55,8 +55,9 @@ class RootSettingsFragment : PreferenceFragmentCompat(),
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == "theme") {
-            (activity as MainActivity).setTheme()
+        when (key) {
+            "theme" -> (activity as MainActivity).setTheme()
+            "send_crash_reports" -> (activity as MainActivity).setSendCrashReports()
         }
     }
 }

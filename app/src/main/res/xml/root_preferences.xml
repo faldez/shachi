@@ -82,4 +82,11 @@
             app:key="download_path" />
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/advanced">
+        <SwitchPreference
+            app:defaultValue="true"
+            app:key="send_crash_reports"
+            app:title="@string/send_crash_reports" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

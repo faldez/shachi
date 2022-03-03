@@ -33,6 +33,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
         <service android:name=".service.DownloadService" />
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
     </application>
 
 </manifest>

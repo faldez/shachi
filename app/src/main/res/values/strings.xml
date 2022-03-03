@@ -110,4 +110,6 @@
     <string name="restore_summary">Restore data</string>
     <string name="select_image">Select image</string>
     <string name="there_is_no_comment">There is no comment</string>
+    <string name="advanced">Advanced</string>
+    <string name="send_crash_reports">Send crash reports</string>
 </resources>

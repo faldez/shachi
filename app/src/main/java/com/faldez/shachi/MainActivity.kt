@@ -23,6 +23,8 @@ import androidx.preference.PreferenceManager
 import com.faldez.shachi.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigationrail.NavigationRailView
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.google.modernstorage.permissions.RequestAccess
 import com.google.modernstorage.permissions.StoragePermissions
 
@@ -62,6 +64,7 @@ class MainActivity : AppCompatActivity(),
             Log.d("MainActivity", "addOnDestinationChangedListener $isShow")
         }
         setTheme()
+        setSendCrashReports()
 
         val permissions = checkPermission()
         Log.d("MainActivity", "permission $permissions")
@@ -96,9 +99,14 @@ class MainActivity : AppCompatActivity(),
         AppCompatDelegate.setDefaultNightMode(mode)
     }
 
+    fun setSendCrashReports() {
+        val isSend = sharedPreferences.getBoolean("send_crash_reports", true)
+        Firebase.crashlytics.setCrashlyticsCollectionEnabled(isSend)
+    }
+
     override fun onPreferenceStartFragment(
         caller: PreferenceFragmentCompat,
-        pref: Preference
+        pref: Preference,
     ): Boolean {
         when (pref.key) {
             "settings" -> {
