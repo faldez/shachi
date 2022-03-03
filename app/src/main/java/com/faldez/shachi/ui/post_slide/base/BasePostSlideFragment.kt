@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -13,11 +12,13 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -119,13 +120,15 @@ abstract class BasePostSlideFragment : Fragment() {
     }
 
     private fun onPhotoTap() {
+        val windowInsetsController =
+            ViewCompat.getWindowInsetsController(requireActivity().window.decorView) ?: return
+        // Configure the behavior of the hidden system bars
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
         isToolbarHide = if (isToolbarHide) {
             showAppBar()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                activity?.window?.insetsController?.show(WindowInsets.Type.systemBars())
-            } else {
-                activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-            }
+            windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
 
             val value = TypedValue()
             context?.theme?.resolveAttribute(R.attr.colorSurface, value, true)
@@ -133,11 +136,8 @@ abstract class BasePostSlideFragment : Fragment() {
             false
         } else {
             hideAppBar()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                activity?.window?.insetsController?.hide(WindowInsets.Type.systemBars())
-            } else {
-                activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-            }
+            // Hide both the status bar and the navigation bar
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
 
             binding.postSlideLayout.setBackgroundColor(resources.getColor(android.R.color.black,
                 null))
@@ -349,11 +349,11 @@ abstract class BasePostSlideFragment : Fragment() {
     }
 
     private fun AppBarLayout.hide() {
-        if (!isToolbarHide) animate().translationY(-height.toFloat())
+        if (!isToolbarHide) animate().alpha(0f)
     }
 
     private fun AppBarLayout.show() {
-        if (isToolbarHide) animate().translationY(0f)
+        if (isToolbarHide) animate().alpha(1f)
     }
 
     abstract fun deleteFavoritePost(post: Post)
