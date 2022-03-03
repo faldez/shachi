@@ -254,6 +254,8 @@ class SavedSearchPostAdapter(
                     binding.favoriteIcon.isGone = true
                 if (MimeUtil.getMimeTypeFromUrl(item.fileUrl)?.startsWith("video") == true)
                     binding.movieTypeIcon.isVisible = true
+                else
+                    binding.movieTypeIcon.isGone = true
                 binding.root.setOnClickListener {
                     listener.onClick(savedSearchServer, bindingAdapterPosition)
                 }
