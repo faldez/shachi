@@ -54,10 +54,10 @@ class MainActivity : AppCompatActivity(),
             }
             if (isShow) {
                 showNavigation()
-                binding.sideNavigationRail?.show()
+//                binding.sideNavigationRail?.show()
             } else {
                 hideNavigation()
-                binding.sideNavigationRail?.hide()
+//                binding.sideNavigationRail?.hide()
             }
             Log.d("MainActivity", "addOnDestinationChangedListener $isShow")
         }
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(),
             supportFragmentManager.findFragmentById(R.id.navFragment) as NavHostFragment
         navController = navFragment.navController
         binding.bottomNavigationView?.setupWithNavController(navController)
-        binding.sideNavigationRail?.setupWithNavController(navController)
+//        binding.sideNavigationRail?.setupWithNavController(navController)
     }
 
     override fun onSupportNavigateUp(): Boolean {
