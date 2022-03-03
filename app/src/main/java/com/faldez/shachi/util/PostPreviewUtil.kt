@@ -7,6 +7,8 @@ import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.Downsampler
 import com.bumptech.glide.request.RequestOptions
 import com.faldez.shachi.R
@@ -40,7 +42,7 @@ fun bindPostImagePreview(
         val drawable = ResourcesCompat.getDrawable(imageView.resources,
             R.drawable.nsfw_placeholder,
             null)
-            ?.toBitmap(previewWidth, previewHeight)
+            ?.toBitmap(previewWidth, previewHeight, Bitmap.Config.RGB_565)
 
         Glide.with(imageView.context).load(drawable)
     } else {
@@ -54,12 +56,14 @@ fun bindPostImagePreview(
             .placeholder(BitmapDrawable(imageView.resources,
                 Bitmap.createBitmap(previewWidth,
                     previewHeight,
-                    Bitmap.Config.ARGB_8888)))
+                    Bitmap.Config.RGB_565)))
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        glide = glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG, true))
+        glide = glide.apply(RequestOptions().set(Downsampler.ALLOW_HARDWARE_CONFIG, true)
+            .format(DecodeFormat.PREFER_RGB_565))
     }
 
-    glide.override(previewWidth, previewHeight).into(imageView)
+    glide.diskCacheStrategy(DiskCacheStrategy.ALL).override(previewWidth, previewHeight)
+        .into(imageView)
 }

@@ -1,89 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.Material3.CardView.Filled"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="?attr/colorSurface"
-    app:cardCornerRadius="0dp">
+    android:padding="16dp">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/titlePostsLayout"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/saved_search_tags_text_view"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginBottom="16dp"
+        android:text="title"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        app:layout_constraintBottom_toTopOf="@id/saved_search_item_recycler_view"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/saved_search_item_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="112dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/tags_text_view"
+        app:layout_constraintTop_toBottomOf="@id/saved_search_tags_text_view" />
 
-            <TextView
-                android:id="@+id/saved_search_tags_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceHeadlineSmall" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/saved_search_item_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="112dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/tags_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceCaption" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <TextView
-            android:id="@+id/saved_search_server_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:textAppearance="?attr/textAppearanceCaption"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titlePostsLayout" />
+    <TextView
+        android:id="@+id/tags_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="16dp"
+        android:text="tags"
+        android:textAppearance="?attr/textAppearanceSubtitle1"
+        app:layout_constraintBottom_toTopOf="@id/saved_search_server_text_view"
+        app:layout_constraintTop_toBottomOf="@id/saved_search_item_recycler_view" />
 
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titlePostsLayout">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/refreshSavedSearchButton"
-                style="@style/Widget.Material3.Button.IconButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/ic_baseline_refresh_24" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/editSavedSearchButton"
-                style="@style/Widget.Material3.Button.IconButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/ic_baseline_edit_24" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/deleteSavedSearchButton"
-                style="@style/Widget.Material3.Button.IconButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/ic_baseline_delete_24" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
+    <TextView
+        android:id="@+id/saved_search_server_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="server"
+        android:textAppearance="?attr/textAppearanceCaption"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tags_text_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

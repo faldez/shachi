@@ -3,8 +3,7 @@ package com.faldez.shachi.ui.saved
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.util.SparseArray
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.util.forEach
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
@@ -31,6 +30,7 @@ class SavedSearchAdapter(
     private val explicitFilter: String,
 ) : ListAdapter<SavedSearchPost, SavedSearchAdapter.SavedSearchViewHolder>(COMPARATOR) {
     private val viewPool = RecyclerView.RecycledViewPool()
+    val adapters: MutableMap<Int, SavedSearchPostAdapter> = mutableMapOf()
 
     fun setScrollPositions(newScrollPositions: SparseArray<Int>) {
         newScrollPositions.forEach { key, value ->
@@ -47,17 +47,11 @@ class SavedSearchAdapter(
         val binding = SavedSearchItemBinding.inflate(inflater, parent, false)
 
         binding.savedSearchItemRecyclerView.apply {
-            layoutManager = if (gridMode == "staggered") {
-                StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL).apply {
-                    gapStrategy =
-                        StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
-                }
-            } else {
-                LinearLayoutManager(binding.root.context,
-                    LinearLayoutManager.HORIZONTAL,
-                    false).apply {
-                    recycleChildrenOnDetach = true
-                }
+            layoutManager = LinearLayoutManager(binding.root.context,
+                LinearLayoutManager.HORIZONTAL,
+                false).apply {
+                recycleChildrenOnDetach = true
+                initialPrefetchItemCount = 10
             }
             setRecycledViewPool(viewPool)
             setHasFixedSize(true)
@@ -66,16 +60,40 @@ class SavedSearchAdapter(
         return SavedSearchViewHolder(
             binding,
             listener,
-            gridMode,
-            quality,
-            questionableFilter,
-            explicitFilter,
         )
     }
 
     override fun onBindViewHolder(holder: SavedSearchViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item,scrollPositions)
+
+        var adapter = adapters[position]
+        if (adapter == null) {
+            adapter = SavedSearchPostAdapter(
+                listener = listener,
+                savedSearchServer = item.savedSearch,
+                gridMode = gridMode,
+                quality = quality,
+                questionableFilter = questionableFilter,
+                explicitFilter = explicitFilter,
+            )
+            adapters[position] = adapter
+
+            CoroutineScope(Dispatchers.IO).launch {
+                item.posts.collectLatest {
+                    if (it != null) {
+                        adapter.submitData(it.filter { item ->
+                            when (item.rating) {
+                                Rating.Questionable -> questionableFilter != "mute"
+                                Rating.Explicit -> explicitFilter != "mute"
+                                Rating.Safe -> true
+                            }
+                        })
+                    }
+                }
+            }
+        }
+
+        holder.bind(adapter, item, scrollPositions)
     }
 
     companion object {
@@ -89,21 +107,22 @@ class SavedSearchAdapter(
             override fun areContentsTheSame(
                 oldItem: SavedSearchPost,
                 newItem: SavedSearchPost,
-            ): Boolean = oldItem == newItem
+            ): Boolean = oldItem.savedSearch == newItem.savedSearch
         }
     }
 
     class SavedSearchViewHolder(
-        private val binding: SavedSearchItemBinding,
+        val binding: SavedSearchItemBinding,
         private val listener: SavedSearchAdapterListener,
-        private val gridMode: String,
-        private val quality: String,
-        private val questionableFilter: String,
-        private val explicitFilter: String,
     ) :
-        RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root), View.OnCreateContextMenuListener {
+
+        init {
+            binding.root.setOnCreateContextMenuListener(this)
+        }
 
         fun bind(
+            adapter: SavedSearchPostAdapter,
             item: SavedSearchPost,
             scrollPositions: SparseArray<Int>,
         ) {
@@ -113,57 +132,45 @@ class SavedSearchAdapter(
             binding.savedSearchServerTextView.text = item.savedSearch.server.title
             binding.tagsTextView.text = SpannableStringBuilder(item.savedSearch.savedSearch.tags)
 
-            val adapter = SavedSearchPostAdapter(
-                listener = listener,
-                savedSearchServer = item.savedSearch,
-                gridMode = gridMode,
-                quality = quality,
-                questionableFilter = questionableFilter,
-                explicitFilter = explicitFilter,
-            ).apply {
-                stateRestorationPolicy =
-                    StateRestorationPolicy.PREVENT_WHEN_EMPTY
-            }
-
             binding.savedSearchItemRecyclerView.apply {
-                swapAdapter(adapter, false)
-            }
-
-            scrollPositions[item.savedSearch.savedSearch.savedSearchId]?.let { scroll ->
-                if (scroll > 0) {
-                    binding.savedSearchItemRecyclerView.post {
-                        binding.savedSearchItemRecyclerView.layoutManager?.scrollToPosition(scroll)
-                    }
-                }
+                swapAdapter(adapter, true)
             }
 
             binding.root.setOnClickListener {
                 listener.onBrowse(item.savedSearch)
             }
-            binding.refreshSavedSearchButton.setOnClickListener {
-                adapter.refresh()
-            }
-            binding.editSavedSearchButton.setOnClickListener {
-                listener.onEdit(item.savedSearch)
-            }
-            binding.deleteSavedSearchButton.setOnClickListener {
-                listener.onDelete(item.savedSearch)
-            }
 
-            binding.savedSearchItemRecyclerView.post {
-                CoroutineScope(Dispatchers.Main).launch {
-                    item.posts.collectLatest {
-                        if (it != null) {
-                            adapter.submitData(it.filter { item ->
-                                when (item.rating) {
-                                    Rating.Questionable -> questionableFilter != "mute"
-                                    Rating.Explicit -> explicitFilter != "mute"
-                                    Rating.Safe -> true
-                                }
-                            })
-                        }
+            scrollPositions[item.savedSearch.savedSearch.savedSearchId]?.let { scroll ->
+                if (scroll > 0) {
+                    binding.savedSearchItemRecyclerView.post {
+                        binding.savedSearchItemRecyclerView.layoutManager?.scrollToPosition(
+                            scroll)
                     }
                 }
+            }
+        }
+
+        override fun onCreateContextMenu(
+            menu: ContextMenu?,
+            v: View?,
+            menuInfo: ContextMenu.ContextMenuInfo?,
+        ) {
+            val refresh = menu?.add(Menu.NONE, 1, 1, "Refresh")
+            val edit = menu?.add(Menu.NONE, 2, 2, "Edit")
+            val delete = menu?.add(Menu.NONE, 3, 3, "Delete")
+
+            refresh?.setOnMenuItemClickListener {
+                listener.onRefresh(bindingAdapterPosition)
+                true
+            }
+
+            edit?.setOnMenuItemClickListener {
+                listener.onEdit(bindingAdapterPosition)
+                true
+            }
+            delete?.setOnMenuItemClickListener {
+                listener.onDelete(bindingAdapterPosition)
+                true
             }
         }
     }
@@ -245,7 +252,7 @@ class SavedSearchPostAdapter(
                 }
             }
 
-            bindPostImagePreview(imageView, item, gridMode, quality, hideQuestionable, hideExplicit)
+            bindPostImagePreview(imageView, item, "square", quality, hideQuestionable, hideExplicit)
         }
     }
 }
@@ -253,7 +260,8 @@ class SavedSearchPostAdapter(
 interface SavedSearchAdapterListener {
     fun onBrowse(savedSearchServer: SavedSearchServer)
     fun onClick(savedSearchServer: SavedSearchServer, position: Int)
-    fun onDelete(savedSearchServer: SavedSearchServer)
-    fun onEdit(savedSearchServer: SavedSearchServer)
+    fun onRefresh(position: Int)
+    fun onDelete(position: Int)
+    fun onEdit(position: Int)
     fun onScroll(position: Int, scroll: Int)
 }

@@ -75,7 +75,12 @@ class SavedFragment : Fragment() {
                     bundle)
         }
 
-        override fun onDelete(savedSearchServer: SavedSearchServer) {
+        override fun onRefresh(position: Int) {
+            savedSearchAdapter.adapters[position]?.refresh()
+        }
+
+        override fun onDelete(position: Int) {
+            val savedSearchServer = savedSearchAdapter.currentList[position].savedSearch
             MaterialAlertDialogBuilder(requireContext()).setTitle("Delete " + savedSearchServer.savedSearch.savedSearchTitle)
                 .setMessage("Are you Sure?")
                 .setPositiveButton("Yes"
@@ -83,7 +88,8 @@ class SavedFragment : Fragment() {
                 .setNegativeButton("No", null).show()
         }
 
-        override fun onEdit(savedSearchServer: SavedSearchServer) {
+        override fun onEdit(position: Int) {
+            val savedSearchServer = savedSearchAdapter.currentList[position].savedSearch
             val dialog =
                 MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
                     .setTitle(resources.getString(R.string.update_title))
