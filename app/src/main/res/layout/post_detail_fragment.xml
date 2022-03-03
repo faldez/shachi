@@ -11,14 +11,12 @@
         android:id="@+id/post_detail_appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/postSlideToolbarBackground"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/post_detail_topappbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_gravity="top"
             app:navigationIcon="@drawable/ic_baseline_close_24"
             app:menu="@menu/post_detail_menu"
             app:title="@string/details" />
@@ -27,8 +25,9 @@
 
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_weight="1">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"

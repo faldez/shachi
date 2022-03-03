@@ -74,8 +74,9 @@ class PostDetailFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         prepareAppbar()
 
-        if (isTablet)
+        if (isTablet) {
             (dialog as AlertDialog?)?.setView(view)
+        }
     }
 
     private fun prepareAppbar() {
@@ -129,13 +130,6 @@ class PostDetailFragment : DialogFragment() {
             ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
                 v.updatePadding(bottom = systemBars.bottom)
-                insets
-            }
-        } else {
-            ViewCompat.setOnApplyWindowInsetsListener(binding.scrollView) { v, insets ->
-                val value = TypedValue()
-                requireContext().theme.resolveAttribute(R.attr.dialogPreferredPadding, value, true)
-                v.updatePadding(bottom = value.data)
                 insets
             }
         }
