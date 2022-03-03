@@ -5,10 +5,14 @@ import android.util.Log
 import android.util.SparseArray
 import android.view.*
 import androidx.core.util.forEach
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.paging.filter
-import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.databinding.SavedSearchItemBinding
 import com.faldez.shachi.model.Post
@@ -244,15 +248,18 @@ class SavedSearchPostAdapter(
             imageView.layoutParams = imageLayoutParams
 
             if (item != null) {
-                binding.favoriteIcon.isVisible = item.favorite
-                binding.movieTypeIcon.isVisible =
-                    MimeUtil.getMimeTypeFromUrl(item.fileUrl)?.startsWith("video") ?: false
+                if (item.favorite)
+                    binding.favoriteIcon.isVisible = true
+                else
+                    binding.favoriteIcon.isGone = true
+                if (MimeUtil.getMimeTypeFromUrl(item.fileUrl)?.startsWith("video") == true)
+                    binding.movieTypeIcon.isVisible = true
                 binding.root.setOnClickListener {
                     listener.onClick(savedSearchServer, bindingAdapterPosition)
                 }
             }
 
-            bindPostImagePreview(imageView, item, "square", quality, hideQuestionable, hideExplicit)
+            bindPostImagePreview(imageView, item, gridMode, quality, hideQuestionable, hideExplicit)
         }
     }
 }

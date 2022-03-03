@@ -1,48 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.Material3.CardView.Filled"
+    android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:checkable="true"
-    android:clickable="true"
-    app:checkedIcon="@drawable/ic_baseline_favorite_24"
-    app:checkedIconGravity="BOTTOM_END"
     android:layout_margin="2dp">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinator_layout"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/image_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        app:shapeAppearance="@style/ShapeAppearanceImageRounded" />
 
-        <ImageView
-            android:id="@+id/image_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop" />
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/favorite_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="top|end"
+        android:background="@color/loadingCardBackgroundColor"
+        android:src="@drawable/ic_baseline_favorite_24"
+        android:tint="@color/loadingCardColor"
+        android:visibility="gone"
+        app:shapeAppearance="@style/ShapeAppearanceImageRounded" />
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/favorite_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|end"
-            android:background="@color/loadingCardBackgroundColor"
-            android:src="@drawable/ic_baseline_favorite_24"
-            android:tint="@color/loadingCardColor"
-            android:visibility="gone"
-            app:shapeAppearance="@style/ShapeAppearanceImageRounded" />
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/movie_type_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:background="@color/loadingCardBackgroundColor"
-            android:src="@drawable/ic_baseline_local_movies_24"
-            android:tint="@color/loadingCardColor"
-            app:shapeAppearance="@style/ShapeAppearanceImageRounded"
-            android:visibility="gone" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-</com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/movie_type_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="bottom|end"
+        android:background="@color/loadingCardBackgroundColor"
+        android:src="@drawable/ic_baseline_local_movies_24"
+        android:tint="@color/loadingCardColor"
+        android:visibility="gone"
+        app:shapeAppearance="@style/ShapeAppearanceImageRounded" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
