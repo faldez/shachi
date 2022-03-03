@@ -40,5 +40,8 @@
             app:fragment="com.faldez.shachi.ui.oss.OssFragment"
             app:key="oss_notices"
             app:title="@string/open_source_notices" />
+        <Preference
+            app:key="privacy_policy"
+            app:title="@string/privacy_policy" />
     </PreferenceCategory>
 </PreferenceScreen>
