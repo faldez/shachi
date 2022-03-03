@@ -119,15 +119,11 @@ class SavedFragment : Fragment() {
     ): View {
         binding = SavedFragmentBinding.inflate(inflater, container, false)
 
-
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
 
         val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
         val quality = preferences.getString("preview_quality", null) ?: "preview"
@@ -144,13 +140,19 @@ class SavedFragment : Fragment() {
             scrollPositions = viewModel.scrollState.value
         )
 
-
         val layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.savedSearchRecyclerView.apply {
             swapAdapter(savedSearchAdapter, false)
             setLayoutManager(layoutManager)
             setHasFixedSize(true)
+        }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            savedSearchAdapter.adapters.forEach { (_, adapter) ->
+                adapter.refresh()
+            }
+            binding.swipeRefreshLayout.isRefreshing = false
         }
 
         val hideBottomBarOnScroll = preferences.getBoolean("hide_bottom_bar_on_scroll", true)
