@@ -14,8 +14,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -58,6 +56,20 @@ abstract class BaseBrowseFragment : Fragment() {
 
     private val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
+    }
+
+    private val hideBottomBarOnScroll by lazy {
+        preferences.getBoolean("hide_bottom_bar_on_scroll", true)
+    }
+
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            if (dy < 0) {
+                (activity as MainActivity).showNavigation()
+            } else if (dy > 0) {
+                (activity as MainActivity).hideNavigation()
+            }
+        }
     }
 
     override fun onCreateView(
@@ -116,6 +128,8 @@ abstract class BaseBrowseFragment : Fragment() {
         binding.searchPostTopAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.search_button -> {
+                    if (hideBottomBarOnScroll) binding.postsRecyclerView.removeOnScrollListener(
+                        scrollListener)
                     navigateToSearch()
                     true
                 }
@@ -250,28 +264,15 @@ abstract class BaseBrowseFragment : Fragment() {
             }
         })
 
-        val hideBottomBarOnScroll = preferences.getBoolean("hide_bottom_bar_on_scroll", true)
         if (hideBottomBarOnScroll) {
-            postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dy < 0) {
-                        (activity as MainActivity).showNavigation()
-                    } else if (dy > 0) {
-                        (activity as MainActivity).hideNavigation()
-                    }
-                }
-            })
+            postsRecyclerView.addOnScrollListener(scrollListener)
 
-            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-                val bottom = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    80f,
-                    Resources.getSystem().displayMetrics)
-                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                val footer =
-                    EmptyFooterDecoration(systemBars.bottom + bottom.toInt())
-                postsRecyclerView.addItemDecoration(footer)
-                insets
-            }
+            val bottom = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                80f,
+                Resources.getSystem().displayMetrics)
+            val footer =
+                EmptyFooterDecoration(bottom.toInt())
+            postsRecyclerView.addItemDecoration(footer)
         }
 
         retryButton.isVisible = false
