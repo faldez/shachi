@@ -2,9 +2,11 @@ package com.faldez.shachi.ui.saved
 
 import android.app.Dialog
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +36,6 @@ import com.faldez.shachi.repository.SavedSearchRepository
 import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.widget.CustomDividerItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -158,15 +159,18 @@ class SavedFragment : Fragment() {
                     }
                 }
             })
-        }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            binding.savedSearchRecyclerView.addItemDecoration(CustomDividerItemDecoration(
-                requireContext(),
-                layoutManager.orientation,
-                if (hideBottomBarOnScroll) systemBars.bottom else 0))
-            insets
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                val bottom = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    80f,
+                    Resources.getSystem().displayMetrics)
+                binding.savedSearchRecyclerView.addItemDecoration(CustomDividerItemDecoration(
+                    requireContext(),
+                    layoutManager.orientation,
+                    systemBars.bottom + bottom.toInt()))
+                insets
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

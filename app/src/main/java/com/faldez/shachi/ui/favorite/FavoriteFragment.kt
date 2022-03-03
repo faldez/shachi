@@ -2,8 +2,10 @@ package com.faldez.shachi.ui.favorite
 
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -147,8 +149,11 @@ class FavoriteFragment : Fragment() {
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                val bottom = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    80f,
+                    Resources.getSystem().displayMetrics)
                 val footer =
-                    EmptyFooterDecoration(systemBars.bottom)
+                    EmptyFooterDecoration(systemBars.bottom + bottom.toInt())
                 favoriteRecyclerView.addItemDecoration(footer)
                 insets
             }
