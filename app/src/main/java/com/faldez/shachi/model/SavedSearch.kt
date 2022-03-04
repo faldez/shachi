@@ -11,6 +11,9 @@ data class SavedSearch(
     val tags: String,
     @ColumnInfo(name = "saved_search_title") val savedSearchTitle: String,
     @ColumnInfo(name = "server_id") val serverId: Int,
+    @ColumnInfo(name = "saved_search_order") val order: Int,
+    @ColumnInfo(name = "date_added",
+        defaultValue = "CURRENT_TIMESTAMP") val dateAdded: Long,
 )
 
 data class SavedSearchServer(

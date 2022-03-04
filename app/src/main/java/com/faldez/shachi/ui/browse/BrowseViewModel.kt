@@ -7,7 +7,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.faldez.shachi.model.*
+import com.faldez.shachi.model.Post
+import com.faldez.shachi.model.SearchHistory
+import com.faldez.shachi.model.ServerView
+import com.faldez.shachi.model.TagDetail
 import com.faldez.shachi.repository.*
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.CoroutineScope
@@ -131,9 +134,9 @@ class BrowseViewModel constructor(
     fun saveSearch(title: String?) {
         viewModelScope.launch {
             state.value.server?.let { server ->
-                savedSearchRepository.insert(SavedSearch(serverId = server.serverId,
+                savedSearchRepository.insert(serverId = server.serverId,
                     tags = state.value.tags,
-                    savedSearchTitle = title ?: state.value.tags.split(" ").first()))
+                    title = title ?: state.value.tags.split(" ").first())
             }
         }
     }

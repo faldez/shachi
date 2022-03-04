@@ -143,7 +143,7 @@ class MoreSettingsFragment : PreferenceFragmentCompat() {
     private suspend fun restoreSavedSearch(db: AppDatabase, data: Backup) {
         val savedSearchRepository = SavedSearchRepository(db)
         data.savedSearches?.forEach {
-            savedSearchRepository.insert(it)
+            savedSearchRepository.insert(it.tags, it.savedSearchTitle, it.serverId)
         }
     }
 

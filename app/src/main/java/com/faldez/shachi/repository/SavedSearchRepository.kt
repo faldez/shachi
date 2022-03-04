@@ -14,8 +14,8 @@ class SavedSearchRepository(private val db: AppDatabase) {
         return db.savedSearchDao().getAll()
     }
 
-    suspend fun insert(savedSearch: SavedSearch) {
-        db.savedSearchDao().insert(savedSearch)
+    suspend fun insert(tags: String, title: String, serverId: Int) {
+        db.savedSearchDao().insert(tags, title, serverId)
     }
 
     suspend fun delete(savedSearch: SavedSearch) {
