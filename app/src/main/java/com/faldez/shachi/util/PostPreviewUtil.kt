@@ -23,7 +23,7 @@ fun bindPostImagePreview(
     hideQuestionable: Boolean,
     hideExplicit: Boolean,
 ) {
-    val previewWidth: Int = item?.previewWidth ?: 150
+    val previewWidth: Int = item?.previewWidth ?: 250
     val previewHeight: Int = if (item != null) {
         if (gridMode == "staggered") {
             item.previewHeight
@@ -32,7 +32,7 @@ fun bindPostImagePreview(
             previewWidth
         }
     } else {
-        150
+        250
     }
 
     var glide = if (item == null) {
