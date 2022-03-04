@@ -3,17 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="?attr/colorSurface"
+    android:background="?attr/selectableItemBackground"
     android:padding="16dp">
 
     <TextView
         android:id="@+id/saved_search_tags_text_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="title"
         android:textAppearance="?attr/textAppearanceHeadline6"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@id/saved_search_item_recycler_view"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/saved_search_server_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="server"
+        android:textAppearance="?attr/textAppearanceCaption"
+        app:layout_constraintBottom_toTopOf="@id/saved_search_item_recycler_view"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -28,20 +40,11 @@
         android:id="@+id/tags_text_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="16dp"
         android:text="tags"
         android:textAppearance="?attr/textAppearanceSubtitle1"
-        app:layout_constraintBottom_toTopOf="@id/saved_search_server_text_view"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/saved_search_item_recycler_view" />
 
 
-    <TextView
-        android:id="@+id/saved_search_server_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="server"
-        android:textAppearance="?attr/textAppearanceCaption"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tags_text_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
