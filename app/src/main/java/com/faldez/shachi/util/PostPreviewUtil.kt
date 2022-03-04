@@ -1,6 +1,7 @@
 package com.faldez.shachi.util
 
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
@@ -52,7 +53,10 @@ fun bindPostImagePreview(
         } ?: item.fileUrl
 
         Glide.with(imageView.context).load(url)
-            .placeholder(R.drawable.placeholder)
+            .placeholder(BitmapDrawable(imageView.resources,
+                Bitmap.createBitmap(previewWidth,
+                    previewHeight,
+                    Bitmap.Config.RGB_565)))
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
