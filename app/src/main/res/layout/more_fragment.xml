@@ -8,24 +8,17 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/more_appbar_layout"
-        android:layout_width="match_parent"
+        android:layout_width="480dp"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            style="?attr/collapsingToolbarLayoutMediumStyle"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/more_topappbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/collapsingToolbarLayoutMediumSize"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/more_topappbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_gravity="top"
-                app:title="More" />
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="top"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:title="More" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
