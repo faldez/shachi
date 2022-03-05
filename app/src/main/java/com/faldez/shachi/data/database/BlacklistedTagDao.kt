@@ -8,9 +8,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BlacklistedTagDao {
+    @Transaction
     @Query("SELECT * FROM blacklisted_tag")
     fun getAllFlow(): Flow<List<BlacklistedTagWithServer>?>
 
+    @Transaction
     @Query("SELECT * FROM blacklisted_tag")
     suspend fun getAll(): List<BlacklistedTagWithServer>?
 

@@ -3,12 +3,15 @@ package com.faldez.shachi.data.database
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
+import androidx.room.Transaction
 import com.faldez.shachi.data.model.SavedSearch
 import com.faldez.shachi.data.model.SavedSearchServer
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SavedSearchDao {
+
+    @Transaction
     @Query("SELECT * FROM saved_search")
     fun getAllFlow(): Flow<List<SavedSearchServer>>
 
