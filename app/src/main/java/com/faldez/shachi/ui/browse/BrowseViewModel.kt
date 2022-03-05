@@ -131,11 +131,11 @@ class BrowseViewModel constructor(
         }
     }
 
-    fun saveSearch(title: String?) {
+    fun saveSearch(title: String?, tags: String) {
         viewModelScope.launch {
             state.value.server?.let { server ->
                 savedSearchRepository.insert(serverId = server.serverId,
-                    tags = state.value.tags,
+                    tags = tags,
                     title = title ?: state.value.tags.split(" ").first())
             }
         }

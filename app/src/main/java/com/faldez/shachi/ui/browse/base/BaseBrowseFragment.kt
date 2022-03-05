@@ -138,25 +138,39 @@ abstract class BaseBrowseFragment : Fragment() {
                     if (viewModel.state.value.tags.isEmpty()) {
                         Toast.makeText(requireContext(),
                             "Can't save search if selected tags is empty",
-                            Toast.LENGTH_LONG).show()
-                    } else {
-                        val dialog =
-                            MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
-                                .setTitle(resources.getString(R.string.title))
-                                .setMessage(resources.getString(R.string.saved_search_description_title_text))
-                                .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
-                                    val title =
-                                        (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTitleInput).text?.toString()
-
-                                    if (viewModel.state.value.tags.isNotEmpty()) {
-                                        viewModel.saveSearch(title)
-                                        Toast.makeText(requireContext(), "Saved", Toast.LENGTH_LONG)
-                                            .show()
-                                    }
-                                }.show()
-                        dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
-                            SpannableStringBuilder(viewModel.state.value.tags.split(" ").first())
+                            Toast.LENGTH_SHORT).show()
+                        return@setOnMenuItemClickListener true
                     }
+
+                    val dialog =
+                        MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
+                            .setTitle(resources.getString(R.string.title))
+                            .setMessage(resources.getString(R.string.saved_search_description_title_text))
+                            .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
+                                val title =
+                                    (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTitleInput).text?.toString()
+                                val tags =
+                                    (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTagsInput).text?.toString()
+
+                                if (tags?.isNotEmpty() == true && title?.isNotEmpty() == true) {
+                                    viewModel.saveSearch(title, tags)
+                                    Toast.makeText(requireContext(),
+                                        "Saved",
+                                        Toast.LENGTH_SHORT)
+                                        .show()
+                                } else {
+                                    Toast.makeText(requireContext(),
+                                        "Can't save search if selected tags is empty",
+                                        Toast.LENGTH_SHORT).show()
+                                }
+                            }.show()
+
+                    var title = viewModel.state.value.tags.split(" ").first()
+                    if (title.isNullOrEmpty()) title = viewModel.state.value.tags
+                    dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
+                        SpannableStringBuilder(title)
+                    dialog.findViewById<EditText>(R.id.savedSearchTagsInput)?.text =
+                        SpannableStringBuilder(viewModel.state.value.tags)
                     true
                 }
                 R.id.select_server_button -> {

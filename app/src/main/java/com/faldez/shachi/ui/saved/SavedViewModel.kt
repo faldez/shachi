@@ -18,7 +18,6 @@ import com.faldez.shachi.service.Action
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
-import kotlin.collections.set
 
 class SavedViewModel(
     private val savedSearchRepository: SavedSearchRepository,
@@ -27,8 +26,6 @@ class SavedViewModel(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val savedSearchFlow: Flow<List<SavedSearchPost>>
-    private val postsMap: MutableMap<Int, Flow<PagingData<Post>>> =
-        mutableMapOf()
     val scrollState: MutableStateFlow<SparseArray<Int>> =
         savedStateHandle[LAST_SCROLL_POSITIONS] ?: MutableStateFlow(SparseArray<Int>())
 
@@ -37,11 +34,7 @@ class SavedViewModel(
             .map { data ->
                 Log.d("SavedViewModel", "collect savedSearches")
                 data.map { savedSearch ->
-                    var posts = postsMap[savedSearch.savedSearch.savedSearchId]
-                    if (posts == null) {
-                        posts = getSearchPosts(savedSearch).cachedIn(viewModelScope)
-                        postsMap[savedSearch.savedSearch.savedSearchId] = posts
-                    }
+                    val posts = getSearchPosts(savedSearch).cachedIn(viewModelScope)
                     SavedSearchPost(savedSearch = savedSearch, posts = posts)
                 }
             }.shareIn(

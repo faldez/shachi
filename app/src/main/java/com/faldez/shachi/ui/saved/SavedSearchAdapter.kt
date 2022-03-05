@@ -1,7 +1,6 @@
 package com.faldez.shachi.ui.saved
 
 import android.text.SpannableStringBuilder
-import android.util.Log
 import android.util.SparseArray
 import android.view.*
 import androidx.core.util.forEach
@@ -67,20 +66,17 @@ class SavedSearchAdapter(
     override fun onBindViewHolder(holder: SavedSearchViewHolder, position: Int) {
         val item = getItem(position)
 
-        var adapter = adapters[position]
-        if (adapter == null) {
-            adapter = SavedSearchPostAdapter(
-                listener = listener,
-                savedSearchServer = item.savedSearch,
-                gridMode = gridMode,
-                quality = quality,
-                questionableFilter = questionableFilter,
-                explicitFilter = explicitFilter,
-            )
+        val adapter = SavedSearchPostAdapter(
+            listener = listener,
+            savedSearchServer = item.savedSearch,
+            gridMode = gridMode,
+            quality = quality,
+            questionableFilter = questionableFilter,
+            explicitFilter = explicitFilter,
+        )
 
-            adapters[position] = adapter
-            listener.onBind(adapter, item, questionableFilter, explicitFilter)
-        }
+        adapters[position] = adapter
+        listener.onBind(adapter, item, questionableFilter, explicitFilter)
 
         holder.bind(adapter, item, scrollPositions)
     }
@@ -115,8 +111,6 @@ class SavedSearchAdapter(
             item: SavedSearchPost,
             scrollPositions: SparseArray<Int>,
         ) {
-            Log.d("SavedSearchItemViewHolder/bind",
-                "${item.savedSearch.savedSearch.savedSearchId} should scroll to ${scrollPositions[bindingAdapterPosition]}")
             binding.savedSearchTagsTextView.text = item.savedSearch.savedSearch.savedSearchTitle
             binding.savedSearchServerTextView.text = item.savedSearch.server.title
             binding.tagsTextView.text = SpannableStringBuilder(item.savedSearch.savedSearch.tags)

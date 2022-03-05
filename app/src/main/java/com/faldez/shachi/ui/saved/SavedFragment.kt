@@ -95,19 +95,28 @@ class SavedFragment : Fragment() {
             val savedSearchServer = savedSearchAdapter.currentList[position].savedSearch
             val dialog =
                 MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
-                    .setTitle(resources.getString(R.string.update_title))
+                    .setTitle(resources.getString(R.string.edit))
                     .setMessage(resources.getString(R.string.saved_search_update_description_title_text))
                     .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
-                        (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTitleInput).text?.toString()
-                            ?.let { title ->
-                                viewModel.saveSearch(savedSearchServer.savedSearch.copy(
-                                    savedSearchTitle = title))
-                                Toast.makeText(requireContext(), "Saved", Toast.LENGTH_LONG)
-                                    .show()
-                            }
+                        val title =
+                            (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTitleInput).text?.toString()
+                        val tags =
+                            (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTagsInput).text?.toString()
+                        if (!title.isNullOrEmpty() && !tags.isNullOrEmpty()) {
+                            viewModel.saveSearch(savedSearchServer.savedSearch.copy(
+                                savedSearchTitle = title, tags = tags))
+                            Toast.makeText(requireContext(), "Saved", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            Toast.makeText(requireContext(),
+                                "Can't save search if selected tags is empty",
+                                Toast.LENGTH_SHORT).show()
+                        }
                     }.show()
             dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
                 SpannableStringBuilder(savedSearchServer.savedSearch.savedSearchTitle)
+            dialog.findViewById<EditText>(R.id.savedSearchTagsInput)?.text =
+                SpannableStringBuilder(savedSearchServer.savedSearch.tags)
         }
 
         override fun onScroll(position: Int, scroll: Int) {
