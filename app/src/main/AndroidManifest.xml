@@ -8,7 +8,6 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28"
         tools:ignore="ScopedStorage" />
-    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:name=".ShachiApp"

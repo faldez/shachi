@@ -83,6 +83,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
     testImplementation "androidx.arch.core:core-testing:2.1.0"
+    implementation "com.android.billingclient:billing-ktx:4.1.0"
 
     // firebase
     implementation platform('com.google.firebase:firebase-bom:29.1.0')
