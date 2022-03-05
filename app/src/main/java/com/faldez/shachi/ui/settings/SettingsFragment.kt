@@ -16,7 +16,6 @@ import com.google.android.material.shape.MaterialShapeDrawable
 
 class SettingsFragment : Fragment() {
     private lateinit var binding: SettingsFragmentBinding
-    private lateinit var viewModel: SettingsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,12 +36,6 @@ class SettingsFragment : Fragment() {
             binding.settingsFrameLayout.updatePadding(bottom = systemBars.bottom)
             insets
         }
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
     private fun prepareAppBar() {
