@@ -1,9 +1,6 @@
 package com.faldez.shachi.data.database
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
 import com.faldez.shachi.data.model.SavedSearch
 import com.faldez.shachi.data.model.SavedSearchServer
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +24,9 @@ interface SavedSearchDao {
             "(SELECT IFNULL(MAX(saved_search_order), 0) + 1 FROM saved_search LIMIT 1)" +
             ")")
     suspend fun insert(tags: String, title: String, serverId: Int)
+
+    @Update
+    suspend fun update(savedSearch: SavedSearch)
 
     @Delete
     suspend fun delete(savedSearch: SavedSearch)

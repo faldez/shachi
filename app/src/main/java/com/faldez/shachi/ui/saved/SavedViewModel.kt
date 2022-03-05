@@ -93,9 +93,7 @@ class SavedViewModel(
 
     fun saveSearch(savedSearch: SavedSearch) {
         viewModelScope.launch {
-            savedSearchRepository.insert(savedSearch.tags,
-                savedSearch.savedSearchTitle,
-                savedSearch.serverId)
+            savedSearchRepository.update(savedSearch)
         }
     }
 
