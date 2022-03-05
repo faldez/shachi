@@ -6,6 +6,8 @@ object ShachiPreference {
     const val KEY_SERVERS = "servers"
     const val KEY_BLACKLISTED_TAGS = "blacklisted_tags"
     const val KEY_OSS_NOTICES = "oss_notices"
+    const val KEY_ABOUT = "about"
+    const val KEY_APP_VERSION = "app_version"
 
     const val KEY_DOWNLOAD_PATH = "download_path"
 

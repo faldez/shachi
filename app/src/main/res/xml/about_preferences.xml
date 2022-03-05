@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:key="app_version"
+        app:title="@string/app_name" />
+    <Preference
+        app:key="github"
+        app:title="@string/github" />
+    <Preference
+        app:fragment="com.faldez.shachi.ui.oss.OssFragment"
+        app:key="oss_notices"
+        app:title="@string/open_source_notices" />
+    <Preference
+        app:key="privacy_policy"
+        app:title="@string/privacy_policy" />
+</PreferenceScreen>

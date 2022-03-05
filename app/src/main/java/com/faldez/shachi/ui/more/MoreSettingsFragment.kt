@@ -76,13 +76,6 @@ class MoreSettingsFragment : PreferenceFragmentCompat() {
             restorePathPicker.launch(arrayOf("application/json"))
             true
         }
-
-        findPreference<Preference>("privacy_policy")?.setOnPreferenceClickListener {
-            val intent =
-                Intent(Intent.ACTION_VIEW, Uri.parse("https://raw.githubusercontent.com/faldez/shachi/master/PRIVACY.md"))
-            startActivity(intent)
-            true
-        }
     }
 
     private suspend fun restore(uri: Uri, restoreItems: SparseBooleanArray) {

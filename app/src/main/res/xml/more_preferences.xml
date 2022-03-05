@@ -37,11 +37,8 @@
 
     <PreferenceCategory app:title="@string/other">
         <Preference
-            app:fragment="com.faldez.shachi.ui.oss.OssFragment"
-            app:key="oss_notices"
-            app:title="@string/open_source_notices" />
-        <Preference
-            app:key="privacy_policy"
-            app:title="@string/privacy_policy" />
+            android:title="@string/about"
+            app:fragment="com.faldez.shachi.ui.about.AboutFragment"
+            app:key="about" />
     </PreferenceCategory>
 </PreferenceScreen>

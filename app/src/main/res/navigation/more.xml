@@ -18,8 +18,8 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_out" />
         <action
-            android:id="@+id/action_more_to_oss"
-            app:destination="@id/ossFragment"
+            android:id="@+id/action_more_to_about"
+            app:destination="@id/aboutFragment"
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
@@ -35,4 +35,18 @@
         android:name="com.faldez.shachi.ui.oss.OssFragment"
         android:label="oss_fragment"
         tools:layout="@layout/oss_fragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.faldez.shachi.ui.about.AboutFragment"
+        android:label="about_fragment"
+        tools:layout="@layout/about_fragment">
+
+        <action
+            android:id="@+id/action_more_to_oss"
+            app:destination="@id/ossFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out" />
+    </fragment>
 </navigation>

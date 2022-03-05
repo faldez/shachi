@@ -108,26 +108,28 @@ class MainActivity : AppCompatActivity(),
     override fun onPreferenceStartFragment(
         caller: PreferenceFragmentCompat,
         pref: Preference,
-    ): Boolean {
-        when (pref.key) {
-            ShachiPreference.KEY_SETTINGS -> {
-                navController.navigate(R.id.action_more_to_settings)
-                return true
-            }
-            ShachiPreference.KEY_SERVERS -> {
-                navController.navigate(R.id.action_global_to_servers)
-                return true
-            }
-            ShachiPreference.KEY_BLACKLISTED_TAGS -> {
-                navController.navigate(R.id.action_global_to_blacklisted_tags)
-                return true
-            }
-            ShachiPreference.KEY_OSS_NOTICES -> {
-                navController.navigate(R.id.action_more_to_oss)
-                return true
-            }
+    ): Boolean = when (pref.key) {
+        ShachiPreference.KEY_SETTINGS -> {
+            navController.navigate(R.id.action_more_to_settings)
+            true
         }
-        return false
+        ShachiPreference.KEY_SERVERS -> {
+            navController.navigate(R.id.action_global_to_servers)
+            true
+        }
+        ShachiPreference.KEY_BLACKLISTED_TAGS -> {
+            navController.navigate(R.id.action_global_to_blacklisted_tags)
+            true
+        }
+        ShachiPreference.KEY_OSS_NOTICES -> {
+            navController.navigate(R.id.action_more_to_oss)
+            true
+        }
+        ShachiPreference.KEY_ABOUT -> {
+            navController.navigate(R.id.action_more_to_about)
+            true
+        }
+        else -> false
     }
 
     fun showNavigation(callback: (() -> Unit)? = null) {
