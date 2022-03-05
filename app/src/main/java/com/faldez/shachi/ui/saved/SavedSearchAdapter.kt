@@ -73,27 +73,30 @@ class SavedSearchAdapter(
     override fun onBindViewHolder(holder: SavedSearchViewHolder, position: Int) {
         val item = getItem(position)
 
-        val adapter = SavedSearchPostAdapter(
-            listener = listener,
-            savedSearchServer = item.savedSearch,
-            gridMode = gridMode,
-            quality = quality,
-            questionableFilter = questionableFilter,
-            explicitFilter = explicitFilter,
-        )
+        var adapter = adapters[position]
+        if (adapter == null) {
+            adapter = SavedSearchPostAdapter(
+                listener = listener,
+                savedSearchServer = item.savedSearch,
+                gridMode = gridMode,
+                quality = quality,
+                questionableFilter = questionableFilter,
+                explicitFilter = explicitFilter,
+            )
 
-        adapters[position] = adapter
+            adapters[position] = adapter
 
-        CoroutineScope(Dispatchers.IO).launch {
-            item.posts.collectLatest {
-                if (it != null) {
-                    adapter.submitData(it.filter { item ->
-                        when (item.rating) {
-                            Rating.Questionable -> questionableFilter != Filter.Mute
-                            Rating.Explicit -> explicitFilter != Filter.Mute
-                            Rating.Safe -> true
-                        }
-                    })
+            CoroutineScope(Dispatchers.Main).launch {
+                item.posts.collectLatest {
+                    if (it != null) {
+                        adapter.submitData(it.filter { item ->
+                            when (item.rating) {
+                                Rating.Questionable -> questionableFilter != Filter.Mute
+                                Rating.Explicit -> explicitFilter != Filter.Mute
+                                Rating.Safe -> true
+                            }
+                        })
+                    }
                 }
             }
         }
