@@ -5,6 +5,7 @@ import androidx.room.*
 @Entity(tableName = "search_history",
     indices = [
         Index(value = ["tags", "server_id"], unique = true),
+        Index("server_id"),
         Index("created_at")],
     foreignKeys = [ForeignKey(childColumns = ["server_id"],
         onDelete = ForeignKey.CASCADE,

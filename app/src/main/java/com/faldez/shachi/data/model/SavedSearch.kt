@@ -2,10 +2,12 @@ package com.faldez.shachi.data.model
 
 import androidx.room.*
 
-@Entity(tableName = "saved_search", foreignKeys = [ForeignKey(childColumns = ["server_id"],
-    onDelete = ForeignKey.CASCADE,
-    parentColumns = ["server_id"],
-    entity = Server::class)])
+@Entity(tableName = "saved_search",
+    indices = [Index("server_id")],
+    foreignKeys = [ForeignKey(childColumns = ["server_id"],
+        onDelete = ForeignKey.CASCADE,
+        parentColumns = ["server_id"],
+        entity = Server::class)])
 data class SavedSearch(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "saved_search_id") val savedSearchId: Int = 0,
     val tags: String,

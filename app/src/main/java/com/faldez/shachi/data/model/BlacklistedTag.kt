@@ -11,6 +11,7 @@ data class BlacklistedTag(
 
 @Entity(tableName = "server_blacklisted_tag_cross_ref",
     primaryKeys = ["server_id", "blacklisted_tag_id"],
+    indices = [Index("blacklisted_tag_id")],
     foreignKeys = [ForeignKey(childColumns = ["blacklisted_tag_id"],
         onDelete = ForeignKey.CASCADE,
         parentColumns = ["blacklisted_tag_id"],
