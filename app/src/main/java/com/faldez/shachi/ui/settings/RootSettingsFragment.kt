@@ -11,6 +11,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
+import com.faldez.shachi.data.preference.ShachiPreference
 
 class RootSettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -22,7 +23,7 @@ class RootSettingsFragment : PreferenceFragmentCompat(),
                 requireContext().contentResolver.takePersistableUriPermission(uri,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()?.apply {
-                    putString("download_path", uri.toString())
+                    putString(ShachiPreference.KEY_DOWNLOAD_PATH, uri.toString())
                     commit()
                 }
             }
@@ -30,7 +31,7 @@ class RootSettingsFragment : PreferenceFragmentCompat(),
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
-        findPreference<Preference>("download_path")?.setOnPreferenceClickListener {
+        findPreference<Preference>(ShachiPreference.KEY_DOWNLOAD_PATH)?.setOnPreferenceClickListener {
             downloadPathPicker.launch(MediaStore.Images.Media.getContentUri("external"))
             true
 
@@ -41,9 +42,9 @@ class RootSettingsFragment : PreferenceFragmentCompat(),
         super.onResume()
         preferenceScreen.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
 
-        findPreference<Preference>("download_path")?.apply {
+        findPreference<Preference>(ShachiPreference.KEY_DOWNLOAD_PATH)?.apply {
             summary =
-                sharedPreferences?.getString("download_path", null)
+                sharedPreferences?.getString(ShachiPreference.KEY_DOWNLOAD_PATH, null)
                     ?.let { Uri.parse(it) }?.lastPathSegment?.substringAfter(":")
                     ?: resources.getString(R.string.not_set_message)
         }
@@ -56,8 +57,8 @@ class RootSettingsFragment : PreferenceFragmentCompat(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            "theme" -> (activity as MainActivity).setTheme()
-            "send_crash_reports" -> (activity as MainActivity).setSendCrashReports()
+            ShachiPreference.KEY_THEME -> (activity as MainActivity).setTheme()
+            ShachiPreference.KEY_SEND_CRASH_REPORTS -> (activity as MainActivity).setSendCrashReports()
         }
     }
 }

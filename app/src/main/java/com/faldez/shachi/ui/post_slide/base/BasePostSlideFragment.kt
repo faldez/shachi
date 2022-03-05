@@ -30,8 +30,9 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.data.model.Post
+import com.faldez.shachi.data.preference.*
+import com.faldez.shachi.databinding.PostSlideFragmentBinding
 import com.faldez.shachi.service.DownloadService
 import com.faldez.shachi.ui.comment.CommentFragment
 import com.faldez.shachi.ui.post_detail.PostDetailFragment
@@ -55,7 +56,8 @@ abstract class BasePostSlideFragment : Fragment() {
     }
 
     protected val postSlideAdapter: PostSlideAdapter by lazy {
-        val quality = preferences.getString("detail_quality", null) ?: "sample"
+        val quality = preferences.getString(ShachiPreference.KEY_DETAIL_QUALITY, null)?.toQuality()
+            ?: Quality.Sample
 
         PostSlideAdapter(
             quality,
@@ -88,13 +90,17 @@ abstract class BasePostSlideFragment : Fragment() {
 
     private fun ViewPager2.bind(position: Int) {
         val questionableFilter =
-            preferences.getString("filter_questionable_content", null) ?: "disable"
-        val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
+            preferences.getString(ShachiPreference.KEY_FILTER_QUESTIONABLE_CONTENT, null)
+                ?.toFilter() ?: Filter.Disable
+        val explicitFilter =
+            preferences.getString(ShachiPreference.KEY_FILTER_EXPLICIT_CONTENT, null)?.toFilter()
+                ?: Filter.Disable
+
         adapter = postSlideAdapter
         lifecycleScope.launch {
             collectPagingData(
-                showQuestionable = questionableFilter != "mute",
-                showExplicit = explicitFilter != "mute"
+                showQuestionable = questionableFilter != Filter.Mute,
+                showExplicit = explicitFilter != Filter.Mute
             )
         }
         setCurrentItem(position, false)
@@ -289,7 +295,7 @@ abstract class BasePostSlideFragment : Fragment() {
             items.add("Original: ${post.width}x${post.height}")
 
             val checked = items.indexOfFirst {
-                it.substringBefore(":").lowercase() == post.quality ?: postSlideAdapter.quality
+                it.substringBefore(":").toQuality() == post.quality ?: postSlideAdapter.quality
             }
 
             Log.d("BasePostSlideFragment/onSelectImage", "$post $items")
@@ -297,7 +303,7 @@ abstract class BasePostSlideFragment : Fragment() {
             MaterialAlertDialogBuilder(requireContext()).setTitle("Select Image")
                 .setSingleChoiceItems(items.toTypedArray(), checked) { dialog, choice ->
                     postSlideAdapter.setPostQuality(binding.postViewPager.currentItem,
-                        items[choice].substringBefore(":").lowercase())
+                        items[choice].substringBefore(":").toQuality())
                     dialog.dismiss()
                 }.show()
         }

@@ -26,9 +26,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
-import com.faldez.shachi.databinding.FavoriteFragmentBinding
 import com.faldez.shachi.data.model.Rating
+import com.faldez.shachi.data.preference.*
 import com.faldez.shachi.data.repository.FavoriteRepository
+import com.faldez.shachi.databinding.FavoriteFragmentBinding
 import com.faldez.shachi.ui.search.SearchFragment
 import com.faldez.shachi.widget.EmptyFooterDecoration
 import kotlinx.coroutines.launch
@@ -92,20 +93,27 @@ class FavoriteFragment : Fragment() {
     private fun FavoriteFragmentBinding.bind(
     ) {
         val gridCount = when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> preferences.getString("grid_column_landscape", null)?.toInt() ?: 5
-            else -> preferences.getString("grid_column_portrait", null)?.toInt() ?: 3
+            Configuration.ORIENTATION_LANDSCAPE -> preferences.getString(ShachiPreference.KEY_GRID_COLUMN_LANDSCAPE,
+                null)?.toInt() ?: 5
+            else -> preferences.getString(ShachiPreference.KEY_GRID_COLUMN_PORTRAIT, null)?.toInt()
+                ?: 3
         }
-        val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
-        val quality = preferences.getString("preview_quality", null) ?: "preview"
+        val gridMode = preferences.getString(ShachiPreference.KEY_GRID_MODE, null)?.toGridMode()
+            ?: GridMode.Staggered
+        val quality = preferences.getString(ShachiPreference.KEY_PREVIEW_QUALITY, null)?.toQuality()
+            ?: Quality.Preview
         val questionableFilter =
-            preferences.getString("filter_questionable_content", null) ?: "disable"
-        val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
+            preferences.getString(ShachiPreference.KEY_FILTER_QUESTIONABLE_CONTENT, null)
+                ?.toFilter() ?: Filter.Disable
+        val explicitFilter =
+            preferences.getString(ShachiPreference.KEY_FILTER_EXPLICIT_CONTENT, null)?.toFilter()
+                ?: Filter.Disable
 
         val favoriteAdapter = FavoriteAdapter(
             gridMode,
             quality,
-            hideQuestionable = questionableFilter == "hide",
-            hideExplicit = explicitFilter == "hide",
+            hideQuestionable = questionableFilter == Filter.Hide,
+            hideExplicit = explicitFilter == Filter.Hide,
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 findNavController().navigate(R.id.action_favorite_to_favoritepostslide, bundle)
@@ -116,7 +124,7 @@ class FavoriteFragment : Fragment() {
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         favoriteRecyclerView.adapter = favoriteAdapter
 
-        favoriteRecyclerView.layoutManager = if (gridMode == "staggered") {
+        favoriteRecyclerView.layoutManager = if (gridMode == GridMode.Staggered) {
             val layoutManager =
                 StaggeredGridLayoutManager(gridCount, StaggeredGridLayoutManager.VERTICAL)
             layoutManager.gapStrategy =
@@ -135,7 +143,8 @@ class FavoriteFragment : Fragment() {
             }
         })
 
-        val hideBottomBarOnScroll = preferences.getBoolean("hide_bottom_bar_on_scroll", true)
+        val hideBottomBarOnScroll =
+            preferences.getBoolean(ShachiPreference.KEY_HIDE_BOTTOM_BAR_ON_SCROLL, true)
         if (hideBottomBarOnScroll) {
             favoriteRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -164,8 +173,8 @@ class FavoriteFragment : Fragment() {
                 viewModel.pagingDataFlow.collect {
                     favoriteAdapter.submitData(it.filter { post ->
                         when (post.rating) {
-                            Rating.Questionable -> questionableFilter != "mute"
-                            Rating.Explicit -> explicitFilter != "mute"
+                            Rating.Questionable -> questionableFilter != Filter.Mute
+                            Rating.Explicit -> explicitFilter != Filter.Mute
                             Rating.Safe -> true
                         }
                     })

@@ -20,9 +20,10 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.faldez.shachi.R
+import com.faldez.shachi.data.model.Post
+import com.faldez.shachi.data.preference.Quality
 import com.faldez.shachi.databinding.PostSlideItemBinding
 import com.faldez.shachi.databinding.PostSlideItemVideoBinding
-import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.glide.GlideApp
 import com.faldez.shachi.util.glide.GlideModule
@@ -31,12 +32,12 @@ import com.google.android.exoplayer2.MediaItem
 
 
 class PostSlideAdapter(
-    val quality: String,
+    val quality: Quality,
     private val onTap: () -> Unit,
 ) :
     PagingDataAdapter<Post, PostSlideViewHolder>(POST_COMPARATOR) {
 
-    fun setPostQuality(position: Int, quality: String) {
+    fun setPostQuality(position: Int, quality: Quality) {
         val item = getItem(position)
         if (item != null) {
             item.quality = quality
@@ -128,7 +129,7 @@ abstract class PostSlideViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 
 class PostSlideImageViewHolder(
     private val binding: PostSlideItemBinding,
-    private val quality: String,
+    private val quality: Quality,
     private val onTap: () -> Unit,
 ) :
     PostSlideViewHolder(binding.root) {
@@ -139,22 +140,22 @@ class PostSlideImageViewHolder(
 
         if (item != null) {
             var url = when (item.quality ?: quality) {
-                "sample" -> {
-                    item.quality = "sample"
+                Quality.Sample -> {
+                    item.quality = Quality.Sample
                     item.sampleUrl
                 }
-                "original" -> {
-                    item.quality = "original"
+                Quality.Original -> {
+                    item.quality = Quality.Original
                     item.fileUrl
                 }
                 else -> {
-                    item.quality = "preview"
+                    item.quality = Quality.Preview
                     item.previewUrl
                 }
             }
 
             if (url == null) {
-                item.quality = "original"
+                item.quality = Quality.Original
                 url = item.fileUrl
             }
 

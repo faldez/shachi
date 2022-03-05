@@ -28,11 +28,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
-import com.faldez.shachi.databinding.SavedFragmentBinding
 import com.faldez.shachi.data.model.SavedSearchServer
+import com.faldez.shachi.data.preference.*
 import com.faldez.shachi.data.repository.FavoriteRepository
 import com.faldez.shachi.data.repository.PostRepository
 import com.faldez.shachi.data.repository.SavedSearchRepository
+import com.faldez.shachi.databinding.SavedFragmentBinding
 import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.widget.CustomDividerItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -125,11 +126,16 @@ class SavedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
-        val quality = preferences.getString("preview_quality", null) ?: "preview"
+        val gridMode = preferences.getString(ShachiPreference.KEY_GRID_MODE, null)?.toGridMode()
+            ?: GridMode.Staggered
+        val quality = preferences.getString(ShachiPreference.KEY_PREVIEW_QUALITY, null)?.toQuality()
+            ?: Quality.Preview
         val questionableFilter =
-            preferences.getString("filter_questionable_content", null) ?: "disable"
-        val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
+            preferences.getString(ShachiPreference.KEY_FILTER_QUESTIONABLE_CONTENT, null)
+                ?.toFilter() ?: Filter.Disable
+        val explicitFilter =
+            preferences.getString(ShachiPreference.KEY_FILTER_EXPLICIT_CONTENT, null)?.toFilter()
+                ?: Filter.Disable
 
         savedSearchAdapter = SavedSearchAdapter(
             listener = adapterListener,
@@ -155,7 +161,8 @@ class SavedFragment : Fragment() {
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        val hideBottomBarOnScroll = preferences.getBoolean("hide_bottom_bar_on_scroll", true)
+        val hideBottomBarOnScroll =
+            preferences.getBoolean(ShachiPreference.KEY_HIDE_BOTTOM_BAR_ON_SCROLL, true)
         if (hideBottomBarOnScroll) {
             binding.savedSearchRecyclerView.addOnScrollListener(object :
                 RecyclerView.OnScrollListener() {

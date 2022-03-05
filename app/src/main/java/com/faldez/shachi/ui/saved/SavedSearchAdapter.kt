@@ -13,11 +13,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.faldez.shachi.databinding.PostCardItemBinding
-import com.faldez.shachi.databinding.SavedSearchItemBinding
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.Rating
 import com.faldez.shachi.data.model.SavedSearchServer
+import com.faldez.shachi.data.preference.Filter
+import com.faldez.shachi.data.preference.GridMode
+import com.faldez.shachi.data.preference.Quality
+import com.faldez.shachi.databinding.PostCardItemBinding
+import com.faldez.shachi.databinding.SavedSearchItemBinding
 import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.bindPostImagePreview
 import kotlinx.coroutines.CoroutineScope
@@ -28,10 +31,10 @@ import kotlinx.coroutines.launch
 class SavedSearchAdapter(
     private val scrollPositions: SparseArray<Int>,
     private val listener: SavedSearchAdapterListener,
-    private val gridMode: String,
-    private val quality: String,
-    private val questionableFilter: String,
-    private val explicitFilter: String,
+    private val gridMode: GridMode,
+    private val quality: Quality,
+    private val questionableFilter: Filter,
+    private val explicitFilter: Filter,
 ) : ListAdapter<SavedSearchPost, SavedSearchAdapter.SavedSearchViewHolder>(COMPARATOR) {
     private val viewPool = RecyclerView.RecycledViewPool()
     val adapters: MutableMap<Int, SavedSearchPostAdapter> = mutableMapOf()
@@ -86,8 +89,8 @@ class SavedSearchAdapter(
                 if (it != null) {
                     adapter.submitData(it.filter { item ->
                         when (item.rating) {
-                            Rating.Questionable -> questionableFilter != "mute"
-                            Rating.Explicit -> explicitFilter != "mute"
+                            Rating.Questionable -> questionableFilter != Filter.Mute
+                            Rating.Explicit -> explicitFilter != Filter.Mute
                             Rating.Safe -> true
                         }
                     })
@@ -181,10 +184,10 @@ class SavedSearchAdapter(
 class SavedSearchPostAdapter(
     private val listener: SavedSearchAdapterListener,
     private val savedSearchServer: SavedSearchServer? = null,
-    private val gridMode: String,
-    private val quality: String,
-    private val questionableFilter: String,
-    private val explicitFilter: String,
+    private val gridMode: GridMode,
+    private val quality: Quality,
+    private val questionableFilter: Filter,
+    private val explicitFilter: Filter,
 ) : PagingDataAdapter<Post, SavedSearchPostAdapter.SavedSearchPostViewHolder>(COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedSearchPostViewHolder {
@@ -195,8 +198,8 @@ class SavedSearchPostAdapter(
             listener,
             gridMode,
             quality,
-            hideQuestionable = questionableFilter == "hide",
-            hideExplicit = explicitFilter == "hide",
+            hideQuestionable = questionableFilter == Filter.Hide,
+            hideExplicit = explicitFilter == Filter.Hide,
         )
     }
 
@@ -222,8 +225,8 @@ class SavedSearchPostAdapter(
     class SavedSearchPostViewHolder(
         val binding: PostCardItemBinding,
         private val listener: SavedSearchAdapterListener,
-        private val gridMode: String,
-        private val quality: String,
+        private val gridMode: GridMode,
+        private val quality: Quality,
         private val hideQuestionable: Boolean,
         private val hideExplicit: Boolean,
     ) :

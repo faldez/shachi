@@ -20,6 +20,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.faldez.shachi.data.preference.ShachiPreference
 import com.faldez.shachi.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigationrail.NavigationRailView
@@ -88,7 +89,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     fun setTheme() {
-        val theme = sharedPreferences.getString("theme", "follow_system")
+        val theme = sharedPreferences.getString(ShachiPreference.KEY_THEME, "follow_system")
 
         val mode = when (theme) {
             "light" -> AppCompatDelegate.MODE_NIGHT_NO
@@ -100,7 +101,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     fun setSendCrashReports() {
-        val isSend = sharedPreferences.getBoolean("send_crash_reports", true)
+        val isSend = sharedPreferences.getBoolean(ShachiPreference.KEY_SEND_CRASH_REPORTS, true)
         Firebase.crashlytics.setCrashlyticsCollectionEnabled(isSend)
     }
 
@@ -109,19 +110,19 @@ class MainActivity : AppCompatActivity(),
         pref: Preference,
     ): Boolean {
         when (pref.key) {
-            "settings" -> {
+            ShachiPreference.KEY_SETTINGS -> {
                 navController.navigate(R.id.action_more_to_settings)
                 return true
             }
-            "servers" -> {
+            ShachiPreference.KEY_SERVERS -> {
                 navController.navigate(R.id.action_global_to_servers)
                 return true
             }
-            "blacklisted_tags" -> {
+            ShachiPreference.KEY_BLACKLISTED_TAGS -> {
                 navController.navigate(R.id.action_global_to_blacklisted_tags)
                 return true
             }
-            "oss_notices" -> {
+            ShachiPreference.KEY_OSS_NOTICES -> {
                 navController.navigate(R.id.action_more_to_oss)
                 return true
             }

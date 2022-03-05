@@ -2,6 +2,7 @@ package com.faldez.shachi.data.model
 
 import android.os.Parcelable
 import androidx.room.*
+import com.faldez.shachi.data.preference.Quality
 import kotlinx.parcelize.Parcelize
 
 enum class Rating {
@@ -48,7 +49,7 @@ data class Post(
     @Ignore
     var favorite: Boolean = false
     @Ignore
-    var quality: String? = null
+    var quality: Quality? = null
 }
 
 @Fts4(tokenizer = FtsOptions.TOKENIZER_UNICODE61, tokenizerArgs = ["tokenchars='"])

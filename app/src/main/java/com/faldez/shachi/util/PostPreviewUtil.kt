@@ -14,18 +14,20 @@ import com.bumptech.glide.request.RequestOptions
 import com.faldez.shachi.R
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.Rating
+import com.faldez.shachi.data.preference.GridMode
+import com.faldez.shachi.data.preference.Quality
 
 fun bindPostImagePreview(
     imageView: ImageView,
     item: Post?,
-    gridMode: String,
-    quality: String,
+    gridMode: GridMode,
+    quality: Quality,
     hideQuestionable: Boolean,
     hideExplicit: Boolean,
 ) {
     val previewWidth: Int = item?.previewWidth ?: 250
     val previewHeight: Int = if (item != null) {
-        if (gridMode == "staggered") {
+        if (gridMode == GridMode.Staggered) {
             item.previewHeight
                 ?: (previewWidth * (item.height.toFloat() / item.width.toFloat())).toInt()
         } else {
@@ -47,8 +49,8 @@ fun bindPostImagePreview(
         Glide.with(imageView.context).load(drawable)
     } else {
         val url = when (quality) {
-            "sample" -> item.sampleUrl ?: item.previewUrl
-            "original" -> item.fileUrl
+            Quality.Sample -> item.sampleUrl ?: item.previewUrl
+            Quality.Original -> item.fileUrl
             else -> item.previewUrl ?: item.sampleUrl
         } ?: item.fileUrl
 

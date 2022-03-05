@@ -29,10 +29,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.Rating
 import com.faldez.shachi.data.model.ServerView
+import com.faldez.shachi.data.preference.*
+import com.faldez.shachi.databinding.BrowseFragmentBinding
 import com.faldez.shachi.ui.browse.BrowseAdapter
 import com.faldez.shachi.ui.browse.BrowseViewModel
 import com.faldez.shachi.ui.browse.UiAction
@@ -59,7 +60,7 @@ abstract class BaseBrowseFragment : Fragment() {
     }
 
     private val hideBottomBarOnScroll by lazy {
-        preferences.getBoolean("hide_bottom_bar_on_scroll", true)
+        preferences.getBoolean(ShachiPreference.KEY_HIDE_BOTTOM_BAR_ON_SCROLL, true)
     }
 
     private val scrollListener = object : RecyclerView.OnScrollListener() {
@@ -196,20 +197,27 @@ abstract class BaseBrowseFragment : Fragment() {
         uiActions: (UiAction) -> Unit,
     ) {
         val gridCount = when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> preferences.getString("grid_column_landscape", null)?.toInt() ?: 5
-            else -> preferences.getString("grid_column_portrait", null)?.toInt() ?: 3
+            Configuration.ORIENTATION_LANDSCAPE -> preferences.getString(ShachiPreference.KEY_GRID_COLUMN_LANDSCAPE,
+                null)?.toInt() ?: 5
+            else -> preferences.getString(ShachiPreference.KEY_GRID_COLUMN_PORTRAIT, null)?.toInt()
+                ?: 3
         }
-        val gridMode = preferences.getString("grid_mode", null) ?: "staggered"
-        val quality = preferences.getString("preview_quality", null) ?: "preview"
+        val gridMode = preferences.getString(ShachiPreference.KEY_GRID_MODE, null)?.toGridMode()
+            ?: GridMode.Staggered
+        val quality = preferences.getString(ShachiPreference.KEY_PREVIEW_QUALITY, null)?.toQuality()
+            ?: Quality.Preview
         val questionableFilter =
-            preferences.getString("filter_questionable_content", null) ?: "disable"
-        val explicitFilter = preferences.getString("filter_explicit_content", null) ?: "disable"
+            preferences.getString(ShachiPreference.KEY_FILTER_QUESTIONABLE_CONTENT, null)
+                ?.toFilter() ?: Filter.Disable
+        val explicitFilter =
+            preferences.getString(ShachiPreference.KEY_FILTER_EXPLICIT_CONTENT, null)?.toFilter()
+                ?: Filter.Disable
 
         val postAdapter = BrowseAdapter(
             gridMode = gridMode,
             quality = quality,
-            hideQuestionable = questionableFilter == "hide",
-            hideExplicit = explicitFilter == "hide",
+            hideQuestionable = questionableFilter == Filter.Hide,
+            hideExplicit = explicitFilter == Filter.Hide,
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 val id = when (findNavController().currentDestination?.id) {
@@ -226,7 +234,7 @@ abstract class BaseBrowseFragment : Fragment() {
         postAdapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         postsRecyclerView.adapter = postAdapter
-        postsRecyclerView.layoutManager = if (gridMode == "staggered") {
+        postsRecyclerView.layoutManager = if (gridMode == GridMode.Staggered) {
             val layoutManager =
                 StaggeredGridLayoutManager(gridCount, StaggeredGridLayoutManager.VERTICAL)
             layoutManager.gapStrategy =
@@ -241,8 +249,8 @@ abstract class BaseBrowseFragment : Fragment() {
             uiState = uiState,
             pagingData = pagingData,
             onScrollChanged = uiActions,
-            showQuestionable = questionableFilter != "mute",
-            showExplicit = explicitFilter != "mute"
+            showQuestionable = questionableFilter != Filter.Mute,
+            showExplicit = explicitFilter != Filter.Mute
         )
     }
 
