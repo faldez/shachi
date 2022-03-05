@@ -88,6 +88,13 @@ abstract class BasePostSlideFragment : Fragment() {
         binding.postViewPager.bind(position)
     }
 
+    override fun onDestroyView() {
+        if (isToolbarHide)
+            ViewCompat.getWindowInsetsController(requireActivity().window.decorView)
+                ?.show(WindowInsetsCompat.Type.systemBars())
+        super.onDestroyView()
+    }
+
     private fun ViewPager2.bind(position: Int) {
         val questionableFilter =
             preferences.getString(ShachiPreference.KEY_FILTER_QUESTIONABLE_CONTENT, null)
