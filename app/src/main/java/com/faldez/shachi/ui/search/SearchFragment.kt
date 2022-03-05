@@ -27,12 +27,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
-import com.faldez.shachi.databinding.SearchFragmentBinding
-import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.data.model.Modifier
 import com.faldez.shachi.data.model.ServerView
 import com.faldez.shachi.data.model.TagDetail
 import com.faldez.shachi.data.repository.TagRepository
+import com.faldez.shachi.databinding.SearchFragmentBinding
+import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.util.StringUtil
 import com.faldez.shachi.util.clearAllGroup
@@ -221,6 +221,7 @@ class SearchFragment : DialogFragment() {
             viewModel.state.collect { state ->
                 binding.searchSimpleTopAppBar.menu.findItem(R.id.search_mode_button).isChecked =
                     state.isAdvancedMode
+
             }
         }
     }
@@ -266,64 +267,64 @@ class SearchFragment : DialogFragment() {
     }
 
     private fun TextInputEditText.bind() {
-        this.apply {
-            setImeActionLabel("Add", KeyEvent.KEYCODE_ENTER)
-            doAfterTextChanged { s ->
-                if (viewModel.state.value.isAdvancedMode) {
-                    s?.toString()?.let {
-                        viewModel.insertTagByName(it)
-                    }
-                }
-            }
-            doOnTextChanged { text, start, _, _ ->
-                if (viewModel.state.value.isAdvancedMode) {
-                    text?.toString()?.trim()?.let {
-                        if (it.isNotEmpty()) {
-                            val tag = StringUtil.getCurrentToken(it, start)
-                            viewModel.accept(UiAction.SearchTag(tag))
-                        }
-                    }
-                } else {
-                    val isVisible = if (text.isNullOrEmpty()) {
-                        searchSuggestionAdapter.clear()
-                        binding.selectedTagsLayout.show()
-                        binding.suggestionTagLayout.hide()
-                        false
-                    } else {
-                        viewModel.accept(UiAction.SearchTag(text.toString()))
-                        binding.selectedTagsLayout.hide()
-                        binding.suggestionTagLayout.show()
-                        true
-                    }
-                    binding.loadingIndicator.isVisible = isVisible
-                    binding.searchSimpleTopAppBar.menu.findItem(R.id.clear_button).isVisible =
-                        isVisible
-                }
-            }
-            setOnEditorActionListener { textView, i, _ ->
-                if (i == EditorInfo.IME_ACTION_DONE) {
-                    /*
-                    If advanced search is active, action done will apply search
-                    instead of insert tag into selected tags or apply search if empty
-                    on simple mode
-                     */
-                    if (viewModel.state.value.isAdvancedMode) {
-                        applySearch()
-                    } else {
-                        val text = (textView as TextInputEditText).text.toString()
-                        if (text.isNotEmpty()) {
-                            viewModel.insertTagByName(text)
-                            binding.searchSimpleTagsInputText.text?.clear()
-                        } else if (text.isEmpty() && viewModel.state.value.selectedTags?.isNotEmpty() == true) {
-                            applySearch()
-                        }
-                    }
-                    true
-                } else {
-                    false
+        hint = "Search " + viewModel.state.value.server?.title
+        setImeActionLabel("Add", KeyEvent.KEYCODE_ENTER)
+        doAfterTextChanged { s ->
+            if (viewModel.state.value.isAdvancedMode) {
+                s?.toString()?.let {
+                    viewModel.insertTagByName(it)
                 }
             }
         }
+        doOnTextChanged { text, start, _, _ ->
+            if (viewModel.state.value.isAdvancedMode) {
+                text?.toString()?.trim()?.let {
+                    if (it.isNotEmpty()) {
+                        val tag = StringUtil.getCurrentToken(it, start)
+                        viewModel.accept(UiAction.SearchTag(tag))
+                    }
+                }
+            } else {
+                val isVisible = if (text.isNullOrEmpty()) {
+                    searchSuggestionAdapter.clear()
+                    binding.selectedTagsLayout.show()
+                    binding.suggestionTagLayout.hide()
+                    false
+                } else {
+                    viewModel.accept(UiAction.SearchTag(text.toString()))
+                    binding.selectedTagsLayout.hide()
+                    binding.suggestionTagLayout.show()
+                    true
+                }
+                binding.loadingIndicator.isVisible = isVisible
+                binding.searchSimpleTopAppBar.menu.findItem(R.id.clear_button).isVisible =
+                    isVisible
+            }
+        }
+        setOnEditorActionListener { textView, i, _ ->
+            if (i == EditorInfo.IME_ACTION_DONE) {
+                /*
+                If advanced search is active, action done will apply search
+                instead of insert tag into selected tags or apply search if empty
+                on simple mode
+                 */
+                if (viewModel.state.value.isAdvancedMode) {
+                    applySearch()
+                } else {
+                    val text = (textView as TextInputEditText).text.toString()
+                    if (text.isNotEmpty()) {
+                        viewModel.insertTagByName(text)
+                        binding.searchSimpleTagsInputText.text?.clear()
+                    } else if (text.isEmpty() && viewModel.state.value.selectedTags?.isNotEmpty() == true) {
+                        applySearch()
+                    }
+                }
+                true
+            } else {
+                false
+            }
+        }
+        requestFocus()
 
         lifecycleScope.launch {
             viewModel.suggestionTags.collect {
