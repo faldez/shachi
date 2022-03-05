@@ -17,7 +17,7 @@ class AboutSettingsFragment : PreferenceFragmentCompat() {
                     0).versionName
         }
 
-        findPreference<Preference>("github")?.setOnPreferenceClickListener {
+        findPreference<Preference>(ShachiPreference.KEY_GITHUB)?.setOnPreferenceClickListener {
             val intent =
                 Intent(Intent.ACTION_VIEW,
                     Uri.parse("https://github.com/faldez/shachi"))
@@ -25,7 +25,7 @@ class AboutSettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        findPreference<Preference>("privacy_policy")?.setOnPreferenceClickListener {
+        findPreference<Preference>(ShachiPreference.KEY_PRIVACY_POLICY)?.setOnPreferenceClickListener {
             val intent =
                 Intent(Intent.ACTION_VIEW,
                     Uri.parse("https://raw.githubusercontent.com/faldez/shachi/master/PRIVACY.md"))

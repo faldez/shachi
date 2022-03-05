@@ -9,6 +9,9 @@ object ShachiPreference {
     const val KEY_ABOUT = "about"
     const val KEY_APP_VERSION = "app_version"
 
+    const val KEY_PRIVACY_POLICY = "privacy_policy"
+    const val KEY_GITHUB = "github"
+
     const val KEY_DOWNLOAD_PATH = "download_path"
 
     const val KEY_THEME = "theme"
