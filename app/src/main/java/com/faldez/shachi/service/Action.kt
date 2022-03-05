@@ -117,7 +117,9 @@ sealed class Action {
         fun buildDanbooruUrl(): HttpUrl? {
             return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json")
-                    .addQueryParameter("search[name_like]", "$tag*").build()
+                    .addQueryParameter("search[name_like]", "$tag*")
+                    .addQueryParameter("search[order]", "count")
+                    .build()
 
             }
         }
