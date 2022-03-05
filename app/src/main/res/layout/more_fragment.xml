@@ -8,7 +8,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/more_appbar_layout"
-        android:layout_width="480dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
