@@ -107,7 +107,7 @@ sealed class Action {
         fun buildMoebooruUrl(): HttpUrl? {
             return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("tag.json")
-                    .addQueryParameter("name", tag)
+                    .addQueryParameter("name", "$tag*")
                     .addQueryParameter("order", "count")
                     .addQueryParameter("limit", limit.toString())
                     .build()
