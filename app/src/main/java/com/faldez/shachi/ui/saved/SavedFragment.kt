@@ -22,12 +22,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.paging.filter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
+import com.faldez.shachi.data.model.Rating
 import com.faldez.shachi.data.model.SavedSearchServer
 import com.faldez.shachi.data.preference.*
 import com.faldez.shachi.data.repository.FavoriteRepository
@@ -111,6 +113,29 @@ class SavedFragment : Fragment() {
         override fun onScroll(position: Int, scroll: Int) {
             Log.d("SavedFragment", "position=$position scroll=$scroll")
             viewModel.putScroll(position, scroll)
+        }
+
+        override fun onBind(
+            adapter: SavedSearchPostAdapter,
+            item: SavedSearchPost,
+            questionableFilter: Filter,
+            explicitFilter: Filter,
+        ) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                    item.posts?.collectLatest {
+                        if (it != null) {
+                            adapter.submitData(it.filter { item ->
+                                when (item.rating) {
+                                    Rating.Questionable -> questionableFilter != Filter.Mute
+                                    Rating.Explicit -> explicitFilter != Filter.Mute
+                                    Rating.Safe -> true
+                                }
+                            })
+                        }
+                    }
+                }
+            }
         }
     }
 

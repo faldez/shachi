@@ -8,13 +8,11 @@ import androidx.core.util.forEach
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
-import androidx.paging.filter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.data.model.Post
-import com.faldez.shachi.data.model.Rating
 import com.faldez.shachi.data.model.SavedSearchServer
 import com.faldez.shachi.data.preference.Filter
 import com.faldez.shachi.data.preference.GridMode
@@ -23,10 +21,6 @@ import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.databinding.SavedSearchItemBinding
 import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.bindPostImagePreview
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 class SavedSearchAdapter(
     private val scrollPositions: SparseArray<Int>,
@@ -85,20 +79,7 @@ class SavedSearchAdapter(
             )
 
             adapters[position] = adapter
-
-            CoroutineScope(Dispatchers.Main).launch {
-                item.posts.collectLatest {
-                    if (it != null) {
-                        adapter.submitData(it.filter { item ->
-                            when (item.rating) {
-                                Rating.Questionable -> questionableFilter != Filter.Mute
-                                Rating.Explicit -> explicitFilter != Filter.Mute
-                                Rating.Safe -> true
-                            }
-                        })
-                    }
-                }
-            }
+            listener.onBind(adapter, item, questionableFilter, explicitFilter)
         }
 
         holder.bind(adapter, item, scrollPositions)
@@ -265,7 +246,12 @@ class SavedSearchPostAdapter(
                 }
             }
 
-            bindPostImagePreview(imageView, item, gridMode, quality, hideQuestionable, hideExplicit)
+            bindPostImagePreview(imageView,
+                item,
+                gridMode,
+                quality,
+                hideQuestionable,
+                hideExplicit)
         }
     }
 }
@@ -277,4 +263,10 @@ interface SavedSearchAdapterListener {
     fun onDelete(position: Int)
     fun onEdit(position: Int)
     fun onScroll(position: Int, scroll: Int)
+    fun onBind(
+        adapter: SavedSearchPostAdapter,
+        item: SavedSearchPost,
+        questionableFilter: Filter,
+        explicitFilter: Filter,
+    )
 }
