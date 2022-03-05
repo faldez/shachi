@@ -2,8 +2,8 @@ package com.faldez.shachi.ui.browse
 
 import androidx.navigation.navGraphViewModels
 import com.faldez.shachi.R
-import com.faldez.shachi.database.AppDatabase
-import com.faldez.shachi.repository.*
+import com.faldez.shachi.data.database.AppDatabase
+import com.faldez.shachi.data.repository.*
 import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.ui.browse.base.BaseBrowseFragment
 

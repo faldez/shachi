@@ -3,9 +3,9 @@ package com.faldez.shachi.ui.search_history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.faldez.shachi.model.SearchHistory
-import com.faldez.shachi.model.SearchHistoryServer
-import com.faldez.shachi.repository.SearchHistoryRepository
+import com.faldez.shachi.data.model.SearchHistory
+import com.faldez.shachi.data.model.SearchHistoryServer
+import com.faldez.shachi.data.repository.SearchHistoryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted

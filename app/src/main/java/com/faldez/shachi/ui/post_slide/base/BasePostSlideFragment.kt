@@ -31,7 +31,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideFragmentBinding
-import com.faldez.shachi.model.Post
+import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.service.DownloadService
 import com.faldez.shachi.ui.comment.CommentFragment
 import com.faldez.shachi.ui.post_detail.PostDetailFragment

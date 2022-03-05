@@ -4,9 +4,9 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.faldez.shachi.model.Post
-import com.faldez.shachi.repository.ServerRepository
-import com.faldez.shachi.repository.TagRepository
+import com.faldez.shachi.data.model.Post
+import com.faldez.shachi.data.repository.ServerRepository
+import com.faldez.shachi.data.repository.TagRepository
 
 class PostDetailViewModelFactory constructor(
     private val post: Post,

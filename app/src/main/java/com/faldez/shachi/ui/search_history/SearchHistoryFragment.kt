@@ -10,9 +10,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.R
-import com.faldez.shachi.database.AppDatabase
+import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.databinding.SearchHistoryBottomSheetDialogFragmentBinding
-import com.faldez.shachi.repository.SearchHistoryRepository
+import com.faldez.shachi.data.repository.SearchHistoryRepository
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest

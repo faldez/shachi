@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.databinding.CommentItemBinding
-import com.faldez.shachi.model.Comment
+import com.faldez.shachi.data.model.Comment
 
 class CommentAdapter : ListAdapter<Comment, CommentViewHolder>(COMPARATOR) {
 

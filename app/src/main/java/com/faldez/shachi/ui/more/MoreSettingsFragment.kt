@@ -11,9 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.faldez.shachi.R
-import com.faldez.shachi.database.AppDatabase
-import com.faldez.shachi.model.*
-import com.faldez.shachi.repository.*
+import com.faldez.shachi.data.database.AppDatabase
+import com.faldez.shachi.data.model.*
+import com.faldez.shachi.data.repository.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers

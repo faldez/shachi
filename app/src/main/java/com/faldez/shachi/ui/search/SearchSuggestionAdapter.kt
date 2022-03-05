@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.SearchSuggestionTagListItemBinding
-import com.faldez.shachi.model.Category
-import com.faldez.shachi.model.TagDetail
+import com.faldez.shachi.data.model.Category
+import com.faldez.shachi.data.model.TagDetail
 
 class SearchSuggestionAdapter(
     val setTextColor: (Int) -> ColorStateList,

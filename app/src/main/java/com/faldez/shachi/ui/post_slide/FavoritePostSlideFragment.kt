@@ -6,10 +6,10 @@ import androidx.navigation.navGraphViewModels
 import androidx.paging.filter
 import androidx.paging.map
 import com.faldez.shachi.R
-import com.faldez.shachi.database.AppDatabase
-import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.Rating
-import com.faldez.shachi.repository.FavoriteRepository
+import com.faldez.shachi.data.database.AppDatabase
+import com.faldez.shachi.data.model.Post
+import com.faldez.shachi.data.model.Rating
+import com.faldez.shachi.data.repository.FavoriteRepository
 import com.faldez.shachi.ui.favorite.FavoriteViewModel
 import com.faldez.shachi.ui.favorite.FavoriteViewModelFactory
 import com.faldez.shachi.ui.post_slide.base.BasePostSlideFragment

@@ -5,10 +5,10 @@ import androidx.core.os.bundleOf
 import androidx.navigation.navGraphViewModels
 import androidx.paging.filter
 import com.faldez.shachi.R
-import com.faldez.shachi.database.AppDatabase
-import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.Rating
-import com.faldez.shachi.repository.*
+import com.faldez.shachi.data.database.AppDatabase
+import com.faldez.shachi.data.model.Post
+import com.faldez.shachi.data.model.Rating
+import com.faldez.shachi.data.repository.*
 import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.ui.browse.BrowseViewModel
 import com.faldez.shachi.ui.browse.BrowseViewModelFactory

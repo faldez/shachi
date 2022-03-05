@@ -22,7 +22,7 @@ import com.bumptech.glide.request.target.Target
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.PostSlideItemBinding
 import com.faldez.shachi.databinding.PostSlideItemVideoBinding
-import com.faldez.shachi.model.Post
+import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.glide.GlideApp
 import com.faldez.shachi.util.glide.GlideModule

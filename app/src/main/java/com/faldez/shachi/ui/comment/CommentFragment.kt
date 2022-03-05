@@ -9,10 +9,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.faldez.shachi.database.AppDatabase
+import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.databinding.CommentFragmentBinding
-import com.faldez.shachi.repository.CommentRepository
-import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.data.repository.CommentRepository
+import com.faldez.shachi.data.repository.ServerRepository
 import com.faldez.shachi.service.BooruServiceImpl
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.flow.collectLatest

@@ -3,12 +3,12 @@ package com.faldez.shachi.ui.blacklisted_tag
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faldez.shachi.model.BlacklistedTag
-import com.faldez.shachi.model.BlacklistedTagWithServer
-import com.faldez.shachi.model.ServerBlacklistedTagCrossRef
-import com.faldez.shachi.model.ServerView
-import com.faldez.shachi.repository.BlacklistTagRepository
-import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.data.model.BlacklistedTag
+import com.faldez.shachi.data.model.BlacklistedTagWithServer
+import com.faldez.shachi.data.model.ServerBlacklistedTagCrossRef
+import com.faldez.shachi.data.model.ServerView
+import com.faldez.shachi.data.repository.BlacklistTagRepository
+import com.faldez.shachi.data.repository.ServerRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

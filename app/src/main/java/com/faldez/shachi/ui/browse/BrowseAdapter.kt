@@ -7,7 +7,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.databinding.PostCardItemBinding
-import com.faldez.shachi.model.Post
+import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.bindPostImagePreview
 

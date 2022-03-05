@@ -1,9 +1,9 @@
 package com.faldez.shachi.service
 
-import com.faldez.shachi.model.SavedSearchServer
-import com.faldez.shachi.model.Server
-import com.faldez.shachi.model.ServerView
-import com.faldez.shachi.repository.PostRepository.Companion.NETWORK_PAGE_SIZE
+import com.faldez.shachi.data.model.SavedSearchServer
+import com.faldez.shachi.data.model.Server
+import com.faldez.shachi.data.model.ServerView
+import com.faldez.shachi.data.repository.PostRepository.Companion.NETWORK_PAGE_SIZE
 import okhttp3.HttpUrl
 
 sealed class Action {

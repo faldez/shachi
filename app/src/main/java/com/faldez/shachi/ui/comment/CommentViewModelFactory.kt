@@ -4,8 +4,8 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.faldez.shachi.repository.CommentRepository
-import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.data.repository.CommentRepository
+import com.faldez.shachi.data.repository.ServerRepository
 
 class CommentViewModelFactory(
     private val serverRepository: ServerRepository,

@@ -3,8 +3,8 @@ package com.faldez.shachi.ui.search
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.faldez.shachi.model.*
-import com.faldez.shachi.repository.TagRepository
+import com.faldez.shachi.data.model.*
+import com.faldez.shachi.data.repository.TagRepository
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

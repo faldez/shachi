@@ -1,8 +1,8 @@
 package com.faldez.shachi.service
 
-import com.faldez.shachi.model.response.GelbooruCommentResponse
-import com.faldez.shachi.model.response.GelbooruPostResponse
-import com.faldez.shachi.model.response.GelbooruTagResponse
+import com.faldez.shachi.data.model.response.GelbooruCommentResponse
+import com.faldez.shachi.data.model.response.GelbooruPostResponse
+import com.faldez.shachi.data.model.response.GelbooruTagResponse
 import com.faldez.shachi.util.interceptor.XmlToJsonInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

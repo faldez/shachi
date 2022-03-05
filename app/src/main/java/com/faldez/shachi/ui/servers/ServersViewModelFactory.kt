@@ -4,7 +4,7 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.data.repository.ServerRepository
 import java.lang.IllegalArgumentException
 
 class ServersViewModelFactory constructor(

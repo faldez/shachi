@@ -3,7 +3,7 @@ package com.faldez.shachi.ui.servers
 import android.view.*
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.databinding.ServerListItemBinding
-import com.faldez.shachi.model.ServerView
+import com.faldez.shachi.data.model.ServerView
 
 class ServerListAdapter(
     private val onTap: (Int) -> Unit,

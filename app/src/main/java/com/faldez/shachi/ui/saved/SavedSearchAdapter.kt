@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.databinding.SavedSearchItemBinding
-import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.Rating
-import com.faldez.shachi.model.SavedSearchServer
+import com.faldez.shachi.data.model.Post
+import com.faldez.shachi.data.model.Rating
+import com.faldez.shachi.data.model.SavedSearchServer
 import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.bindPostImagePreview
 import kotlinx.coroutines.CoroutineScope

@@ -4,7 +4,7 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.faldez.shachi.repository.FavoriteRepository
+import com.faldez.shachi.data.repository.FavoriteRepository
 
 class FavoriteViewModelFactory(
     private val favoriteRepository: FavoriteRepository,

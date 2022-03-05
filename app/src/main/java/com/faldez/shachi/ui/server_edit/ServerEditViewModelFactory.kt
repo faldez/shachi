@@ -4,10 +4,10 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.faldez.shachi.model.Server
-import com.faldez.shachi.repository.PostRepository
-import com.faldez.shachi.repository.ServerRepository
-import com.faldez.shachi.repository.TagRepository
+import com.faldez.shachi.data.model.Server
+import com.faldez.shachi.data.repository.PostRepository
+import com.faldez.shachi.data.repository.ServerRepository
+import com.faldez.shachi.data.repository.TagRepository
 
 class ServerEditViewModelFactory constructor(
     private val server: Server?,

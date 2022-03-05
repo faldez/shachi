@@ -3,7 +3,6 @@ package com.faldez.shachi.ui.post_detail
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,13 +20,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.faldez.shachi.R
-import com.faldez.shachi.database.AppDatabase
+import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.databinding.PostDetailFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
-import com.faldez.shachi.model.Modifier
-import com.faldez.shachi.model.Post
-import com.faldez.shachi.repository.ServerRepository
-import com.faldez.shachi.repository.TagRepository
+import com.faldez.shachi.data.model.Modifier
+import com.faldez.shachi.data.model.Post
+import com.faldez.shachi.data.repository.ServerRepository
+import com.faldez.shachi.data.repository.TagRepository
 import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.util.clearAllGroup
 import com.faldez.shachi.util.getGroupHeaderTextColor

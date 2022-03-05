@@ -12,8 +12,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.Downsampler
 import com.bumptech.glide.request.RequestOptions
 import com.faldez.shachi.R
-import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.Rating
+import com.faldez.shachi.data.model.Post
+import com.faldez.shachi.data.model.Rating
 
 fun bindPostImagePreview(
     imageView: ImageView,

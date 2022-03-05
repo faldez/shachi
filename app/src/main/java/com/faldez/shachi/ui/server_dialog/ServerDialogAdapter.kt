@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.databinding.ServerListDialogItemBinding
-import com.faldez.shachi.model.ServerView
+import com.faldez.shachi.data.model.ServerView
 
 class ServerDialogAdapter :
     ListAdapter<ServerView, ServerDialogViewHolder>(POST_COMPARATOR) {

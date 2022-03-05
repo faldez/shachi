@@ -1,13 +1,13 @@
 package com.faldez.shachi
 
 import androidx.paging.PagingSource
-import com.faldez.shachi.model.ServerType
-import com.faldez.shachi.model.ServerView
-import com.faldez.shachi.model.response.GelbooruPost
-import com.faldez.shachi.model.response.GelbooruPostResponse
-import com.faldez.shachi.model.response.GelbooruPosts
-import com.faldez.shachi.model.response.mapToPost
-import com.faldez.shachi.repository.PostPagingSource
+import com.faldez.shachi.data.model.ServerType
+import com.faldez.shachi.data.model.ServerView
+import com.faldez.shachi.data.model.response.GelbooruPost
+import com.faldez.shachi.data.model.response.GelbooruPostResponse
+import com.faldez.shachi.data.model.response.GelbooruPosts
+import com.faldez.shachi.data.model.response.mapToPost
+import com.faldez.shachi.data.repository.PostPagingSource
 import com.faldez.shachi.service.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

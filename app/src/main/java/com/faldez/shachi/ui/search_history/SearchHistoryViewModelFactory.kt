@@ -4,7 +4,7 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.faldez.shachi.repository.SearchHistoryRepository
+import com.faldez.shachi.data.repository.SearchHistoryRepository
 
 class SearchHistoryViewModelFactory constructor(
     private val searchHistoryRepository: SearchHistoryRepository,

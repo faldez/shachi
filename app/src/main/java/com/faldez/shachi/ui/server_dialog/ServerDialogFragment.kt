@@ -12,9 +12,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.faldez.shachi.R
-import com.faldez.shachi.database.AppDatabase
+import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.databinding.ServerDialogFragmentBinding
-import com.faldez.shachi.repository.ServerRepository
+import com.faldez.shachi.data.repository.ServerRepository
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 

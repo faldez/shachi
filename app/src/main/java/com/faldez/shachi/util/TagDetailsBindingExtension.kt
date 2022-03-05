@@ -4,7 +4,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.TagsDetailsBinding
-import com.faldez.shachi.model.Category
+import com.faldez.shachi.data.model.Category
 import com.google.android.material.chip.ChipGroup
 
 

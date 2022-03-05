@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
 import com.faldez.shachi.R
-import com.faldez.shachi.model.Post
+import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.util.MimeUtil
 import java.net.URL
 

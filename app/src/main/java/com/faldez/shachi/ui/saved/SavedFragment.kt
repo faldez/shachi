@@ -27,12 +27,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
-import com.faldez.shachi.database.AppDatabase
+import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.databinding.SavedFragmentBinding
-import com.faldez.shachi.model.SavedSearchServer
-import com.faldez.shachi.repository.FavoriteRepository
-import com.faldez.shachi.repository.PostRepository
-import com.faldez.shachi.repository.SavedSearchRepository
+import com.faldez.shachi.data.model.SavedSearchServer
+import com.faldez.shachi.data.repository.FavoriteRepository
+import com.faldez.shachi.data.repository.PostRepository
+import com.faldez.shachi.data.repository.SavedSearchRepository
 import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.widget.CustomDividerItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

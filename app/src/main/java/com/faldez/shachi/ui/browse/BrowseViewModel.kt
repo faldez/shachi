@@ -7,11 +7,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.SearchHistory
-import com.faldez.shachi.model.ServerView
-import com.faldez.shachi.model.TagDetail
-import com.faldez.shachi.repository.*
+import com.faldez.shachi.data.model.Post
+import com.faldez.shachi.data.model.SearchHistory
+import com.faldez.shachi.data.model.ServerView
+import com.faldez.shachi.data.model.TagDetail
+import com.faldez.shachi.data.repository.*
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

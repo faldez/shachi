@@ -4,9 +4,7 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.faldez.shachi.repository.ServerRepository
-import com.faldez.shachi.ui.servers.ServersViewModel
-import java.lang.IllegalArgumentException
+import com.faldez.shachi.data.repository.ServerRepository
 
 class ServerDialogModelFactory constructor(
     private val repository: ServerRepository,

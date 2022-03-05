@@ -30,9 +30,9 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.databinding.BrowseFragmentBinding
-import com.faldez.shachi.model.Post
-import com.faldez.shachi.model.Rating
-import com.faldez.shachi.model.ServerView
+import com.faldez.shachi.data.model.Post
+import com.faldez.shachi.data.model.Rating
+import com.faldez.shachi.data.model.ServerView
 import com.faldez.shachi.ui.browse.BrowseAdapter
 import com.faldez.shachi.ui.browse.BrowseViewModel
 import com.faldez.shachi.ui.browse.UiAction

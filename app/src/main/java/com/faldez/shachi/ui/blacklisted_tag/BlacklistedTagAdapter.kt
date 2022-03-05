@@ -3,8 +3,7 @@ package com.faldez.shachi.ui.blacklisted_tag
 import android.view.*
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.databinding.BlacklistedTagListItemBinding
-import com.faldez.shachi.model.BlacklistedTagWithServer
-import com.google.android.material.chip.Chip
+import com.faldez.shachi.data.model.BlacklistedTagWithServer
 
 class BlacklistedTagAdapter(
     private val onEdit: (Int) -> Unit,

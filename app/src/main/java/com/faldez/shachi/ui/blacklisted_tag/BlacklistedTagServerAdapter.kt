@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.databinding.BlacklistedTagEditServerItemBinding
-import com.faldez.shachi.model.Server
-import com.faldez.shachi.model.ServerView
+import com.faldez.shachi.data.model.Server
+import com.faldez.shachi.data.model.ServerView
 
 class BlacklistedTagServerAdapter(
     private val servers: List<ServerView>,

@@ -1,9 +1,9 @@
 package com.faldez.shachi.service
 
-import com.faldez.shachi.model.response.MoebooruComment
-import com.faldez.shachi.model.response.MoebooruPost
-import com.faldez.shachi.model.response.MoebooruTag
-import com.faldez.shachi.model.response.MoebooruTagSummary
+import com.faldez.shachi.data.model.response.MoebooruComment
+import com.faldez.shachi.data.model.response.MoebooruPost
+import com.faldez.shachi.data.model.response.MoebooruTag
+import com.faldez.shachi.data.model.response.MoebooruTagSummary
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
