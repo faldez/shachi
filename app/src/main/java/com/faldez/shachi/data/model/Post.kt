@@ -13,7 +13,10 @@ enum class Rating {
 
 @Entity(tableName = "favorite",
     primaryKeys = ["server_id", "post_id"],
-    foreignKeys = [ForeignKey(parentColumns = ["server_id"],
+    foreignKeys = [ForeignKey(
+        onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.CASCADE,
+        parentColumns = ["server_id"],
         childColumns = ["server_id"],
         entity = Server::class)])
 @Parcelize

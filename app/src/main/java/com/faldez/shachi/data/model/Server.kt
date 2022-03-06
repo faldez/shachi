@@ -2,7 +2,6 @@ package com.faldez.shachi.data.model
 
 import android.os.Parcelable
 import androidx.room.*
-import androidx.room.ForeignKey.CASCADE
 import kotlinx.parcelize.Parcelize
 
 enum class ServerType {
@@ -42,7 +41,9 @@ data class Server(
 @Entity(
     tableName = "selected_server",
     indices = [Index(value = ["server_id"])],
-    foreignKeys = [ForeignKey(onDelete = CASCADE,
+    foreignKeys = [ForeignKey(
+        onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.CASCADE,
         entity = Server::class,
         parentColumns = ["server_id"],
         childColumns = ["server_id"])]

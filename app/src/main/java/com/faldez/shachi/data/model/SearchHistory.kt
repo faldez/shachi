@@ -9,6 +9,7 @@ import androidx.room.*
         Index("created_at")],
     foreignKeys = [ForeignKey(childColumns = ["server_id"],
         onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.CASCADE,
         parentColumns = ["server_id"],
         entity = Server::class)])
 data class SearchHistory(

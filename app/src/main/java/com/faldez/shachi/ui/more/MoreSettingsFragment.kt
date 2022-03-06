@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.util.SparseBooleanArray
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
@@ -14,7 +13,6 @@ import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.*
 import com.faldez.shachi.data.repository.*
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,10 +20,6 @@ import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 
 class MoreSettingsFragment : PreferenceFragmentCompat() {
-    private var selectedItems = SparseBooleanArray()
-    private val items =
-        listOf("Server", "Blacklist tags", "Saved searches", "Favorites", "Search histories")
-
     private val backupPathPicker =
         registerForActivityResult(ActivityResultContracts.CreateDocument()) { uri ->
             if (uri != null) {
@@ -34,7 +28,7 @@ class MoreSettingsFragment : PreferenceFragmentCompat() {
                 lifecycleScope.launch {
                     try {
                         withContext(Dispatchers.IO) {
-                            backup(uri, selectedItems)
+                            backup(uri)
                         }
                         Toast.makeText(requireContext(), "Backup success", Toast.LENGTH_SHORT)
                             .show()
@@ -78,69 +72,69 @@ class MoreSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private suspend fun restore(uri: Uri, restoreItems: SparseBooleanArray) {
+    private suspend fun restore(uri: Uri) {
         val gson = Gson()
         val data = requireContext().contentResolver.openInputStream(uri)?.use { input ->
             gson.fromJson(input.reader(), Backup::class.java)
-        }
+        } ?: return
 
-        if (data != null) {
-            val db = AppDatabase.build(requireContext())
-            if (restoreItems[0]) restoreServers(db, data)
-            if (restoreItems[1]) restoreBlacklistTags(db, data)
-            if (restoreItems[2]) restoreSavedSearch(db, data)
-            if (restoreItems[3]) restoreFavorites(db, data)
-            if (restoreItems[4]) restoreSearchHistories(db, data)
-        }
-    }
 
-    private suspend fun restoreServers(db: AppDatabase, data: Backup) {
+        val db = AppDatabase.build(requireContext())
+
+        // restore server
         val serverRepository = ServerRepository(db)
-
+        val serverIdMap: MutableMap<Int, Int> = mutableMapOf()
         data.servers?.forEach { server ->
-            serverRepository.insert(Server(
-                serverId = server.serverId,
-                type = server.type,
-                title = server.title,
-                url = server.url,
-                username = server.username,
-                password = server.password
-            ))
+            serverIdMap[server.serverId] =
+                serverRepository.getServerByUrl(server.url)?.serverId ?: serverRepository.insert(
+                    server.copy(serverId = 0)).toInt()
         }
-    }
 
-    private suspend fun restoreBlacklistTags(db: AppDatabase, data: Backup) {
+        //restore blacklist tag
         val blacklistTagRepository = BlacklistTagRepository(db)
-
         data.blacklistedTags?.forEach {
             blacklistTagRepository.insertBlacklistedTag(it)
         }
 
-        data.blacklistedTagsCrossRef?.let { blacklistTagRepository.insertBlacklistedTag(it) }
-    }
-
-    private suspend fun restoreFavorites(db: AppDatabase, data: Backup) {
-        val favoriteRepository = FavoriteRepository(db)
-        data.favorites?.forEach {
-            favoriteRepository.insert(it)
+        // restore blacklist crossref
+        data.blacklistedTagsCrossRef?.let {
+            val list =
+                it.mapNotNull { ref ->
+                    serverIdMap[ref.serverId]?.let { serverId ->
+                        ref.copy(serverId = serverId)
+                    }
+                }
+            blacklistTagRepository.insertBlacklistedTag(list)
         }
-    }
 
-    private suspend fun restoreSearchHistories(db: AppDatabase, data: Backup) {
-        val searchHistoryRepository = SearchHistoryRepository(db)
-        data.searchHistories?.forEach {
-            searchHistoryRepository.insert(it)
-        }
-    }
-
-    private suspend fun restoreSavedSearch(db: AppDatabase, data: Backup) {
+        // restore saved search
         val savedSearchRepository = SavedSearchRepository(db)
         data.savedSearches?.forEach {
-            savedSearchRepository.insert(it.tags, it.savedSearchTitle, it.serverId)
+            serverIdMap[it.serverId]?.let { serverId ->
+                savedSearchRepository.insert(tags = it.tags,
+                    title = it.savedSearchTitle,
+                    serverId = serverId)
+            }
+        }
+
+        // restore favorites
+        val favoriteRepository = FavoriteRepository(db)
+        data.favorites?.forEach {
+            serverIdMap[it.serverId]?.let { serverId ->
+                favoriteRepository.insert(it.copy(serverId = serverId))
+            }
+        }
+
+        // restore search histories
+        val searchHistoryRepository = SearchHistoryRepository(db)
+        data.searchHistories?.forEach {
+            serverIdMap[it.serverId]?.let { serverId ->
+                searchHistoryRepository.insert(it.copy(serverId = serverId))
+            }
         }
     }
 
-    private suspend fun backup(uri: Uri, backupItems: SparseBooleanArray) {
+    private suspend fun backup(uri: Uri) {
         val db = AppDatabase.build(requireContext())
 
         val blacklistedTags = getBlacklistedTags(db)
@@ -152,12 +146,12 @@ class MoreSettingsFragment : PreferenceFragmentCompat() {
         }
 
         val data = Backup(
-            servers = if (backupItems[0]) getServers(db) else null,
-            blacklistedTags = if (backupItems[1]) blacklistedTags?.map { it.blacklistedTag } else null,
-            blacklistedTagsCrossRef = if (backupItems[1]) blacklistedTagsCrossRef else null,
-            savedSearches = if (backupItems[2]) getSavedSearches(db) else null,
-            favorites = if (backupItems[3]) getFavorites(db) else null,
-            searchHistories = if (backupItems[4]) getSearchHistories(db) else null,
+            servers = getServers(db),
+            blacklistedTags = blacklistedTags?.map { it.blacklistedTag },
+            blacklistedTagsCrossRef = blacklistedTagsCrossRef,
+            savedSearches = getSavedSearches(db),
+            favorites = getFavorites(db),
+            searchHistories = getSearchHistories(db),
         )
 
         val gson = Gson()
@@ -195,41 +189,26 @@ class MoreSettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun backupDialog() {
-        selectItemsDialog("Select items to backup", "Backup", callback = {
-            backupPathPicker.launch("shachi_backup_${
-                ZonedDateTime.now().toEpochSecond()
-            }.json")
-        })
+        backupPathPicker.launch("shachi_backup_${
+            ZonedDateTime.now().toEpochSecond()
+        }.json")
     }
 
     private fun restoreDialog(uri: Uri) {
         Log.d("MoreSettingsFragment", "restoreDialog")
-        selectItemsDialog("Select items to restore", "Restore", callback = {
-            lifecycleScope.launch {
-                try {
-                    withContext(Dispatchers.IO) {
-                        restore(uri, selectedItems)
-                    }
-                    Toast.makeText(requireContext(), "Restore success", Toast.LENGTH_SHORT)
-                        .show()
-                } catch (e: IllegalStateException) {
-                    Toast.makeText(requireContext(), "Restore failed", Toast.LENGTH_SHORT)
-                        .show()
+        lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    restore(uri)
                 }
-                requireContext().contentResolver.releasePersistableUriPermission(uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                Toast.makeText(requireContext(), "Restore success", Toast.LENGTH_SHORT)
+                    .show()
+            } catch (e: IllegalStateException) {
+                Toast.makeText(requireContext(), "Restore failed", Toast.LENGTH_SHORT)
+                    .show()
             }
-        })
-    }
-
-    private fun selectItemsDialog(title: String, action: String, callback: () -> Unit) {
-        Log.d("MoreSettingsFragment", "selectItemsDialog")
-        selectedItems = SparseBooleanArray()
-        MaterialAlertDialogBuilder(requireContext()).setTitle(title)
-            .setMultiChoiceItems(items.toTypedArray(), null) { _, which, isChecked ->
-                selectedItems.put(which, isChecked)
-            }.setPositiveButton(action) { _, _ ->
-                callback()
-            }.show()
+            requireContext().contentResolver.releasePersistableUriPermission(uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        }
     }
 }

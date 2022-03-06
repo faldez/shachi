@@ -6,6 +6,7 @@ import androidx.room.*
     indices = [Index("server_id")],
     foreignKeys = [ForeignKey(childColumns = ["server_id"],
         onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.CASCADE,
         parentColumns = ["server_id"],
         entity = Server::class)])
 data class SavedSearch(

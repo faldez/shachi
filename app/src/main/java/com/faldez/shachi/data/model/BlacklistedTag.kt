@@ -14,6 +14,7 @@ data class BlacklistedTag(
     indices = [Index("blacklisted_tag_id")],
     foreignKeys = [ForeignKey(childColumns = ["blacklisted_tag_id"],
         onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.CASCADE,
         parentColumns = ["blacklisted_tag_id"],
         entity = BlacklistedTag::class)])
 data class ServerBlacklistedTagCrossRef(

@@ -27,6 +27,10 @@ class ServerRepository(private val db: AppDatabase) {
         return db.serverDao().getServerById(serverId)
     }
 
+    suspend fun getServerByUrl(url: String): ServerView? {
+        return db.serverDao().getServerByUrl(url)
+    }
+
     suspend fun setSelectedServer(serverId: Int) {
         return db.serverDao().insertSelectedServer(SelectedServer(serverId = serverId))
     }
