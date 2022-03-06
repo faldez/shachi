@@ -17,12 +17,12 @@ import androidx.lifecycle.lifecycleScope
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
-import com.faldez.shachi.databinding.ServerEditFragmentBinding
 import com.faldez.shachi.data.model.Server
 import com.faldez.shachi.data.model.ServerType
 import com.faldez.shachi.data.repository.PostRepository
 import com.faldez.shachi.data.repository.ServerRepository
 import com.faldez.shachi.data.repository.TagRepository
+import com.faldez.shachi.databinding.ServerEditFragmentBinding
 import com.faldez.shachi.service.BooruServiceImpl
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.launch
@@ -77,19 +77,19 @@ class ServerEditFragment : Fragment() {
         }
 
         binding.serverNameInput.doOnTextChanged { text, _, _, _ ->
-            viewModel.setTitle(text.toString())
+            viewModel.setTitle(text.toString().trim())
         }
 
         binding.serverUrlInput.doOnTextChanged { text, _, _, _ ->
-            viewModel.setUrl(text.toString())
+            viewModel.setUrl(text.toString().trim())
         }
 
         binding.usernameInput.doOnTextChanged { text, _, _, _ ->
-            viewModel.setUsername(text.toString())
+            viewModel.setUsername(text.toString().trim())
         }
 
         binding.passwordInput.doOnTextChanged { text, _, _, _ ->
-            viewModel.setPassword(text.toString())
+            viewModel.setPassword(text.toString().trim())
         }
 
         binding.serverTypeSpinner.onItemSelectedListener =
