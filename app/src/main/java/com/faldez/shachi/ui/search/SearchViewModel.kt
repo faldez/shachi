@@ -43,7 +43,6 @@ class SearchSimpleViewModel(
     private fun setInitialTagsSimple(tags: List<TagDetail>) =
         CoroutineScope(Dispatchers.IO).launch {
             _state.update { currentState ->
-                Log.d("SearchSimpleViewModel/setInitialTagsSimple", "$tags")
                 val list = if (tags.isNotEmpty()) {
                     val tagsString = tags.joinToString(" ") { it.name }
                     tagRepository.getTags(Action.GetTags(server?.toServer(), tagsString))

@@ -3,14 +3,19 @@ package com.faldez.shachi.data.repository
 import android.util.Log
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.*
-import com.faldez.shachi.data.model.response.mapToTagDetail
+import com.faldez.shachi.data.model.response.mapToTag
 import com.faldez.shachi.data.model.response.mapToTagDetails
 import com.faldez.shachi.data.model.response.mapToTags
+import com.faldez.shachi.data.model.response.parseTag
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
 import kotlinx.coroutines.delay
 
 class TagRepository(private val service: BooruService, private val db: AppDatabase) {
+    suspend fun insertTags(tags: List<Tag>) {
+        db.tagDao().insertTags(tags)
+    }
+
     suspend fun queryTags(action: Action.SearchTag): List<TagDetail>? {
         return when (action.server?.type) {
             ServerType.Gelbooru -> {
@@ -38,32 +43,31 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
     }
 
     suspend fun getTag(action: Action.GetTag): Tag? {
-        val tag = db.tagDao().getTag(action.tag)?.let {
-            Tag(name = it.name, type = it.type)
-        } ?: when (action.server?.type) {
-            ServerType.Gelbooru -> {
-                action.buildGelbooruUrl()?.toString()?.let {
-                    service.gelbooru.getTags(it).mapToTagDetail()
-                }
-            }
-            ServerType.Danbooru -> {
-                action.buildDanbooruUrl()?.toString()?.let {
-                    service.danbooru.getTags(it).mapToTagDetail()
-                }
-            }
-            ServerType.Moebooru -> {
-                action.buildMoebooruUrl()?.toString()?.let {
-                    service.moebooru.getTags(it).mapToTagDetail()
-                }
-            }
-            null -> {
-                null
-            }
-        }?.let {
-            Tag(name = it.name, type = it.type)
-        }?.also {
-            if (action.server != null) db.tagDao().insertTag(it)
+        val tag = if (action.server != null) {
+            db.tagDao().getTag(action.server.serverId, action.tag)
+        } else {
+            db.tagDao().getTag(action.tag)
         }
+            ?: when (action.server?.type) {
+                ServerType.Gelbooru -> {
+                    action.buildGelbooruUrl()?.toString()?.let {
+                        service.gelbooru.getTags(it).mapToTag(action.server.serverId)
+                    }
+                }
+                ServerType.Danbooru -> {
+                    action.buildDanbooruUrl()?.toString()?.let {
+                        service.danbooru.getTags(it).mapToTag(action.server.serverId)
+                    }
+                }
+                ServerType.Moebooru -> {
+                    action.buildMoebooruUrl()?.toString()?.let {
+                        service.moebooru.getTags(it).mapToTag(action.server.serverId)
+                    }
+                }
+                else -> null
+            }?.also {
+                db.tagDao().insertTag(it)
+            }
 
         return tag
     }
@@ -76,13 +80,14 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
         val modifierPrefixRegex = Regex(modifierRegex)
         val tagsToQuery = action.tags.trim().split(" ")
         val cachedTags = tagsToQuery.let { tags ->
-            val cleanedTagsToQuery = tagsToQuery.map { it.replaceFirst(modifierPrefixRegex, "") }
-            val result = db.tagDao().getTags(cleanedTagsToQuery)
-                ?.associate { it.name to it.type }
+            val cleanedTagsToQuery = tags.map { it.replaceFirst(modifierPrefixRegex, "") }
+            val result = if (action.server != null) {
+                db.tagDao().getTags(action.server.serverId, cleanedTagsToQuery)
+            } else {
+                db.tagDao().getTags(cleanedTagsToQuery)
+            }?.associateBy { it.name }
             cleanedTagsToQuery.mapIndexedNotNull { index, tag ->
-                result?.get(tag)?.let {
-                    Tag(name = tagsToQuery[index], type = it)
-                }
+                result?.get(tag)?.copy(name = tagsToQuery[index])
             }
         }
 
@@ -106,23 +111,21 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
             ServerType.Gelbooru -> {
                 newAction.buildGelbooruUrl()?.toString()?.let { url ->
                     Log.d("TagRepository/Gelbooru", url)
-                    service.gelbooru.getTags(url).mapToTags()
+                    service.gelbooru.getTags(url).mapToTags(action.server.serverId)
                 }
             }
             ServerType.Danbooru -> {
                 newAction.buildDanbooruUrl()?.toString()?.let { url ->
                     Log.d("TagRepository/Danbooru", url)
-                    service.danbooru.getTags(url).mapToTags()
+                    service.danbooru.getTags(url).mapToTags(action.server.serverId)
                 }
 
             }
             ServerType.Moebooru -> {
-                newAction.buildMoebooruUrl()?.toString()?.let { url ->
-                    Log.d("TagRepository/Moebooru", url)
-                    service.moebooru.getTags(url).mapToTags()
-                }
+                Log.d("TagRepository/Moebooru", "Moebooru can't get multiple tags at once")
+                null
             }
-            null -> {
+            else -> {
                 null
             }
         }.let { tags ->
@@ -134,18 +137,20 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
             }
         }
 
-        if (action.server != null && bulkQueriedTags?.isNotEmpty() == true) {
+        if (bulkQueriedTags?.isNotEmpty() == true) {
             db.tagDao().insertTags(bulkQueriedTags)
         }
 
         val bulkQueriedTagMap = bulkQueriedTags?.associateBy { it.name }
 
         val eachQueriedTags =
-            uncachedTags.filter { bulkQueriedTagMap?.containsKey(it) != true }.mapNotNull {
-                Log.d("TagRepository/getTags", "eachQueriedTags $it")
+            uncachedTags.filter { bulkQueriedTagMap?.containsKey(it) != true }.mapNotNull { name ->
+                Log.d("TagRepository/getTags", "eachQueriedTags $name")
                 delay(100)
-                val eachTagAction = Action.GetTag(server = action.server, it)
-                getTag(eachTagAction)
+                action.server?.let { server ->
+                    val eachTagAction = Action.GetTag(server = server, name)
+                    getTag(eachTagAction)
+                }
             }
 
         val result =
@@ -155,6 +160,30 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
         Log.d("TagRepository/getTags", "result $result")
 
         return result
+    }
 
+    suspend fun getTagsSummary(action: Action.GetTagsSummary): List<Tag>? {
+        return when (action.server?.type) {
+            ServerType.Moebooru -> {
+                action.buildMoebooruUrl()?.toString()?.let {
+                    service.moebooru.getTagsSummary(it).data.split(" ").mapNotNull { summary ->
+                        try {
+                            summary.trim().split("`").let { split ->
+                                val type = split[0].toInt()
+                                split.subList(1, split.size).mapNotNull { tag ->
+                                    if (tag.isNotEmpty()) Tag(name = tag,
+                                        type = parseTag(type),
+                                        serverId = action.server.serverId)
+                                    else null
+                                }
+                            }
+                        } catch (exception: Exception) {
+                            null
+                        }
+                    }.flatten()
+                }
+            }
+            else -> null
+        }
     }
 }

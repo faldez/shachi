@@ -171,8 +171,6 @@ sealed class Action {
             }
         }
 
-        fun buildMoebooruUrl(): HttpUrl? = null
-
         fun buildDanbooruUrl(): HttpUrl? {
             return server?.let {
                 HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json").apply {

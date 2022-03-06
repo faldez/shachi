@@ -28,33 +28,33 @@ class PostDetailViewModel(
         val postTagsFlow =
             actionStateFlow.filterIsInstance<UiAction.SetInitialTags>().distinctUntilChanged()
                 .onStart { emit(UiAction.SetInitialTags(initialSearchTags)) }.map {
-                    val server = serverRepository.getServerById(post.serverId)
+                    serverRepository.getServerById(post.serverId)?.let { server ->
+                        val (included, blacklisted) = stringToTags(server = server.toServer(),
+                            tags = initialSearchTags)
 
-                    val (included, blacklisted) = stringToTags(server = server?.toServer(),
-                        tags = initialSearchTags)
+                        val includedSet = included.toSet()
 
-                    val includedSet = included.toSet()
+                        val postTags = tagRepository.getTags(Action.GetTags(server.toServer(),
+                            post.tags))?.map {
+                            TagDetailState(
+                                tag = TagDetail.fromTag(it),
+                                checked = included.contains(it),
+                                mutable = !includedSet.contains(it)
+                            )
+                        } ?: listOf()
 
-                    val postTags = tagRepository.getTags(Action.GetTags(server?.toServer(),
-                        post.tags))?.map {
-                        TagDetailState(
-                            tag = TagDetail.fromTag(it),
-                            checked = included.contains(it),
-                            mutable = !includedSet.contains(it)
-                        )
-                    } ?: listOf()
+                        val blacklistedTags = blacklisted.map {
+                            TagDetailState(
+                                tag = TagDetail.fromTag(it).copy(modifier = Modifier.Minus),
+                                checked = true,
+                                mutable = false
+                            )
+                        }
 
-                    val blacklistedTags = blacklisted.map {
-                        TagDetailState(
-                            tag = TagDetail.fromTag(it).copy(modifier = Modifier.Minus),
-                            checked = true,
-                            mutable = false
-                        )
-                    }
+                        val tags = listOf(postTags, blacklistedTags).flatten()
 
-                    val tags = listOf(postTags, blacklistedTags).flatten()
-
-                    Pair(server, tags)
+                        Pair(server, tags)
+                    } ?: Pair(null, listOf())
                 }
 
 
@@ -92,7 +92,7 @@ class PostDetailViewModel(
             }
     }
 
-    private suspend fun stringToTags(server: Server?, tags: String): Pair<List<Tag>, List<Tag>> {
+    private suspend fun stringToTags(server: Server, tags: String): Pair<List<Tag>, List<Tag>> {
         val splittedTags =
             tags.split(" ").filter {
                 it.isNotEmpty() && it != "~"

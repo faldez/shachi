@@ -31,7 +31,7 @@ class ServerRepository(private val db: AppDatabase) {
         return db.serverDao().insertSelectedServer(SelectedServer(serverId = serverId))
     }
 
-    suspend fun insert(server: Server) {
+    suspend fun insert(server: Server): Long {
         return db.serverDao().insert(server)
     }
 

@@ -91,7 +91,15 @@ class ServerEditViewModel(
             try {
                 postRepository.testSearchPost(Action.SearchPost(server.toServerView(), ""))
                 if (isNew) {
-                    serverRepository.insert(server)
+                    val serverId = serverRepository.insert(server)
+                    serverRepository.getServerById(serverId.toInt())?.let {
+                        val tags =
+                            tagRepository.getTagsSummary(Action.GetTagsSummary(it.toServer()))
+                        if (tags != null) {
+                            tagRepository.insertTags(tags)
+                        }
+                    }
+
                 } else {
                     serverRepository.update(server)
                 }

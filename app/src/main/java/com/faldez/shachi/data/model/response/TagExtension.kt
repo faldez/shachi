@@ -14,11 +14,12 @@ fun GelbooruTagResponse.mapToTagDetails() =
         )
     }
 
-fun GelbooruTagResponse.mapToTags() =
+fun GelbooruTagResponse.mapToTags(serverId: Int) =
     this.tags?.tag?.map {
         Tag(
             name = it.name,
-            type = parseTag(it.type)
+            type = parseTag(it.type),
+            serverId = serverId
         )
     }
 
@@ -31,11 +32,12 @@ fun GelbooruTagResponse.mapToTagDetail() =
         )
     }
 
-fun GelbooruTagResponse.mapToTag() =
+fun GelbooruTagResponse.mapToTag(serverId: Int) =
     this.tags?.tag?.firstOrNull()?.let {
         Tag(
             name = it.name,
-            type = parseTag(it.type)
+            type = parseTag(it.type),
+            serverId = serverId
         )
     }
 
@@ -50,11 +52,12 @@ fun List<DanbooruTag>.mapToTagDetails() =
     }
 
 @JvmName("danbooruMapToTags")
-fun List<DanbooruTag>.mapToTags() =
+fun List<DanbooruTag>.mapToTags(serverId: Int) =
     this.map {
         Tag(
             name = it.name,
-            type = parseTag(it.category)
+            type = parseTag(it.category),
+            serverId = serverId
         )
     }
 
@@ -69,11 +72,12 @@ fun List<DanbooruTag>.mapToTagDetail() =
     }
 
 @JvmName("danbooruMapToTag")
-fun List<DanbooruTag>.mapToTag() =
+fun List<DanbooruTag>.mapToTag(serverId: Int) =
     this.firstOrNull()?.let {
         Tag(
             name = it.name,
-            type = parseTag(it.category)
+            type = parseTag(it.category),
+            serverId = serverId
         )
     }
 
@@ -88,11 +92,12 @@ fun List<MoebooruTag>.mapToTagDetails() =
     }
 
 @JvmName("moebooruMapToTags")
-fun List<MoebooruTag>.mapToTags() =
+fun List<MoebooruTag>.mapToTags(serverId: Int) =
     this.map {
         Tag(
             name = it.name,
-            type = parseTag(it.type)
+            type = parseTag(it.type),
+            serverId = serverId
         )
     }
 
@@ -107,11 +112,12 @@ fun List<MoebooruTag>.mapToTagDetail() =
     }
 
 @JvmName("moebooruMapToTag")
-fun List<MoebooruTag>.mapToTag() =
+fun List<MoebooruTag>.mapToTag(serverId: Int) =
     this.firstOrNull()?.let {
         Tag(
             name = it.name,
-            type = parseTag(it.type)
+            type = parseTag(it.type),
+            serverId = serverId
         )
     }
 

@@ -51,4 +51,5 @@ fun List<Tag>.mapToTagDetails(): List<TagDetail> = this.map {
     TagDetail(name = it.name, type = it.type)
 }
 
-fun List<TagDetail>.mapToTags(): List<Tag> = this.map { Tag(name = it.name, type = it.type) }
+fun List<TagDetail>.mapToTags(serverId: Int): List<Tag> =
+    this.map { Tag(name = it.name, type = it.type, serverId = serverId) }

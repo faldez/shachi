@@ -27,8 +27,8 @@ interface ServerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSelectedServer(server: SelectedServer)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(server: Server)
+    @Insert
+    suspend fun insert(server: Server): Long
 
     @Update
     suspend fun update(server: Server)
