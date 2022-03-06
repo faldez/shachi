@@ -15,9 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
-import com.faldez.shachi.databinding.ServersFragmentBinding
 import com.faldez.shachi.data.model.Server
 import com.faldez.shachi.data.repository.ServerRepository
+import com.faldez.shachi.databinding.ServersFragmentBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.launch
 
@@ -62,7 +63,11 @@ class ServersFragment : Fragment() {
             },
             onDelete = {
                 val server = adapter.serverList.get(it)
-                viewModel.delete(server)
+                MaterialAlertDialogBuilder(requireContext()).setTitle("Delete " + server.title)
+                    .setMessage("Are you Sure? Saved searches, favorite, and search history for this server will be deleted")
+                    .setPositiveButton("Yes"
+                    ) { _, _ -> viewModel.delete(server) }
+                    .setNegativeButton("No", null).show()
             })
         binding.serverListRecyclerview.adapter = adapter
         binding.serverListRecyclerview.layoutManager =
