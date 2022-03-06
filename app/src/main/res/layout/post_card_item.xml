@@ -4,7 +4,6 @@
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/colorPrimaryContainer"
     android:layout_margin="2dp">
 
     <com.google.android.material.imageview.ShapeableImageView
