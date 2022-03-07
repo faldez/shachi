@@ -19,6 +19,9 @@ class MoreFragment : Fragment() {
     ): View? {
         binding = MoreFragmentBinding.inflate(inflater, container, false)
 
+        binding.moreAppbarLayout.statusBarForeground =
+            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+
         (activity as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.moreFrameLayout, MoreSettingsFragment()).commit()
         return binding.root

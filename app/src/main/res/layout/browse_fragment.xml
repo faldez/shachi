@@ -20,7 +20,7 @@
             app:layout_collapseMode="pin"
             app:menu="@menu/browse_menu"
             app:title="@string/browse"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"/>
+            app:layout_scrollFlags="scroll|enterAlways|snap"/>
 
 
     </com.google.android.material.appbar.AppBarLayout>

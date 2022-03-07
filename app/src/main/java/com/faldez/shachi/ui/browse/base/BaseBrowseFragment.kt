@@ -42,6 +42,7 @@ import com.faldez.shachi.ui.search.SearchFragment
 import com.faldez.shachi.ui.server_dialog.ServerDialogFragment
 import com.faldez.shachi.widget.EmptyFooterDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -118,6 +119,9 @@ abstract class BaseBrowseFragment : Fragment() {
 
     private fun prepareAppBar() {
         val savedSearchTitle = arguments?.getString("title")
+
+        binding.appBarLayout.statusBarForeground =
+            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
 
         binding.searchPostTopAppBar.menu.clear()
         binding.searchPostTopAppBar.inflateMenu(R.menu.browse_menu)

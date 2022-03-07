@@ -39,6 +39,7 @@ import com.faldez.shachi.databinding.SavedFragmentBinding
 import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.widget.CustomDividerItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -159,6 +160,9 @@ class SavedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.savedAppbarLayout.statusBarForeground =
+            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
 
         val gridMode = preferences.getString(ShachiPreference.KEY_GRID_MODE, null)?.toGridMode()
             ?: GridMode.Staggered

@@ -32,6 +32,7 @@ import com.faldez.shachi.data.repository.FavoriteRepository
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
 import com.faldez.shachi.ui.search.SearchFragment
 import com.faldez.shachi.widget.EmptyFooterDecoration
+import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.launch
 
 class FavoriteFragment : Fragment() {
@@ -68,6 +69,8 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun prepareAppBar() {
+        binding.favoriteAppbarLayout.statusBarForeground =
+            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
         binding.favoriteTopappbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.search_button -> {

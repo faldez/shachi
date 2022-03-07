@@ -17,7 +17,7 @@
             android:layout_height="?attr/actionBarSize"
             android:elevation="0dp"
             app:layout_collapseMode="pin"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
             app:menu="@menu/favorite_menu"
             app:title="@string/favorite" />
 
