@@ -15,7 +15,9 @@ class SearchSimpleViewModel(
     private val server: ServerView?,
     private val tagRepository: TagRepository,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<UiState> = MutableStateFlow(UiState(server = server))
+    private val _state: MutableStateFlow<UiState> =
+        MutableStateFlow(UiState(server = server, selectedTags = SelectedTags.Simple(
+            listOf())))
     val state: StateFlow<UiState> = _state.asStateFlow()
 
     val suggestionTags: Flow<List<TagDetail>?>
@@ -40,8 +42,11 @@ class SearchSimpleViewModel(
         }
     }
 
-    private fun setInitialTagsSimple(tags: List<TagDetail>) =
+    private fun setInitialTagsSimple(value: String) =
         CoroutineScope(Dispatchers.IO).launch {
+            val tags = value.split(" ")
+                .mapNotNull { if (it.isNotEmpty()) TagDetail.fromName(it) else null }
+
             _state.update { currentState ->
                 val list = if (tags.isNotEmpty()) {
                     val tagsString = tags.joinToString(" ") { it.name }
@@ -55,22 +60,20 @@ class SearchSimpleViewModel(
                 } else {
                     listOf()
                 }
-                currentState.copy(selectedTags = SelectedTags.Simple(list), isAdvancedMode = false)
+                currentState.copy(selectedTags = SelectedTags.Simple(list))
             }
         }
 
     private fun setInitialTagsAdvance(tags: String) {
         _state.value =
-            state.value.copy(selectedTags = SelectedTags.Advance(tags), isAdvancedMode = true)
+            state.value.copy(selectedTags = SelectedTags.Advance(tags))
     }
 
     fun setInitialTags(tags: String) {
         if (tags.contains(Regex("[{}~]"))) {
             setInitialTagsAdvance(tags)
         } else {
-            val value = tags.split(" ")
-                .mapNotNull { if (it.isNotEmpty()) TagDetail.fromName(it) else null }
-            setInitialTagsSimple(value)
+            setInitialTagsSimple(tags)
         }
     }
 
@@ -136,14 +139,13 @@ class SearchSimpleViewModel(
     }
 
     fun toggleMode() {
-        when (val selectedTags = state.value.selectedTags) {
+        when (state.value.selectedTags) {
             is SelectedTags.Simple -> {
-                _state.value = state.value.copy(isAdvancedMode = true, selectedTags = null)
+                _state.value =
+                    state.value.copy(selectedTags = SelectedTags.Advance(""))
             }
             is SelectedTags.Advance -> {
-                if (!selectedTags.tags.contains(Regex("[{}~]"))) {
-                    _state.value = state.value.copy(isAdvancedMode = false, selectedTags = null)
-                }
+                setInitialTagsSimple("")
             }
         }
     }
@@ -166,6 +168,5 @@ sealed class UiAction {
 
 data class UiState(
     val server: ServerView?,
-    val isAdvancedMode: Boolean = false,
-    val selectedTags: SelectedTags? = null,
+    val selectedTags: SelectedTags,
 )

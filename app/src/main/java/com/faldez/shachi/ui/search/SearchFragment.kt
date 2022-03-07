@@ -89,7 +89,7 @@ class SearchFragment : DialogFragment() {
 
         lifecycleScope.launch {
             viewModel.state.collect { state ->
-                if (state.isAdvancedMode) {
+                if (state.selectedTags is SelectedTags.Advance) {
                     binding.selectedTagsLayout.hide()
                     binding.suggestionTagLayout.show()
                 }
@@ -136,7 +136,7 @@ class SearchFragment : DialogFragment() {
             }
         }
         viewModel.setInitialTags(initialTags)
-        if (viewModel.state.value.isAdvancedMode) {
+        if (viewModel.state.value.selectedTags is SelectedTags.Advance) {
             binding.searchSimpleTagsInputText.text = SpannableStringBuilder(initialTags)
         }
     }
@@ -155,7 +155,7 @@ class SearchFragment : DialogFragment() {
 
             },
             onClick = {
-                if (viewModel.state.value.isAdvancedMode) {
+                if (viewModel.state.value.selectedTags is SelectedTags.Advance) {
                     val text = binding.searchSimpleTagsInputText.text?.toString()
                     if (text.isNullOrEmpty()) {
                         binding.searchSimpleTagsInputText.text = SpannableStringBuilder(it.name)
@@ -220,7 +220,7 @@ class SearchFragment : DialogFragment() {
         lifecycleScope.launch {
             viewModel.state.collect { state ->
                 binding.searchSimpleTopAppBar.menu.findItem(R.id.search_mode_button).isChecked =
-                    state.isAdvancedMode
+                    state.selectedTags is SelectedTags.Advance
 
             }
         }
@@ -229,15 +229,15 @@ class SearchFragment : DialogFragment() {
     private fun applySearch() {
         val value = when (val selectedTags = viewModel.state.value.selectedTags) {
             is SelectedTags.Simple -> {
+                Log.d("SearchFragment", "Simple browse: ${selectedTags.tags}")
                 selectedTags.tags.joinToString(" ") { it.toString() }
             }
             is SelectedTags.Advance -> {
+                Log.d("SearchFragment", "Advance browse: ${selectedTags.tags}")
                 selectedTags.tags
             }
-            else -> {
-                ""
-            }
         }
+
         val bundle = bundleOf("server" to viewModel.state.value.server,
             "tags" to value)
         findNavController().navigate(R.id.action_search_to_browse, bundle)
@@ -269,19 +269,13 @@ class SearchFragment : DialogFragment() {
     private fun TextInputEditText.bind() {
         hint = "Search " + viewModel.state.value.server?.title
         setImeActionLabel("Add", KeyEvent.KEYCODE_ENTER)
-        doAfterTextChanged { s ->
-            if (viewModel.state.value.isAdvancedMode) {
-                s?.toString()?.let {
-                    viewModel.insertTagByName(it)
-                }
-            }
-        }
         doOnTextChanged { text, start, _, _ ->
-            if (viewModel.state.value.isAdvancedMode) {
+            if (viewModel.state.value.selectedTags is SelectedTags.Advance) {
                 text?.toString()?.trim()?.let {
                     if (it.isNotEmpty()) {
                         val tag = StringUtil.getCurrentToken(it, start)
                         viewModel.accept(UiAction.SearchTag(tag))
+                        viewModel.insertTagByName(it)
                     }
                 }
             } else {
@@ -308,14 +302,14 @@ class SearchFragment : DialogFragment() {
                 instead of insert tag into selected tags or apply search if empty
                 on simple mode
                  */
-                if (viewModel.state.value.isAdvancedMode) {
+                if (viewModel.state.value.selectedTags is SelectedTags.Advance) {
                     applySearch()
                 } else {
                     val text = (textView as TextInputEditText).text.toString()
                     if (text.isNotEmpty()) {
                         viewModel.insertTagByName(text)
                         binding.searchSimpleTagsInputText.text?.clear()
-                    } else if (text.isEmpty() && viewModel.state.value.selectedTags?.isNotEmpty() == true) {
+                    } else if (text.isEmpty() && viewModel.state.value.selectedTags.isNotEmpty()) {
                         applySearch()
                     }
                 }
