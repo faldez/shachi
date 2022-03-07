@@ -34,6 +34,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/tags"
                     android:inputType="textAutoComplete"
+                    android:imeOptions="flagNoFullscreen"
                     android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
