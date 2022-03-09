@@ -53,9 +53,8 @@ fun bindPostImagePreview(
 
             Glide.with(imageView.context).load(url)
                 .placeholder(BitmapDrawable(imageView.resources,
-                    ColorDrawable(Color.GRAY).toBitmap(previewWidth,
-                        previewHeight,
-                        Bitmap.Config.RGB_565))).diskCacheStrategy(DiskCacheStrategy.ALL)
+                    Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ALPHA_8)))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
         }
     } else {
         Glide.with(imageView.context).load(ColorDrawable(Color.GRAY).toBitmap(previewWidth,
