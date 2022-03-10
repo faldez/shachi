@@ -68,7 +68,7 @@ class PostDetailViewModel(
             val appendedTagsMap = appendedTags.associateBy { it.tag.name }
             val tags = postTags.second.map {
                 appendedTagsMap[it.tag.name] ?: it
-            }
+            }.toSet()
 
 
             UiState(
@@ -152,6 +152,5 @@ data class TagDetailState(
 data class UiState(
     val initialSearchTags: String,
     val server: ServerView? = null,
-    val tags: List<TagDetailState>? = null,
-
-    )
+    val tags: Set<TagDetailState>? = null,
+)
