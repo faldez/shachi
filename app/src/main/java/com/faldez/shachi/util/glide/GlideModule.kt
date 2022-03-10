@@ -3,7 +3,6 @@ package com.faldez.shachi.util.glide
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.Registry
@@ -15,7 +14,6 @@ import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okio.*
-import okio.`-DeprecatedOkio`.buffer
 import java.io.InputStream
 import java.util.concurrent.ConcurrentHashMap
 
@@ -41,7 +39,7 @@ class GlideModule : AppGlideModule() {
     }
 
     override fun isManifestParsingEnabled(): Boolean {
-        return super.isManifestParsingEnabled()
+        return false
     }
 
     internal class ProgressResponseBody(

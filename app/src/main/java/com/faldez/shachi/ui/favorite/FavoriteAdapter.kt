@@ -6,10 +6,11 @@ import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.faldez.shachi.databinding.PostCardItemBinding
+import com.bumptech.glide.Glide
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.preference.GridMode
 import com.faldez.shachi.data.preference.Quality
+import com.faldez.shachi.databinding.PostCardItemBinding
 import com.faldez.shachi.util.MimeUtil
 import com.faldez.shachi.util.bindPostImagePreview
 
@@ -45,7 +46,18 @@ class FavoriteAdapter(
             }
         }
 
-        bindPostImagePreview(imageView, post, gridMode, quality, hideQuestionable, hideExplicit)
+        bindPostImagePreview(holder.binding.root.context,
+            imageView,
+            post,
+            gridMode,
+            quality,
+            hideQuestionable,
+            hideExplicit)
+    }
+
+    override fun onViewRecycled(holder: BrowseItemViewHolder) {
+        super.onViewRecycled(holder)
+        Glide.with(holder.binding.root).clear(holder.binding.imageView)
     }
 
     companion object {

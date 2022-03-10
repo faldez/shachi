@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.preference.GridMode
 import com.faldez.shachi.data.preference.Quality
@@ -41,6 +42,11 @@ class BrowseAdapter(
         holder.bind(post)
     }
 
+    override fun onViewRecycled(holder: BrowseItemViewHolder) {
+        super.onViewRecycled(holder)
+        Glide.with(holder.binding.root).clear(holder.binding.imageView)
+    }
+
     companion object {
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
@@ -74,6 +80,12 @@ class BrowseItemViewHolder(
             }
         }
 
-        bindPostImagePreview(imageView, post, gridMode, quality, hideQuestionable, hideExplicit)
+        bindPostImagePreview(binding.root.context,
+            imageView,
+            post,
+            gridMode,
+            quality,
+            hideQuestionable,
+            hideExplicit)
     }
 }

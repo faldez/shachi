@@ -1,5 +1,6 @@
 package com.faldez.shachi.util
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
@@ -18,7 +19,8 @@ import com.faldez.shachi.data.preference.GridMode
 import com.faldez.shachi.data.preference.Quality
 
 fun bindPostImagePreview(
-    imageView: ImageView,
+    context: Context,
+    target: ImageView,
     item: Post?,
     gridMode: GridMode,
     quality: Quality,
@@ -41,7 +43,7 @@ fun bindPostImagePreview(
 
     if (item != null) {
         if (hideQuestionable && item.rating == Rating.Questionable || hideExplicit && item.rating == Rating.Explicit) {
-            Glide.with(imageView.context).load(ColorDrawable(Color.RED).toBitmap(previewWidth,
+            Glide.with(context).load(ColorDrawable(Color.RED).toBitmap(previewWidth,
                 previewHeight,
                 Bitmap.Config.RGB_565))
         } else {
@@ -51,17 +53,17 @@ fun bindPostImagePreview(
                 else -> item.previewUrl ?: item.sampleUrl
             } ?: item.fileUrl
 
-            Glide.with(imageView.context).load(url)
-                .placeholder(BitmapDrawable(imageView.resources,
+            Glide.with(context).load(url)
+                .placeholder(BitmapDrawable(context.resources,
                     Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ALPHA_8)))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
         }
     } else {
-        Glide.with(imageView.context).load(ColorDrawable(Color.GRAY).toBitmap(previewWidth,
+        Glide.with(context).load(ColorDrawable(Color.GRAY).toBitmap(previewWidth,
             previewHeight,
             Bitmap.Config.RGB_565))
     }
         .apply(options)
         .override(previewWidth, previewHeight)
-        .into(imageView)
+        .into(target)
 }

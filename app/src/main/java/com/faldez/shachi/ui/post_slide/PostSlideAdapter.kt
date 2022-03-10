@@ -110,6 +110,14 @@ class PostSlideAdapter(
         }
     }
 
+    override fun onViewRecycled(holder: PostSlideViewHolder) {
+        super.onViewRecycled(holder)
+        if (holder is PostSlideImageViewHolder) {
+            GlideApp.with(holder.binding.root.context)
+                .clear(holder.binding.postImageView)
+        }
+    }
+
     companion object {
         private val POST_COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean =
@@ -128,7 +136,7 @@ abstract class PostSlideViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
 }
 
 class PostSlideImageViewHolder(
-    private val binding: PostSlideItemBinding,
+    val binding: PostSlideItemBinding,
     private val quality: Quality,
     private val onTap: () -> Unit,
 ) :
@@ -168,8 +176,8 @@ class PostSlideImageViewHolder(
                     binding.postLoadingIndicator.isIndeterminate = false
                 })
 
-            var glide = GlideApp.with(postImageView.context).load(url)
-                .thumbnail(GlideApp.with(postImageView.context).load(item.previewUrl))
+            var glide = GlideApp.with(binding.root.context).load(url)
+                .thumbnail(GlideApp.with(binding.root.context).load(item.previewUrl))
                 .timeout(3000)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
@@ -200,7 +208,7 @@ class PostSlideImageViewHolder(
             }
             glide.into(postImageView)
         } else {
-            GlideApp.with(postImageView.context).load(BitmapDrawable(postImageView.resources,
+            GlideApp.with(binding.root.context).load(BitmapDrawable(postImageView.resources,
                 Bitmap.createBitmap(150,
                     150,
                     Bitmap.Config.ARGB_8888))).into(postImageView)

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.SavedSearchServer
 import com.faldez.shachi.data.preference.Filter
@@ -186,6 +187,11 @@ class SavedSearchPostAdapter(
         holder.bind(item, savedSearchServer!!)
     }
 
+    override fun onViewRecycled(holder: SavedSearchPostViewHolder) {
+        super.onViewRecycled(holder)
+        Glide.with(holder.binding.root).clear(holder.binding.imageView)
+    }
+
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<Post>() {
             override fun areItemsTheSame(
@@ -240,7 +246,9 @@ class SavedSearchPostAdapter(
                 }
             }
 
-            bindPostImagePreview(imageView,
+            bindPostImagePreview(
+                binding.root.context,
+                imageView,
                 item,
                 gridMode,
                 quality,
