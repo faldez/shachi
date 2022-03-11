@@ -14,6 +14,9 @@ data class GelbooruTags(
 //    @Serializable(SingleObjectAsArraySerializer::class)
     val tag: List<GelbooruTag>?,
     val type: String,
+    val count: Int? = null,
+    val offset: Int? = null,
+    val limit: Int? = null,
 )
 
 @Serializable
