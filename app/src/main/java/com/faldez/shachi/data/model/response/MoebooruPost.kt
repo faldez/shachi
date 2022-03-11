@@ -50,6 +50,6 @@ data class MoebooruPost(
     @JsonNames("is_rating_locked") val isRatingLocked: Boolean? = false,
     @JsonNames("is_note_locked") val isNoteLocked: Boolean? = false,
     @JsonNames("is_pending") val isPending: Boolean? = false,
-    @Serializable(TimestampDateTimeSerializer::class) @JsonNames("last_noted_at") val lastNotedAt: ZonedDateTime?,
+    @Serializable(TimestampDateTimeSerializer::class) @JsonNames("last_noted_at") val lastNotedAt: ZonedDateTime? = null,
     @Serializable(TimestampDateTimeSerializer::class) @JsonNames("last_commented_at") val lastCommentedAt: ZonedDateTime? = null,
 )
