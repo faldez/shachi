@@ -1,6 +1,7 @@
 package com.faldez.shachi.ui.saved
 
 import android.text.SpannableStringBuilder
+import android.util.Log
 import android.util.SparseArray
 import android.view.*
 import androidx.core.util.forEach
@@ -189,7 +190,11 @@ class SavedSearchPostAdapter(
 
     override fun onViewRecycled(holder: SavedSearchPostViewHolder) {
         super.onViewRecycled(holder)
-        Glide.with(holder.binding.root).clear(holder.binding.imageView)
+        try {
+            Glide.with(holder.binding.root).clear(holder.binding.imageView)
+        } catch (e: Exception) {
+            Log.e("SavedSearchAdapter", "onViewRecycled $e")
+        }
     }
 
     companion object {

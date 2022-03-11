@@ -4,9 +4,11 @@ import com.faldez.shachi.data.model.response.MoebooruComment
 import com.faldez.shachi.data.model.response.MoebooruPost
 import com.faldez.shachi.data.model.response.MoebooruTag
 import com.faldez.shachi.data.model.response.MoebooruTagSummary
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Url
 
@@ -30,9 +32,10 @@ interface MoebooruService {
         private val retrofit2Service: MoebooruService by lazy {
             val client =
                 OkHttpClient().newBuilder().build()
+            val contentType = "application/json".toMediaType()
             Retrofit.Builder().client(client)
                 .baseUrl("https://safebooru.org")
-                .addConverterFactory(GsonConverterFactory.create()).build()
+                .addConverterFactory(Json.asConverterFactory(contentType)).build()
                 .create(MoebooruService::class.java)
         }
 

@@ -5,6 +5,7 @@ import com.faldez.shachi.data.model.Server
 import com.faldez.shachi.data.model.ServerView
 import com.faldez.shachi.data.repository.PostRepository.Companion.NETWORK_PAGE_SIZE
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 sealed class Action {
     /*
@@ -18,7 +19,7 @@ sealed class Action {
         Action() {
         fun buildGelbooruUrl(page: Int): HttpUrl? {
             return server.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
+                it.url.toHttpUrl().newBuilder().addPathSegment("index.php")
                     .addQueryParameter("page", "dapi")
                     .addQueryParameter("q", "index").addQueryParameter("s", "post")
                     .addQueryParameter("pid", page.toString())
@@ -32,7 +33,7 @@ sealed class Action {
 
         fun buildMoebooruUrl(page: Int): HttpUrl? {
             return server.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("post.json")
+                it.url.toHttpUrl().newBuilder().addPathSegment("post.json")
                     .addQueryParameter("page", page.toString())
                     .addQueryParameter("limit", limit.toString())
                     .addQueryParameter("tags", tags)
@@ -43,7 +44,7 @@ sealed class Action {
 
         fun buildDanbooruUrl(page: Int): HttpUrl? {
             return server.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("posts.json")
+                it.url.toHttpUrl().newBuilder().addPathSegment("posts.json")
                     .addQueryParameter("page", page.toString())
                     .addQueryParameter("limit", limit.toString())
                     .addQueryParameter("tags", tags)
@@ -59,7 +60,7 @@ sealed class Action {
     data class SearchSavedSearchPost(val savedSearch: SavedSearchServer) : Action() {
         fun buildGelbooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
             return savedSearch.server.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
+                it.url.toHttpUrl().newBuilder().addPathSegment("index.php")
                     .addQueryParameter("page", "dapi")
                     .addQueryParameter("q", "index").addQueryParameter("s", "post")
                     .addQueryParameter("pid", page.toString())
@@ -70,7 +71,7 @@ sealed class Action {
 
         fun buildMoebooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
             return savedSearch.server.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("post.json")
+                it.url.toHttpUrl().newBuilder().addPathSegment("post.json")
                     .addQueryParameter("page", page.toString())
                     .addQueryParameter("limit", limit.toString())
                     .addQueryParameter("tags", savedSearch.savedSearch.tags).build()
@@ -79,7 +80,7 @@ sealed class Action {
 
         fun buildDanbooruUrl(page: Int, limit: Int = NETWORK_PAGE_SIZE): HttpUrl? {
             return savedSearch.server.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("posts.json")
+                it.url.toHttpUrl().newBuilder().addPathSegment("posts.json")
                     .addQueryParameter("page", page.toString())
                     .addQueryParameter("limit", limit.toString())
                     .addQueryParameter("tags", savedSearch.savedSearch.tags).build()
@@ -92,36 +93,23 @@ sealed class Action {
      */
     data class SearchTag(val server: Server?, val tag: String, val limit: Int = 10) : Action() {
         fun buildGelbooruUrl(): HttpUrl? {
-            return server?.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
-                    .addQueryParameter("page", "dapi")
-                    .addQueryParameter("q", "index").addQueryParameter("s", "tag")
-                    .addQueryParameter("name_pattern", "$tag%")
-                    .addQueryParameter("order", "DESC")
-                    .addQueryParameter("orderby", "count")
-                    .addQueryParameter("limit", limit.toString())
-                    .build()
-            }
+            return server?.url?.toHttpUrl()?.newBuilder()?.addPathSegment("index.php")
+                ?.addQueryParameter("page", "dapi")?.addQueryParameter("q", "index")
+                ?.addQueryParameter("s", "tag")?.addQueryParameter("name_pattern", "$tag%")
+                ?.addQueryParameter("order", "DESC")?.addQueryParameter("orderby", "count")
+                ?.addQueryParameter("limit", limit.toString())?.build()
         }
 
         fun buildMoebooruUrl(): HttpUrl? {
-            return server?.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("tag.json")
-                    .addQueryParameter("name", "$tag*")
-                    .addQueryParameter("order", "count")
-                    .addQueryParameter("limit", limit.toString())
-                    .build()
-            }
+            return server?.url?.toHttpUrl()?.newBuilder()?.addPathSegment("tag.json")
+                ?.addQueryParameter("name", "$tag*")?.addQueryParameter("order", "count")
+                ?.addQueryParameter("limit", limit.toString())?.build()
         }
 
         fun buildDanbooruUrl(): HttpUrl? {
-            return server?.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json")
-                    .addQueryParameter("search[name_like]", "$tag*")
-                    .addQueryParameter("search[order]", "count")
-                    .build()
-
-            }
+            return server?.url?.toHttpUrl()?.newBuilder()?.addPathSegment("tags.json")
+                ?.addQueryParameter("search[name_like]", "$tag*")
+                ?.addQueryParameter("search[order]", "count")?.build()
         }
     }
 
@@ -131,7 +119,7 @@ sealed class Action {
     data class GetTag(val server: Server?, val tag: String) : Action() {
         fun buildGelbooruUrl(): HttpUrl? {
             return server?.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
+                it.url.toHttpUrl().newBuilder().addPathSegment("index.php")
                     .addQueryParameter("page", "dapi")
                     .addQueryParameter("q", "index").addQueryParameter("s", "tag")
                     .addQueryParameter("name", tag)
@@ -141,7 +129,7 @@ sealed class Action {
 
         fun buildMoebooruUrl(): HttpUrl? {
             return server?.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("tag.json")
+                it.url.toHttpUrl().newBuilder().addPathSegment("tag.json")
                     .addQueryParameter("name", "$tag*")
                     .addQueryParameter("limit", "1")
                     .build()
@@ -150,7 +138,7 @@ sealed class Action {
 
         fun buildDanbooruUrl(): HttpUrl? {
             return server?.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json")
+                it.url.toHttpUrl().newBuilder().addPathSegment("tags.json")
                     .addQueryParameter("search[name]", tag)
                     .build()
             }
@@ -163,7 +151,7 @@ sealed class Action {
     data class GetTags(val server: Server?, val tags: String) : Action() {
         fun buildGelbooruUrl(): HttpUrl? {
             return server?.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("index.php")
+                it.url.toHttpUrl().newBuilder().addPathSegment("index.php")
                     .addQueryParameter("page", "dapi")
                     .addQueryParameter("q", "index").addQueryParameter("s", "tag")
                     .addQueryParameter("names", tags)
@@ -173,7 +161,7 @@ sealed class Action {
 
         fun buildDanbooruUrl(): HttpUrl? {
             return server?.let {
-                HttpUrl.get(it.url).newBuilder().addPathSegment("tags.json").apply {
+                it.url.toHttpUrl().newBuilder().addPathSegment("tags.json").apply {
                     tags.split(" ").forEach { tag ->
                         addQueryParameter("search[name_array][]", tag)
                     }
@@ -185,14 +173,14 @@ sealed class Action {
 
     data class GetTagsSummary(val server: Server?) : Action() {
         fun buildMoebooruUrl(): HttpUrl? = server?.let {
-            HttpUrl.get(it.url).newBuilder().addPathSegment("tag").addPathSegment("summary.json")
+            it.url.toHttpUrl().newBuilder().addPathSegment("tag").addPathSegment("summary.json")
                 .build()
         }
     }
 
     data class GetComments(val server: Server, val postId: Int) : Action() {
         fun buildGelbooruUrl(): HttpUrl? {
-            return HttpUrl.get(server.url).newBuilder().addPathSegment("index.php")
+            return server.url.toHttpUrl().newBuilder().addPathSegment("index.php")
                 .addQueryParameter("page", "dapi")
                 .addQueryParameter("q", "index").addQueryParameter("s", "comment")
                 .addQueryParameter("post_id", postId.toString())
@@ -200,12 +188,12 @@ sealed class Action {
         }
 
         fun buildMoebooruUrl(): HttpUrl? {
-            return HttpUrl.get(server.url).newBuilder().addPathSegment("comment.json")
+            return server.url.toHttpUrl().newBuilder().addPathSegment("comment.json")
                 .addQueryParameter("post_id", postId.toString()).build()
         }
 
         fun buildDanbooruUrl(): HttpUrl? {
-            return HttpUrl.get(server.url).newBuilder().addPathSegment("comments.json")
+            return server.url.toHttpUrl().newBuilder().addPathSegment("comments.json")
                 .addQueryParameter("group_by", "comment")
                 .addQueryParameter("search[post_id]", postId.toString())
                 .addQueryParameter("only",

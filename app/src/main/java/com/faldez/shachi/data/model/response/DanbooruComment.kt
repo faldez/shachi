@@ -1,24 +1,26 @@
 package com.faldez.shachi.data.model.response
 
-import com.faldez.shachi.util.type_adapter.JsonDateTimeAdapter
-import com.google.gson.annotations.JsonAdapter
-import com.google.gson.annotations.SerializedName
+import com.faldez.shachi.util.serializer.JsonDateTimeSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 import java.time.ZonedDateTime
 
+@Serializable
 data class DanbooruComment(
     val id: Int,
-    @SerializedName("post_id") val postId: Int,
+    @JsonNames("post_id") val postId: Int,
     val body: String,
     val score: Int,
-    @JsonAdapter(JsonDateTimeAdapter::class) @SerializedName("created_at") val createdAt: ZonedDateTime?,
-    @JsonAdapter(JsonDateTimeAdapter::class) @SerializedName("updated_at") val updatedAt: ZonedDateTime?,
-    @SerializedName("updater_id") val updaterId: Int,
-    @SerializedName("do_not_bump_post") val doNotBumpPost: Boolean,
-    @SerializedName("is_deleted") val isDeleted: Boolean,
-    @SerializedName("is_sticky") val isSticky: Boolean,
+    @Serializable(JsonDateTimeSerializer::class) @JsonNames("created_at") val createdAt: ZonedDateTime?,
+    @Serializable(JsonDateTimeSerializer::class) @JsonNames("updated_at") val updatedAt: ZonedDateTime?,
+    @JsonNames("updater_id") val updaterId: Int,
+    @JsonNames("do_not_bump_post") val doNotBumpPost: Boolean,
+    @JsonNames("is_deleted") val isDeleted: Boolean,
+    @JsonNames("is_sticky") val isSticky: Boolean,
     val creator: DanbooruCommentCreator,
 )
 
+@Serializable
 data class DanbooruCommentCreator(
     val id: Int,
     val name: String,

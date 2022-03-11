@@ -1,7 +1,9 @@
 package com.faldez.shachi.data.model
 
 import androidx.room.*
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(tableName = "search_history",
     indices = [
         Index(value = ["tags", "server_id"], unique = true),

@@ -3,13 +3,16 @@ package com.faldez.shachi.data.model
 import android.os.Parcelable
 import androidx.room.*
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class ServerType {
     Gelbooru,
     Danbooru,
     Moebooru
 }
 
+@Serializable
 @Parcelize
 @Entity(tableName = "server", indices = [Index(value = ["url"], unique = true)])
 data class Server(
@@ -53,6 +56,7 @@ data class SelectedServer(
     @ColumnInfo(name = "server_id") val serverId: Int,
 )
 
+@Serializable
 @Parcelize
 @DatabaseView("SELECT " +
         "server.*, " +

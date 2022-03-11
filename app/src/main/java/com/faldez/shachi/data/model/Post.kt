@@ -4,13 +4,17 @@ import android.os.Parcelable
 import androidx.room.*
 import com.faldez.shachi.data.preference.Quality
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class Rating {
     Safe,
     Questionable,
     Explicit
 }
 
+@Serializable
+@Parcelize
 @Entity(tableName = "favorite",
     primaryKeys = ["server_id", "post_id"],
     foreignKeys = [ForeignKey(
@@ -19,7 +23,6 @@ enum class Rating {
         parentColumns = ["server_id"],
         childColumns = ["server_id"],
         entity = Server::class)])
-@Parcelize
 data class Post(
     val height: Int,
     val width: Int,
@@ -45,12 +48,13 @@ data class Post(
     val source: String,
     @ColumnInfo(name = "has_notes") val hasNotes: Boolean,
     @ColumnInfo(name = "has_comments") val hasComments: Boolean,
-    @ColumnInfo(name ="post_url") val postUrl: String,
+    @ColumnInfo(name = "post_url") val postUrl: String,
     @ColumnInfo(name = "date_added",
         defaultValue = "CURRENT_TIMESTAMP") val dateAdded: Long? = null,
 ) : Parcelable {
     @Ignore
     var favorite: Boolean = false
+
     @Ignore
     var quality: Quality? = null
 }

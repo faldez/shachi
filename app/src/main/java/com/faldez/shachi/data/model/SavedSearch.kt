@@ -1,7 +1,9 @@
 package com.faldez.shachi.data.model
 
 import androidx.room.*
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(tableName = "saved_search",
     indices = [Index("server_id")],
     foreignKeys = [ForeignKey(childColumns = ["server_id"],

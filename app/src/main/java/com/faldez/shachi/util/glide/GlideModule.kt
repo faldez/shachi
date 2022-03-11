@@ -29,8 +29,8 @@ class GlideModule : AppGlideModule() {
             val request = chain.request()
             val response = chain.proceed(request)
             val listener = DispatchProgressListener()
-            response.newBuilder().body(response.body()
-                ?.let { ProgressResponseBody(request.url().toString(), it, listener) })
+            response.newBuilder().body(response.body
+                ?.let { ProgressResponseBody(request.url.toString(), it, listener) })
                 .build()
         }.build()
         registry.replace(GlideUrl::class.java,

@@ -1,15 +1,16 @@
 package com.faldez.shachi.data.model.response
 
-import com.faldez.shachi.util.type_adapter.JsonDateTimeAdapter
-import com.google.gson.annotations.JsonAdapter
-import com.google.gson.annotations.SerializedName
+import com.faldez.shachi.util.serializer.JsonDateTimeSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 import java.time.ZonedDateTime
 
+@Serializable
 data class MoebooruComment(
     val id: Int,
-    @SerializedName("post_id") val postId: Int,
+    @JsonNames("post_id") val postId: Int,
     val body: String,
     val creator: String,
-    @SerializedName("creator_id") val creatorId: Int,
-    @JsonAdapter(JsonDateTimeAdapter::class) @SerializedName("created_at") val createdAt: ZonedDateTime?,
+    @JsonNames("creator_id") val creatorId: Int,
+    @Serializable(JsonDateTimeSerializer::class) @JsonNames("created_at") val createdAt: ZonedDateTime?,
 )

@@ -1,27 +1,27 @@
 package com.faldez.shachi.data.model.response
 
-import com.faldez.shachi.util.type_adapter.NumberAsBooleanTypeAdapter
-import com.faldez.shachi.util.type_adapter.SingleObjectAsArrayTypeAdapter
-import com.google.gson.*
-import com.google.gson.annotations.JsonAdapter
-import java.lang.reflect.Type
+import com.faldez.shachi.util.serializer.NumberAsBooleanTypeSerializer
+import com.faldez.shachi.util.serializer.SingleObjectAsArraySerializer
+import kotlinx.serialization.Serializable
 
-
+@Serializable
 data class GelbooruTagResponse(
     val tags: GelbooruTags?,
 )
 
+@Serializable
 data class GelbooruTags(
-    @JsonAdapter(SingleObjectAsArrayTypeAdapter::class)
+//    @Serializable(SingleObjectAsArraySerializer::class)
     val tag: List<GelbooruTag>?,
     val type: String,
 )
 
+@Serializable
 data class GelbooruTag(
     val id: Int,
     val name: String,
     val count: Int,
     val type: Int,
-    @JsonAdapter(NumberAsBooleanTypeAdapter::class)
+    @Serializable(NumberAsBooleanTypeSerializer::class)
     val ambiguous: Boolean,
 )

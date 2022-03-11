@@ -1,26 +1,27 @@
 package com.faldez.shachi.data.model.response
 
-import com.faldez.shachi.util.type_adapter.DateTimeAdapter
-import com.faldez.shachi.util.type_adapter.EmptyStringAsNullTypeAdapter
-import com.faldez.shachi.util.type_adapter.SingleObjectAsArrayTypeAdapter
-import com.google.gson.annotations.JsonAdapter
-import com.google.gson.annotations.SerializedName
+import com.faldez.shachi.util.serializer.LocalDateTimeSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 import java.time.LocalDateTime
 
+@Serializable
 data class GelbooruCommentResponse(
     val comments: GelbooruComments?,
 )
 
+@Serializable
 data class GelbooruComments(
-    @JsonAdapter(SingleObjectAsArrayTypeAdapter::class)
+//    @Serializable(SingleObjectAsArraySerializer::class)
     val comment: List<GelbooruComment>?,
 )
 
+@Serializable
 data class GelbooruComment(
     val id: Int,
-    @SerializedName("post_id") val postId: Int,
+    @JsonNames("post_id") val postId: Int,
     val body: String,
     val creator: String,
-    @JsonAdapter(EmptyStringAsNullTypeAdapter::class) @SerializedName("creator_id") val creatorId: Int?,
-    @JsonAdapter(DateTimeAdapter::class) @SerializedName("created_at") val createdAt: LocalDateTime?,
+    @JsonNames("creator_id") val creatorId: Int?,
+    @Serializable(LocalDateTimeSerializer::class) @JsonNames("created_at") val createdAt: LocalDateTime?,
 )
