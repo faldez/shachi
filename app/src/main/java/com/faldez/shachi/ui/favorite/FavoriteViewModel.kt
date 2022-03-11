@@ -6,7 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
 import com.faldez.shachi.data.model.Post
+import com.faldez.shachi.data.model.Rating
+import com.faldez.shachi.data.preference.Filter
 import com.faldez.shachi.data.repository.FavoriteRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -41,7 +44,9 @@ class FavoriteViewModel(
                 UiState(
                     tags = search.tags,
                     lastTagsScrolled = scroll.currentTags,
-                    hasNotScrolledForCurrentTag = search.tags != scroll.currentTags
+                    hasNotScrolledForCurrentTag = search.tags != scroll.currentTags,
+                    questionableFilter = search.questionableFilter,
+                    explicitFilter = search.explicitFilter
                 )
             }.stateIn(scope = viewModelScope,
                 started = SharingStarted.Eagerly,
@@ -49,7 +54,17 @@ class FavoriteViewModel(
             )
 
         pagingDataFlow = searches.onStart { emit(UiAction.SearchFavorite(initialTags)) }
-            .flatMapLatest { favoriteRepository.query(it.tags) }
+            .flatMapLatest {
+                favoriteRepository.query(it.tags).map { data ->
+                    data.filter { post ->
+                        when (post.rating) {
+                            Rating.Questionable -> it.questionableFilter != Filter.Mute
+                            Rating.Explicit -> it.explicitFilter != Filter.Mute
+                            Rating.Safe -> true
+                        }
+                    }
+                }
+            }
             .cachedIn(viewModelScope)
 
         accept = {
@@ -74,7 +89,12 @@ class FavoriteViewModel(
 }
 
 sealed class UiAction {
-    data class SearchFavorite(val tags: String) : UiAction()
+    data class SearchFavorite(
+        val tags: String,
+        val questionableFilter: Filter = Filter.Disable,
+        val explicitFilter: Filter = Filter.Disable,
+    ) : UiAction()
+
     data class Scroll(
         val currentTags: String,
     ) : UiAction()
@@ -84,6 +104,8 @@ data class UiState(
     val tags: String = "",
     val lastTagsScrolled: String = "",
     val hasNotScrolledForCurrentTag: Boolean = false,
+    val questionableFilter: Filter = Filter.Disable,
+    val explicitFilter: Filter = Filter.Disable,
 )
 
 private const val LAST_SEARCH_TAGS: String = "last_search_tags"

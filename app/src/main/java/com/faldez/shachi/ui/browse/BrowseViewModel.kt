@@ -6,11 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
 import androidx.paging.map
-import com.faldez.shachi.data.model.Post
-import com.faldez.shachi.data.model.SearchHistory
-import com.faldez.shachi.data.model.ServerView
-import com.faldez.shachi.data.model.TagDetail
+import com.faldez.shachi.data.model.*
+import com.faldez.shachi.data.preference.Filter
 import com.faldez.shachi.data.repository.*
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.CoroutineScope
@@ -63,7 +62,9 @@ class BrowseViewModel constructor(
                     server = server,
                     tags = search.tags,
                     lastTagsScrolled = scroll.currentTags,
-                    hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (server?.url != scroll.currentServerUrl)
+                    hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (server?.url != scroll.currentServerUrl),
+                    questionableFilter = search.questionableFilter,
+                    explicitFilter = search.explicitFilter
                 )
             }.stateIn(scope = viewModelScope,
                 started = SharingStarted.Eagerly,
@@ -73,8 +74,14 @@ class BrowseViewModel constructor(
         pagingDataFlow =
             state.filter { it.server != null }
                 .flatMapLatest {
-                    searchPosts(it.server!!, tags = it.tags).map {
-                        it.map { post ->
+                    searchPosts(it.server!!, tags = it.tags).map { data ->
+                        data.filter { post ->
+                            when (post.rating) {
+                                Rating.Questionable -> it.questionableFilter != Filter.Mute
+                                Rating.Explicit -> it.explicitFilter != Filter.Mute
+                                Rating.Safe -> true
+                            }
+                        }.map { post ->
                             val postId =
                                 favoriteRepository.queryByServerUrlAndPostId(post.serverId,
                                     post.postId)
@@ -163,14 +170,16 @@ class BrowseViewModel constructor(
 }
 
 sealed class UiAction {
-    data class Search(val tags: String) : UiAction()
+    data class Search(
+        val tags: String,
+        val questionableFilter: Filter,
+        val explicitFilter: Filter,
+    ) : UiAction()
+
     data class Scroll(
         val currentServerUrl: String?,
         val currentTags: String,
     ) : UiAction()
-
-    object GetSelectedServer : UiAction()
-    object GetSearchHistory : UiAction()
 }
 
 data class UiState(
@@ -178,6 +187,8 @@ data class UiState(
     val tags: String = "",
     val lastTagsScrolled: String = "",
     val hasNotScrolledForCurrentTag: Boolean = false,
+    val questionableFilter: Filter = Filter.Disable,
+    val explicitFilter: Filter = Filter.Disable,
 )
 
 private const val LAST_SEARCH_SERVER: String = "last_search_server"

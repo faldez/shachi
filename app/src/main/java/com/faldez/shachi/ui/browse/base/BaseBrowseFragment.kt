@@ -22,7 +22,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.paging.filter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,7 +29,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.data.model.Post
-import com.faldez.shachi.data.model.Rating
 import com.faldez.shachi.data.model.ServerView
 import com.faldez.shachi.data.preference.*
 import com.faldez.shachi.databinding.BrowseFragmentBinding
@@ -84,12 +82,19 @@ abstract class BaseBrowseFragment : Fragment() {
         val server = arguments?.get("server") as ServerView?
         val tags = arguments?.get("tags") as String? ?: ""
 
+        val questionableFilter =
+            preferences.getString(ShachiPreference.KEY_FILTER_QUESTIONABLE_CONTENT, null)
+                ?.toFilter() ?: Filter.Disable
+        val explicitFilter =
+            preferences.getString(ShachiPreference.KEY_FILTER_EXPLICIT_CONTENT, null)?.toFilter()
+                ?: Filter.Disable
+
         Log.d("BrowseFragment/onCreateView", "server: $server tags: $tags")
 
         if (server != null) {
             viewModel.selectServer(server)
         }
-        viewModel.accept(UiAction.Search(tags))
+        viewModel.accept(UiAction.Search(tags, questionableFilter, explicitFilter))
 
         binding.bindState(
             uiState = viewModel.state,
@@ -224,18 +229,12 @@ abstract class BaseBrowseFragment : Fragment() {
             ?: GridMode.Staggered
         val quality = preferences.getString(ShachiPreference.KEY_PREVIEW_QUALITY, null)?.toQuality()
             ?: Quality.Preview
-        val questionableFilter =
-            preferences.getString(ShachiPreference.KEY_FILTER_QUESTIONABLE_CONTENT, null)
-                ?.toFilter() ?: Filter.Disable
-        val explicitFilter =
-            preferences.getString(ShachiPreference.KEY_FILTER_EXPLICIT_CONTENT, null)?.toFilter()
-                ?: Filter.Disable
 
         val postAdapter = BrowseAdapter(
             gridMode = gridMode,
             quality = quality,
-            hideQuestionable = questionableFilter == Filter.Hide,
-            hideExplicit = explicitFilter == Filter.Hide,
+            hideQuestionable = viewModel.state.value.questionableFilter == Filter.Hide,
+            hideExplicit = viewModel.state.value.explicitFilter == Filter.Hide,
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 val id = when (findNavController().currentDestination?.id) {
@@ -267,8 +266,6 @@ abstract class BaseBrowseFragment : Fragment() {
             uiState = uiState,
             pagingData = pagingData,
             onScrollChanged = uiActions,
-            showQuestionable = questionableFilter != Filter.Mute,
-            showExplicit = explicitFilter != Filter.Mute
         )
     }
 
@@ -277,8 +274,6 @@ abstract class BaseBrowseFragment : Fragment() {
         uiState: StateFlow<UiState>,
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (UiAction.Scroll) -> Unit,
-        showQuestionable: Boolean,
-        showExplicit: Boolean,
     ) {
         retryButton.setOnClickListener { postsAdapter.retry() }
         postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -311,13 +306,7 @@ abstract class BaseBrowseFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 pagingData.collect {
-                    postsAdapter.submitData(it.filter { post ->
-                        when (post.rating) {
-                            Rating.Questionable -> showQuestionable
-                            Rating.Explicit -> showExplicit
-                            Rating.Safe -> true
-                        }
-                    })
+                    postsAdapter.submitData(it)
                 }
             }
         }

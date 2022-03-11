@@ -32,13 +32,7 @@ class SavedPostSlideFragment : BasePostSlideFragment() {
     override suspend fun collectPagingData(showQuestionable: Boolean, showExplicit: Boolean) {
         viewModel.posts(savedSearchId).collect {
             if (it != null) {
-                postSlideAdapter.submitData(it.filter { post ->
-                    when (post.rating) {
-                        Rating.Questionable -> showQuestionable
-                        Rating.Explicit -> showExplicit
-                        Rating.Safe -> true
-                    }
-                })
+                postSlideAdapter.submitData(it)
             }
         }
     }

@@ -18,7 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
-import androidx.paging.filter
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +25,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
-import com.faldez.shachi.data.model.Rating
 import com.faldez.shachi.data.preference.*
 import com.faldez.shachi.data.repository.FavoriteRepository
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
@@ -53,19 +51,24 @@ class FavoriteFragment : Fragment() {
     ): View? {
         binding = FavoriteFragmentBinding.inflate(inflater, container, false)
 
-        val tags = arguments?.get("tags") as String? ?: ""
-        if (tags != viewModel.state.value.tags) {
-            viewModel.accept(UiAction.SearchFavorite(tags))
-        }
-
-        binding.bind()
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prepareAppBar()
+
+        val questionableFilter =
+            preferences.getString(ShachiPreference.KEY_FILTER_QUESTIONABLE_CONTENT, null)
+                ?.toFilter() ?: Filter.Disable
+        val explicitFilter =
+            preferences.getString(ShachiPreference.KEY_FILTER_EXPLICIT_CONTENT, null)?.toFilter()
+                ?: Filter.Disable
+
+        val tags = arguments?.get("tags") as String? ?: ""
+        viewModel.accept(UiAction.SearchFavorite(tags, questionableFilter, explicitFilter))
+
+        binding.bind()
     }
 
     private fun prepareAppBar() {
@@ -105,18 +108,12 @@ class FavoriteFragment : Fragment() {
             ?: GridMode.Staggered
         val quality = preferences.getString(ShachiPreference.KEY_PREVIEW_QUALITY, null)?.toQuality()
             ?: Quality.Preview
-        val questionableFilter =
-            preferences.getString(ShachiPreference.KEY_FILTER_QUESTIONABLE_CONTENT, null)
-                ?.toFilter() ?: Filter.Disable
-        val explicitFilter =
-            preferences.getString(ShachiPreference.KEY_FILTER_EXPLICIT_CONTENT, null)?.toFilter()
-                ?: Filter.Disable
 
         val favoriteAdapter = FavoriteAdapter(
             gridMode,
             quality,
-            hideQuestionable = questionableFilter == Filter.Hide,
-            hideExplicit = explicitFilter == Filter.Hide,
+            hideQuestionable = viewModel.state.value.questionableFilter == Filter.Hide,
+            hideExplicit = viewModel.state.value.explicitFilter == Filter.Hide,
             onClick = { position ->
                 val bundle = bundleOf("position" to position)
                 findNavController().navigate(R.id.action_favorite_to_favoritepostslide, bundle)
@@ -174,13 +171,7 @@ class FavoriteFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.pagingDataFlow.collect {
-                    favoriteAdapter.submitData(it.filter { post ->
-                        when (post.rating) {
-                            Rating.Questionable -> questionableFilter != Filter.Mute
-                            Rating.Explicit -> explicitFilter != Filter.Mute
-                            Rating.Safe -> true
-                        }
-                    })
+                    favoriteAdapter.submitData(it)
                 }
             }
         }
