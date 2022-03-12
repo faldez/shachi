@@ -58,11 +58,3 @@ data class Post(
     @Ignore
     var quality: Quality? = null
 }
-
-@Fts4(tokenizer = FtsOptions.TOKENIZER_UNICODE61, tokenizerArgs = ["tokenchars='"])
-@Entity(tableName = "post_tag")
-data class PostTag(
-    @ColumnInfo(name = "post_id") val postId: Int,
-    @ColumnInfo(name = "server_id") val serverId: Int,
-    val tags: String,
-)
