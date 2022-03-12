@@ -36,6 +36,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
         <service android:name=".service.DownloadService" />
+        <service android:name=".service.BackupService" />
+        <service android:name=".service.RestoreService" />
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />

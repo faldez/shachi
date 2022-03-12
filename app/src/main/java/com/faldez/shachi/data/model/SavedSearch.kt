@@ -5,7 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Entity(tableName = "saved_search",
-    indices = [Index("server_id")],
+    indices = [
+        Index("server_id"),
+        Index("tags", "saved_search_title", "server_id", unique = true)],
     foreignKeys = [ForeignKey(childColumns = ["server_id"],
         onDelete = ForeignKey.CASCADE,
         onUpdate = ForeignKey.CASCADE,

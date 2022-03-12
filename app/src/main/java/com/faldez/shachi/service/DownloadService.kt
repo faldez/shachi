@@ -35,7 +35,7 @@ class DownloadService : Service() {
                 DocumentFile.fromTreeUri(applicationContext, Uri.parse(it))
                     ?.createFile(mime ?: "image/*", fileUri.lastPathSegment!!)
             }?.let { file ->
-                val builder = NotificationCompat.Builder(applicationContext, "DOWNLOAD")
+                val builder = NotificationCompat.Builder(applicationContext, "download")
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(resources.getText(R.string.download))
                     .setContentText(resources.getText(R.string.downloading))

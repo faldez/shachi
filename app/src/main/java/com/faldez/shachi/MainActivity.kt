@@ -73,7 +73,10 @@ class MainActivity : AppCompatActivity(),
             requestPermission()
         }
 
-        createNotificationChannel()
+        createNotificationChannel("download", "Download notification channel")
+        createNotificationChannel("system",
+            "System notification channel",
+            NotificationManager.IMPORTANCE_DEFAULT)
     }
 
     private fun setupNavController() {
@@ -222,11 +225,12 @@ class MainActivity : AppCompatActivity(),
         ))
     }
 
-    private fun createNotificationChannel() {
-        val name = "download"
-        val descriptionText = "Download notification channel"
-        val importance = NotificationManager.IMPORTANCE_LOW
-        val channel = NotificationChannel("DOWNLOAD", name, importance).apply {
+    private fun createNotificationChannel(
+        name: String,
+        descriptionText: String,
+        importance: Int = NotificationManager.IMPORTANCE_LOW,
+    ) {
+        val channel = NotificationChannel(name, name, importance).apply {
             description = descriptionText
         }
         val notificationManager: NotificationManager =

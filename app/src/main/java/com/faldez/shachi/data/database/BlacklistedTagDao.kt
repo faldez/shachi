@@ -16,6 +16,9 @@ interface BlacklistedTagDao {
     @Query("SELECT * FROM blacklisted_tag")
     suspend fun getAll(): List<BlacklistedTagWithServer>?
 
+    @Query("SELECT * FROM blacklisted_tag WHERE tags = :tags")
+    suspend fun getByTags(tags: String): BlacklistedTag?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBlacklistedTag(blacklistedTag: BlacklistedTag): Long
 

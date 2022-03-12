@@ -11,8 +11,8 @@ interface ServerDao {
     @Query("SELECT * FROM server_view")
     fun getAllFlow(): Flow<List<ServerView>?>
 
-    @Query("SELECT * FROM server")
-    suspend fun getAll(): List<Server>?
+    @Query("SELECT * FROM server_view")
+    suspend fun getAll(): List<ServerView>?
 
     @Query("SELECT * FROM server_view WHERE selected = :selected")
     fun getSelectedServer(selected: Boolean = true): Flow<ServerView?>

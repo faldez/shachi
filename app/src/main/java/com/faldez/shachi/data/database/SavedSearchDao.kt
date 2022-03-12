@@ -15,7 +15,7 @@ interface SavedSearchDao {
     @Query("SELECT * FROM saved_search")
     suspend fun getAll(): List<SavedSearch>
 
-    @Query("INSERT INTO saved_search(" +
+    @Query("INSERT OR IGNORE INTO saved_search(" +
             "tags, " +
             "saved_search_title, " +
             "server_id, " +

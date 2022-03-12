@@ -15,6 +15,8 @@ class BlacklistTagRepository(private val db: AppDatabase) {
         return db.blacklistedTagDao().getAll()
     }
 
+    suspend fun getByTags(tags: String): BlacklistedTag? = db.blacklistedTagDao().getByTags(tags)
+
     suspend fun insertBlacklistedTag(blacklistedTag: BlacklistedTag): Long {
         return db.blacklistedTagDao().insertBlacklistedTag(blacklistedTag)
     }

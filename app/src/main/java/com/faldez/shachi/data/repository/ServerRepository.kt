@@ -11,7 +11,7 @@ class ServerRepository(private val db: AppDatabase) {
         return db.serverDao().getAllFlow()
     }
 
-    suspend fun getAllServers(): List<Server>? {
+    suspend fun getAllServers(): List<ServerView>? {
         return db.serverDao().getAll()
     }
 
