@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.filter
 import androidx.paging.map
 import com.faldez.shachi.data.model.*
 import com.faldez.shachi.data.preference.Filter
@@ -75,19 +74,16 @@ class BrowseViewModel constructor(
             state.filter { it.server != null }
                 .flatMapLatest {
                     searchPosts(it.server!!, tags = it.tags).map { data ->
-                        data.filter { post ->
-                            when (post.rating) {
-                                Rating.Questionable -> it.questionableFilter != Filter.Mute
-                                Rating.Explicit -> it.explicitFilter != Filter.Mute
-                                Rating.Safe -> true
+                        data.applyFilters(it.server.blacklistedTags,
+                            it.questionableFilter == Filter.Mute,
+                            it.explicitFilter == Filter.Mute)
+                            .map { post ->
+                                val postId =
+                                    favoriteRepository.queryByServerUrlAndPostId(post.serverId,
+                                        post.postId)
+                                post.favorite = postId != null
+                                post
                             }
-                        }.map { post ->
-                            val postId =
-                                favoriteRepository.queryByServerUrlAndPostId(post.serverId,
-                                    post.postId)
-                            post.favorite = postId != null
-                            post
-                        }
                     }
                 }.cachedIn(viewModelScope)
 

@@ -6,9 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.filter
 import com.faldez.shachi.data.model.Post
-import com.faldez.shachi.data.model.Rating
+import com.faldez.shachi.data.model.applyFilters
 import com.faldez.shachi.data.preference.Filter
 import com.faldez.shachi.data.repository.FavoriteRepository
 import kotlinx.coroutines.flow.*
@@ -56,13 +55,9 @@ class FavoriteViewModel(
         pagingDataFlow = searches.onStart { emit(UiAction.SearchFavorite(initialTags)) }
             .flatMapLatest {
                 favoriteRepository.query(it.tags).map { data ->
-                    data.filter { post ->
-                        when (post.rating) {
-                            Rating.Questionable -> it.questionableFilter != Filter.Mute
-                            Rating.Explicit -> it.explicitFilter != Filter.Mute
-                            Rating.Safe -> true
-                        }
-                    }
+                    data.applyFilters(null,
+                        it.questionableFilter == Filter.Mute,
+                        it.explicitFilter == Filter.Mute)
                 }
             }
             .cachedIn(viewModelScope)

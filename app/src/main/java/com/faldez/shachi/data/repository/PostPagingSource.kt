@@ -5,7 +5,6 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.ServerType
-import com.faldez.shachi.data.model.applyBlacklist
 import com.faldez.shachi.data.model.response.mapToPost
 import com.faldez.shachi.service.*
 import retrofit2.HttpException
@@ -30,20 +29,17 @@ class PostPagingSource(
                 ServerType.Gelbooru -> {
                     val url = action.buildGelbooruUrl(position).toString()
                     Log.d("PostPagingSource/Gelbooru", url)
-                    service.gelbooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
-                        ?.mapToPost(action.server.toServer()) ?: listOf()
+                    service.gelbooru.getPosts(url).mapToPost(action.server.toServer()) ?: listOf()
                 }
                 ServerType.Danbooru -> {
                     val url = action.buildDanbooruUrl(position).toString()
                     Log.d("PostPagingSource/Danbooru", url)
-                    service.danbooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
-                        .mapToPost(action.server.toServer())
+                    service.danbooru.getPosts(url).mapToPost(action.server.toServer())
                 }
                 ServerType.Moebooru -> {
                     val url = action.buildMoebooruUrl(position).toString()
                     Log.d("PostPagingSource/Moebooru", url)
-                    service.moebooru.getPosts(url).applyBlacklist(action.server.blacklistedTags)
-                        .mapToPost(action.server.toServer())
+                    service.moebooru.getPosts(url).mapToPost(action.server.toServer())
                 }
             }
 

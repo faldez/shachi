@@ -7,12 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.filter
 import androidx.paging.map
 import com.faldez.shachi.data.model.Post
-import com.faldez.shachi.data.model.Rating
 import com.faldez.shachi.data.model.SavedSearch
 import com.faldez.shachi.data.model.SavedSearchServer
+import com.faldez.shachi.data.model.applyFilters
 import com.faldez.shachi.data.preference.Filter
 import com.faldez.shachi.data.repository.FavoriteRepository
 import com.faldez.shachi.data.repository.PostRepository
@@ -57,13 +56,9 @@ class SavedViewModel(
                 Log.d("SavedViewModel", "collect savedSearches")
                 data.map { savedSearch ->
                     val posts = getSearchPosts(savedSearch).map {
-                        it.filter { item ->
-                            when (item.rating) {
-                                Rating.Questionable -> filters.questionableFilter != Filter.Mute
-                                Rating.Explicit -> filters.explicitFilter != Filter.Mute
-                                Rating.Safe -> true
-                            }
-                        }
+                        it.applyFilters(savedSearch.server.blacklistedTags,
+                            filters.questionableFilter == Filter.Mute,
+                            filters.explicitFilter == Filter.Mute)
                     }.cachedIn(viewModelScope)
                     SavedSearchPost(savedSearch = savedSearch, posts = posts)
                 }
