@@ -56,14 +56,14 @@
 
     <PreferenceCategory app:title="@string/filters">
         <ListPreference
-            app:defaultValue="disable"
+            app:defaultValue="mute"
             app:entries="@array/filter_entries"
             app:entryValues="@array/filter_values"
             app:key="filter_questionable_content"
             app:title="@string/questionable"
             app:useSimpleSummaryProvider="true" />
         <ListPreference
-            app:defaultValue="disable"
+            app:defaultValue="mute"
             app:entries="@array/filter_entries"
             app:entryValues="@array/filter_values"
             app:key="filter_explicit_content"
