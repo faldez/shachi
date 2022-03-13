@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity(),
             supportFragmentManager.findFragmentById(R.id.navFragment) as NavHostFragment
         navController = navFragment.navController
         binding.bottomNavigationView?.setupWithNavController(navController)
-//        binding.sideNavigationRail?.setupWithNavController(navController)
+        binding.sideNavigationRail?.setupWithNavController(navController)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -137,29 +137,31 @@ class MainActivity : AppCompatActivity(),
 
     fun showNavigation(callback: (() -> Unit)? = null) {
         binding.bottomNavigationView?.show(callback)
+        binding.sideNavigationRail?.show()
     }
 
     fun hideNavigation(callback: (() -> Unit)? = null) {
         binding.bottomNavigationView?.hide(callback)
+        binding.sideNavigationRail?.hide()
     }
 
     private fun BottomNavigationView.hide(callback: (() -> Unit)? = null) {
         if (!isShowNavigation) return
         isShowNavigation = false
+        val constraint = binding.mainLayout
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(binding.mainLayout)
+        constraintSet.connect(R.id.navFragment,
+            ConstraintSet.BOTTOM,
+            R.id.mainLayout,
+            ConstraintSet.BOTTOM)
+        constraintSet.applyTo(constraint)
         animate()
             .translationY(height.toFloat())
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator?) {
                     super.onAnimationStart(animation)
                     if (callback != null) callback()
-                    val constraint = binding.mainLayout
-                    val constraintSet = ConstraintSet()
-                    constraintSet.clone(binding.mainLayout)
-                    constraintSet.connect(R.id.navFragment,
-                        ConstraintSet.BOTTOM,
-                        R.id.mainLayout,
-                        ConstraintSet.BOTTOM)
-                    constraintSet.applyTo(constraint)
                 }
 
                 override fun onAnimationEnd(animation: Animator?) {
