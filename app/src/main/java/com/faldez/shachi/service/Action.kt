@@ -108,8 +108,8 @@ sealed class Action {
 
         fun buildDanbooruUrl(): HttpUrl? {
             return server?.url?.toHttpUrl()?.newBuilder()?.addPathSegment("tags.json")
-                ?.addQueryParameter("search[name_like]", "$tag*")
-                ?.addQueryParameter("search[order]", "count")?.build()
+                ?.addEncodedQueryParameter("search[name_like]", "$tag*")
+                ?.addEncodedQueryParameter("search[order]", "count")?.build()
         }
     }
 
@@ -139,7 +139,7 @@ sealed class Action {
         fun buildDanbooruUrl(): HttpUrl? {
             return server?.let {
                 it.url.toHttpUrl().newBuilder().addPathSegment("tags.json")
-                    .addQueryParameter("search[name]", tag)
+                    .addEncodedQueryParameter("search[name]", tag)
                     .build()
             }
         }
@@ -161,10 +161,12 @@ sealed class Action {
 
         fun buildDanbooruUrl(): HttpUrl? {
             return server?.let {
+                val tagsList = tags.split(" ")
                 it.url.toHttpUrl().newBuilder().addPathSegment("tags.json").apply {
-                    tags.split(" ").forEach { tag ->
-                        addQueryParameter("search[name_array][]", tag)
+                    tagsList.forEach { tag ->
+                        addEncodedQueryParameter("search[name_array][]", tag)
                     }
+                    addQueryParameter("limit", tagsList.size.toString())
                 }.build()
 
             }
@@ -195,8 +197,8 @@ sealed class Action {
         fun buildDanbooruUrl(): HttpUrl? {
             return server.url.toHttpUrl().newBuilder().addPathSegment("comments.json")
                 .addQueryParameter("group_by", "comment")
-                .addQueryParameter("search[post_id]", postId.toString())
-                .addQueryParameter("only",
+                .addEncodedQueryParameter("search[post_id]", postId.toString())
+                .addEncodedQueryParameter("only",
                     "id,post_id,body,score,created_at,updated_at,updater_id,do_not_bump_post,is_deleted,is_sticky,creator[id,name]")
                 .build()
         }
