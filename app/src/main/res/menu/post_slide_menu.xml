@@ -5,11 +5,16 @@
         android:id="@+id/favorite_action_button"
         android:icon="@drawable/favorite"
         android:title="@string/favorite"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/detail_action_button"
         android:icon="@drawable/ic_baseline_info_24"
         android:title="@string/detail"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/select_image_button"
+        android:icon="@drawable/ic_baseline_collections_24"
+        android:title="@string/select_image"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/share_action_button"
@@ -38,11 +43,6 @@
         android:id="@+id/download_action_button"
         android:icon="@drawable/ic_baseline_download_24"
         android:title="@string/download"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/select_image_button"
-        android:icon="@drawable/ic_baseline_collections_24"
-        android:title="@string/select_image"
         app:showAsAction="ifRoom" />
     <!--    <item-->
     <!--        android:id="@+id/notes_button"-->
