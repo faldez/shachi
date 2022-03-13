@@ -2,11 +2,9 @@ package com.faldez.shachi.ui.saved
 
 import android.app.Dialog
 import android.content.SharedPreferences
-import android.content.res.Resources
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +14,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,9 +22,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.SavedSearchServer
@@ -35,7 +33,6 @@ import com.faldez.shachi.data.repository.PostRepository
 import com.faldez.shachi.data.repository.SavedSearchRepository
 import com.faldez.shachi.databinding.SavedFragmentBinding
 import com.faldez.shachi.service.BooruServiceImpl
-import com.faldez.shachi.widget.CustomDividerItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.TextInputEditText
@@ -193,32 +190,9 @@ class SavedFragment : Fragment() {
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        val hideBottomBarOnScroll =
-            preferences.getBoolean(ShachiPreference.KEY_HIDE_BOTTOM_BAR_ON_SCROLL, true)
-        if (hideBottomBarOnScroll) {
-            binding.savedSearchRecyclerView.addOnScrollListener(object :
-                RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dy < 0) {
-                        (activity as MainActivity).showNavigation()
-                    } else if (dy > 0) {
-                        (activity as MainActivity).hideNavigation()
-                    }
-                }
-            })
-
-            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                val bottom = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    80f,
-                    Resources.getSystem().displayMetrics)
-                binding.savedSearchRecyclerView.addItemDecoration(CustomDividerItemDecoration(
-                    requireContext(),
-                    layoutManager.orientation,
-                    systemBars.bottom + bottom.toInt()))
-                insets
-            }
-        }
+        binding.savedSearchRecyclerView.addItemDecoration(DividerItemDecoration(
+            requireContext(),
+            layoutManager.orientation))
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {

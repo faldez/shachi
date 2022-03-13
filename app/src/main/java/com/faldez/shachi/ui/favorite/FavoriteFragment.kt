@@ -2,16 +2,15 @@ package com.faldez.shachi.ui.favorite
 
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -22,14 +21,12 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.preference.*
 import com.faldez.shachi.data.repository.FavoriteRepository
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
 import com.faldez.shachi.ui.search.SearchFragment
-import com.faldez.shachi.widget.EmptyFooterDecoration
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.launch
 
@@ -142,31 +139,6 @@ class FavoriteFragment : Fragment() {
                 }
             }
         })
-
-        val hideBottomBarOnScroll =
-            preferences.getBoolean(ShachiPreference.KEY_HIDE_BOTTOM_BAR_ON_SCROLL, true)
-        if (hideBottomBarOnScroll) {
-            favoriteRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dy < 0) {
-                        (activity as MainActivity).showNavigation()
-                    } else if (dy > 0) {
-                        (activity as MainActivity).hideNavigation()
-                    }
-                }
-            })
-
-            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                val bottom = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    80f,
-                    Resources.getSystem().displayMetrics)
-                val footer =
-                    EmptyFooterDecoration(systemBars.bottom + bottom.toInt())
-                favoriteRecyclerView.addItemDecoration(footer)
-                insets
-            }
-        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

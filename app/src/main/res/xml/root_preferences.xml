@@ -52,11 +52,6 @@
             app:title="@string/detail_quality"
             app:useSimpleSummaryProvider="true" />
 
-        <SwitchPreference
-            android:defaultValue="true"
-            app:key="hide_bottom_bar_on_scroll"
-            app:title="@string/hide_bottom_bar_on_scroll" />
-
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/filters">

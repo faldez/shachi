@@ -14,7 +14,10 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -58,10 +61,6 @@ abstract class BaseBrowseFragment : Fragment() {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
     }
 
-    private val hideBottomBarOnScroll by lazy {
-        preferences.getBoolean(ShachiPreference.KEY_HIDE_BOTTOM_BAR_ON_SCROLL, true)
-    }
-
     private val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             if (dy < 0) {
@@ -78,6 +77,13 @@ abstract class BaseBrowseFragment : Fragment() {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = BrowseFragmentBinding.inflate(inflater, container, false)
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareAppBar()
 
         val server = arguments?.get("server") as ServerView?
         val tags = arguments?.get("tags") as String? ?: ""
@@ -101,13 +107,6 @@ abstract class BaseBrowseFragment : Fragment() {
             pagingData = viewModel.pagingDataFlow,
             uiActions = viewModel.accept,
         )
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        prepareAppBar()
     }
 
     private fun navigateToSearch() {
@@ -138,8 +137,6 @@ abstract class BaseBrowseFragment : Fragment() {
         binding.searchPostTopAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.search_button -> {
-                    if (hideBottomBarOnScroll) binding.postsRecyclerView.removeOnScrollListener(
-                        scrollListener)
                     navigateToSearch()
                     true
                 }
@@ -284,17 +281,6 @@ abstract class BaseBrowseFragment : Fragment() {
                 }
             }
         })
-
-        if (hideBottomBarOnScroll) {
-            postsRecyclerView.addOnScrollListener(scrollListener)
-
-            val bottom = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                80f,
-                Resources.getSystem().displayMetrics)
-            val footer =
-                EmptyFooterDecoration(bottom.toInt())
-            postsRecyclerView.addItemDecoration(footer)
-        }
 
         retryButton.isVisible = false
         serverHelpText.isVisible = viewModel.state.value.server == null

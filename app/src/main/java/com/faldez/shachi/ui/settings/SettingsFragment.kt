@@ -33,7 +33,7 @@ class SettingsFragment : Fragment() {
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            binding.settingsFrameLayout.updatePadding(bottom = systemBars.bottom)
+            v.updatePadding(bottom = systemBars.bottom)
             insets
         }
     }

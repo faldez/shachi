@@ -7,6 +7,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -14,13 +17,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.faldez.shachi.R
-import com.faldez.shachi.data.repository.BlacklistTagRepository
-import com.faldez.shachi.data.repository.ServerRepository
 import com.faldez.shachi.data.database.AppDatabase
-import com.faldez.shachi.databinding.BlacklistedTagEditDialogBinding
-import com.faldez.shachi.databinding.BlacklistedTagFragmentBinding
 import com.faldez.shachi.data.model.BlacklistedTag
 import com.faldez.shachi.data.model.BlacklistedTagWithServer
+import com.faldez.shachi.data.repository.BlacklistTagRepository
+import com.faldez.shachi.data.repository.ServerRepository
+import com.faldez.shachi.databinding.BlacklistedTagEditDialogBinding
+import com.faldez.shachi.databinding.BlacklistedTagFragmentBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.flow.collectLatest
@@ -45,13 +48,20 @@ class BlacklistedTagFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = BlacklistedTagFragmentBinding.inflate(inflater, container, false)
-        binding.bind()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prepareAppBar()
+
+        binding.bind()
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = systemBars.bottom)
+            insets
+        }
     }
 
     private fun prepareAppBar() {
