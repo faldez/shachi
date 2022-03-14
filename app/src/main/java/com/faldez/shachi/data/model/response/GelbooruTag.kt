@@ -11,7 +11,7 @@ data class GelbooruTagResponse(
 
 @Serializable
 data class GelbooruTags(
-//    @Serializable(SingleObjectAsArraySerializer::class)
+    @Serializable(with = GelbooruTagSerializer::class)
     val tag: List<GelbooruTag>?,
     val type: String,
     val count: Int? = null,
@@ -28,3 +28,5 @@ data class GelbooruTag(
     @Serializable(NumberAsBooleanTypeSerializer::class)
     val ambiguous: Boolean,
 )
+
+object GelbooruTagSerializer : SingleObjectAsArraySerializer<GelbooruTag>(GelbooruTag.serializer())

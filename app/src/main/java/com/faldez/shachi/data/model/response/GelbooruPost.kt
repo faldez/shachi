@@ -1,8 +1,6 @@
 package com.faldez.shachi.data.model.response
 
-import com.faldez.shachi.util.serializer.EmptyStringAsNullTypeSerializer
-import com.faldez.shachi.util.serializer.NumberAsBooleanTypeSerializer
-import com.faldez.shachi.util.serializer.ZonedDateTimeSerializer
+import com.faldez.shachi.util.serializer.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 import java.time.ZonedDateTime
@@ -14,7 +12,7 @@ data class GelbooruPostResponse(
 
 @Serializable
 data class GelbooruPosts(
-//    @Serializable(SingleObjectAsArraySerializer::class)
+    @Serializable(with = GelbooruPostSerializer::class)
     val post: List<GelbooruPost>?,
     val count: Int? = null,
     val offset: Int? = null,
@@ -25,7 +23,7 @@ data class GelbooruPosts(
 data class GelbooruPost(
     val height: Int,
     val width: Int,
-    val score: Int?,
+    @Serializable(EmptyStringAsIntNullTypeSerializer::class) val score: Int?,
     val title: String? = null,
     val directory: String? = null,
     val owner: String? = null,
@@ -33,11 +31,11 @@ data class GelbooruPost(
     @Serializable(NumberAsBooleanTypeSerializer::class) val sample: Boolean? = false,
     @Serializable(NumberAsBooleanTypeSerializer::class) @JsonNames("post_locked") val postLocked: Boolean? = false,
     @JsonNames("file_url") val fileUrl: String,
-    @JsonNames("parent_id") val parentId: Int?,
-    @Serializable(EmptyStringAsNullTypeSerializer::class) @JsonNames("sample_url") val sampleUrl: String?,
+    @Serializable(EmptyStringAsIntNullTypeSerializer::class) @JsonNames("parent_id") val parentId: Int? = null,
+    @Serializable(EmptyStringAsStringNullTypeSerializer::class) @JsonNames("sample_url") val sampleUrl: String?,
     @JsonNames("sample_width") val sampleWidth: Int?,
     @JsonNames("sample_height") val sampleHeight: Int?,
-    @Serializable(EmptyStringAsNullTypeSerializer::class) @JsonNames("preview_url") val previewUrl: String?,
+    @Serializable(EmptyStringAsStringNullTypeSerializer::class) @JsonNames("preview_url") val previewUrl: String?,
     @JsonNames("preview_width") val previewWidth: Int?,
     @JsonNames("preview_height") val previewHeight: Int?,
     val rating: String,
@@ -53,3 +51,6 @@ data class GelbooruPost(
     @JsonNames("has_notes") val hasNotes: Boolean,
     @JsonNames("has_comments") val hasComments: Boolean,
 )
+
+object GelbooruPostSerializer :
+    SingleObjectAsArraySerializer<GelbooruPost>(GelbooruPost.serializer())

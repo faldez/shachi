@@ -7,21 +7,19 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-object EmptyStringAsNullTypeSerializer : KSerializer<String?> {
-    override fun deserialize(decoder: Decoder): String? {
-        val string = decoder.decodeString()
-        if (string.isNotEmpty()) {
-            return string
-        } else {
-            return null
-        }
-    }
+object EmptyStringAsStringNullTypeSerializer : KSerializer<String?> {
 
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("EmptyStringAsNullTypeSerializer", PrimitiveKind.STRING)
+        PrimitiveSerialDescriptor("EmptyStringAsStringNullTypeSerializer", PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): String? {
+        val string = decoder.decodeString()
+        return string.ifEmpty {
+            null
+        }
+    }
 
     override fun serialize(encoder: Encoder, value: String?) {
         value?.let { encoder.encodeString(it) }
     }
-
 }

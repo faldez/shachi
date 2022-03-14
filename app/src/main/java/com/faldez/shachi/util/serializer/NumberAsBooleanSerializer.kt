@@ -1,22 +1,23 @@
 package com.faldez.shachi.util.serializer
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.json.*
 
-object NumberAsBooleanTypeSerializer : KSerializer<Boolean> {
-    override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("NumberAsBooleanTypeSerializer", PrimitiveKind.STRING)
+object NumberAsBooleanTypeSerializer : JsonTransformingSerializer<Boolean>(Boolean.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        require(element is JsonPrimitive)
+        try {
+            return JsonPrimitive(element.int > 0)
+        } catch (e: Exception) {
 
-    override fun deserialize(decoder: Decoder): Boolean {
-        val number = decoder.decodeInt()
-        return number > 0
-    }
+        }
 
-    override fun serialize(encoder: Encoder, value: Boolean) {
-        encoder.encodeBoolean(value)
+        try {
+            return JsonPrimitive(element.boolean)
+        } catch (e: Exception) {
+
+        }
+
+        return JsonPrimitive(false)
     }
 }

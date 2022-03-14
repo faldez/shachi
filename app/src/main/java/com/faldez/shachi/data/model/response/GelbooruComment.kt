@@ -1,6 +1,7 @@
 package com.faldez.shachi.data.model.response
 
 import com.faldez.shachi.util.serializer.LocalDateTimeSerializer
+import com.faldez.shachi.util.serializer.SingleObjectAsArraySerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 import java.time.LocalDateTime
@@ -12,7 +13,7 @@ data class GelbooruCommentResponse(
 
 @Serializable
 data class GelbooruComments(
-//    @Serializable(SingleObjectAsArraySerializer::class)
+    @Serializable(with = GelbooruCommentSerializer::class)
     val comment: List<GelbooruComment>?,
 )
 
@@ -25,3 +26,6 @@ data class GelbooruComment(
     @JsonNames("creator_id") val creatorId: Int?,
     @Serializable(LocalDateTimeSerializer::class) @JsonNames("created_at") val createdAt: LocalDateTime?,
 )
+
+object GelbooruCommentSerializer :
+    SingleObjectAsArraySerializer<GelbooruComment>(GelbooruComment.serializer())
