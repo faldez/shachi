@@ -13,7 +13,7 @@ data class GelbooruPostResponse(
 @Serializable
 data class GelbooruPosts(
     @Serializable(with = GelbooruPostSerializer::class)
-    val post: List<GelbooruPost>?,
+    val post: List<GelbooruPost>? = null,
     val count: Int? = null,
     val offset: Int? = null,
     val limit: Int? = null,
