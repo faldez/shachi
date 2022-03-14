@@ -4,22 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.browse.base.BaseBrowseFragment">
+    tools:context=".ui.saved.SavedFragment">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+        android:id="@+id/saved_appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:liftOnScroll="false">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/searchPostTopAppBar"
+            android:id="@+id/saved_topappbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:menu="@menu/browse_menu"
-            app:title="@string/browse"
-            app:layout_scrollFlags="scroll|enterAlways|snap"/>
-
+            android:background="?attr/colorSurface"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:title="@string/saved_searches" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -30,27 +30,19 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/postsRecyclerView"
+            android:id="@+id/saved_search_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/post_card_item" />
+            tools:listitem="@layout/saved_search_item" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/retryButton"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/retry" />
-
     <TextView
-        android:id="@+id/serverHelpText"
+        android:id="@+id/saved_search_help_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="16dp"
         android:gravity="center"
-        android:text="@string/empty_server_help_text"
+        android:text="@string/empty_home_help_text"
         android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
