@@ -2,6 +2,7 @@ package com.faldez.shachi
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.animation.LayoutTransition
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -9,11 +10,11 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.WindowCompat
-import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -41,6 +42,8 @@ class MainActivity : AppCompatActivity(),
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        (binding.mainLayout as ViewGroup).layoutTransition?.enableTransitionType(LayoutTransition.CHANGING)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
@@ -172,7 +175,28 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun NavigationRailView.hide() {
-        isVisible = false
+        if (!isShowNavigation) return
+        isShowNavigation = false
+        val constraint = binding.mainLayout
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(binding.mainLayout)
+        constraintSet.connect(R.id.navFragment,
+            ConstraintSet.LEFT,
+            R.id.mainLayout,
+            ConstraintSet.LEFT)
+        constraintSet.applyTo(constraint)
+        animate()
+            .translationX(-width.toFloat())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator?) {
+                    super.onAnimationStart(animation)
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    visibility = View.GONE
+                }
+            })
     }
 
     private fun BottomNavigationView.show(callback: (() -> Unit)? = null) {
@@ -201,7 +225,28 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun NavigationRailView.show() {
-        isVisible = true
+        if (isShowNavigation) return
+        isShowNavigation = true
+
+        val constraint = binding.mainLayout
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(constraint)
+        constraintSet.connect(R.id.navFragment,
+            ConstraintSet.LEFT,
+            R.id.sideNavigationRail,
+            ConstraintSet.RIGHT)
+        constraintSet.applyTo(constraint)
+        animate().translationX(0f)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator?) {
+                    super.onAnimationStart(animation)
+                    visibility = View.VISIBLE
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                }
+            })
     }
 
     private fun checkPermission(): List<String> {
