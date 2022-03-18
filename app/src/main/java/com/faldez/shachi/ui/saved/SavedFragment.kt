@@ -183,13 +183,6 @@ class SavedFragment : Fragment() {
             setHasFixedSize(true)
         }
 
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            savedSearchAdapter.adapters.forEach { (_, adapter) ->
-                adapter.refresh()
-            }
-            binding.swipeRefreshLayout.isRefreshing = false
-        }
-
         binding.savedSearchRecyclerView.addItemDecoration(DividerItemDecoration(
             requireContext(),
             layoutManager.orientation))
