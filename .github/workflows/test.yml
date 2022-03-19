@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  test:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,4 +23,4 @@ jobs:
           api-level: 31
           target: playstore
           arch: x86_64
-          script: ./gradlew connectedAndroidTest
+          script: ./gradlew connectedCheck --exclude-task json:test --exclude-task app:processDebugGoogleServices --exclude-task app:processReleaseGoogleServices
