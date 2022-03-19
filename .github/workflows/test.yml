@@ -1,0 +1,15 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Android Emulator Runner
+        uses: ReactiveCircus/android-emulator-runner@v2.23.0
+        with:
+          api-level: 31
+          script: ./gradlew connectedCheck
