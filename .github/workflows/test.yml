@@ -9,6 +9,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       - name: Android Emulator Runner
         uses: ReactiveCircus/android-emulator-runner@v2.23.0
         with:
