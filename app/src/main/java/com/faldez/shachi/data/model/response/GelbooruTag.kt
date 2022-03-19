@@ -12,7 +12,7 @@ data class GelbooruTagResponse(
 @Serializable
 data class GelbooruTags(
     @Serializable(with = GelbooruTagSerializer::class)
-    val tag: List<GelbooruTag>?,
+    val tag: List<GelbooruTag>? = null,
     val type: String,
     val count: Int? = null,
     val offset: Int? = null,

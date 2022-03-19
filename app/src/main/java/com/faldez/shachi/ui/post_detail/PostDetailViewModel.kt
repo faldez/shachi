@@ -94,8 +94,8 @@ class PostDetailViewModel(
 
     private suspend fun stringToTags(server: Server, tags: String): Pair<List<Tag>, List<Tag>> {
         val splittedTags =
-            tags.split(" ").filter {
-                it.isNotEmpty() && it != "~"
+            tags.split(" ", "~", "{", "}").filter {
+                it.isNotEmpty()
             }.groupBy { it.first() == '-' }
 
         Log.d("PostDetailViewModel/splittedTags", "$splittedTags")

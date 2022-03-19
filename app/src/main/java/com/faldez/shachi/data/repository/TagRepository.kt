@@ -80,24 +80,19 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
         val modifierPrefixRegex = Regex(modifierRegex)
         val tagsToQuery = action.tags.trim().split(" ")
         val cachedTags = tagsToQuery.let { tags ->
-            val cleanedTagsToQuery = tags.map { it.replaceFirst(modifierPrefixRegex, "") }
-            val result = if (action.server != null) {
-                db.tagDao().getTags(action.server.serverId, cleanedTagsToQuery)
+            if (action.server != null) {
+                db.tagDao().getTags(action.server.serverId, tags)
             } else {
-                db.tagDao().getTags(cleanedTagsToQuery)
-            }?.associateBy { it.name }
-            cleanedTagsToQuery.mapIndexedNotNull { index, tag ->
-                result?.get(tag)?.copy(name = tagsToQuery[index])
+                db.tagDao().getTags(tags)
             }
         }
 
         Log.d("TagRepository/getTags", "cachedTags $cachedTags")
 
         // filter tags from tagsToQuery that is not on database to query to server
-        val cachedTagsSet = cachedTags.map { it.name }.toSet()
+        val cachedTagsSet = cachedTags?.map { it.name }?.toSet()
         val uncachedTags = tagsToQuery.filter {
-            !cachedTagsSet.contains(it.replaceFirst(modifierPrefixRegex,
-                ""))
+            !(cachedTagsSet?.contains(it) ?: false)
         }
         Log.d("TagRepository/getTags", "uncachedTags $uncachedTags")
 
@@ -154,7 +149,7 @@ class TagRepository(private val service: BooruService, private val db: AppDataba
             }
 
         val result =
-            (listOf(cachedTags, bulkQueriedTags ?: listOf(),
+            (listOf(cachedTags ?: listOf(), bulkQueriedTags ?: listOf(),
                 eachQueriedTags).flatten() as List<*>).filterIsInstance<Tag>()
 
         Log.d("TagRepository/getTags", "result $result")

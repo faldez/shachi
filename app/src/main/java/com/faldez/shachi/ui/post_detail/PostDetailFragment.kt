@@ -159,7 +159,6 @@ class PostDetailFragment : DialogFragment() {
     }
 
     private fun Chip.bind(group: ChipGroup, textColor: Int?, tag: TagDetailState) {
-        Log.d("PostDetailFragment", "$tag")
 
         setChipDrawable(ChipDrawable.createFromResource(requireContext(), R.xml.filter_chip))
         text = tag.tag.toString()
