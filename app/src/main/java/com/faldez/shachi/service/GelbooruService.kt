@@ -30,9 +30,13 @@ interface GelbooruService {
             val client =
                 OkHttpClient().newBuilder().addInterceptor(XmlToJsonInterceptor()).build()
             val contentType = "application/json".toMediaType()
+            val json = Json {
+                isLenient = true
+                ignoreUnknownKeys = true
+            }
             Retrofit.Builder().client(client)
                 .baseUrl("https://safebooru.org")
-                .addConverterFactory(Json.asConverterFactory(contentType)).build()
+                .addConverterFactory(json.asConverterFactory(contentType)).build()
                 .create(GelbooruService::class.java)
         }
 
