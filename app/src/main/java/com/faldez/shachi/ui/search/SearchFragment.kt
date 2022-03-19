@@ -235,9 +235,6 @@ class SearchFragment : DialogFragment() {
     }
 
     private fun prepareAppBar() {
-        binding.searchSimpleAppBarLayout.statusBarForeground =
-            MaterialShapeDrawable.createWithElevationOverlay(requireContext(), 8f)
-
         binding.searchSimpleTopAppBar.menu.clear()
         binding.searchSimpleTopAppBar.inflateMenu(R.menu.search_menu)
         binding.searchSimpleTopAppBar.setNavigationIcon(if (isTablet) {
