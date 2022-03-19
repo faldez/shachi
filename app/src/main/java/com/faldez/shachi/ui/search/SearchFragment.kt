@@ -16,7 +16,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -89,7 +88,7 @@ class SearchFragment : DialogFragment() {
 
         lifecycleScope.launch {
             viewModel.state.collect { state ->
-                if (state.selectedTags is SelectedTags.Advance) {
+                if (state.selectedTags is SelectedTags.Manual) {
                     binding.selectedTagsLayout.hide()
                     binding.suggestionTagLayout.show()
                 }
@@ -102,6 +101,17 @@ class SearchFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prepareAppBar()
+
+        binding.manualSearchChip.setOnCheckedChangeListener { _, checked ->
+            viewModel.setMode(checked)
+        }
+
+        lifecycleScope.launch {
+            viewModel.state.collect { state ->
+                binding.manualSearchChip.isChecked =
+                    state.selectedTags is SelectedTags.Manual
+            }
+        }
 
         if (isTablet)
             (dialog as AlertDialog?)?.setView(view)
@@ -136,7 +146,7 @@ class SearchFragment : DialogFragment() {
             }
         }
         viewModel.setInitialTags(initialTags)
-        if (viewModel.state.value.selectedTags is SelectedTags.Advance) {
+        if (viewModel.state.value.selectedTags is SelectedTags.Manual) {
             binding.searchSimpleTagsInputText.text = SpannableStringBuilder(initialTags)
         }
     }
@@ -155,7 +165,7 @@ class SearchFragment : DialogFragment() {
 
             },
             onClick = {
-                if (viewModel.state.value.selectedTags is SelectedTags.Advance) {
+                if (viewModel.state.value.selectedTags is SelectedTags.Manual) {
                     val text = binding.searchSimpleTagsInputText.text?.toString()
                     if (text.isNullOrEmpty()) {
                         binding.searchSimpleTagsInputText.text = SpannableStringBuilder(it.name)
@@ -184,7 +194,7 @@ class SearchFragment : DialogFragment() {
 
     private fun prepareAppBar() {
         binding.searchSimpleAppBarLayout.statusBarForeground =
-            MaterialShapeDrawable.createWithElevationOverlay(requireContext())
+            MaterialShapeDrawable.createWithElevationOverlay(requireContext(), 8f)
 
         binding.searchSimpleTopAppBar.menu.clear()
         binding.searchSimpleTopAppBar.inflateMenu(R.menu.search_menu)
@@ -210,18 +220,7 @@ class SearchFragment : DialogFragment() {
                     applySearch()
                     true
                 }
-                R.id.search_mode_button -> {
-                    viewModel.toggleMode()
-                    true
-                }
                 else -> false
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.state.collect { state ->
-                binding.searchSimpleTopAppBar.menu.findItem(R.id.search_mode_button).isChecked =
-                    state.selectedTags is SelectedTags.Advance
-
             }
         }
     }
@@ -232,7 +231,7 @@ class SearchFragment : DialogFragment() {
                 Log.d("SearchFragment", "Simple browse: ${selectedTags.tags}")
                 selectedTags.tags.joinToString(" ") { it.toString() }
             }
-            is SelectedTags.Advance -> {
+            is SelectedTags.Manual -> {
                 Log.d("SearchFragment", "Advance browse: ${selectedTags.tags}")
                 selectedTags.tags
             }
@@ -270,7 +269,7 @@ class SearchFragment : DialogFragment() {
         hint = "Search " + viewModel.state.value.server?.title
         setImeActionLabel("Add", KeyEvent.KEYCODE_ENTER)
         doOnTextChanged { text, start, _, _ ->
-            if (viewModel.state.value.selectedTags is SelectedTags.Advance) {
+            if (viewModel.state.value.selectedTags is SelectedTags.Manual) {
                 text?.toString()?.trim()?.let {
                     if (it.isNotEmpty()) {
                         val tag = StringUtil.getCurrentToken(it, start)
@@ -302,7 +301,7 @@ class SearchFragment : DialogFragment() {
                 instead of insert tag into selected tags or apply search if empty
                 on simple mode
                  */
-                if (viewModel.state.value.selectedTags is SelectedTags.Advance) {
+                if (viewModel.state.value.selectedTags is SelectedTags.Manual) {
                     applySearch()
                 } else {
                     val text = (textView as TextInputEditText).text.toString()

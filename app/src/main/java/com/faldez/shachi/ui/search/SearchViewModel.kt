@@ -66,7 +66,7 @@ class SearchSimpleViewModel(
 
     private fun setInitialTagsAdvance(tags: String) {
         _state.value =
-            state.value.copy(selectedTags = SelectedTags.Advance(tags))
+            state.value.copy(selectedTags = SelectedTags.Manual(tags))
     }
 
     fun setInitialTags(tags: String) {
@@ -120,9 +120,9 @@ class SearchSimpleViewModel(
             _state.update {
                 it.copy(selectedTags = SelectedTags.Simple(list))
             }
-        } else if (selectedTags is SelectedTags.Advance) {
+        } else if (selectedTags is SelectedTags.Manual) {
             _state.update {
-                it.copy(selectedTags = SelectedTags.Advance(name))
+                it.copy(selectedTags = SelectedTags.Manual(name))
             }
         }
     }
@@ -138,15 +138,12 @@ class SearchSimpleViewModel(
         }
     }
 
-    fun toggleMode() {
-        when (state.value.selectedTags) {
-            is SelectedTags.Simple -> {
-                _state.value =
-                    state.value.copy(selectedTags = SelectedTags.Advance(""))
-            }
-            is SelectedTags.Advance -> {
-                setInitialTagsSimple("")
-            }
+    fun setMode(isManualMode: Boolean) {
+        if (isManualMode) {
+            _state.value =
+                state.value.copy(selectedTags = SelectedTags.Manual(""))
+        } else {
+            setInitialTagsSimple("")
         }
     }
 }
@@ -157,7 +154,7 @@ sealed class SelectedTags {
         override fun isNotEmpty(): Boolean = tags.isNotEmpty()
     }
 
-    data class Advance(val tags: String) : SelectedTags() {
+    data class Manual(val tags: String) : SelectedTags() {
         override fun isNotEmpty(): Boolean = tags.isNotEmpty()
     }
 }

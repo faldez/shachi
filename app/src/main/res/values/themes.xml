@@ -36,4 +36,13 @@
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="p">shortEdges</item>
         <item name="postSlideToolbarBackground">@color/postSlideToolbarBackgroundColorLight</item>
     </style>
+
+    <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Toolbar</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Toolbar" parent="">
+        <item name="colorSurface">?attr/colorPrimaryContainer</item>
+        <item name="colorOnSurface">?attr/colorOnPrimaryContainer</item>
+    </style>
 </resources>

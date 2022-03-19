@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:orientation="vertical"
     tools:context=".ui.search.SearchFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/searchSimpleAppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:liftOnScroll="false">
 
         <com.google.android.material.appbar.MaterialToolbar
+            style="@style/Widget.App.Toolbar"
             android:id="@+id/searchSimpleTopAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -49,10 +51,22 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <com.google.android.material.chip.ChipGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/manualSearchChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/manual_search" />
+    </com.google.android.material.chip.ChipGroup>
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        android:layout_height="match_parent">
 
         <ScrollView
             android:id="@+id/suggestionTagLayout"
@@ -65,7 +79,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:fitsSystemWindows="true"
                 android:orientation="vertical">
 
                 <TextView
@@ -98,7 +111,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:fitsSystemWindows="true"
                 android:orientation="vertical">
 
                 <TextView
@@ -117,4 +129,4 @@
         </ScrollView>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>
