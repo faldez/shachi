@@ -40,7 +40,7 @@ class PostPagingSourceTest {
         override val gelbooru: GelbooruApi,
         override val moebooru: MoebooruApi,
         override val danbooru: DanbooruApi,
-    ) : BooruApi() {}
+    ) : BooruApi {}
 
     @Mock
     lateinit var booruApi: BooruApi
