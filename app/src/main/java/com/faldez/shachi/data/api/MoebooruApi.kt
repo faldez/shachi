@@ -1,9 +1,9 @@
 package com.faldez.shachi.data.api
 
-import com.faldez.shachi.data.model.response.MoebooruComment
-import com.faldez.shachi.data.model.response.MoebooruPost
-import com.faldez.shachi.data.model.response.MoebooruTag
-import com.faldez.shachi.data.model.response.MoebooruTagSummary
+import com.faldez.shachi.data.model.response.moebooru.MoebooruComment
+import com.faldez.shachi.data.model.response.moebooru.MoebooruPost
+import com.faldez.shachi.data.model.response.moebooru.MoebooruTag
+import com.faldez.shachi.data.model.response.moebooru.MoebooruTagSummary
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType

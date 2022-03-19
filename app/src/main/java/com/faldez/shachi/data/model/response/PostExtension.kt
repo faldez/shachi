@@ -4,6 +4,8 @@ import androidx.core.os.LocaleListCompat
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.Rating
 import com.faldez.shachi.data.model.Server
+import com.faldez.shachi.data.model.response.danbooru.DanbooruPost
+import com.faldez.shachi.data.model.response.moebooru.MoebooruPost
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 

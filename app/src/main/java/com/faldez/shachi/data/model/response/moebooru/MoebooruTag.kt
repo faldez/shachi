@@ -1,4 +1,4 @@
-package com.faldez.shachi.data.model.response
+package com.faldez.shachi.data.model.response.moebooru
 
 import kotlinx.serialization.Serializable
 

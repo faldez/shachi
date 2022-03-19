@@ -3,6 +3,8 @@ package com.faldez.shachi.data.model.response
 import com.faldez.shachi.data.model.Category
 import com.faldez.shachi.data.model.Tag
 import com.faldez.shachi.data.model.TagDetail
+import com.faldez.shachi.data.model.response.danbooru.DanbooruTag
+import com.faldez.shachi.data.model.response.moebooru.MoebooruTag
 
 
 fun GelbooruTagResponse.mapToTagDetails() =

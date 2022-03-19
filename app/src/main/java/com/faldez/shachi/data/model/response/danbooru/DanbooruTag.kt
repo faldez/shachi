@@ -1,4 +1,4 @@
-package com.faldez.shachi.data.model.response
+package com.faldez.shachi.data.model.response.danbooru
 
 import com.faldez.shachi.util.serializer.JsonDateTimeSerializer
 import kotlinx.serialization.Serializable

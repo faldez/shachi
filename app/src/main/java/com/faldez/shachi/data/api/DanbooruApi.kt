@@ -1,8 +1,8 @@
 package com.faldez.shachi.data.api
 
-import com.faldez.shachi.data.model.response.DanbooruComment
-import com.faldez.shachi.data.model.response.DanbooruPost
-import com.faldez.shachi.data.model.response.DanbooruTag
+import com.faldez.shachi.data.model.response.danbooru.DanbooruComment
+import com.faldez.shachi.data.model.response.danbooru.DanbooruPost
+import com.faldez.shachi.data.model.response.danbooru.DanbooruTag
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
