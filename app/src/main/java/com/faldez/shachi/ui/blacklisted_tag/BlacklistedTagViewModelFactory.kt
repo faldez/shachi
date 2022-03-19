@@ -2,7 +2,7 @@ package com.faldez.shachi.ui.blacklisted_tag
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.faldez.shachi.data.repository.BlacklistTagRepository
+import com.faldez.shachi.data.repository.blacklist_tag.BlacklistTagRepository
 import com.faldez.shachi.data.repository.ServerRepository
 
 class BlacklistedTagViewModelFactory(

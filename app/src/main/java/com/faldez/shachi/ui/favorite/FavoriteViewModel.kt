@@ -9,7 +9,7 @@ import androidx.paging.cachedIn
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.applyFilters
 import com.faldez.shachi.data.preference.Filter
-import com.faldez.shachi.data.repository.FavoriteRepository
+import com.faldez.shachi.data.repository.favorite.FavoriteRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

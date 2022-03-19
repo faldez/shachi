@@ -8,9 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -24,7 +21,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.preference.*
-import com.faldez.shachi.data.repository.FavoriteRepository
+import com.faldez.shachi.data.repository.favorite.FavoriteRepositoryImpl
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
 import com.faldez.shachi.ui.search.SearchFragment
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -38,8 +35,7 @@ class FavoriteFragment : Fragment() {
     private lateinit var binding: FavoriteFragmentBinding
     private val viewModel: FavoriteViewModel by navGraphViewModels(R.id.favorite) {
         val db = AppDatabase.build(requireContext())
-        val favoriteRepository = FavoriteRepository(db)
-        FavoriteViewModelFactory(favoriteRepository, this)
+        FavoriteViewModelFactory(FavoriteRepositoryImpl(db), this)
     }
 
     override fun onCreateView(

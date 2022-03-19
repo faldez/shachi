@@ -20,6 +20,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.Server
 import com.faldez.shachi.data.repository.ServerRepository
+import com.faldez.shachi.data.repository.server.ServerRepositoryImpl
 import com.faldez.shachi.databinding.ServersFragmentBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -29,7 +30,7 @@ class ServersFragment : Fragment() {
 
     private val viewModel: ServersViewModel by
     navGraphViewModels(R.id.nav_graph) {
-        ServersViewModelFactory(ServerRepository(AppDatabase.build(requireContext())), this)
+        ServersViewModelFactory(ServerRepositoryImpl(AppDatabase.build(requireContext())), this)
     }
     private lateinit var binding: ServersFragmentBinding
     private lateinit var adapter: ServerListAdapter

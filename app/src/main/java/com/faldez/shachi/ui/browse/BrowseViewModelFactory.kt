@@ -5,6 +5,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import com.faldez.shachi.data.repository.*
+import com.faldez.shachi.data.repository.favorite.FavoriteRepository
+import com.faldez.shachi.data.repository.post.PostRepository
+import com.faldez.shachi.data.repository.saved_search.SavedSearchRepository
+import com.faldez.shachi.data.repository.search_history.SearchHistoryRepository
 
 class BrowseViewModelFactory constructor(
     private val postRepository: PostRepository,

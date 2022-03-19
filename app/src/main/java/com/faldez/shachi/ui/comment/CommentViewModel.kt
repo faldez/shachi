@@ -3,7 +3,7 @@ package com.faldez.shachi.ui.comment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.faldez.shachi.data.model.Comment
-import com.faldez.shachi.data.repository.CommentRepository
+import com.faldez.shachi.data.repository.comment.CommentRepository
 import com.faldez.shachi.data.repository.ServerRepository
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.flow.*

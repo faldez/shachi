@@ -7,7 +7,7 @@ import com.faldez.shachi.data.model.BlacklistedTag
 import com.faldez.shachi.data.model.BlacklistedTagWithServer
 import com.faldez.shachi.data.model.ServerBlacklistedTagCrossRef
 import com.faldez.shachi.data.model.ServerView
-import com.faldez.shachi.data.repository.BlacklistTagRepository
+import com.faldez.shachi.data.repository.blacklist_tag.BlacklistTagRepository
 import com.faldez.shachi.data.repository.ServerRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

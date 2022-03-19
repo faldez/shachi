@@ -1,4 +1,4 @@
-package com.faldez.shachi.data.repository
+package com.faldez.shachi.data.repository.comment
 
 import android.util.Log
 import com.faldez.shachi.data.model.Comment
@@ -7,10 +7,11 @@ import com.faldez.shachi.data.model.response.mapToComments
 import com.faldez.shachi.service.Action
 import com.faldez.shachi.service.BooruService
 
-class CommentRepository(private val service: BooruService) {
-    suspend fun getComments(action: Action.GetComments): List<Comment>? {
-        Log.d("CommentRepository", "getComments")
-        return when (action.server.type) {
+interface CommentRepository {
+    val service: BooruService
+
+    suspend fun getComments(action: Action.GetComments): List<Comment>? =
+        when (action.server.type) {
             ServerType.Gelbooru -> {
                 action.buildGelbooruUrl()?.toString()?.let {
                     Log.d("CommentRepository/Gelbooru", it)
@@ -30,5 +31,4 @@ class CommentRepository(private val service: BooruService) {
                 }
             }
         }
-    }
 }

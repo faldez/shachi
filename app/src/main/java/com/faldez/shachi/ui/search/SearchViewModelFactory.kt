@@ -5,8 +5,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import com.faldez.shachi.data.model.ServerView
-import com.faldez.shachi.data.repository.SearchHistoryRepository
-import com.faldez.shachi.data.repository.TagRepository
+import com.faldez.shachi.data.repository.search_history.SearchHistoryRepository
+import com.faldez.shachi.data.repository.tag.TagRepository
 
 class SearchViewModelFactory constructor(
     private val server: ServerView?,

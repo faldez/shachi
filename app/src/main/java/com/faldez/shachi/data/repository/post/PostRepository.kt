@@ -1,4 +1,4 @@
-package com.faldez.shachi.data.repository
+package com.faldez.shachi.data.repository.post
 
 import android.util.Log
 import androidx.paging.Pager
@@ -8,23 +8,21 @@ import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.ServerType
 import com.faldez.shachi.data.model.response.mapToPost
 import com.faldez.shachi.service.Action
-import com.faldez.shachi.service.BooruServiceImpl
+import com.faldez.shachi.service.BooruService
 import kotlinx.coroutines.flow.Flow
 
-class PostRepository constructor(
-    private val service: BooruServiceImpl,
-) {
-    fun getSearchPostsResultStream(action: Action.SearchPost): Flow<PagingData<Post>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = action.limit,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                PostPagingSource(action, service)
-            }
-        ).flow
-    }
+interface PostRepository {
+    val service: BooruService
+
+    fun getSearchPostsResultStream(action: Action.SearchPost): Flow<PagingData<Post>> = Pager(
+        config = PagingConfig(
+            pageSize = action.limit,
+            enablePlaceholders = false
+        ),
+        pagingSourceFactory = {
+            PostPagingSource(action, service)
+        }
+    ).flow
 
     suspend fun testSearchPost(action: Action.SearchPost) {
         try {

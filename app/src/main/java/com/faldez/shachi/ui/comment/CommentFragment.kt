@@ -10,9 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.data.database.AppDatabase
+import com.faldez.shachi.data.repository.comment.CommentRepositoryImpl
+import com.faldez.shachi.data.repository.server.ServerRepositoryImpl
 import com.faldez.shachi.databinding.CommentFragmentBinding
-import com.faldez.shachi.data.repository.CommentRepository
-import com.faldez.shachi.data.repository.ServerRepository
 import com.faldez.shachi.service.BooruServiceImpl
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.flow.collectLatest
@@ -22,8 +22,9 @@ class CommentFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: CommentFragmentBinding
     private val viewModel: CommentViewModel by viewModels {
-        CommentViewModelFactory(serverRepository = ServerRepository(AppDatabase.build(requireContext())),
-            commentRepository = CommentRepository(BooruServiceImpl()), this)
+        CommentViewModelFactory(serverRepository = ServerRepositoryImpl(AppDatabase.build(
+            requireContext())),
+            commentRepository = CommentRepositoryImpl(BooruServiceImpl()), this)
     }
     private lateinit var adapter: CommentAdapter
 

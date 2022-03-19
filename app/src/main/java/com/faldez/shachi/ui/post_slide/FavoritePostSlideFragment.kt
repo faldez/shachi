@@ -9,7 +9,8 @@ import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.Rating
-import com.faldez.shachi.data.repository.FavoriteRepository
+import com.faldez.shachi.data.repository.favorite.FavoriteRepository
+import com.faldez.shachi.data.repository.favorite.FavoriteRepositoryImpl
 import com.faldez.shachi.ui.favorite.FavoriteViewModel
 import com.faldez.shachi.ui.favorite.FavoriteViewModelFactory
 import com.faldez.shachi.ui.post_slide.base.BasePostSlideFragment
@@ -21,8 +22,7 @@ class FavoritePostSlideFragment : BasePostSlideFragment() {
 
     private val viewModel: FavoriteViewModel by navGraphViewModels(R.id.favorite) {
         val db = AppDatabase.build(requireContext())
-        val favoriteRepository = FavoriteRepository(db)
-        FavoriteViewModelFactory(favoriteRepository, this)
+        FavoriteViewModelFactory(FavoriteRepositoryImpl(db), this)
     }
 
     override suspend fun collectPagingData(showQuestionable: Boolean, showExplicit: Boolean) {

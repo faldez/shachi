@@ -10,6 +10,10 @@ import androidx.paging.map
 import com.faldez.shachi.data.model.*
 import com.faldez.shachi.data.preference.Filter
 import com.faldez.shachi.data.repository.*
+import com.faldez.shachi.data.repository.favorite.FavoriteRepository
+import com.faldez.shachi.data.repository.post.PostRepository
+import com.faldez.shachi.data.repository.saved_search.SavedSearchRepository
+import com.faldez.shachi.data.repository.search_history.SearchHistoryRepository
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

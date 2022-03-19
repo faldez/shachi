@@ -12,6 +12,17 @@ import com.faldez.shachi.data.backup.Backup
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.*
 import com.faldez.shachi.data.repository.*
+import com.faldez.shachi.data.repository.blacklist_tag.BlacklistTagRepository
+import com.faldez.shachi.data.repository.blacklist_tag.BlacklistTagRepositoryImpl
+import com.faldez.shachi.data.repository.favorite.FavoriteRepository
+import com.faldez.shachi.data.repository.favorite.FavoriteRepositoryImpl
+import com.faldez.shachi.data.repository.saved_search.SavedSearchRepository
+import com.faldez.shachi.data.repository.saved_search.SavedSearchRepositoryImpl
+import com.faldez.shachi.data.repository.search_history.SearchHistoryRepository
+import com.faldez.shachi.data.repository.search_history.SearchHistoryRepositoryImpl
+import com.faldez.shachi.data.repository.server.ServerRepositoryImpl
+import com.faldez.shachi.data.repository.tag.TagRepository
+import com.faldez.shachi.data.repository.tag.TagRepositoryImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -48,12 +59,12 @@ class RestoreService : Service() {
             serviceHandler = ServiceHandler(looper = it.looper)
 
             val db = AppDatabase.build(applicationContext)
-            serverRepository = ServerRepository(db)
-            blacklistTagRepository = BlacklistTagRepository(db)
-            savedSearchRepository = SavedSearchRepository(db)
-            favoriteRepository = FavoriteRepository(db)
-            searchHistoryRepository = SearchHistoryRepository(db)
-            tagRepository = TagRepository(BooruServiceImpl(), db)
+            serverRepository = ServerRepositoryImpl(db)
+            blacklistTagRepository = BlacklistTagRepositoryImpl(db)
+            savedSearchRepository = SavedSearchRepositoryImpl(db)
+            favoriteRepository = FavoriteRepositoryImpl(db)
+            searchHistoryRepository = SearchHistoryRepositoryImpl(db)
+            tagRepository = TagRepositoryImpl(BooruServiceImpl(), db)
         }
     }
 

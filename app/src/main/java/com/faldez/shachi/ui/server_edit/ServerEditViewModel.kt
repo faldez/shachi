@@ -4,9 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.faldez.shachi.data.model.Server
 import com.faldez.shachi.data.model.ServerType
-import com.faldez.shachi.data.repository.PostRepository
+import com.faldez.shachi.data.repository.post.PostRepository
 import com.faldez.shachi.data.repository.ServerRepository
-import com.faldez.shachi.data.repository.TagRepository
+import com.faldez.shachi.data.repository.tag.TagRepository
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

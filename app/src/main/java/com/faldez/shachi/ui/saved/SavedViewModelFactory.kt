@@ -4,9 +4,9 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.faldez.shachi.data.repository.FavoriteRepository
-import com.faldez.shachi.data.repository.PostRepository
-import com.faldez.shachi.data.repository.SavedSearchRepository
+import com.faldez.shachi.data.repository.favorite.FavoriteRepository
+import com.faldez.shachi.data.repository.post.PostRepository
+import com.faldez.shachi.data.repository.saved_search.SavedSearchRepository
 
 class SavedViewModelFactory(
     private val savedSearchRepository: SavedSearchRepository,

@@ -7,7 +7,7 @@ import com.faldez.shachi.data.model.response.GelbooruPost
 import com.faldez.shachi.data.model.response.GelbooruPostResponse
 import com.faldez.shachi.data.model.response.GelbooruPosts
 import com.faldez.shachi.data.model.response.mapToPost
-import com.faldez.shachi.data.repository.PostPagingSource
+import com.faldez.shachi.data.repository.post.PostPagingSource
 import com.faldez.shachi.service.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -1,4 +1,4 @@
-package com.faldez.shachi.data.repository
+package com.faldez.shachi.data.repository.post
 
 import android.util.Log
 import androidx.paging.PagingSource

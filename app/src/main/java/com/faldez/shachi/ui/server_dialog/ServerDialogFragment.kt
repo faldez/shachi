@@ -15,6 +15,7 @@ import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.databinding.ServerDialogFragmentBinding
 import com.faldez.shachi.data.repository.ServerRepository
+import com.faldez.shachi.data.repository.server.ServerRepositoryImpl
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
@@ -22,7 +23,7 @@ class ServerDialogFragment : DialogFragment() {
 
     private lateinit var binding: ServerDialogFragmentBinding
     private val viewModel: ServerDialogViewModel by viewModels {
-        ServerDialogModelFactory(ServerRepository(AppDatabase.build(requireContext())),
+        ServerDialogModelFactory(ServerRepositoryImpl(AppDatabase.build(requireContext())),
             this)
     }
     private val adapter: ServerDialogAdapter = ServerDialogAdapter()

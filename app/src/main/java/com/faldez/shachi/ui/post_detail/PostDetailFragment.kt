@@ -21,12 +21,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
-import com.faldez.shachi.databinding.PostDetailFragmentBinding
-import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.data.model.Modifier
 import com.faldez.shachi.data.model.Post
-import com.faldez.shachi.data.repository.ServerRepository
-import com.faldez.shachi.data.repository.TagRepository
+import com.faldez.shachi.data.repository.server.ServerRepositoryImpl
+import com.faldez.shachi.data.repository.tag.TagRepositoryImpl
+import com.faldez.shachi.databinding.PostDetailFragmentBinding
+import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.util.clearAllGroup
 import com.faldez.shachi.util.getGroupHeaderTextColor
@@ -46,8 +46,8 @@ class PostDetailFragment : DialogFragment() {
         val post = requireArguments().get("post") as Post
         val currentSearchTags = requireArguments().getString("tags", null) ?: ""
         val db = AppDatabase.build(requireContext())
-        PostDetailViewModelFactory(post, currentSearchTags, ServerRepository(db),
-            TagRepository(BooruServiceImpl(), db),
+        PostDetailViewModelFactory(post, currentSearchTags, ServerRepositoryImpl(db),
+            TagRepositoryImpl(BooruServiceImpl(), db),
             this)
     }
 

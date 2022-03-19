@@ -11,10 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -28,9 +25,9 @@ import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.SavedSearchServer
 import com.faldez.shachi.data.preference.*
-import com.faldez.shachi.data.repository.FavoriteRepository
-import com.faldez.shachi.data.repository.PostRepository
-import com.faldez.shachi.data.repository.SavedSearchRepository
+import com.faldez.shachi.data.repository.favorite.FavoriteRepositoryImpl
+import com.faldez.shachi.data.repository.post.PostRepositoryImpl
+import com.faldez.shachi.data.repository.saved_search.SavedSearchRepositoryImpl
 import com.faldez.shachi.databinding.SavedFragmentBinding
 import com.faldez.shachi.service.BooruServiceImpl
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -43,9 +40,8 @@ import kotlinx.coroutines.launch
 class SavedFragment : Fragment() {
     private val viewModel: SavedViewModel by navGraphViewModels(R.id.saved) {
         val db = AppDatabase.build(requireContext())
-        val service = BooruServiceImpl()
-        SavedViewModelFactory(SavedSearchRepository(db),
-            PostRepository(service), FavoriteRepository(db), this)
+        SavedViewModelFactory(SavedSearchRepositoryImpl(db),
+            PostRepositoryImpl(BooruServiceImpl()), FavoriteRepositoryImpl(db), this)
     }
     private val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireContext())

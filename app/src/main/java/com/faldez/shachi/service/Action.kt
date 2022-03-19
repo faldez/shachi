@@ -3,7 +3,7 @@ package com.faldez.shachi.service
 import com.faldez.shachi.data.model.SavedSearchServer
 import com.faldez.shachi.data.model.Server
 import com.faldez.shachi.data.model.ServerView
-import com.faldez.shachi.data.repository.PostRepository.Companion.NETWORK_PAGE_SIZE
+import com.faldez.shachi.data.repository.post.PostRepository.Companion.NETWORK_PAGE_SIZE
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 

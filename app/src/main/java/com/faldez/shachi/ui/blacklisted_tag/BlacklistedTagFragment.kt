@@ -20,8 +20,8 @@ import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.BlacklistedTag
 import com.faldez.shachi.data.model.BlacklistedTagWithServer
-import com.faldez.shachi.data.repository.BlacklistTagRepository
-import com.faldez.shachi.data.repository.ServerRepository
+import com.faldez.shachi.data.repository.blacklist_tag.BlacklistTagRepositoryImpl
+import com.faldez.shachi.data.repository.server.ServerRepositoryImpl
 import com.faldez.shachi.databinding.BlacklistedTagEditDialogBinding
 import com.faldez.shachi.databinding.BlacklistedTagFragmentBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -38,7 +38,8 @@ class BlacklistedTagFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val db = AppDatabase.build(requireContext())
         viewModel = ViewModelProvider(this,
-            BlacklistedTagViewModelFactory(ServerRepository(db), BlacklistTagRepository(db))).get(
+            BlacklistedTagViewModelFactory(ServerRepositoryImpl(db),
+                BlacklistTagRepositoryImpl(db))).get(
             BlacklistedTagViewModel::class.java)
     }
 

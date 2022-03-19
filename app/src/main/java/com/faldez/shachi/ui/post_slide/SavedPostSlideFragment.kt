@@ -3,14 +3,12 @@ package com.faldez.shachi.ui.post_slide
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.navigation.navGraphViewModels
-import androidx.paging.filter
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.Post
-import com.faldez.shachi.data.model.Rating
-import com.faldez.shachi.data.repository.FavoriteRepository
-import com.faldez.shachi.data.repository.PostRepository
-import com.faldez.shachi.data.repository.SavedSearchRepository
+import com.faldez.shachi.data.repository.favorite.FavoriteRepositoryImpl
+import com.faldez.shachi.data.repository.post.PostRepositoryImpl
+import com.faldez.shachi.data.repository.saved_search.SavedSearchRepositoryImpl
 import com.faldez.shachi.service.BooruServiceImpl
 import com.faldez.shachi.ui.post_slide.base.BasePostSlideFragment
 import com.faldez.shachi.ui.saved.SavedViewModel
@@ -24,8 +22,8 @@ class SavedPostSlideFragment : BasePostSlideFragment() {
     private val viewModel: SavedViewModel by navGraphViewModels(R.id.saved) {
         val db = AppDatabase.build(requireContext())
         val service = BooruServiceImpl()
-        SavedViewModelFactory(SavedSearchRepository(db),
-            PostRepository(service), FavoriteRepository(db), this)
+        SavedViewModelFactory(SavedSearchRepositoryImpl(db),
+            PostRepositoryImpl(service), FavoriteRepositoryImpl(db), this)
     }
     private val savedSearchId by lazy { requireArguments().getInt("saved_search_id") }
 
