@@ -64,69 +64,79 @@
             android:text="@string/manual_search" />
     </com.google.android.material.chip.ChipGroup>
 
+
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/searchHistoryLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        <ScrollView
-            android:id="@+id/suggestionTagLayout"
+        <TextView
+            android:id="@+id/searchHistoryHeader"
+            style="@style/TextAppearance.Material3.LabelLarge"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/search_history"
+            android:textSize="16sp" />
 
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/suggestionTagsHeader"
-                    style="@style/TextAppearance.Material3.LabelLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/suggested_tags"
-                    android:textSize="16sp"
-                    android:visibility="gone" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/suggestionTagsRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp"
-                    tools:listitem="@layout/search_suggestion_tag_list_item" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-        </ScrollView>
-
-        <ScrollView
-            android:id="@+id/selectedTagsLayout"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchHistoryRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:listitem="@layout/search_history_list_item" />
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/selectedTagsHeader"
-                    style="@style/TextAppearance.Material3.LabelLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/selected_tags"
-                    android:textSize="16sp"
-                    android:visibility="gone" />
-
-                <include layout="@layout/tags_details" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-        </ScrollView>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/suggestionTagLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/suggestionTagsHeader"
+            style="@style/TextAppearance.Material3.LabelLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/suggested_tags"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/suggestionTagsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            tools:listitem="@layout/search_suggestion_tag_list_item" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/selectedTagsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/selectedTagsHeader"
+            style="@style/TextAppearance.Material3.LabelLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/selected_tags"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <include layout="@layout/tags_details" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.appcompat.widget.LinearLayoutCompat>

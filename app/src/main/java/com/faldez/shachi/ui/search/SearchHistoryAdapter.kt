@@ -1,4 +1,4 @@
-package com.faldez.shachi.ui.search_history
+package com.faldez.shachi.ui.search
 
 import android.util.Log
 import android.view.LayoutInflater

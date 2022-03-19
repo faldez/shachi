@@ -7,9 +7,7 @@
     android:clickable="true"
     android:focusable="true"
     android:orientation="horizontal"
-    android:paddingLeft="16dp"
     android:paddingTop="8dp"
-    android:paddingRight="16dp"
     android:paddingBottom="8dp">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -23,14 +21,13 @@
             android:id="@+id/tags_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
+            android:textAppearance="?attr/textAppearanceTitleSmall" />
 
         <TextView
             android:id="@+id/server_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?android:attr/textColorSecondary" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 

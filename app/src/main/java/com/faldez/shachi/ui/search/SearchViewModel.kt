@@ -3,28 +3,36 @@ package com.faldez.shachi.ui.search
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import com.faldez.shachi.data.model.*
+import com.faldez.shachi.data.repository.SearchHistoryRepository
 import com.faldez.shachi.data.repository.TagRepository
 import com.faldez.shachi.service.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchSimpleViewModel(
     private val server: ServerView?,
     private val tagRepository: TagRepository,
+    private val searchHistoryRepository: SearchHistoryRepository,
 ) : ViewModel() {
     private val _state: MutableStateFlow<UiState> =
         MutableStateFlow(UiState(server = server, selectedTags = SelectedTags.Simple(
             listOf())))
     val state: StateFlow<UiState> = _state.asStateFlow()
 
+    val searchHistoriesFlow: Flow<PagingData<SearchHistoryServer>>
     val suggestionTags: Flow<List<TagDetail>?>
     val accept: (UiAction) -> Unit
 
     init {
         val actionStateFlow = MutableSharedFlow<UiAction>()
+
+        searchHistoriesFlow = searchHistoryRepository.getAllFlow()
+            .shareIn(scope = viewModelScope, started = SharingStarted.Eagerly, replay = 1)
 
         suggestionTags =
             actionStateFlow.filterIsInstance<UiAction.SearchTag>()
@@ -144,6 +152,12 @@ class SearchSimpleViewModel(
                 state.value.copy(selectedTags = SelectedTags.Manual(""))
         } else {
             setInitialTagsSimple("")
+        }
+    }
+
+    fun deleteSearchHistory(searchHistory: SearchHistory) = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            searchHistoryRepository.delete(searchHistory)
         }
     }
 }

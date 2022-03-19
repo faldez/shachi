@@ -130,10 +130,6 @@ abstract class BaseBrowseFragment : Fragment() {
         binding.searchPostTopAppBar.menu.clear()
         binding.searchPostTopAppBar.inflateMenu(R.menu.browse_menu)
 
-        if (findNavController().currentDestination?.id != R.id.browseFragment) {
-            binding.searchPostTopAppBar.menu.removeItem(R.id.search_history_button)
-        }
-
         binding.searchPostTopAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.search_button -> {
@@ -182,10 +178,6 @@ abstract class BaseBrowseFragment : Fragment() {
                 R.id.select_server_button -> {
                     val selectServerDialog = ServerDialogFragment()
                     selectServerDialog.show(requireActivity().supportFragmentManager, "dialog")
-                    true
-                }
-                R.id.search_history_button -> {
-                    findNavController().navigate(R.id.action_browse_to_searchhistory)
                     true
                 }
                 else -> super.onOptionsItemSelected(item)

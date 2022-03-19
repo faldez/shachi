@@ -14,12 +14,6 @@
         android:title="@string/save_search"
         app:showAsAction="always" />
     <item
-        android:id="@+id/search_history_button"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_history_24"
-        android:title="@string/search_history"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/select_server_button"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_storage_24"

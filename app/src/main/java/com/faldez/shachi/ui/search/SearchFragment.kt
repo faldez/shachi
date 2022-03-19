@@ -11,8 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.ScrollView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -24,11 +24,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.R
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.Modifier
 import com.faldez.shachi.data.model.ServerView
 import com.faldez.shachi.data.model.TagDetail
+import com.faldez.shachi.data.repository.SearchHistoryRepository
 import com.faldez.shachi.data.repository.TagRepository
 import com.faldez.shachi.databinding.SearchFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
@@ -52,9 +54,10 @@ class SearchFragment : DialogFragment() {
 
     private val viewModel: SearchSimpleViewModel by viewModels {
         val server: ServerView? =
-            requireArguments().getParcelable<ServerView>("server") as ServerView?
+            requireArguments().getParcelable("server") as ServerView?
+        val db = AppDatabase.build(requireContext())
         SearchViewModelFactory(server, TagRepository(BooruServiceImpl(),
-            AppDatabase.build(requireContext())), this)
+            db), SearchHistoryRepository(db), this)
     }
 
     private lateinit var searchSuggestionAdapter: SearchSuggestionAdapter
@@ -89,6 +92,7 @@ class SearchFragment : DialogFragment() {
         lifecycleScope.launch {
             viewModel.state.collect { state ->
                 if (state.selectedTags is SelectedTags.Manual) {
+                    binding.searchHistoryLayout.hide()
                     binding.selectedTagsLayout.hide()
                     binding.suggestionTagLayout.show()
                 }
@@ -110,15 +114,36 @@ class SearchFragment : DialogFragment() {
             viewModel.state.collect { state ->
                 binding.manualSearchChip.isChecked =
                     state.selectedTags is SelectedTags.Manual
+                if (!state.selectedTags.isNotEmpty()) {
+                    binding.searchHistoryLayout.show()
+                    binding.selectedTagsLayout.hide()
+                    binding.suggestionTagLayout.hide()
+                }
             }
         }
+        val adapter = SearchHistoryAdapter(
+            onClick = { searchHistoryServer ->
+                bindSelectedTags(searchHistoryServer.searchHistory.tags)
+            },
+            onDelete = { searchHistoryServer ->
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Are you Sure?")
+                    .setPositiveButton("Yes"
+                    ) { _, _ -> viewModel.deleteSearchHistory(searchHistoryServer.searchHistory) }
+                    .setNegativeButton("No", null).show()
+            }
+        )
+        binding.searchHistoryRecyclerView.layoutManager =
+            StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL).apply {
+                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+            }
+        binding.searchHistoryRecyclerView.adapter = adapter
 
-        if (isTablet)
-            (dialog as AlertDialog?)?.setView(view)
-    }
-
-    private fun bindSelectedTags(initialTags: String) {
-        binding.loadingIndicator.isVisible = initialTags.isNotEmpty()
+        lifecycleScope.launch {
+            viewModel.searchHistoriesFlow.collectLatest {
+                adapter.submitData(it)
+            }
+        }
 
         lifecycleScope.launch {
             viewModel.state.collectLatest { state ->
@@ -145,6 +170,23 @@ class SearchFragment : DialogFragment() {
                 }
             }
         }
+
+        if (isTablet)
+            (dialog as AlertDialog?)?.setView(view)
+    }
+
+    private fun bindSelectedTags(initialTags: String) {
+        binding.loadingIndicator.isVisible = initialTags.isNotEmpty()
+        if (initialTags.isNotEmpty()) {
+            binding.searchHistoryLayout.hide()
+            binding.selectedTagsLayout.show()
+            binding.suggestionTagLayout.hide()
+        } else {
+            binding.searchHistoryLayout.show()
+            binding.selectedTagsLayout.hide()
+            binding.suggestionTagLayout.hide()
+        }
+
         viewModel.setInitialTags(initialTags)
         if (viewModel.state.value.selectedTags is SelectedTags.Manual) {
             binding.searchSimpleTagsInputText.text = SpannableStringBuilder(initialTags)
@@ -243,24 +285,22 @@ class SearchFragment : DialogFragment() {
         dialog?.dismiss()
     }
 
-    private fun ScrollView.show() {
-        val view = this
-        view.animate().alpha(1f)
+    private fun LinearLayoutCompat.show() {
+        animate().alpha(1f)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator?) {
                     super.onAnimationEnd(animation)
-                    view.visibility = View.VISIBLE
+                    visibility = View.VISIBLE
                 }
             })
     }
 
-    private fun ScrollView.hide() {
-        val view = this
-        view.animate().alpha(0f)
+    private fun LinearLayoutCompat.hide() {
+        animate().alpha(0f)
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
                     super.onAnimationEnd(animation)
-                    view.visibility = View.GONE
+                    visibility = View.GONE
                 }
             })
     }
@@ -275,20 +315,33 @@ class SearchFragment : DialogFragment() {
                         val tag = StringUtil.getCurrentToken(it, start)
                         viewModel.accept(UiAction.SearchTag(tag))
                         viewModel.insertTagByName(it)
+                    } else {
+                        binding.searchHistoryLayout.show()
+                        binding.selectedTagsLayout.hide()
+                        binding.suggestionTagLayout.hide()
                     }
                 }
             } else {
-                val isVisible = if (text.isNullOrEmpty()) {
-                    searchSuggestionAdapter.clear()
-                    binding.selectedTagsLayout.show()
-                    binding.suggestionTagLayout.hide()
-                    false
-                } else {
-                    viewModel.accept(UiAction.SearchTag(text.toString()))
-                    binding.selectedTagsLayout.hide()
-                    binding.suggestionTagLayout.show()
-                    true
-                }
+                val isVisible =
+                    if (text.isNullOrEmpty() && viewModel.state.value.selectedTags.isNotEmpty()) {
+                        searchSuggestionAdapter.clear()
+                        binding.searchHistoryLayout.hide()
+                        binding.selectedTagsLayout.show()
+                        binding.suggestionTagLayout.hide()
+                        false
+                    } else if (text.isNullOrEmpty() && !viewModel.state.value.selectedTags.isNotEmpty()) {
+                        searchSuggestionAdapter.clear()
+                        binding.searchHistoryLayout.show()
+                        binding.selectedTagsLayout.hide()
+                        binding.suggestionTagLayout.hide()
+                        false
+                    } else {
+                        viewModel.accept(UiAction.SearchTag(text.toString()))
+                        binding.searchHistoryLayout.hide()
+                        binding.selectedTagsLayout.hide()
+                        binding.suggestionTagLayout.show()
+                        true
+                    }
                 binding.loadingIndicator.isVisible = isVisible
                 binding.searchSimpleTopAppBar.menu.findItem(R.id.clear_button).isVisible =
                     isVisible
