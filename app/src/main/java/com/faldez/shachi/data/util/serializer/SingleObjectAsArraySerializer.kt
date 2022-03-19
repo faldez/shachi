@@ -1,4 +1,4 @@
-package com.faldez.shachi.util.serializer
+package com.faldez.shachi.data.util.serializer
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer

@@ -1,7 +1,7 @@
 package com.faldez.shachi.data.model.response
 
-import com.faldez.shachi.util.serializer.NumberAsBooleanTypeSerializer
-import com.faldez.shachi.util.serializer.SingleObjectAsArraySerializer
+import com.faldez.shachi.data.util.serializer.NumberAsBooleanTypeSerializer
+import com.faldez.shachi.data.util.serializer.SingleObjectAsArraySerializer
 import kotlinx.serialization.Serializable
 
 @Serializable

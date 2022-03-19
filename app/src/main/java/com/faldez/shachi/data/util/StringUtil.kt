@@ -1,4 +1,4 @@
-package com.faldez.shachi.util
+package com.faldez.shachi.data.util
 
 class StringUtil {
     companion object {

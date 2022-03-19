@@ -1,6 +1,6 @@
 package com.faldez.shachi
 
-import com.faldez.shachi.util.StringUtil
+import com.faldez.shachi.data.util.StringUtil
 import org.junit.Test
 
 import org.junit.Assert.*

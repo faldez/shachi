@@ -37,8 +37,8 @@ import com.faldez.shachi.service.DownloadService
 import com.faldez.shachi.ui.comment.CommentFragment
 import com.faldez.shachi.ui.post_detail.PostDetailFragment
 import com.faldez.shachi.ui.post_slide.PostSlideAdapter
-import com.faldez.shachi.util.MimeUtil
-import com.faldez.shachi.util.glide.GlideApp
+import com.faldez.shachi.data.util.MimeUtil
+import com.faldez.shachi.data.util.glide.GlideApp
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar

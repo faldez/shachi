@@ -11,8 +11,8 @@ import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.preference.GridMode
 import com.faldez.shachi.data.preference.Quality
 import com.faldez.shachi.databinding.PostCardItemBinding
-import com.faldez.shachi.util.MimeUtil
-import com.faldez.shachi.util.bindPostImagePreview
+import com.faldez.shachi.data.util.MimeUtil
+import com.faldez.shachi.data.util.bindPostImagePreview
 
 
 class BrowseAdapter(

@@ -35,10 +35,10 @@ import com.faldez.shachi.data.repository.tag.TagRepositoryImpl
 import com.faldez.shachi.databinding.SearchFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.faldez.shachi.data.api.BooruApiImpl
-import com.faldez.shachi.util.StringUtil
-import com.faldez.shachi.util.clearAllGroup
-import com.faldez.shachi.util.getGroupHeaderTextColor
-import com.faldez.shachi.util.hideAll
+import com.faldez.shachi.data.util.StringUtil
+import com.faldez.shachi.data.util.clearAllGroup
+import com.faldez.shachi.data.util.getGroupHeaderTextColor
+import com.faldez.shachi.data.util.hideAll
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

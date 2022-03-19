@@ -1,4 +1,4 @@
-package com.faldez.shachi.util.serializer
+package com.faldez.shachi.data.util.serializer
 
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.*

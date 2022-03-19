@@ -1,6 +1,6 @@
 package com.faldez.shachi.data.model.response.danbooru
 
-import com.faldez.shachi.util.serializer.JsonDateTimeSerializer
+import com.faldez.shachi.data.util.serializer.JsonDateTimeSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 import java.time.ZonedDateTime

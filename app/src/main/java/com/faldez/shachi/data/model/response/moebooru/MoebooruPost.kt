@@ -1,6 +1,6 @@
 package com.faldez.shachi.data.model.response.moebooru
 
-import com.faldez.shachi.util.serializer.TimestampDateTimeSerializer
+import com.faldez.shachi.data.util.serializer.TimestampDateTimeSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 import java.time.ZonedDateTime

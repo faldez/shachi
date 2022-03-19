@@ -24,9 +24,9 @@ import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.preference.Quality
 import com.faldez.shachi.databinding.PostSlideItemBinding
 import com.faldez.shachi.databinding.PostSlideItemVideoBinding
-import com.faldez.shachi.util.MimeUtil
-import com.faldez.shachi.util.glide.GlideApp
-import com.faldez.shachi.util.glide.GlideModule
+import com.faldez.shachi.data.util.MimeUtil
+import com.faldez.shachi.data.util.glide.GlideApp
+import com.faldez.shachi.data.util.glide.GlideModule
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 

@@ -12,7 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
 import com.faldez.shachi.R
 import com.faldez.shachi.data.model.Post
-import com.faldez.shachi.util.MimeUtil
+import com.faldez.shachi.data.util.MimeUtil
 import java.net.URL
 
 class DownloadService : Service() {

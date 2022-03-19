@@ -1,7 +1,7 @@
 package com.faldez.shachi.data.model.response
 
-import com.faldez.shachi.util.serializer.LocalDateTimeSerializer
-import com.faldez.shachi.util.serializer.SingleObjectAsArraySerializer
+import com.faldez.shachi.data.util.serializer.LocalDateTimeSerializer
+import com.faldez.shachi.data.util.serializer.SingleObjectAsArraySerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 import java.time.LocalDateTime

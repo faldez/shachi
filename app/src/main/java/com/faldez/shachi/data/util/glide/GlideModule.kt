@@ -1,4 +1,4 @@
-package com.faldez.shachi.util.glide
+package com.faldez.shachi.data.util.glide
 
 import android.content.Context
 import android.os.Handler

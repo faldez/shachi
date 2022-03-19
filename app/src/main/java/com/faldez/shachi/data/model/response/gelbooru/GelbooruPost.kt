@@ -1,6 +1,6 @@
 package com.faldez.shachi.data.model.response
 
-import com.faldez.shachi.util.serializer.*
+import com.faldez.shachi.data.util.serializer.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 import java.time.ZonedDateTime
