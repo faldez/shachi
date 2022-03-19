@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.res.ResourcesCompat
@@ -26,23 +27,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.faldez.shachi.R
+import com.faldez.shachi.data.api.BooruApiImpl
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.Modifier
 import com.faldez.shachi.data.model.ServerView
 import com.faldez.shachi.data.model.TagDetail
 import com.faldez.shachi.data.repository.search_history.SearchHistoryRepositoryImpl
 import com.faldez.shachi.data.repository.tag.TagRepositoryImpl
-import com.faldez.shachi.databinding.SearchFragmentBinding
-import com.faldez.shachi.databinding.TagsDetailsBinding
-import com.faldez.shachi.data.api.BooruApiImpl
 import com.faldez.shachi.data.util.StringUtil
 import com.faldez.shachi.data.util.clearAllGroup
 import com.faldez.shachi.data.util.getGroupHeaderTextColor
 import com.faldez.shachi.data.util.hideAll
+import com.faldez.shachi.databinding.SearchFragmentBinding
+import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -82,7 +82,7 @@ class SearchFragment : DialogFragment() {
         binding = SearchFragmentBinding.inflate(inflater, container, false)
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
-        binding.searchSimpleTagsInputText.bind()
+        binding.searchTagsInputText.bind()
         binding.suggestionTagsRecyclerView.bind()
 
         val initialTags: String = requireArguments().get("tags") as String
@@ -189,7 +189,7 @@ class SearchFragment : DialogFragment() {
 
         viewModel.setInitialTags(initialTags)
         if (viewModel.state.value.selectedTags is SelectedTags.Manual) {
-            binding.searchSimpleTagsInputText.text = SpannableStringBuilder(initialTags)
+            binding.searchTagsInputText.text = SpannableStringBuilder(initialTags)
         }
     }
 
@@ -208,23 +208,23 @@ class SearchFragment : DialogFragment() {
             },
             onClick = {
                 if (viewModel.state.value.selectedTags is SelectedTags.Manual) {
-                    val text = binding.searchSimpleTagsInputText.text?.toString()
+                    val text = binding.searchTagsInputText.text?.toString()
                     if (text.isNullOrEmpty()) {
-                        binding.searchSimpleTagsInputText.text = SpannableStringBuilder(it.name)
-                        binding.searchSimpleTagsInputText.setSelection(it.name.length)
+                        binding.searchTagsInputText.text = SpannableStringBuilder(it.name)
+                        binding.searchTagsInputText.setSelection(it.name.length)
                     } else {
-                        val selectionStart = binding.searchSimpleTagsInputText.selectionStart - 1
+                        val selectionStart = binding.searchTagsInputText.selectionStart - 1
                         val start =
                             StringUtil.findTokenStart(text, selectionStart)
                         val end = StringUtil.findTokenEnd(text, selectionStart)
                         Log.d("SearchFragment",
                             "selectionStart=$selectionStart text=$text replace start=$start to end=$end with=${it.name}")
-                        binding.searchSimpleTagsInputText.text?.replace(start, end + 1, it.name)
-                        binding.searchSimpleTagsInputText.setSelection(start + it.name.length)
+                        binding.searchTagsInputText.text?.replace(start, end + 1, it.name)
+                        binding.searchTagsInputText.setSelection(start + it.name.length)
                     }
                 } else {
                     viewModel.insertTag(it)
-                    binding.searchSimpleTagsInputText.text?.clear()
+                    binding.searchTagsInputText.text?.clear()
                 }
             }
         )
@@ -235,24 +235,24 @@ class SearchFragment : DialogFragment() {
     }
 
     private fun prepareAppBar() {
-        binding.searchSimpleTopAppBar.menu.clear()
-        binding.searchSimpleTopAppBar.inflateMenu(R.menu.search_menu)
-        binding.searchSimpleTopAppBar.setNavigationIcon(if (isTablet) {
+        binding.searchTopAppBar.menu.clear()
+        binding.searchTopAppBar.inflateMenu(R.menu.search_menu)
+        binding.searchTopAppBar.setNavigationIcon(if (isTablet) {
             R.drawable.ic_baseline_close_24
         } else {
             R.drawable.ic_baseline_arrow_back_24
         })
-        binding.searchSimpleTopAppBar.setNavigationOnClickListener {
+        binding.searchTopAppBar.setNavigationOnClickListener {
             if (isTablet) {
                 dialog?.dismiss()
             } else {
                 requireActivity().onBackPressed()
             }
         }
-        binding.searchSimpleTopAppBar.setOnMenuItemClickListener { item ->
+        binding.searchTopAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.clear_button -> {
-                    binding.searchSimpleTagsInputText.text?.clear()
+                    binding.searchTagsInputText.text?.clear()
                     true
                 }
                 R.id.apply_button -> {
@@ -302,7 +302,7 @@ class SearchFragment : DialogFragment() {
             })
     }
 
-    private fun TextInputEditText.bind() {
+    private fun EditText.bind() {
         hint = "Search " + viewModel.state.value.server?.title
         setImeActionLabel("Add", KeyEvent.KEYCODE_ENTER)
         doOnTextChanged { text, start, _, _ ->
@@ -340,7 +340,7 @@ class SearchFragment : DialogFragment() {
                         true
                     }
                 binding.loadingIndicator.isVisible = isVisible
-                binding.searchSimpleTopAppBar.menu.findItem(R.id.clear_button).isVisible =
+                binding.searchTopAppBar.menu.findItem(R.id.clear_button).isVisible =
                     isVisible
             }
         }
@@ -357,7 +357,7 @@ class SearchFragment : DialogFragment() {
                     val text = (textView as TextInputEditText).text.toString()
                     if (text.isNotEmpty()) {
                         viewModel.insertTagByName(text)
-                        binding.searchSimpleTagsInputText.text?.clear()
+                        binding.searchTagsInputText.text?.clear()
                     } else if (text.isEmpty() && viewModel.state.value.selectedTags.isNotEmpty()) {
                         applySearch()
                     }

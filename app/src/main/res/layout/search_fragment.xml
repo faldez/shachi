@@ -8,7 +8,7 @@
     tools:context=".ui.search.SearchFragment">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/searchSimpleAppBarLayout"
+        android:id="@+id/searchAppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
@@ -16,31 +16,20 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             style="@style/Widget.App.Toolbar"
-            android:id="@+id/searchSimpleTopAppBar"
+            android:id="@+id/searchTopAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:menu="@menu/search_menu"
             app:title="@string/search">
 
-            <com.google.android.material.textfield.TextInputLayout
+            <EditText
+                android:id="@+id/searchTagsInputText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                app:boxStrokeWidth="0dp"
-                app:boxStrokeWidthFocused="0dp"
-                app:hintEnabled="false">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/searchSimpleTagsInputText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/tags"
-                    android:inputType="textAutoComplete"
-                    android:imeOptions="flagNoFullscreen"
-                    android:maxLines="1" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
+                android:hint="@string/tags"
+                android:imeOptions="flagNoFullscreen"
+                android:maxLines="1" />
         </com.google.android.material.appbar.MaterialToolbar>
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
