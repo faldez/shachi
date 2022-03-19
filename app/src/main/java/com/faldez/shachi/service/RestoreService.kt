@@ -8,6 +8,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.faldez.shachi.R
+import com.faldez.shachi.data.api.Action
+import com.faldez.shachi.data.api.BooruApiImpl
 import com.faldez.shachi.data.backup.Backup
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.*
@@ -64,7 +66,7 @@ class RestoreService : Service() {
             savedSearchRepository = SavedSearchRepositoryImpl(db)
             favoriteRepository = FavoriteRepositoryImpl(db)
             searchHistoryRepository = SearchHistoryRepositoryImpl(db)
-            tagRepository = TagRepositoryImpl(BooruServiceImpl(), db)
+            tagRepository = TagRepositoryImpl(BooruApiImpl(), db)
         }
     }
 

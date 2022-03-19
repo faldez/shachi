@@ -14,7 +14,7 @@ import com.faldez.shachi.data.repository.favorite.FavoriteRepository
 import com.faldez.shachi.data.repository.post.PostRepository
 import com.faldez.shachi.data.repository.saved_search.SavedSearchRepository
 import com.faldez.shachi.data.repository.search_history.SearchHistoryRepository
-import com.faldez.shachi.service.Action
+import com.faldez.shachi.data.api.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

@@ -7,7 +7,7 @@ import androidx.paging.PagingData
 import com.faldez.shachi.data.model.*
 import com.faldez.shachi.data.repository.search_history.SearchHistoryRepository
 import com.faldez.shachi.data.repository.tag.TagRepository
-import com.faldez.shachi.service.Action
+import com.faldez.shachi.data.api.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

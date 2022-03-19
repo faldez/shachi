@@ -1,5 +1,5 @@
 package com.faldez.shachi.data.repository.post
 
-import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.data.api.BooruApi
 
-class PostRepositoryImpl(override val service: BooruService) : PostRepository
+class PostRepositoryImpl(override val booruApi: BooruApi) : PostRepository

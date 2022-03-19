@@ -13,7 +13,7 @@ import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.repository.comment.CommentRepositoryImpl
 import com.faldez.shachi.data.repository.server.ServerRepositoryImpl
 import com.faldez.shachi.databinding.CommentFragmentBinding
-import com.faldez.shachi.service.BooruServiceImpl
+import com.faldez.shachi.data.api.BooruApiImpl
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ class CommentFragment : BottomSheetDialogFragment() {
     private val viewModel: CommentViewModel by viewModels {
         CommentViewModelFactory(serverRepository = ServerRepositoryImpl(AppDatabase.build(
             requireContext())),
-            commentRepository = CommentRepositoryImpl(BooruServiceImpl()), this)
+            commentRepository = CommentRepositoryImpl(BooruApiImpl()), this)
     }
     private lateinit var adapter: CommentAdapter
 

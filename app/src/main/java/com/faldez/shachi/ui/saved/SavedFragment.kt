@@ -29,7 +29,7 @@ import com.faldez.shachi.data.repository.favorite.FavoriteRepositoryImpl
 import com.faldez.shachi.data.repository.post.PostRepositoryImpl
 import com.faldez.shachi.data.repository.saved_search.SavedSearchRepositoryImpl
 import com.faldez.shachi.databinding.SavedFragmentBinding
-import com.faldez.shachi.service.BooruServiceImpl
+import com.faldez.shachi.data.api.BooruApiImpl
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.TextInputEditText
@@ -41,7 +41,7 @@ class SavedFragment : Fragment() {
     private val viewModel: SavedViewModel by navGraphViewModels(R.id.saved) {
         val db = AppDatabase.build(requireContext())
         SavedViewModelFactory(SavedSearchRepositoryImpl(db),
-            PostRepositoryImpl(BooruServiceImpl()), FavoriteRepositoryImpl(db), this)
+            PostRepositoryImpl(BooruApiImpl()), FavoriteRepositoryImpl(db), this)
     }
     private val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireContext())

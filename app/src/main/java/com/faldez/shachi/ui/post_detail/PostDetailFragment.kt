@@ -27,7 +27,7 @@ import com.faldez.shachi.data.repository.server.ServerRepositoryImpl
 import com.faldez.shachi.data.repository.tag.TagRepositoryImpl
 import com.faldez.shachi.databinding.PostDetailFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
-import com.faldez.shachi.service.BooruServiceImpl
+import com.faldez.shachi.data.api.BooruApiImpl
 import com.faldez.shachi.util.clearAllGroup
 import com.faldez.shachi.util.getGroupHeaderTextColor
 import com.faldez.shachi.util.hideAll
@@ -47,7 +47,7 @@ class PostDetailFragment : DialogFragment() {
         val currentSearchTags = requireArguments().getString("tags", null) ?: ""
         val db = AppDatabase.build(requireContext())
         PostDetailViewModelFactory(post, currentSearchTags, ServerRepositoryImpl(db),
-            TagRepositoryImpl(BooruServiceImpl(), db),
+            TagRepositoryImpl(BooruApiImpl(), db),
             this)
     }
 

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.faldez.shachi.data.model.*
 import com.faldez.shachi.data.repository.ServerRepository
 import com.faldez.shachi.data.repository.tag.TagRepository
-import com.faldez.shachi.service.Action
+import com.faldez.shachi.data.api.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

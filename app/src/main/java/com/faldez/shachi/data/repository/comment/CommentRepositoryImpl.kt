@@ -1,5 +1,5 @@
 package com.faldez.shachi.data.repository.comment
 
-import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.data.api.BooruApi
 
-class CommentRepositoryImpl(override val service: BooruService) : CommentRepository
+class CommentRepositoryImpl(override val booruApi: BooruApi) : CommentRepository

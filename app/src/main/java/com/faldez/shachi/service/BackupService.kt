@@ -7,6 +7,7 @@ import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.faldez.shachi.R
+import com.faldez.shachi.data.api.BooruApiImpl
 import com.faldez.shachi.data.backup.*
 import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.repository.ServerRepository
@@ -62,7 +63,7 @@ class BackupService : Service() {
             savedSearchRepository = SavedSearchRepositoryImpl(db)
             favoriteRepository = FavoriteRepositoryImpl(db)
             searchHistoryRepository = SearchHistoryRepositoryImpl(db)
-            tagRepository = TagRepositoryImpl(BooruServiceImpl(), db)
+            tagRepository = TagRepositoryImpl(BooruApiImpl(), db)
         }
     }
 

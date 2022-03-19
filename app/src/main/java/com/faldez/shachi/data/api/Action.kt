@@ -1,4 +1,4 @@
-package com.faldez.shachi.service
+package com.faldez.shachi.data.api
 
 import com.faldez.shachi.data.model.SavedSearchServer
 import com.faldez.shachi.data.model.Server

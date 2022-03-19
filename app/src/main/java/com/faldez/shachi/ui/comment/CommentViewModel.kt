@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.faldez.shachi.data.model.Comment
 import com.faldez.shachi.data.repository.comment.CommentRepository
 import com.faldez.shachi.data.repository.ServerRepository
-import com.faldez.shachi.service.Action
+import com.faldez.shachi.data.api.Action
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

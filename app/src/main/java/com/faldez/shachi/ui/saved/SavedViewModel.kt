@@ -16,7 +16,7 @@ import com.faldez.shachi.data.preference.Filter
 import com.faldez.shachi.data.repository.favorite.FavoriteRepository
 import com.faldez.shachi.data.repository.post.PostRepository
 import com.faldez.shachi.data.repository.saved_search.SavedSearchRepository
-import com.faldez.shachi.service.Action
+import com.faldez.shachi.data.api.Action
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime

@@ -1,4 +1,4 @@
-package com.faldez.shachi.service
+package com.faldez.shachi.data.api
 
 import com.faldez.shachi.data.model.response.MoebooruComment
 import com.faldez.shachi.data.model.response.MoebooruPost
@@ -13,7 +13,7 @@ import retrofit2.http.GET
 import retrofit2.http.Url
 
 
-interface MoebooruService {
+interface MoebooruApi {
     @GET
     suspend fun getPosts(@Url url: String): List<MoebooruPost>
 
@@ -29,18 +29,18 @@ interface MoebooruService {
     companion object {
         const val STARTING_PAGE_INDEX = 1
 
-        private val retrofit2Service: MoebooruService by lazy {
+        private val retrofit2Api: MoebooruApi by lazy {
             val client =
                 OkHttpClient().newBuilder().build()
             val contentType = "application/json".toMediaType()
             Retrofit.Builder().client(client)
                 .baseUrl("https://safebooru.org")
                 .addConverterFactory(Json.asConverterFactory(contentType)).build()
-                .create(MoebooruService::class.java)
+                .create(MoebooruApi::class.java)
         }
 
-        fun getInstance(): MoebooruService {
-            return retrofit2Service
+        fun getInstance(): MoebooruApi {
+            return retrofit2Api
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.faldez.shachi
 
 import androidx.paging.PagingSource
+import com.faldez.shachi.data.api.*
 import com.faldez.shachi.data.model.ServerType
 import com.faldez.shachi.data.model.ServerView
 import com.faldez.shachi.data.model.response.GelbooruPost
@@ -8,7 +9,6 @@ import com.faldez.shachi.data.model.response.GelbooruPostResponse
 import com.faldez.shachi.data.model.response.GelbooruPosts
 import com.faldez.shachi.data.model.response.mapToPost
 import com.faldez.shachi.data.repository.post.PostPagingSource
-import com.faldez.shachi.service.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -28,22 +28,22 @@ class PostPagingSourceTest {
     private val testDispatcher = TestCoroutineDispatcher()
 
     @Mock
-    lateinit var gelbooruService: GelbooruService
+    lateinit var gelbooruApi: GelbooruApi
 
     @Mock
-    lateinit var danbooruService: DanbooruService
+    lateinit var danbooruApi: DanbooruApi
 
     @Mock
-    lateinit var moebooruService: MoebooruService
+    lateinit var moebooruApi: MoebooruApi
 
-    class BooruServiceTest(
-        override val gelbooru: GelbooruService,
-        override val moebooru: MoebooruService,
-        override val danbooru: DanbooruService,
-    ) : BooruService() {}
+    class BooruApiTest(
+        override val gelbooru: GelbooruApi,
+        override val moebooru: MoebooruApi,
+        override val danbooru: DanbooruApi,
+    ) : BooruApi() {}
 
     @Mock
-    lateinit var booruService: BooruService
+    lateinit var booruApi: BooruApi
 
     lateinit var postPagingSource: PostPagingSource
 
@@ -95,16 +95,16 @@ class PostPagingSourceTest {
         Dispatchers.setMain(testDispatcher)
 
         MockitoAnnotations.openMocks(this)
-        booruService = BooruServiceTest(gelbooru = gelbooruService,
-            danbooru = danbooruService,
-            moebooru = moebooruService)
+        booruApi = BooruApiTest(gelbooru = gelbooruApi,
+            danbooru = danbooruApi,
+            moebooru = moebooruApi)
         postPagingSource =
-            PostPagingSource(Action.SearchPost(server = server, tags = ""), booruService)
+            PostPagingSource(Action.SearchPost(server = server, tags = ""), booruApi)
     }
 
     @Test
     fun loadReturnsPostWhenOnSuccessfulLoad() = runBlockingTest {
-        given(booruService.gelbooru.getPosts(anyString())).willReturn(gelbooruResponse)
+        given(booruApi.gelbooru.getPosts(anyString())).willReturn(gelbooruResponse)
 
         val expectedResult = PagingSource.LoadResult.Page(
             data = gelbooruResponse.mapToPost(server.toServer()) ?: listOf(),

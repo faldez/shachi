@@ -1,4 +1,4 @@
-package com.faldez.shachi.service
+package com.faldez.shachi.data.api
 
 import com.faldez.shachi.data.model.response.DanbooruComment
 import com.faldez.shachi.data.model.response.DanbooruPost
@@ -12,7 +12,7 @@ import retrofit2.http.GET
 import retrofit2.http.Url
 
 
-interface DanbooruService {
+interface DanbooruApi {
     @GET
     suspend fun getPosts(@Url url: String): List<DanbooruPost>
 
@@ -25,18 +25,18 @@ interface DanbooruService {
     companion object {
         const val STARTING_PAGE_INDEX = 1
 
-        private val retrofitService: DanbooruService by lazy {
+        private val retrofitApi: DanbooruApi by lazy {
             val client =
                 OkHttpClient().newBuilder().build()
             val contentType = "application/json".toMediaType()
             Retrofit.Builder().client(client)
                 .baseUrl("https://safebooru.org")
                 .addConverterFactory(Json.asConverterFactory(contentType)).build()
-                .create(DanbooruService::class.java)
+                .create(DanbooruApi::class.java)
         }
 
-        fun getInstance(): DanbooruService {
-            return retrofitService
+        fun getInstance(): DanbooruApi {
+            return retrofitApi
         }
     }
 }

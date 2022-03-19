@@ -7,12 +7,12 @@ import com.faldez.shachi.data.model.response.mapToTag
 import com.faldez.shachi.data.model.response.mapToTagDetails
 import com.faldez.shachi.data.model.response.mapToTags
 import com.faldez.shachi.data.model.response.parseTag
-import com.faldez.shachi.service.Action
-import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.data.api.Action
+import com.faldez.shachi.data.api.BooruApi
 import kotlinx.coroutines.delay
 
 interface TagRepository {
-    val service: BooruService
+    val booruApi: BooruApi
     val db: AppDatabase
 
     suspend fun insertTags(tags: List<Tag>) = db.tagDao().insertTags(tags)
@@ -22,19 +22,19 @@ interface TagRepository {
         ServerType.Gelbooru -> {
             action.buildGelbooruUrl()?.toString()?.let {
                 Log.d("TagRepository/Gelbooru", it)
-                service.gelbooru.getTags(it).mapToTagDetails()
+                booruApi.gelbooru.getTags(it).mapToTagDetails()
             }
         }
         ServerType.Danbooru -> {
             action.buildDanbooruUrl()?.toString()?.let {
                 Log.d("TagRepository/Danbooru", it)
-                service.danbooru.getTags(it).mapToTagDetails()
+                booruApi.danbooru.getTags(it).mapToTagDetails()
             }
         }
         ServerType.Moebooru -> {
             action.buildMoebooruUrl()?.toString()?.let {
                 Log.d("TagRepository/Moebooru", it)
-                service.moebooru.getTags(it).mapToTagDetails()
+                booruApi.moebooru.getTags(it).mapToTagDetails()
             }
         }
         null -> {
@@ -51,17 +51,17 @@ interface TagRepository {
         ?: when (action.server?.type) {
             ServerType.Gelbooru -> {
                 action.buildGelbooruUrl()?.toString()?.let {
-                    service.gelbooru.getTags(it).mapToTag(action.server.serverId)
+                    booruApi.gelbooru.getTags(it).mapToTag(action.server.serverId)
                 }
             }
             ServerType.Danbooru -> {
                 action.buildDanbooruUrl()?.toString()?.let {
-                    service.danbooru.getTags(it).mapToTag(action.server.serverId)
+                    booruApi.danbooru.getTags(it).mapToTag(action.server.serverId)
                 }
             }
             ServerType.Moebooru -> {
                 action.buildMoebooruUrl()?.toString()?.let {
-                    service.moebooru.getTags(it).mapToTag(action.server.serverId)
+                    booruApi.moebooru.getTags(it).mapToTag(action.server.serverId)
                 }
             }
             else -> null
@@ -103,13 +103,13 @@ interface TagRepository {
             ServerType.Gelbooru -> {
                 newAction.buildGelbooruUrl()?.toString()?.let { url ->
                     Log.d("TagRepository/Gelbooru", url)
-                    service.gelbooru.getTags(url).mapToTags(action.server.serverId)
+                    booruApi.gelbooru.getTags(url).mapToTags(action.server.serverId)
                 }
             }
             ServerType.Danbooru -> {
                 newAction.buildDanbooruUrl()?.toString()?.let { url ->
                     Log.d("TagRepository/Danbooru", url)
-                    service.danbooru.getTags(url).mapToTags(action.server.serverId)
+                    booruApi.danbooru.getTags(url).mapToTags(action.server.serverId)
                 }
 
             }
@@ -158,7 +158,7 @@ interface TagRepository {
         when (action.server?.type) {
             ServerType.Moebooru -> {
                 action.buildMoebooruUrl()?.toString()?.let {
-                    service.moebooru.getTagsSummary(it).data.split(" ").mapNotNull { summary ->
+                    booruApi.moebooru.getTagsSummary(it).data.split(" ").mapNotNull { summary ->
                         try {
                             summary.trim().split("`").let { split ->
                                 val type = split[0].toInt()

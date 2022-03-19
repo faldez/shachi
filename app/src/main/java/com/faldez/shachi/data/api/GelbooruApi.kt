@@ -1,4 +1,4 @@
-package com.faldez.shachi.service
+package com.faldez.shachi.data.api
 
 import com.faldez.shachi.data.model.response.GelbooruCommentResponse
 import com.faldez.shachi.data.model.response.GelbooruPostResponse
@@ -13,7 +13,7 @@ import retrofit2.http.GET
 import retrofit2.http.Url
 
 
-interface GelbooruService {
+interface GelbooruApi {
     @GET
     suspend fun getPosts(@Url url: String): GelbooruPostResponse
 
@@ -26,7 +26,7 @@ interface GelbooruService {
     companion object {
         const val STARTING_PAGE_INDEX = 0
 
-        private val retrofitService: GelbooruService by lazy {
+        private val retrofitApi: GelbooruApi by lazy {
             val client =
                 OkHttpClient().newBuilder().addInterceptor(XmlToJsonInterceptor()).build()
             val contentType = "application/json".toMediaType()
@@ -37,11 +37,11 @@ interface GelbooruService {
             Retrofit.Builder().client(client)
                 .baseUrl("https://safebooru.org")
                 .addConverterFactory(json.asConverterFactory(contentType)).build()
-                .create(GelbooruService::class.java)
+                .create(GelbooruApi::class.java)
         }
 
-        fun getInstance(): GelbooruService {
-            return retrofitService
+        fun getInstance(): GelbooruApi {
+            return retrofitApi
         }
     }
 }

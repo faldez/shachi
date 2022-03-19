@@ -30,13 +30,11 @@ import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.model.Modifier
 import com.faldez.shachi.data.model.ServerView
 import com.faldez.shachi.data.model.TagDetail
-import com.faldez.shachi.data.repository.search_history.SearchHistoryRepository
 import com.faldez.shachi.data.repository.search_history.SearchHistoryRepositoryImpl
-import com.faldez.shachi.data.repository.tag.TagRepository
 import com.faldez.shachi.data.repository.tag.TagRepositoryImpl
 import com.faldez.shachi.databinding.SearchFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
-import com.faldez.shachi.service.BooruServiceImpl
+import com.faldez.shachi.data.api.BooruApiImpl
 import com.faldez.shachi.util.StringUtil
 import com.faldez.shachi.util.clearAllGroup
 import com.faldez.shachi.util.getGroupHeaderTextColor
@@ -58,7 +56,7 @@ class SearchFragment : DialogFragment() {
         val server: ServerView? =
             requireArguments().getParcelable("server") as ServerView?
         val db = AppDatabase.build(requireContext())
-        SearchViewModelFactory(server, TagRepositoryImpl(BooruServiceImpl(),
+        SearchViewModelFactory(server, TagRepositoryImpl(BooruApiImpl(),
             db), SearchHistoryRepositoryImpl(db), this)
     }
 

@@ -7,12 +7,12 @@ import androidx.paging.PagingData
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.ServerType
 import com.faldez.shachi.data.model.response.mapToPost
-import com.faldez.shachi.service.Action
-import com.faldez.shachi.service.BooruService
+import com.faldez.shachi.data.api.Action
+import com.faldez.shachi.data.api.BooruApi
 import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
-    val service: BooruService
+    val booruApi: BooruApi
 
     fun getSearchPostsResultStream(action: Action.SearchPost): Flow<PagingData<Post>> = Pager(
         config = PagingConfig(
@@ -20,7 +20,7 @@ interface PostRepository {
             enablePlaceholders = false
         ),
         pagingSourceFactory = {
-            PostPagingSource(action, service)
+            PostPagingSource(action, booruApi)
         }
     ).flow
 
@@ -30,7 +30,7 @@ interface PostRepository {
                 ServerType.Gelbooru -> {
                     val url = action.buildGelbooruUrl(0).toString()
                     Log.d("PostPagingSource/Gelbooru", url)
-                    if (service.gelbooru.getPosts(url).mapToPost(action.server.toServer())
+                    if (booruApi.gelbooru.getPosts(url).mapToPost(action.server.toServer())
                             .isNullOrEmpty()
                     ) {
                         throw Error("list empty")
@@ -39,7 +39,7 @@ interface PostRepository {
                 ServerType.Danbooru -> {
                     val url = action.buildDanbooruUrl(1).toString()
                     Log.d("PostPagingSource/Danbooru", url)
-                    if (service.danbooru.getPosts(url).mapToPost(action.server.toServer())
+                    if (booruApi.danbooru.getPosts(url).mapToPost(action.server.toServer())
                             .isNullOrEmpty()
                     ) {
                         throw Error("list empty")
@@ -48,7 +48,7 @@ interface PostRepository {
                 ServerType.Moebooru -> {
                     val url = action.buildMoebooruUrl(1).toString()
                     Log.d("PostPagingSource/Moebooru", url)
-                    if (service.moebooru.getPosts(url).mapToPost(action.server.toServer())
+                    if (booruApi.moebooru.getPosts(url).mapToPost(action.server.toServer())
                             .isNullOrEmpty()
                     ) {
                         throw Error("list empty")

@@ -13,7 +13,7 @@ import com.faldez.shachi.data.repository.post.PostRepositoryImpl
 import com.faldez.shachi.data.repository.saved_search.SavedSearchRepositoryImpl
 import com.faldez.shachi.data.repository.search_history.SearchHistoryRepositoryImpl
 import com.faldez.shachi.data.repository.server.ServerRepositoryImpl
-import com.faldez.shachi.service.BooruServiceImpl
+import com.faldez.shachi.data.api.BooruApiImpl
 import com.faldez.shachi.ui.browse.BrowseViewModel
 import com.faldez.shachi.ui.browse.BrowseViewModelFactory
 import com.faldez.shachi.ui.post_slide.base.BasePostSlideFragment
@@ -26,7 +26,7 @@ class BrowseSavedPostSlideFragment : BasePostSlideFragment() {
     private val viewModel: BrowseViewModel by navGraphViewModels(R.id.saved) {
         val db = AppDatabase.build(requireContext())
         BrowseViewModelFactory(
-            PostRepositoryImpl(BooruServiceImpl()),
+            PostRepositoryImpl(BooruApiImpl()),
             ServerRepositoryImpl(db),
             FavoriteRepositoryImpl(db),
             SavedSearchRepositoryImpl(db),
