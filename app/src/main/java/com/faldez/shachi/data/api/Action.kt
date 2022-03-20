@@ -14,7 +14,8 @@ sealed class Action {
     data class SearchPost(
         val server: ServerView,
         val tags: String = "*",
-        val limit: Int = NETWORK_PAGE_SIZE
+        val limit: Int = NETWORK_PAGE_SIZE,
+        val start: Int? = null,
     ) :
         Action() {
         fun buildGelbooruUrl(page: Int): HttpUrl? {

@@ -157,6 +157,10 @@ class SearchSimpleViewModel(
         }
     }
 
+    fun setPage(page: Int?) {
+        _state.value = _state.value.copy(page = page)
+    }
+
     fun deleteSearchHistory(searchHistory: SearchHistory) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             searchHistoryRepository.delete(searchHistory)
@@ -185,4 +189,5 @@ sealed class UiAction {
 data class UiState(
     val server: ServerView?,
     val selectedTags: SelectedTags,
+    val page: Int? = null,
 )

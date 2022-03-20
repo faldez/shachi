@@ -15,7 +15,7 @@ class PostPagingSource(
     private val booruApi: BooruApi,
 ) :
     PagingSource<Int, Post>() {
-    override fun getRefreshKey(state: PagingState<Int, Post>): Int? = null
+    override fun getRefreshKey(state: PagingState<Int, Post>): Int? = action.start
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
         val startingPageIndex = when (action.server.type) {
@@ -43,14 +43,18 @@ class PostPagingSource(
                 }
             }
 
+            val prevKey =
+                if (position == startingPageIndex || position == action.start) null else position
             val nextKey = if (posts.isEmpty()) {
                 null
             } else {
                 position + 1
             }
 
+            Log.d("PostPagingSource",
+                "params.key=${params.key} position=$position prevKey=$prevKey nextKey=$nextKey")
             return LoadResult.Page(data = posts,
-                prevKey = if (position == startingPageIndex) null else position,
+                prevKey = prevKey,
                 nextKey = nextKey)
         } catch (exception: IOException) {
             return LoadResult.Error(exception)

@@ -7,14 +7,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.faldez.shachi.data.api.Action
 import com.faldez.shachi.data.model.*
 import com.faldez.shachi.data.preference.Filter
-import com.faldez.shachi.data.repository.*
+import com.faldez.shachi.data.repository.ServerRepository
 import com.faldez.shachi.data.repository.favorite.FavoriteRepository
 import com.faldez.shachi.data.repository.post.PostRepository
 import com.faldez.shachi.data.repository.saved_search.SavedSearchRepository
 import com.faldez.shachi.data.repository.search_history.SearchHistoryRepository
-import com.faldez.shachi.data.api.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -45,29 +45,25 @@ class BrowseViewModel constructor(
         val actionStateFlow = MutableSharedFlow<UiAction>()
         val searches =
             actionStateFlow.filterIsInstance<UiAction.Search>().distinctUntilChanged()
-        val tagsScrolled =
-            actionStateFlow.filterIsInstance<UiAction.Scroll>().distinctUntilChanged()
-                .onStart {
-                    emit(UiAction.Scroll(null, currentTags = lastTagsScrolled))
-                }
-                .shareIn(scope = viewModelScope,
-                    started = SharingStarted.Eagerly,
-                    replay = 1)
+//        val tagsScrolled =
+//            actionStateFlow.filterIsInstance<UiAction.Scroll>().distinctUntilChanged()
+//                .onStart {
+//                    emit(UiAction.Scroll(null, currentTags = lastTagsScrolled))
+//                }
+//                .shareIn(scope = viewModelScope,
+//                    started = SharingStarted.Eagerly,
+//                    replay = 1)
 
         val getServer = getSelectedServer()
 
         state =
-            combine(getServer, searches, tagsScrolled, ::Triple).map { (server, search, scroll) ->
-                Log.d("BrowseViewModel",
-                    "serverId=${server?.serverId} ${search.tags} != ${scroll.currentTags}) || (${server?.url} != ${scroll.currentServerUrl})")
-
+            combine(getServer, searches, ::Pair).map { (server, search) ->
                 UiState(
                     server = server,
                     tags = search.tags,
-                    lastTagsScrolled = scroll.currentTags,
-                    hasNotScrolledForCurrentTag = (search.tags != scroll.currentTags) || (server?.url != scroll.currentServerUrl),
                     questionableFilter = search.questionableFilter,
-                    explicitFilter = search.explicitFilter
+                    explicitFilter = search.explicitFilter,
+                    start = search.start
                 )
             }.stateIn(scope = viewModelScope,
                 started = SharingStarted.Eagerly,
@@ -77,7 +73,7 @@ class BrowseViewModel constructor(
         pagingDataFlow =
             state.filter { it.server != null }
                 .flatMapLatest {
-                    searchPosts(it.server!!, tags = it.tags).map { data ->
+                    searchPosts(it.server!!, tags = it.tags, it.start).map { data ->
                         data.applyFilters(it.server.blacklistedTags,
                             it.questionableFilter == Filter.Mute,
                             it.explicitFilter == Filter.Mute)
@@ -120,8 +116,9 @@ class BrowseViewModel constructor(
     }
 
 
-    private fun searchPosts(server: ServerView, tags: String): Flow<PagingData<Post>> {
-        val action = Action.SearchPost(server, tags)
+    private fun searchPosts(server: ServerView, tags: String, start: Int?): Flow<PagingData<Post>> {
+        Log.d("BrowseViewModel", "searchPost(server=$server, tags=$tags, start=$start)")
+        val action = Action.SearchPost(server = server, tags = tags, start = start)
         return postRepository.getSearchPostsResultStream(action)
     }
 
@@ -158,10 +155,7 @@ class BrowseViewModel constructor(
     override fun onCleared() {
         savedStateHandle.set(LAST_SEARCH_SERVER, state.value.server)
         savedStateHandle.set(LAST_SEARCH_TAGS, state.value.tags)
-        savedStateHandle.set(LAST_TAGS_SCROLLED, state.value.lastTagsScrolled)
         super.onCleared()
-        Log.d("PostsViewModel",
-            "onCleared " + state.value.tags + " " + state.value.lastTagsScrolled)
     }
 
     private fun List<TagDetail>.toQuery(): String {
@@ -174,6 +168,7 @@ sealed class UiAction {
         val tags: String,
         val questionableFilter: Filter,
         val explicitFilter: Filter,
+        val start: Int? = null,
     ) : UiAction()
 
     data class Scroll(
@@ -185,10 +180,9 @@ sealed class UiAction {
 data class UiState(
     val server: ServerView? = null,
     val tags: String = "",
-    val lastTagsScrolled: String = "",
-    val hasNotScrolledForCurrentTag: Boolean = false,
     val questionableFilter: Filter = Filter.Disable,
     val explicitFilter: Filter = Filter.Disable,
+    val start: Int? = null,
 )
 
 private const val LAST_SEARCH_SERVER: String = "last_search_server"

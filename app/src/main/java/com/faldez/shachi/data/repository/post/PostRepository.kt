@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.faldez.shachi.data.api.Action
+import com.faldez.shachi.data.api.BooruApi
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.ServerType
 import com.faldez.shachi.data.model.response.mapToPost
-import com.faldez.shachi.data.api.Action
-import com.faldez.shachi.data.api.BooruApi
 import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
@@ -19,6 +19,7 @@ interface PostRepository {
             pageSize = action.limit,
             enablePlaceholders = false
         ),
+        initialKey = action.start,
         pagingSourceFactory = {
             PostPagingSource(action, booruApi)
         }
@@ -61,6 +62,6 @@ interface PostRepository {
     }
 
     companion object {
-        const val NETWORK_PAGE_SIZE = 50
+        const val NETWORK_PAGE_SIZE = 100
     }
 }

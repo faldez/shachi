@@ -117,4 +117,5 @@
     <string name="about">About</string>
     <string name="github">Github</string>
     <string name="hostname">Hostname</string>
+    <string name="page">Page</string>
 </resources>

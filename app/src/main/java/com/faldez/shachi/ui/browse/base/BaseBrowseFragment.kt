@@ -3,21 +3,16 @@ package com.faldez.shachi.ui.browse.base
 import android.app.Dialog
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -29,7 +24,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.faldez.shachi.MainActivity
 import com.faldez.shachi.R
 import com.faldez.shachi.data.model.Post
 import com.faldez.shachi.data.model.ServerView
@@ -41,11 +35,12 @@ import com.faldez.shachi.ui.browse.UiAction
 import com.faldez.shachi.ui.browse.UiState
 import com.faldez.shachi.ui.search.SearchFragment
 import com.faldez.shachi.ui.server_dialog.ServerDialogFragment
-import com.faldez.shachi.widget.EmptyFooterDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 abstract class BaseBrowseFragment : Fragment() {
@@ -59,16 +54,6 @@ abstract class BaseBrowseFragment : Fragment() {
 
     private val preferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
-    }
-
-    private val scrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            if (dy < 0) {
-                (activity as MainActivity).showNavigation()
-            } else if (dy > 0) {
-                (activity as MainActivity).hideNavigation()
-            }
-        }
     }
 
     override fun onCreateView(
@@ -85,8 +70,15 @@ abstract class BaseBrowseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         prepareAppBar()
 
-        val server = arguments?.get("server") as ServerView?
-        val tags = arguments?.get("tags") as String? ?: ""
+        var server: ServerView? = null
+        var tags = ""
+        var start: Int? = null
+
+        arguments?.also { args ->
+            server = args.get("server") as ServerView?
+            tags = args.get("tags") as String? ?: ""
+            start = args.get("start") as Int?
+        }
 
         val questionableFilter =
             preferences.getString(ShachiPreference.KEY_FILTER_QUESTIONABLE_CONTENT, null)
@@ -95,12 +87,12 @@ abstract class BaseBrowseFragment : Fragment() {
             preferences.getString(ShachiPreference.KEY_FILTER_EXPLICIT_CONTENT, null)?.toFilter()
                 ?: Filter.Disable
 
-        Log.d("BrowseFragment/onCreateView", "server: $server tags: $tags")
+        Log.d("BrowseFragment/onCreateView", "server: $server tags: $tags start: $start")
 
         if (server != null) {
-            viewModel.selectServer(server)
+            viewModel.selectServer(server!!)
         }
-        viewModel.accept(UiAction.Search(tags, questionableFilter, explicitFilter))
+        viewModel.accept(UiAction.Search(tags, questionableFilter, explicitFilter, start))
 
         binding.bindState(
             uiState = viewModel.state,
@@ -111,7 +103,8 @@ abstract class BaseBrowseFragment : Fragment() {
 
     private fun navigateToSearch() {
         val bundle = bundleOf("server" to viewModel.state.value.server,
-            "tags" to viewModel.state.value.tags)
+            "tags" to viewModel.state.value.tags,
+            "page" to viewModel.state.value.start)
         if (resources.getBoolean(R.bool.isTablet)) {
             val searchFragment = SearchFragment()
             searchFragment.arguments = bundle
@@ -285,28 +278,6 @@ abstract class BaseBrowseFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 pagingData.collect {
                     postsAdapter.submitData(it)
-                }
-            }
-        }
-
-        val notLoading = postsAdapter.loadStateFlow.distinctUntilChangedBy { it.source.refresh }
-            .map { it.source.refresh is LoadState.NotLoading }
-        val hasNotScrolledForCurrentSearch =
-            uiState.map { it.hasNotScrolledForCurrentTag }.distinctUntilChanged()
-
-        val shouldScrollToTop = combine(
-            notLoading,
-            hasNotScrolledForCurrentSearch,
-            Boolean::and
-        )
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                shouldScrollToTop.collect { shouldScroll ->
-                    val isNotEmpty = postsAdapter.itemCount != 0
-                    Log.d(TAG,
-                        "shouldScroll=$shouldScroll postsAdapter.itemCount=$isNotEmpty")
-                    if (shouldScroll) postsRecyclerView.scrollToPosition(0)
                 }
             }
         }

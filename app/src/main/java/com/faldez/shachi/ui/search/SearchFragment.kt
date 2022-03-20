@@ -2,6 +2,7 @@ package com.faldez.shachi.ui.search
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.app.Dialog
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.SpannableStringBuilder
@@ -40,6 +41,7 @@ import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -93,6 +95,8 @@ class SearchFragment : DialogFragment() {
         binding.suggestionTagsRecyclerView.bind()
 
         val initialTags: String = requireArguments().get("tags") as String
+        val initialPage: Int? = requireArguments().get("page") as Int?
+        viewModel.setPage(initialPage)
 
         bindSelectedTags(initialTags)
 
@@ -122,6 +126,29 @@ class SearchFragment : DialogFragment() {
             if (checked) {
                 binding.searchTagsInputText.text =
                     SpannableStringBuilder(viewModel.state.value.selectedTags.asString())
+            }
+        }
+
+        binding.pageChip.setOnClickListener {
+            binding.pageChip.isChecked = viewModel.state.value.page != null
+            MaterialAlertDialogBuilder(requireContext()).setTitle("Start at page")
+                .setView(R.layout.page_input_layout).setPositiveButton("Ok") { dialog, _ ->
+                    (dialog as Dialog).findViewById<TextInputEditText>(R.id.pageInputText).text?.toString()
+                        ?.toIntOrNull()?.let {
+                            viewModel.setPage(it)
+                        }
+                }.setNegativeButton("Clear") { _, _ ->
+                    viewModel.setPage(null)
+                }.show()
+        }
+
+        binding.pageChip.setOnCheckedChangeListener { chip, checked ->
+            if (checked) {
+                binding.pageChip.closeIcon = null
+            } else {
+                binding.pageChip.closeIcon = ResourcesCompat.getDrawable(resources,
+                    R.drawable.ic_baseline_arrow_drop_down_24,
+                    activity?.theme)
             }
         }
 
@@ -172,6 +199,13 @@ class SearchFragment : DialogFragment() {
                         }
                     }
                     binding.loadingIndicator.isVisible = false
+                }
+
+                binding.pageChip.isChecked = state.page != null
+                if (state.page != null) {
+                    binding.pageChip.text = "Page: ${state.page}"
+                } else {
+                    binding.pageChip.text = "Page"
                 }
             }
         }
@@ -282,7 +316,7 @@ class SearchFragment : DialogFragment() {
         }
 
         val bundle = bundleOf("server" to viewModel.state.value.server,
-            "tags" to value)
+            "tags" to value, "start" to viewModel.state.value.page)
         findNavController().navigate(R.id.action_search_to_browse, bundle)
         dialog?.dismiss()
     }
