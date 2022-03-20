@@ -25,6 +25,14 @@ class AboutSettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
+        findPreference<Preference>(ShachiPreference.KEY_DISCORD)?.setOnPreferenceClickListener {
+            val intent =
+                Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://discord.gg/WShfXrpbwu"))
+            startActivity(intent)
+            true
+        }
+
         findPreference<Preference>(ShachiPreference.KEY_PRIVACY_POLICY)?.setOnPreferenceClickListener {
             val intent =
                 Intent(Intent.ACTION_VIEW,

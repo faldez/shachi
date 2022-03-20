@@ -6,11 +6,13 @@
         <Preference
             app:fragment="com.faldez.shachi.ui.servers.ServersFragment"
             app:key="servers"
+            app:icon="@drawable/ic_baseline_storage_24"
             app:summary="@string/manage_servers"
             app:title="@string/servers" />
         <Preference
             app:fragment="com.faldez.shachi.ui.blacklisted_tag.BlacklistedTagFragment"
             app:key="blacklisted_tags"
+            app:icon="@drawable/ic_baseline_label_off_24"
             app:summary="@string/blacklisted_tags"
             app:title="@string/blacklisted_tags" />
 
@@ -27,10 +29,12 @@
     <PreferenceCategory app:title="@string/backup_and_restore">
         <Preference
             android:title="@string/backup"
+            app:icon="@drawable/ic_baseline_backup_24"
             app:key="backup"
             app:summary="@string/restore_summary" />
         <Preference
             android:title="@string/restore"
+            app:icon="@drawable/ic_baseline_restore_24"
             app:key="restore"
             app:summary="@string/restore_summary" />
     </PreferenceCategory>
@@ -38,6 +42,7 @@
     <PreferenceCategory app:title="@string/other">
         <Preference
             android:title="@string/about"
+            app:icon="@drawable/ic_baseline_info_24"
             app:fragment="com.faldez.shachi.ui.about.AboutFragment"
             app:key="about" />
     </PreferenceCategory>

@@ -6,7 +6,12 @@
         app:title="@string/app_name" />
     <Preference
         app:key="github"
+        app:icon="@drawable/ic_github"
         app:title="@string/github" />
+    <Preference
+        app:icon="@drawable/ic_discord"
+        app:key="discord"
+        app:title="Discord" />
     <Preference
         app:fragment="com.faldez.shachi.ui.oss.OssFragment"
         app:key="oss_notices"
