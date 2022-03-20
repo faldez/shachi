@@ -29,6 +29,8 @@
                 android:background="@null"
                 android:hint="@string/tags"
                 android:imeOptions="flagNoFullscreen"
+                android:imeActionLabel="@string/add"
+                android:inputType="text"
                 android:maxLines="1" />
         </com.google.android.material.appbar.MaterialToolbar>
 

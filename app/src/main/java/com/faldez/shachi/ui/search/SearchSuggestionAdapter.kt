@@ -3,29 +3,19 @@ package com.faldez.shachi.ui.search
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.faldez.shachi.R
-import com.faldez.shachi.databinding.SearchSuggestionTagListItemBinding
 import com.faldez.shachi.data.model.Category
 import com.faldez.shachi.data.model.TagDetail
+import com.faldez.shachi.databinding.SearchSuggestionTagListItemBinding
 
 class SearchSuggestionAdapter(
     val setTextColor: (Int) -> ColorStateList,
     val onClick: (TagDetail) -> Unit,
 ) :
-    RecyclerView.Adapter<SearchSugestionViewHolder>() {
-    var suggestions: MutableList<TagDetail> = mutableListOf()
-
-    fun clear() {
-        suggestions.clear()
-    }
-
-    fun setSuggestion(tags: List<TagDetail>) {
-        suggestions.clear()
-        suggestions.addAll(tags)
-        notifyDataSetChanged()
-    }
-
+    ListAdapter<TagDetail, SearchSugestionViewHolder>(COMPARATOR) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchSugestionViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = SearchSuggestionTagListItemBinding.inflate(inflater, parent, false)
@@ -33,26 +23,38 @@ class SearchSuggestionAdapter(
     }
 
     override fun onBindViewHolder(holder: SearchSugestionViewHolder, position: Int) {
-        suggestions[position].let { tag ->
-            val textColor  = when (tag.type) {
-                Category.General -> R.color.tag_general
-                Category.Artist -> R.color.tag_artist
-                Category.Copyright -> R.color.tag_copyright
-                Category.Character -> R.color.tag_character
-                Category.Metadata -> R.color.tag_metadata
-                else -> null
-            }
-            textColor?.let {
-                holder.binding.sugestionTagTextView.setTextColor(setTextColor(it))
-            }
-            holder.binding.sugestionTagTextView.text = "# ${tag.name}"
-            holder.binding.root.setOnClickListener {
-                onClick(tag)
-            }
+        val tag = getItem(position)
+        val textColor = when (tag.type) {
+            Category.General -> R.color.tag_general
+            Category.Artist -> R.color.tag_artist
+            Category.Copyright -> R.color.tag_copyright
+            Category.Character -> R.color.tag_character
+            Category.Metadata -> R.color.tag_metadata
+            else -> null
+        }
+        textColor?.let {
+            holder.binding.sugestionTagTextView.setTextColor(setTextColor(it))
+        }
+        holder.binding.sugestionTagTextView.text = "# ${tag.name}"
+        holder.binding.root.setOnClickListener {
+            onClick(tag)
         }
     }
 
-    override fun getItemCount(): Int = suggestions.size
+    companion object {
+        private val COMPARATOR = object : DiffUtil.ItemCallback<TagDetail>() {
+            override fun areItemsTheSame(
+                oldItem: TagDetail,
+                newItem: TagDetail,
+            ): Boolean =
+                oldItem.name == newItem.name
+
+            override fun areContentsTheSame(
+                oldItem: TagDetail,
+                newItem: TagDetail,
+            ): Boolean = oldItem == newItem
+        }
+    }
 }
 
 class SearchSugestionViewHolder(val binding: SearchSuggestionTagListItemBinding) :

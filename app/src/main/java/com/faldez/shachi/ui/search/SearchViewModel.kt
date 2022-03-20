@@ -4,10 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import com.faldez.shachi.data.api.Action
 import com.faldez.shachi.data.model.*
 import com.faldez.shachi.data.repository.search_history.SearchHistoryRepository
 import com.faldez.shachi.data.repository.tag.TagRepository
-import com.faldez.shachi.data.api.Action
+import com.faldez.shachi.data.util.isManualSearchTags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -72,14 +73,14 @@ class SearchSimpleViewModel(
             }
         }
 
-    private fun setInitialTagsAdvance(tags: String) {
+    private fun setInitialTagsManual(tags: String) {
         _state.value =
             state.value.copy(selectedTags = SelectedTags.Manual(tags))
     }
 
     fun setInitialTags(tags: String) {
-        if (tags.contains(Regex("[{}~]"))) {
-            setInitialTagsAdvance(tags)
+        if (tags.isManualSearchTags()) {
+            setInitialTagsManual(tags)
         } else {
             setInitialTagsSimple(tags)
         }
@@ -148,8 +149,9 @@ class SearchSimpleViewModel(
 
     fun setMode(isManualMode: Boolean) {
         if (isManualMode) {
-            _state.value =
-                state.value.copy(selectedTags = SelectedTags.Manual(""))
+            val tags = (state.value.selectedTags as SelectedTags.Simple).tags.joinToString(" ")
+            Log.d("SearchViewModel", "tags=$tags")
+            setInitialTagsManual(tags)
         } else {
             setInitialTagsSimple("")
         }
@@ -164,12 +166,15 @@ class SearchSimpleViewModel(
 
 sealed class SelectedTags {
     abstract fun isNotEmpty(): Boolean
+    abstract fun asString(): String
     data class Simple(val tags: List<TagDetail>) : SelectedTags() {
         override fun isNotEmpty(): Boolean = tags.isNotEmpty()
+        override fun asString(): String = tags.joinToString(" ")
     }
 
     data class Manual(val tags: String) : SelectedTags() {
         override fun isNotEmpty(): Boolean = tags.isNotEmpty()
+        override fun asString(): String = tags
     }
 }
 

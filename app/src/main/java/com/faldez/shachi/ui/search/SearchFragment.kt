@@ -34,21 +34,21 @@ import com.faldez.shachi.data.model.ServerView
 import com.faldez.shachi.data.model.TagDetail
 import com.faldez.shachi.data.repository.search_history.SearchHistoryRepositoryImpl
 import com.faldez.shachi.data.repository.tag.TagRepositoryImpl
-import com.faldez.shachi.data.util.StringUtil
-import com.faldez.shachi.data.util.clearAllGroup
-import com.faldez.shachi.data.util.getGroupHeaderTextColor
-import com.faldez.shachi.data.util.hideAll
+import com.faldez.shachi.data.util.*
 import com.faldez.shachi.databinding.SearchFragmentBinding
 import com.faldez.shachi.databinding.TagsDetailsBinding
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
 class SearchFragment : DialogFragment() {
+    companion object {
+        const val TAG = "SearchFragment"
+    }
+
     private lateinit var binding: SearchFragmentBinding
     private lateinit var tagDetailsBinding: TagsDetailsBinding
 
@@ -82,6 +82,13 @@ class SearchFragment : DialogFragment() {
         binding = SearchFragmentBinding.inflate(inflater, container, false)
         tagDetailsBinding = TagsDetailsBinding.bind(binding.root)
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareAppBar()
+
         binding.searchTagsInputText.bind()
         binding.suggestionTagsRecyclerView.bind()
 
@@ -91,36 +98,33 @@ class SearchFragment : DialogFragment() {
 
         lifecycleScope.launch {
             viewModel.state.collect { state ->
-                if (state.selectedTags is SelectedTags.Manual) {
+                binding.manualSearchChip.isChecked =
+                    state.selectedTags is SelectedTags.Manual
+
+                if (state.selectedTags.isNotEmpty() && state.selectedTags is SelectedTags.Manual) {
                     binding.searchHistoryLayout.hide()
                     binding.selectedTagsLayout.hide()
                     binding.suggestionTagLayout.show()
-                }
-            }
-        }
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        prepareAppBar()
-
-        binding.manualSearchChip.setOnCheckedChangeListener { _, checked ->
-            viewModel.setMode(checked)
-        }
-
-        lifecycleScope.launch {
-            viewModel.state.collect { state ->
-                binding.manualSearchChip.isChecked =
-                    state.selectedTags is SelectedTags.Manual
-                if (!state.selectedTags.isNotEmpty()) {
+                } else if (state.selectedTags.isNotEmpty() && state.selectedTags is SelectedTags.Simple) {
+                    binding.searchHistoryLayout.hide()
+                    binding.selectedTagsLayout.show()
+                    binding.suggestionTagLayout.hide()
+                } else if (!state.selectedTags.isNotEmpty()) {
                     binding.searchHistoryLayout.show()
                     binding.selectedTagsLayout.hide()
                     binding.suggestionTagLayout.hide()
                 }
             }
         }
+
+        binding.manualSearchChip.setOnCheckedChangeListener { _, checked ->
+            viewModel.setMode(checked)
+            if (checked) {
+                binding.searchTagsInputText.text =
+                    SpannableStringBuilder(viewModel.state.value.selectedTags.asString())
+            }
+        }
+
         val adapter = SearchHistoryAdapter(
             onClick = { searchHistoryServer ->
                 bindSelectedTags(searchHistoryServer.searchHistory.tags)
@@ -148,6 +152,7 @@ class SearchFragment : DialogFragment() {
         lifecycleScope.launch {
             viewModel.state.collectLatest { state ->
                 val tags = state.selectedTags
+
                 if (tags is SelectedTags.Simple) {
                     binding.selectedTagsHeader.isVisible = tags.isNotEmpty()
                     tagDetailsBinding.hideAll()
@@ -171,24 +176,24 @@ class SearchFragment : DialogFragment() {
             }
         }
 
+        lifecycleScope.launch {
+            viewModel.suggestionTags.collectLatest {
+                binding.loadingIndicator.isVisible = false
+                it?.let { tags ->
+                    searchSuggestionAdapter.submitList(tags)
+                }
+            }
+        }
+
         if (isTablet)
             (dialog as AlertDialog?)?.setView(view)
     }
 
     private fun bindSelectedTags(initialTags: String) {
+        Log.d(TAG, "bindSelectedTags initialTags=$initialTags")
         binding.loadingIndicator.isVisible = initialTags.isNotEmpty()
-        if (initialTags.isNotEmpty()) {
-            binding.searchHistoryLayout.hide()
-            binding.selectedTagsLayout.show()
-            binding.suggestionTagLayout.hide()
-        } else {
-            binding.searchHistoryLayout.show()
-            binding.selectedTagsLayout.hide()
-            binding.suggestionTagLayout.hide()
-        }
-
         viewModel.setInitialTags(initialTags)
-        if (viewModel.state.value.selectedTags is SelectedTags.Manual) {
+        if (initialTags.isManualSearchTags()) {
             binding.searchTagsInputText.text = SpannableStringBuilder(initialTags)
         }
     }
@@ -219,7 +224,7 @@ class SearchFragment : DialogFragment() {
                         val end = StringUtil.findTokenEnd(text, selectionStart)
                         Log.d("SearchFragment",
                             "selectionStart=$selectionStart text=$text replace start=$start to end=$end with=${it.name}")
-                        binding.searchTagsInputText.text?.replace(start, end + 1, it.name)
+                        binding.searchTagsInputText.text?.replace(start, end + 1, "${it.name} ")
                         binding.searchTagsInputText.setSelection(start + it.name.length)
                     }
                 } else {
@@ -312,40 +317,21 @@ class SearchFragment : DialogFragment() {
                         val tag = StringUtil.getCurrentToken(it, start)
                         viewModel.accept(UiAction.SearchTag(tag))
                         viewModel.insertTagByName(it)
-                    } else {
-                        binding.searchHistoryLayout.show()
-                        binding.selectedTagsLayout.hide()
-                        binding.suggestionTagLayout.hide()
                     }
                 }
             } else {
-                val isVisible =
-                    if (text.isNullOrEmpty() && viewModel.state.value.selectedTags.isNotEmpty()) {
-                        searchSuggestionAdapter.clear()
-                        binding.searchHistoryLayout.hide()
-                        binding.selectedTagsLayout.show()
-                        binding.suggestionTagLayout.hide()
-                        false
-                    } else if (text.isNullOrEmpty() && !viewModel.state.value.selectedTags.isNotEmpty()) {
-                        searchSuggestionAdapter.clear()
-                        binding.searchHistoryLayout.show()
-                        binding.selectedTagsLayout.hide()
-                        binding.suggestionTagLayout.hide()
-                        false
-                    } else {
-                        viewModel.accept(UiAction.SearchTag(text.toString()))
+                text?.toString()?.trim()?.let {
+                    if (it.isNotEmpty()) {
+                        viewModel.accept(UiAction.SearchTag(it))
                         binding.searchHistoryLayout.hide()
                         binding.selectedTagsLayout.hide()
                         binding.suggestionTagLayout.show()
-                        true
                     }
-                binding.loadingIndicator.isVisible = isVisible
-                binding.searchTopAppBar.menu.findItem(R.id.clear_button).isVisible =
-                    isVisible
+                }
             }
         }
-        setOnEditorActionListener { textView, i, _ ->
-            if (i == EditorInfo.IME_ACTION_DONE) {
+        setOnEditorActionListener { textView, action, _ ->
+            if (action == EditorInfo.IME_ACTION_DONE) {
                 /*
                 If advanced search is active, action done will apply search
                 instead of insert tag into selected tags or apply search if empty
@@ -354,7 +340,7 @@ class SearchFragment : DialogFragment() {
                 if (viewModel.state.value.selectedTags is SelectedTags.Manual) {
                     applySearch()
                 } else {
-                    val text = (textView as TextInputEditText).text.toString()
+                    val text = textView.text.toString()
                     if (text.isNotEmpty()) {
                         viewModel.insertTagByName(text)
                         binding.searchTagsInputText.text?.clear()
@@ -368,16 +354,6 @@ class SearchFragment : DialogFragment() {
             }
         }
         requestFocus()
-
-        lifecycleScope.launch {
-            viewModel.suggestionTags.collect {
-                binding.suggestionTagsHeader.isVisible = !it.isNullOrEmpty()
-                binding.loadingIndicator.isVisible = false
-                it?.let { tags ->
-                    searchSuggestionAdapter.setSuggestion(tags)
-                }
-            }
-        }
     }
 
     private fun Chip.bind(group: ChipGroup, textColor: Int?, tag: TagDetail) {
