@@ -111,6 +111,38 @@ abstract class BaseBrowseFragment : Fragment() {
         findNavController().navigate(R.id.action_browse_to_search, bundle)
     }
 
+    private fun saveSearchDialog() {
+        val dialog =
+            MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
+                .setTitle(resources.getString(R.string.title))
+                .setMessage(resources.getString(R.string.saved_search_description_title_text))
+                .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
+                    val title =
+                        (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTitleInput).text?.toString()
+                    val tags =
+                        (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTagsInput).text?.toString()
+
+                    if (tags?.isNotEmpty() == true && title?.isNotEmpty() == true) {
+                        viewModel.saveSearch(title, tags)
+                        Toast.makeText(requireContext(),
+                            "Saved",
+                            Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        Toast.makeText(requireContext(),
+                            "Can't save search if selected tags is empty",
+                            Toast.LENGTH_SHORT).show()
+                    }
+                }.show()
+
+        var title = viewModel.state.value.tags.split(" ").first()
+        if (title.isEmpty()) title = viewModel.state.value.tags
+        dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
+            SpannableStringBuilder(title)
+        dialog.findViewById<EditText>(R.id.savedSearchTagsInput)?.text =
+            SpannableStringBuilder(viewModel.state.value.tags)
+    }
+
     private fun prepareAppBar() {
         val savedSearchTitle = arguments?.getString("title")
 
@@ -133,36 +165,7 @@ abstract class BaseBrowseFragment : Fragment() {
                             Toast.LENGTH_SHORT).show()
                         return@setOnMenuItemClickListener true
                     }
-
-                    val dialog =
-                        MaterialAlertDialogBuilder(requireContext()).setView(R.layout.saved_search_title_dialog_fragment)
-                            .setTitle(resources.getString(R.string.title))
-                            .setMessage(resources.getString(R.string.saved_search_description_title_text))
-                            .setPositiveButton(resources.getText(R.string.save)) { dialog, which ->
-                                val title =
-                                    (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTitleInput).text?.toString()
-                                val tags =
-                                    (dialog as Dialog).findViewById<TextInputEditText>(R.id.savedSearchTagsInput).text?.toString()
-
-                                if (tags?.isNotEmpty() == true && title?.isNotEmpty() == true) {
-                                    viewModel.saveSearch(title, tags)
-                                    Toast.makeText(requireContext(),
-                                        "Saved",
-                                        Toast.LENGTH_SHORT)
-                                        .show()
-                                } else {
-                                    Toast.makeText(requireContext(),
-                                        "Can't save search if selected tags is empty",
-                                        Toast.LENGTH_SHORT).show()
-                                }
-                            }.show()
-
-                    var title = viewModel.state.value.tags.split(" ").first()
-                    if (title.isNullOrEmpty()) title = viewModel.state.value.tags
-                    dialog.findViewById<EditText>(R.id.savedSearchTitleInput)?.text =
-                        SpannableStringBuilder(title)
-                    dialog.findViewById<EditText>(R.id.savedSearchTagsInput)?.text =
-                        SpannableStringBuilder(viewModel.state.value.tags)
+                    saveSearchDialog()
                     true
                 }
                 R.id.select_server_button -> {
