@@ -33,7 +33,6 @@ import com.faldez.shachi.ui.browse.BrowseAdapter
 import com.faldez.shachi.ui.browse.BrowseViewModel
 import com.faldez.shachi.ui.browse.UiAction
 import com.faldez.shachi.ui.browse.UiState
-import com.faldez.shachi.ui.search.SearchFragment
 import com.faldez.shachi.ui.server_dialog.ServerDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -93,6 +92,10 @@ abstract class BaseBrowseFragment : Fragment() {
             viewModel.selectServer(server!!)
         }
         viewModel.accept(UiAction.Search(tags, questionableFilter, explicitFilter, start))
+
+        if (tags.isNotEmpty()) {
+            binding.searchPostTopAppBar.subtitle = tags
+        }
 
         binding.bindState(
             uiState = viewModel.state,
