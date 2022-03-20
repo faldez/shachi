@@ -20,6 +20,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -46,7 +47,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
-class SearchFragment : DialogFragment() {
+class SearchFragment : Fragment() {
     companion object {
         const val TAG = "SearchFragment"
     }
@@ -64,12 +65,6 @@ class SearchFragment : DialogFragment() {
 
     private lateinit var searchSuggestionAdapter: SearchSuggestionAdapter
 
-    private var isTablet = false
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): AlertDialog {
-        isTablet = resources.getBoolean(R.bool.isTablet)
-        return MaterialAlertDialogBuilder(requireContext()).create()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -218,9 +213,6 @@ class SearchFragment : DialogFragment() {
                 }
             }
         }
-
-        if (isTablet)
-            (dialog as AlertDialog?)?.setView(view)
     }
 
     private fun bindSelectedTags(initialTags: String) {
@@ -276,17 +268,9 @@ class SearchFragment : DialogFragment() {
     private fun prepareAppBar() {
         binding.searchTopAppBar.menu.clear()
         binding.searchTopAppBar.inflateMenu(R.menu.search_menu)
-        binding.searchTopAppBar.setNavigationIcon(if (isTablet) {
-            R.drawable.ic_baseline_close_24
-        } else {
-            R.drawable.ic_baseline_arrow_back_24
-        })
+        binding.searchTopAppBar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
         binding.searchTopAppBar.setNavigationOnClickListener {
-            if (isTablet) {
-                dialog?.dismiss()
-            } else {
-                requireActivity().onBackPressed()
-            }
+            requireActivity().onBackPressed()
         }
         binding.searchTopAppBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
@@ -318,7 +302,6 @@ class SearchFragment : DialogFragment() {
         val bundle = bundleOf("server" to viewModel.state.value.server,
             "tags" to value, "start" to viewModel.state.value.page)
         findNavController().navigate(R.id.action_search_to_browse, bundle)
-        dialog?.dismiss()
     }
 
     private fun LinearLayoutCompat.show() {

@@ -80,13 +80,7 @@ class FavoriteFragment : Fragment() {
 
     private fun navigateToSearch() {
         val bundle = bundleOf("tags" to viewModel.state.value.tags)
-        if (!resources.getBoolean(R.bool.isTablet)) {
-            findNavController().navigate(R.id.action_browse_to_search, bundle)
-        } else {
-            val searchFragment = SearchFragment()
-            searchFragment.arguments = bundle
-            searchFragment.show(requireActivity().supportFragmentManager, "dialog")
-        }
+        findNavController().navigate(R.id.action_browse_to_search, bundle)
     }
 
     private fun FavoriteFragmentBinding.bind(

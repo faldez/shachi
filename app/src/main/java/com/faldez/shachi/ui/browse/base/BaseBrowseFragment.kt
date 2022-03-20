@@ -105,13 +105,7 @@ abstract class BaseBrowseFragment : Fragment() {
         val bundle = bundleOf("server" to viewModel.state.value.server,
             "tags" to viewModel.state.value.tags,
             "page" to viewModel.state.value.start)
-        if (resources.getBoolean(R.bool.isTablet)) {
-            val searchFragment = SearchFragment()
-            searchFragment.arguments = bundle
-            searchFragment.show(requireActivity().supportFragmentManager, "dialog")
-        } else {
-            findNavController().navigate(R.id.action_browse_to_search, bundle)
-        }
+        findNavController().navigate(R.id.action_browse_to_search, bundle)
     }
 
     private fun prepareAppBar() {
