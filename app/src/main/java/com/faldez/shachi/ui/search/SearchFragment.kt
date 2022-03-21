@@ -13,13 +13,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -116,11 +114,14 @@ class SearchFragment : Fragment() {
             }
         }
 
-        binding.manualSearchChip.setOnCheckedChangeListener { _, checked ->
-            viewModel.setMode(checked)
-            if (checked) {
+        binding.manualSearchChip.setOnClickListener {
+            val tags = viewModel.state.value.selectedTags
+            viewModel.setMode(viewModel.state.value.selectedTags is SelectedTags.Simple)
+            if (tags is SelectedTags.Manual) {
+                binding.searchTagsInputText.text = null
+            } else if (tags is SelectedTags.Simple) {
                 binding.searchTagsInputText.text =
-                    SpannableStringBuilder(viewModel.state.value.selectedTags.asString())
+                    SpannableStringBuilder(tags.tags.joinToString(" "))
             }
         }
 
@@ -138,10 +139,11 @@ class SearchFragment : Fragment() {
         }
 
         binding.pageChip.setOnCheckedChangeListener { chip, checked ->
-            if (checked) {
-                binding.pageChip.closeIcon = null
+            viewModel.setMode(checked)
+            (chip as Chip).closeIcon = if (checked) {
+                null
             } else {
-                binding.pageChip.closeIcon = ResourcesCompat.getDrawable(resources,
+                ResourcesCompat.getDrawable(resources,
                     R.drawable.ic_baseline_arrow_drop_down_24,
                     activity?.theme)
             }
@@ -194,6 +196,8 @@ class SearchFragment : Fragment() {
                         }
                     }
                     binding.loadingIndicator.isVisible = false
+                } else if (tags is SelectedTags.Manual) {
+                    binding.manualSearchChip.isChecked = true
                 }
 
                 binding.pageChip.isChecked = state.page != null
@@ -217,7 +221,7 @@ class SearchFragment : Fragment() {
 
     private fun bindSelectedTags(initialTags: String) {
         Log.d(TAG, "bindSelectedTags initialTags=$initialTags")
-        binding.loadingIndicator.isVisible = initialTags.isNotEmpty()
+        binding.loadingIndicator.isVisible = !initialTags.isManualSearchTags()
         viewModel.setInitialTags(initialTags)
         if (initialTags.isManualSearchTags()) {
             binding.searchTagsInputText.text = SpannableStringBuilder(initialTags)
@@ -325,7 +329,12 @@ class SearchFragment : Fragment() {
     }
 
     private fun EditText.bind() {
-        hint = "Search " + viewModel.state.value.server?.title
+        val serverTitle = viewModel.state.value.server?.title
+        hint = if (serverTitle != null) {
+            "Search $serverTitle"
+        } else {
+            "Search"
+        }
         setImeActionLabel("Add", KeyEvent.KEYCODE_ENTER)
         doOnTextChanged { text, start, _, _ ->
             if (viewModel.state.value.selectedTags is SelectedTags.Manual) {

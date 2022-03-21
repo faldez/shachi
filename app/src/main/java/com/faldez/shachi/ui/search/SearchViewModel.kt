@@ -148,12 +148,17 @@ class SearchSimpleViewModel(
     }
 
     fun setMode(isManualMode: Boolean) {
-        if (isManualMode) {
-            val tags = (state.value.selectedTags as SelectedTags.Simple).tags.joinToString(" ")
+        val tags = state.value.selectedTags
+        if (isManualMode && tags is SelectedTags.Simple) {
+            val tags = tags.tags.joinToString(" ")
             Log.d("SearchViewModel", "tags=$tags")
             setInitialTagsManual(tags)
-        } else {
-            setInitialTagsSimple("")
+        } else if (tags is SelectedTags.Manual) {
+            if (tags.tags.isManualSearchTags()) {
+                setInitialTagsSimple("")
+            } else {
+                setInitialTagsSimple(tags.tags)
+            }
         }
     }
 
