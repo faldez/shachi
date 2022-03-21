@@ -190,6 +190,7 @@ abstract class BaseBrowseFragment : Fragment() {
                         state.server?.title?.let {
                             binding.searchPostTopAppBar.title = SpannableStringBuilder(it)
                         }
+                        arguments?.putParcelable("server", state.server)
                     }
                 }
             }
