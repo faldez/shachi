@@ -23,7 +23,6 @@ import com.faldez.shachi.data.database.AppDatabase
 import com.faldez.shachi.data.preference.*
 import com.faldez.shachi.data.repository.favorite.FavoriteRepositoryImpl
 import com.faldez.shachi.databinding.FavoriteFragmentBinding
-import com.faldez.shachi.ui.search.SearchFragment
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.coroutines.launch
 
@@ -59,6 +58,9 @@ class FavoriteFragment : Fragment() {
                 ?: Filter.Disable
 
         val tags = arguments?.get("tags") as String? ?: ""
+        if (tags.isNotEmpty()) {
+            binding.favoriteTopappbar.subtitle = tags
+        }
         viewModel.accept(UiAction.SearchFavorite(tags, questionableFilter, explicitFilter))
 
         binding.bind()
