@@ -14,6 +14,13 @@
     <action
         android:id="@+id/action_postdetail_to_browse"
         app:destination="@id/browseSavedFragment" />
+    <action
+        android:id="@+id/action_browse_to_search"
+        app:destination="@id/search_fragment"
+        app:enterAnim="@anim/slide_in"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/slide_out" />
     <fragment
         android:id="@+id/savedFragment"
         android:name="com.faldez.shachi.ui.saved.SavedFragment"
@@ -47,13 +54,6 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/slide_out" />
     </fragment>
-    <action
-        android:id="@+id/action_browse_to_search"
-        app:destination="@id/search_fragment"
-        app:enterAnim="@anim/slide_in_up"
-        app:exitAnim="@anim/fade_out"
-        app:popEnterAnim="@anim/fade_in"
-        app:popExitAnim="@anim/slide_out_down" />
     <fragment
         android:id="@+id/browseSavedPostSlideFragment"
         android:name="com.faldez.shachi.ui.post_slide.BrowseSavedPostSlideFragment"

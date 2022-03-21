@@ -12,10 +12,10 @@
         <action
             android:id="@+id/action_browse_to_search"
             app:destination="@id/search_fragment"
-            app:enterAnim="@anim/slide_in_up"
+            app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/slide_out_down" />
+            app:popExitAnim="@anim/slide_out" />
         <action
             android:id="@+id/action_browse_to_postslide"
             app:destination="@id/browsePostSlideFragment"
