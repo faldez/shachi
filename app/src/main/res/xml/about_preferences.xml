@@ -9,10 +9,6 @@
         app:icon="@drawable/ic_github"
         app:title="@string/github" />
     <Preference
-        app:icon="@drawable/ic_discord"
-        app:key="discord"
-        app:title="Discord" />
-    <Preference
         app:fragment="com.faldez.shachi.ui.oss.OssFragment"
         app:key="oss_notices"
         app:title="@string/open_source_notices" />
