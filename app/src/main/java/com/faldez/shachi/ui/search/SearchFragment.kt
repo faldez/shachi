@@ -95,22 +95,7 @@ class SearchFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.state.collect { state ->
-                binding.manualSearchChip.isChecked =
-                    state.selectedTags is SelectedTags.Manual
 
-                if (state.selectedTags.isNotEmpty() && state.selectedTags is SelectedTags.Manual) {
-                    binding.searchHistoryLayout.hide()
-                    binding.selectedTagsLayout.hide()
-                    binding.suggestionTagLayout.show()
-                } else if (state.selectedTags.isNotEmpty() && state.selectedTags is SelectedTags.Simple) {
-                    binding.searchHistoryLayout.hide()
-                    binding.selectedTagsLayout.show()
-                    binding.suggestionTagLayout.hide()
-                } else if (!state.selectedTags.isNotEmpty()) {
-                    binding.searchHistoryLayout.show()
-                    binding.selectedTagsLayout.hide()
-                    binding.suggestionTagLayout.hide()
-                }
             }
         }
 
@@ -139,7 +124,6 @@ class SearchFragment : Fragment() {
         }
 
         binding.pageChip.setOnCheckedChangeListener { chip, checked ->
-            viewModel.setMode(checked)
             (chip as Chip).closeIcon = if (checked) {
                 null
             } else {
@@ -196,8 +180,24 @@ class SearchFragment : Fragment() {
                         }
                     }
                     binding.loadingIndicator.isVisible = false
+                    if (tags.isNotEmpty()) {
+                        binding.searchHistoryLayout.hide()
+                        binding.selectedTagsLayout.show()
+                        binding.suggestionTagLayout.hide()
+                    }
                 } else if (tags is SelectedTags.Manual) {
                     binding.manualSearchChip.isChecked = true
+                    if (tags.isNotEmpty()) {
+                        binding.searchHistoryLayout.hide()
+                        binding.selectedTagsLayout.hide()
+                        binding.suggestionTagLayout.show()
+                    }
+                }
+
+                if (!tags.isNotEmpty()) {
+                    binding.searchHistoryLayout.show()
+                    binding.selectedTagsLayout.hide()
+                    binding.suggestionTagLayout.hide()
                 }
 
                 binding.pageChip.isChecked = state.page != null
