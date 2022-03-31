@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Url
+import java.util.concurrent.TimeUnit
 
 
 interface MoebooruApi {
@@ -30,8 +31,12 @@ interface MoebooruApi {
         const val STARTING_PAGE_INDEX = 1
 
         private val retrofit2Api: MoebooruApi by lazy {
-            val client =
-                OkHttpClient().newBuilder().build()
+            val client = OkHttpClient()
+                .newBuilder()
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .build()
             val contentType = "application/json".toMediaType()
             Retrofit.Builder().client(client)
                 .baseUrl("https://safebooru.org")

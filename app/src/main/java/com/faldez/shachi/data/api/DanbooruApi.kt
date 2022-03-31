@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Url
+import java.util.concurrent.TimeUnit
 
 
 interface DanbooruApi {
@@ -27,7 +28,10 @@ interface DanbooruApi {
 
         private val retrofitApi: DanbooruApi by lazy {
             val client =
-                OkHttpClient().newBuilder().build()
+                OkHttpClient().newBuilder()
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(120, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS).build()
             val contentType = "application/json".toMediaType()
             Retrofit.Builder().client(client)
                 .baseUrl("https://safebooru.org")

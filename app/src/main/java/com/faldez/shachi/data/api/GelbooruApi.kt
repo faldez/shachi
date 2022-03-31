@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Url
+import java.util.concurrent.TimeUnit
 
 
 interface GelbooruApi {
@@ -28,7 +29,10 @@ interface GelbooruApi {
 
         private val retrofitApi: GelbooruApi by lazy {
             val client =
-                OkHttpClient().newBuilder().addInterceptor(XmlToJsonInterceptor()).build()
+                OkHttpClient().newBuilder().addInterceptor(XmlToJsonInterceptor())
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(120, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS).build()
             val contentType = "application/json".toMediaType()
             val json = Json {
                 isLenient = true
