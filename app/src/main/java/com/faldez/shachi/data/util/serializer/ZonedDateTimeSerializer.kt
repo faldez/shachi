@@ -10,18 +10,24 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 
-object ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
+object ZonedDateTimeSerializer : KSerializer<ZonedDateTime?> {
     private val format: DateTimeFormatter = DateTimeFormatter.ofPattern("eee MMM d HH:mm:ss Z yyyy")
 
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("ZonedDateTimeSerializer", PrimitiveKind.STRING)
 
-    override fun deserialize(decoder: Decoder): ZonedDateTime {
+    override fun deserialize(decoder: Decoder): ZonedDateTime? {
         val string = decoder.decodeString()
-        return ZonedDateTime.parse(string, format)
+        return try {
+            ZonedDateTime.parse(string, format)
+        } catch (e: Exception) {
+            null
+        }
     }
 
-    override fun serialize(encoder: Encoder, value: ZonedDateTime) {
-        encoder.encodeString(value.format(format))
+    override fun serialize(encoder: Encoder, value: ZonedDateTime?) {
+        if (value != null) {
+            encoder.encodeString(value.format(format))
+        }
     }
 }
