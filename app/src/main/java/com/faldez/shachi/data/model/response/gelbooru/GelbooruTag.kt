@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GelbooruTagResponse(
-    val tags: GelbooruTags?,
+    val tags: GelbooruTags? = null,
 )
 
 @Serializable
