@@ -1,5 +1,6 @@
 package com.faldez.shachi.data.model.response
 
+import com.faldez.shachi.data.util.serializer.EmptyStringAsIntNullTypeSerializer
 import com.faldez.shachi.data.util.serializer.LocalDateTimeSerializer
 import com.faldez.shachi.data.util.serializer.SingleObjectAsArraySerializer
 import kotlinx.serialization.Serializable
@@ -23,7 +24,7 @@ data class GelbooruComment(
     @JsonNames("post_id") val postId: Int,
     val body: String,
     val creator: String,
-    @JsonNames("creator_id") val creatorId: Int?,
+    @Serializable(EmptyStringAsIntNullTypeSerializer::class) @JsonNames("creator_id") val creatorId: Int?,
     @Serializable(LocalDateTimeSerializer::class) @JsonNames("created_at") val createdAt: LocalDateTime?,
 )
 
