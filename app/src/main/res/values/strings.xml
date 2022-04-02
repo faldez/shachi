@@ -94,8 +94,8 @@
     <string name="username">Username</string>
     <string name="login_optional">Login (Optional)</string>
     <string name="disable">Disable</string>
-    <string name="hide">Hide</string>
-    <string name="mute">Mute</string>
+    <string name="hide">Blur rated post when browse but not when viewing</string>
+    <string name="mute">Don\'t show rated post</string>
     <string name="notes">Notes</string>
     <string name="comments">Comments</string>
     <string name="update_title">Update Title</string>
