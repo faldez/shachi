@@ -1,5 +1,6 @@
 package com.faldez.shachi.ui.server_edit
 
+import android.database.sqlite.SQLiteConstraintException
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.faldez.shachi.data.model.Server
@@ -99,7 +100,6 @@ class ServerEditViewModel(
                             tagRepository.insertTags(tags)
                         }
                     }
-
                 } else {
                     serverRepository.update(server)
                 }
@@ -107,6 +107,9 @@ class ServerEditViewModel(
             } catch (e: Error) {
                 Log.d("ServerEditViewModel/test", "$e")
                 state.value = State.Failed("$e")
+            } catch (e: SQLiteConstraintException) {
+                Log.d("ServerEditViewModel/test", "$e")
+                state.value = State.Failed("Server with same url exists")
             }
         }
     }
