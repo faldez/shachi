@@ -3,12 +3,12 @@ package com.faldez.shachi.ui.server_edit
 import android.database.sqlite.SQLiteConstraintException
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.faldez.shachi.data.api.Action
 import com.faldez.shachi.data.model.Server
 import com.faldez.shachi.data.model.ServerType
-import com.faldez.shachi.data.repository.post.PostRepository
 import com.faldez.shachi.data.repository.ServerRepository
+import com.faldez.shachi.data.repository.post.PostRepository
 import com.faldez.shachi.data.repository.tag.TagRepository
-import com.faldez.shachi.data.api.Action
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -99,6 +99,9 @@ class ServerEditViewModel(
                         if (tags != null) {
                             tagRepository.insertTags(tags)
                         }
+                    }
+                    if (serverRepository.getAllServers()?.size == 1) {
+                        serverRepository.setSelectedServer(serverId.toInt())
                     }
                 } else {
                     serverRepository.update(server)
