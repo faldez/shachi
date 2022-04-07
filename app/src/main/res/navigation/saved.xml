@@ -13,7 +13,8 @@
         app:popExitAnim="@anim/slide_out_down" />
     <action
         android:id="@+id/action_postdetail_to_browse"
-        app:destination="@id/browseSavedFragment" />
+        app:destination="@id/browseSavedFragment"
+        app:popUpTo="@id/browseSavedFragment"  />
     <action
         android:id="@+id/action_browse_to_search"
         app:destination="@id/search_fragment"
