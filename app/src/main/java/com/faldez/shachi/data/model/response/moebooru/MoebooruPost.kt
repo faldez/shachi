@@ -11,7 +11,7 @@ data class MoebooruPost(
     val tags: String,
     @Serializable(TimestampDateTimeSerializer::class) @JsonNames("created_at") val createdAt: ZonedDateTime?,
     @Serializable(TimestampDateTimeSerializer::class) @JsonNames("updated_at") val updatedAt: ZonedDateTime? = null,
-    @JsonNames("creator_id") val creatorId: Int,
+    @JsonNames("creator_id") val creatorId: Int?,
     val author: String,
     val change: Int,
     val source: String,
