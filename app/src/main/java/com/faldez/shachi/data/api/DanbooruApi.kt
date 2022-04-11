@@ -33,9 +33,13 @@ interface DanbooruApi {
                     .writeTimeout(120, TimeUnit.SECONDS)
                     .readTimeout(60, TimeUnit.SECONDS).build()
             val contentType = "application/json".toMediaType()
+            val json = Json {
+                isLenient = true
+                ignoreUnknownKeys = true
+            }
             Retrofit.Builder().client(client)
                 .baseUrl("https://safebooru.org")
-                .addConverterFactory(Json.asConverterFactory(contentType)).build()
+                .addConverterFactory(json.asConverterFactory(contentType)).build()
                 .create(DanbooruApi::class.java)
         }
 
