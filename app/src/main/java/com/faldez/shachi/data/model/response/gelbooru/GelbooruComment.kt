@@ -9,13 +9,13 @@ import java.time.LocalDateTime
 
 @Serializable
 data class GelbooruCommentResponse(
-    val comments: GelbooruComments?,
+    val comments: GelbooruComments? = null,
 )
 
 @Serializable
 data class GelbooruComments(
     @Serializable(with = GelbooruCommentSerializer::class)
-    val comment: List<GelbooruComment>?,
+    val comment: List<GelbooruComment>? = null,
 )
 
 @Serializable

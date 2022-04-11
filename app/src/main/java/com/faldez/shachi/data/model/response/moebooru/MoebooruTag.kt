@@ -4,11 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MoebooruTag(
-    val id: Int,
-    val name: String,
-    val count: Int,
-    val type: Int,
-    val ambiguous: Boolean,
+    val id: Int = 0,
+    val name: String = "",
+    val count: Int = 0,
+    val type: Int = 0,
+    val ambiguous: Boolean = false,
 )
 
 @Serializable

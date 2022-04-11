@@ -41,6 +41,7 @@ interface MoebooruApi {
             val json = Json {
                 isLenient = true
                 ignoreUnknownKeys = true
+                coerceInputValues = true
             }
             Retrofit.Builder().client(client)
                 .baseUrl("https://safebooru.org")

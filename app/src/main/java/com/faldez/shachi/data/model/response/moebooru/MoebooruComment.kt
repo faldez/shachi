@@ -7,10 +7,10 @@ import java.time.ZonedDateTime
 
 @Serializable
 data class MoebooruComment(
-    val id: Int,
-    @JsonNames("post_id") val postId: Int,
-    val body: String,
-    val creator: String,
-    @JsonNames("creator_id") val creatorId: Int,
-    @Serializable(JsonDateTimeSerializer::class) @JsonNames("created_at") val createdAt: ZonedDateTime?,
+    val id: Int = 0,
+    @JsonNames("post_id") val postId: Int = 0,
+    val body: String = "",
+    val creator: String = "",
+    @JsonNames("creator_id") val creatorId: Int = 0,
+    @Serializable(JsonDateTimeSerializer::class) @JsonNames("created_at") val createdAt: ZonedDateTime? = null,
 )

@@ -30,8 +30,8 @@ fun List<DanbooruComment>?.mapToComments() = this?.map {
     Comment(id = it.id,
         postId = it.postId,
         body = it.body,
-        creator = it.creator.name,
-        creatorId = it.creator.id,
+        creator = it.creator?.name ?: "",
+        creatorId = it.creator?.id?: 0,
         createdAt = it.createdAt?.toLocalDateTime()
     )
 }
