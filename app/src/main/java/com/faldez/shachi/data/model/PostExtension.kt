@@ -18,6 +18,7 @@ fun PagingData<Post>.applyFilters(
             Rating.Questionable -> muteQuestionable
             Rating.Explicit -> muteExplicit
             Rating.Safe -> false
+            Rating.General -> false
         }
 
         if (isMute) {

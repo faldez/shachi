@@ -41,6 +41,7 @@ class BrowseSavedPostSlideFragment : BasePostSlideFragment() {
                     Rating.Questionable -> showQuestionable
                     Rating.Explicit -> showExplicit
                     Rating.Safe -> true
+                    Rating.General -> true
                 }
             })
         }

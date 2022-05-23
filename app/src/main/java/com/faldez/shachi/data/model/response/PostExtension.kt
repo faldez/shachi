@@ -153,5 +153,6 @@ fun parseRating(rating: String): Rating =
         "explicit" -> Rating.Explicit
         "q" -> Rating.Questionable
         "questionable" -> Rating.Questionable
-        else -> throw IllegalAccessException()
+        "general" -> Rating.General
+        else -> Rating.Safe
     }

@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class Rating {
+    General,
     Safe,
     Questionable,
     Explicit

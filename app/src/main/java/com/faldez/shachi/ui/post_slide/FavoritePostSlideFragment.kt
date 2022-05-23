@@ -32,6 +32,7 @@ class FavoritePostSlideFragment : BasePostSlideFragment() {
                     Rating.Questionable -> showQuestionable
                     Rating.Explicit -> showExplicit
                     Rating.Safe -> true
+                    Rating.General -> true
                 }
             }.map { post ->
                 post.favorite = true
