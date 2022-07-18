@@ -7,7 +7,7 @@ import java.time.ZonedDateTime
 
 @Serializable
 data class GelbooruPostResponse(
-    val posts: GelbooruPosts?,
+    val posts: GelbooruPosts? = null,
 )
 
 @Serializable
